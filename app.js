@@ -407,8 +407,8 @@
             </header>
             <div class="store-hero-copy">
               <p class="eyebrow">Interaktive Mystery Collection</p>
-              <h1 class="display-title display-title--store">${escapeHtml(STORY.meta.appTitle)}</h1>
-              <p class="store-hero-subtitle">${escapeHtml(featuredStory.subtitle)}</p>
+              <h1 class="display-title display-title--store">${escapeHtml(featuredStory.subtitle)}</h1>
+              <p class="store-hero-subtitle">Eine Story aus ${escapeHtml(STORY.meta.appTitle)}</p>
               <div class="tag-row">
                 ${featuredStory.tags
                   .map(function (tag) {
