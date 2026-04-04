@@ -348,7 +348,7 @@ select {
 
 .store-card--compact {
   display: grid;
-  grid-template-rows: 12rem 1fr;
+  grid-template-rows: 14rem 1fr;
 }
 
 .store-card--active {

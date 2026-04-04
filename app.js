@@ -163,6 +163,9 @@
       subtitle: "Mystery Novella",
       description: "Eine Ermittlungsakte mit geschwärzten Seiten, gelöschten Namen und einem Brand ohne Quelle.",
       tags: ["Noir", "Archiv"],
+      imageSrc: "./Ascheprotokoll.png",
+      imageAlt: "Ascheprotokoll Cover mit verbrannter Ermittlungsakte",
+      imagePosition: "center 4%",
       status: "Demnächst",
       available: false
     },
@@ -171,6 +174,9 @@
       subtitle: "Psychologischer Thriller",
       description: "Ein Wochenendhaus im Schnee, eine Kamera zu viel und eine Nacht, die im Material fehlt.",
       tags: ["Thriller", "Isolation"],
+      imageSrc: "./DasGlashaus.png",
+      imageAlt: "Das Glashaus Cover mit Haus im Schnee und Kamera im Vordergrund",
+      imagePosition: "center 4%",
       status: "Platzhalter",
       available: false
     },
@@ -179,6 +185,9 @@
       subtitle: "Folk Horror",
       description: "Ein Dorf hört jede Nacht denselben Glockenschlag, obwohl der Turm seit Jahren leer steht.",
       tags: ["Okkult", "Dorf"],
+      imageSrc: "./DieverlasseneGlockeimNebel.png",
+      imageAlt: "Die vierte Glocke Cover mit verlassenem Turm im Schneenebel",
+      imagePosition: "center 4%",
       status: "Später",
       available: false
     }
@@ -228,7 +237,9 @@
     const mediaMarkup = story.imageSrc
       ? `<img class="store-card-media" src="${escapeHtml(story.imageSrc)}" alt="${escapeHtml(
           story.imageAlt || story.title
-        )}" loading="${isFeatured ? "eager" : "lazy"}" />`
+        )}" loading="${isFeatured ? "eager" : "lazy"}" style="object-position: ${escapeHtml(
+          story.imagePosition || "center"
+        )};" />`
       : '<div class="store-card-media store-card-media--placeholder" aria-hidden="true"></div>';
     const tagsMarkup = (story.tags || [])
       .map(function (tag) {
