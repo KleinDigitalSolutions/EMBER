@@ -1060,6 +1060,101 @@ select {
   }
 
   .button {
-    width: 100%;
+  width: 100%;
   }
-}
+  }
+
+  .site-footer {
+  position: relative;
+  z-index: 10;
+  background: var(--bg-deep);
+  color: var(--text-faint);
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 2.6rem);
+  font-family: var(--font-ui);
+  border-top: 1px solid var(--line);
+  }
+
+  .footer-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  }
+
+  .footer-top {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  }
+
+  .footer-top a {
+  color: inherit;
+  text-decoration: none;
+  }
+
+  .footer-top a:hover {
+  text-decoration: underline;
+  }
+
+  .footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  }
+
+  .footer-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.85rem;
+  }
+
+  .footer-link:hover {
+    text-decoration: underline;
+  }
+
+  .footer-badges-container {
+    margin-top: 2rem;
+  }
+
+  .footer-badges-label {
+    margin: 0 0 0.8rem 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .footer-badges {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .footer-badge {
+  display: block;
+  }
+
+  .footer-badge img {
+  height: 34px;
+  width: auto;
+  display: block;
+  opacity: 0.85;
+  transition: opacity 200ms ease;
+  }
+
+  .footer-badge:hover img {
+  opacity: 1;
+  }
+
+  @media (max-width: 740px) {
+  .footer-links {
+  grid-template-columns: repeat(3, 1fr);
+  }
+  }
+
+  @media (max-width: 500px) {
+  .footer-links {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  }
+  }
+
