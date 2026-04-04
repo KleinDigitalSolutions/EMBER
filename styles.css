@@ -245,11 +245,12 @@ select {
 }
 
 .store-wordmark {
-  font-size: 1.02rem;
-  font-weight: 700;
-  letter-spacing: 0.28em;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: #f7e9da;
+  color: #f2efe8;
+  opacity: 0.95;
 }
 
 .store-hero-note {

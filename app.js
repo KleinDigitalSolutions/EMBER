@@ -312,8 +312,16 @@
     fadeTo(function () {
       runtime.screen = "intro";
       runtime.currentEndingId = null;
-      runtime.currentSceneId = STORY.startSceneId;
-      runtime.chapterCardFor = STORY.startSceneId;
+    });
+  }
+
+  function resumeApp() {
+    fadeTo(function () {
+      if (runtime.currentEndingId) {
+        runtime.screen = "ending";
+      } else {
+        runtime.screen = "scene";
+      }
     });
   }
 
@@ -397,8 +405,9 @@
         return renderStoreCard(story, false);
       })
       .join("");
-    const primaryLabel = hasMeaningfulProgress() ? "Öffnen" : "Zur Story";
-    const secondaryLabel = hasMeaningfulProgress() ? "Direkt weiterlesen" : "Direkt lesen";
+    const primaryLabel = hasMeaningfulProgress() ? "Fortsetzen" : "Ansehen";
+    const secondaryLabel = hasMeaningfulProgress() ? "Neu starten" : "Direkt starten";
+    const primaryAction = hasMeaningfulProgress() ? "resume" : "start";
 
     return `
       <section class="view view--start">
@@ -414,12 +423,11 @@
             </div>
             <header class="store-hero-topbar">
               <div class="store-wordmark">EMBER</div>
-              <p class="store-hero-note">Story Store</p>
             </header>
             <div class="store-hero-copy">
-              <p class="eyebrow">Interaktive Mystery Collection</p>
+              <p class="eyebrow">EMBER Originals</p>
               <h1 class="display-title display-title--store">${escapeHtml(featuredStory.subtitle)}</h1>
-              <p class="store-hero-subtitle">Eine Story aus ${escapeHtml(STORY.meta.appTitle)}</p>
+              <p class="store-hero-subtitle">Stories, in denen deine Entscheidungen Konsequenzen haben</p>
               <div class="tag-row">
                 ${featuredStory.tags
                   .map(function (tag) {
@@ -434,7 +442,7 @@
                 <span class="store-hero-status">1 Story freigeschaltet</span>
               </div>
               <div class="actions actions--hero">
-                <button class="button button--solid" data-action="start" data-autofocus="true">${escapeHtml(
+                <button class="button button--solid" data-action="${primaryAction}" data-autofocus="true">${escapeHtml(
                   primaryLabel
                 )}</button>
                 <button class="button button--ghost" data-action="begin">${escapeHtml(
@@ -718,6 +726,11 @@
 
     if (action === "start") {
       startApp();
+      return;
+    }
+
+    if (action === "resume") {
+      resumeApp();
       return;
     }
 
