@@ -445,6 +445,49 @@
             </div>
             <div class="store-grid">${storeCards}</div>
           </section>
+
+          <nav class="app-tabbar" aria-label="iOS Tab Bar">
+            <button class="app-tab" type="button">
+              <span class="app-tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M3.5 10.5 12 4l8.5 6.5" />
+                  <path d="M6.5 9.5V20h11V9.5" />
+                  <path d="M10 20v-5h4v5" />
+                </svg>
+              </span>
+              <span class="app-tab-label">Home</span>
+            </button>
+            <button class="app-tab app-tab--active" type="button">
+              <span class="app-tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="4" y="4" width="6" height="6" rx="1.5" />
+                  <rect x="14" y="4" width="6" height="6" rx="1.5" />
+                  <rect x="4" y="14" width="6" height="6" rx="1.5" />
+                  <rect x="14" y="14" width="6" height="6" rx="1.5" />
+                </svg>
+              </span>
+              <span class="app-tab-label">Store</span>
+            </button>
+            <button class="app-tab" type="button">
+              <span class="app-tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6.5 5.5h8.75A2.25 2.25 0 0 1 17.5 7.75V18.5H8.75A2.25 2.25 0 0 0 6.5 20.75Z" />
+                  <path d="M6.5 6v14.75" />
+                  <path d="M9.25 8.25h5.75" />
+                </svg>
+              </span>
+              <span class="app-tab-label">Bibliothek</span>
+            </button>
+            <button class="app-tab" type="button">
+              <span class="app-tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="8" r="3.25" />
+                  <path d="M5.5 19a6.5 6.5 0 0 1 13 0" />
+                </svg>
+              </span>
+              <span class="app-tab-label">Account</span>
+            </button>
+          </nav>
         </div>
       </section>
     `;
