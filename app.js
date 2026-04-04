@@ -146,6 +146,130 @@
       .replaceAll("'", "&#39;");
   }
 
+  const storefrontStories = [
+    {
+      title: STORY.meta.appTitle,
+      subtitle: STORY.meta.storyTitle,
+      description: STORY.meta.storyDescription,
+      tags: STORY.meta.tags,
+      imageSrc: "./Cover.png",
+      imageAlt: "Düstere Kapelle im Wald bei Kerzenlicht",
+      status: "Aktiv",
+      available: true,
+      action: "start"
+    },
+    {
+      title: "Ascheprotokoll",
+      subtitle: "Mystery Novella",
+      description: "Eine Ermittlungsakte mit geschwärzten Seiten, gelöschten Namen und einem Brand ohne Quelle.",
+      tags: ["Noir", "Archiv"],
+      status: "Demnächst",
+      available: false
+    },
+    {
+      title: "Das Glashaus",
+      subtitle: "Psychologischer Thriller",
+      description: "Ein Wochenendhaus im Schnee, eine Kamera zu viel und eine Nacht, die im Material fehlt.",
+      tags: ["Thriller", "Isolation"],
+      status: "Platzhalter",
+      available: false
+    },
+    {
+      title: "Die vierte Glocke",
+      subtitle: "Folk Horror",
+      description: "Ein Dorf hört jede Nacht denselben Glockenschlag, obwohl der Turm seit Jahren leer steht.",
+      tags: ["Okkult", "Dorf"],
+      status: "Später",
+      available: false
+    }
+  ];
+
+  function hasMeaningfulProgress() {
+    return (
+      runtime.currentEndingId !== null ||
+      runtime.currentSceneId !== STORY.startSceneId ||
+      Object.keys(runtime.flags).length > 0 ||
+      runtime.screen === "intro" ||
+      runtime.screen === "chapter" ||
+      runtime.screen === "scene" ||
+      runtime.screen === "ending"
+    );
+  }
+
+  function getProgressLabel() {
+    if (runtime.currentEndingId) {
+      return "Finale erreicht";
+    }
+
+    if (runtime.screen === "chapter" || runtime.screen === "scene") {
+      const currentScene =
+        runtime.screen === "chapter"
+          ? getScene(runtime.chapterCardFor)
+          : getScene(runtime.currentSceneId);
+
+      if (currentScene) {
+        return currentScene.chapterCard.eyebrow + " • " + currentScene.sceneTitle;
+      }
+    }
+
+    if (runtime.screen === "intro") {
+      return "Intro geöffnet";
+    }
+
+    return "Kapitel I bereit";
+  }
+
+  function renderStoreCard(story, isFeatured) {
+    const classNames = [
+      "store-card",
+      isFeatured ? "store-card--featured" : "store-card--compact",
+      story.available ? "store-card--active" : "store-card--locked"
+    ].join(" ");
+    const mediaMarkup = story.imageSrc
+      ? `<img class="store-card-media" src="${escapeHtml(story.imageSrc)}" alt="${escapeHtml(
+          story.imageAlt || story.title
+        )}" loading="${isFeatured ? "eager" : "lazy"}" />`
+      : '<div class="store-card-media store-card-media--placeholder" aria-hidden="true"></div>';
+    const tagsMarkup = (story.tags || [])
+      .map(function (tag) {
+        return `<span class="tag">${escapeHtml(tag)}</span>`;
+      })
+      .join("");
+    const buttonLabel = story.available
+      ? hasMeaningfulProgress()
+        ? "Öffnen"
+        : "Ansehen"
+      : "Gesperrt";
+
+    return `
+      <article class="${classNames}">
+        <div class="store-card-visual">
+          ${mediaMarkup}
+          <span class="store-card-status-badge">${escapeHtml(story.status)}</span>
+        </div>
+        <div class="store-card-copy">
+          <p class="eyebrow">${escapeHtml(story.subtitle)}</p>
+          <h2 class="${isFeatured ? "store-card-title store-card-title--hero" : "store-card-title"}">${escapeHtml(
+            story.title
+          )}</h2>
+          <p class="store-card-description">${escapeHtml(story.description)}</p>
+          <div class="tag-row">${tagsMarkup}</div>
+          <div class="store-card-footer">
+            <span class="store-card-meta">${escapeHtml(
+              story.available ? getProgressLabel() : "Noch nicht freigeschaltet"
+            )}</span>
+            <button
+              class="button${story.available && isFeatured ? " button--solid" : ""}"
+              ${story.available ? `data-action="${escapeHtml(story.action)}"` : "disabled"}
+            >
+              ${escapeHtml(buttonLabel)}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
   function fadeTo(update) {
     if (navigationLocked) {
       return;
@@ -256,25 +380,71 @@
   }
 
   function renderStart() {
+    const featuredStory = storefrontStories[0];
+    const storeCards = storefrontStories
+      .map(function (story) {
+        return renderStoreCard(story, false);
+      })
+      .join("");
+    const primaryLabel = hasMeaningfulProgress() ? "Öffnen" : "Zur Story";
+    const secondaryLabel = hasMeaningfulProgress() ? "Direkt weiterlesen" : "Direkt lesen";
+
     return `
       <section class="view view--start">
-        <div class="start-backdrop" aria-hidden="true">
-          <img
-            class="start-backdrop-media"
-            src="./Cover.png"
-            alt="Düstere Kapelle im Wald bei Kerzenlicht"
-            loading="eager"
-          />
-        </div>
-        <div class="start-content">
-          <div class="start-cover-copy">
-            <p class="eyebrow">Interaktive Story</p>
-            <h1 class="display-title">${escapeHtml(STORY.meta.appTitle)}</h1>
-            <p class="subtitle">${escapeHtml(STORY.meta.appSubtitle)}</p>
-          </div>
-          <div class="actions">
-            <button class="button" data-action="start" data-autofocus="true">Eintreten</button>
-          </div>
+        <div class="store-shell">
+          <section class="store-hero">
+            <div class="store-hero-backdrop" aria-hidden="true">
+              <img
+                class="store-hero-image"
+                src="./Cover.png"
+                alt="Düstere Kapelle im Wald bei Kerzenlicht"
+                loading="eager"
+              />
+            </div>
+            <header class="store-hero-topbar">
+              <div class="store-wordmark">EMBER</div>
+              <p class="store-hero-note">Story Store</p>
+            </header>
+            <div class="store-hero-copy">
+              <p class="eyebrow">Interaktive Mystery Collection</p>
+              <h1 class="display-title display-title--store">${escapeHtml(STORY.meta.appTitle)}</h1>
+              <p class="store-hero-subtitle">${escapeHtml(featuredStory.subtitle)}</p>
+              <div class="tag-row">
+                ${featuredStory.tags
+                  .map(function (tag) {
+                    return `<span class="tag">${escapeHtml(tag)}</span>`;
+                  })
+                  .join("")}
+              </div>
+              <p class="lede">${escapeHtml(featuredStory.description)}</p>
+              <div class="store-hero-meta">
+                <span class="store-hero-pill">${escapeHtml(featuredStory.status)}</span>
+                <span class="store-hero-status">${escapeHtml(getProgressLabel())}</span>
+                <span class="store-hero-status">1 Story freigeschaltet</span>
+              </div>
+              <div class="actions actions--hero">
+                <button class="button button--solid" data-action="start" data-autofocus="true">${escapeHtml(
+                  primaryLabel
+                )}</button>
+                <button class="button button--ghost" data-action="begin">${escapeHtml(
+                  secondaryLabel
+                )}</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="store-section">
+            <div class="store-section-heading">
+              <div>
+                <p class="eyebrow">Auswahl</p>
+                <h2 class="store-section-title">Storys im Store</h2>
+              </div>
+              <p class="store-section-copy">Nur ${escapeHtml(
+                STORY.meta.appTitle
+              )} ist derzeit aktiv. Die übrigen Karten bleiben vorerst Platzhalter.</p>
+            </div>
+            <div class="store-grid">${storeCards}</div>
+          </section>
         </div>
       </section>
     `;
@@ -296,6 +466,7 @@
         <p class="ambient-note">Fortschritt wird lokal auf diesem Gerät gespeichert.</p>
         <div class="actions">
           <button class="button" data-action="begin" data-autofocus="true">Kapitel I beginnen</button>
+          <button class="button button--ghost" data-action="restart">Zur Auswahl</button>
         </div>
       </section>
     `;
@@ -405,7 +576,7 @@
   function render() {
     clearChapterTimer();
     app.classList.toggle("app-shell--start", runtime.screen === "start");
-    document.body.classList.toggle("body--no-scroll", runtime.screen === "start");
+    document.body.classList.remove("body--no-scroll");
 
     switch (runtime.screen) {
       case "intro":
