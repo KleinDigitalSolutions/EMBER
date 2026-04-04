@@ -25,10 +25,12 @@
 
 html {
   color-scheme: dark;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
+  min-height: 100%;
   min-height: 100vh;
   background:
     radial-gradient(circle at top, rgba(85, 80, 67, 0.18), transparent 28%),
@@ -77,8 +79,10 @@ select {
 }
 
 .app-shell.app-shell--start {
+  display: block;
+  min-height: 100dvh;
+  height: 100dvh;
   padding: 0;
-  place-items: stretch;
 }
 
 .view {
@@ -94,8 +98,13 @@ select {
 }
 
 .view--start {
+  position: fixed;
+  inset: 0;
   width: 100%;
+  width: 100vw;
   max-width: none;
+  height: 100dvh;
+  min-height: 100dvh;
   background: transparent;
   border: 0;
   border-radius: 0;
@@ -111,10 +120,8 @@ select {
 }
 
 .view--start {
-  position: relative;
   overflow: hidden;
   gap: 1.1rem;
-  min-height: 100svh;
   align-content: stretch;
   padding: 0;
 }
@@ -155,8 +162,9 @@ select {
 }
 
 .start-backdrop {
-  position: relative;
-  min-height: 100svh;
+  position: absolute;
+  inset: 0;
+  min-height: 0;
   border-radius: 0;
 }
 
@@ -195,10 +203,15 @@ select {
   position: absolute;
   inset: 0;
   z-index: 2;
-  display: grid;
-  align-content: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   gap: 1rem;
-  padding: clamp(1.3rem, 4vw, 2rem);
+  padding:
+    max(1rem, env(safe-area-inset-top))
+    clamp(1rem, 4vw, 1.5rem)
+    max(1.2rem, calc(env(safe-area-inset-bottom) + 1.2rem))
+    clamp(1rem, 4vw, 1.5rem);
 }
 
 .start-cover-copy {
@@ -207,6 +220,11 @@ select {
   justify-items: center;
   gap: 0.7rem;
   margin-top: auto;
+  padding-top: min(14vh, 6rem);
+}
+
+.view--start .actions {
+  margin-top: 0.25rem;
 }
 
 .story-title,
