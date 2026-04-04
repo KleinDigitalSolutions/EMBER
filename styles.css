@@ -157,7 +157,7 @@ select {
 
 .display-title--store {
   text-align: left;
-  font-size: clamp(3.7rem, 11vw, 6.6rem);
+  font-size: clamp(2.5rem, 11vw, 6.6rem);
 }
 
 .store-shell {
