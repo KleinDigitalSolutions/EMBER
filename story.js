@@ -4,288 +4,218 @@ window.EMBER_STORY = {
     appSubtitle: "Lies. Sieh. Entscheide.",
     storyTitle: "Der Ring im Erdreich",
     storyDescription:
-      "Eine ermordete Ehefrau. Ein Dorf, das schweigt. Ein Ermittler, der in einem gewöhnlichen Fall etwas entdeckt, das nicht in die Welt passen dürfte.",
-    tags: ["Mystery", "Okkult", "Detective"]
+      "Ein ungelöster Mord in den Karpaten. Ein Dorf, das unter der Last seiner eigenen Geschichte erstickt. Und ein Ermittler, der lernen muss, dass manche Wahrheiten besser vergraben geblieben wären.",
+    tags: ["Psychothriller", "Noir", "Okkult"]
   },
   startSceneId: "scene1",
   scenes: [
     {
       id: "scene1",
       chapterKey: "chapter-1",
-      chapter: "Kapitel I – Der Auftrag",
+      chapter: "Kapitel I – Der Geruch von Erde",
       chapterCard: {
         eyebrow: "Kapitel I",
-        title: "Der Auftrag"
+        title: "Der Geruch von Erde"
       },
-      sceneTitle: "Der Auftrag",
+      sceneTitle: "Das Büro",
       visual: "office",
       imageSrc: "./Der_Auftrag.png",
-      imageAlt: "Jonas Falk sitzt in einem warm beleuchteten Büro und liest Unterlagen am Schreibtisch.",
+      imageAlt: "Jonas Falk im Halbdunkel seines Büros.",
       imagePosition: "center 0%",
       hideImageLabel: true,
       blocks: [
         {
-          text: "Als Adrian Petrescu an diesem verregneten Mittwochabend Jonas Falks Büro betrat, roch er nach nasser Erde und kaltem Rauch. Er setzte sich nicht. Er stand einfach vor dem Schreibtisch, den Mantel noch geschlossen, als hätte er Angst, bei zu viel Bewegung auseinanderzufallen."
+          text: "Adrian Petrescu brachte den Oktober mit in das Zimmer. Er roch nach aufgewühlten Gräbern und dem bitteren Beigeschmack von billigem Tabak, der in nassem Tuch hängengeblieben war. Er mied den angebotenen Stuhl; er stand einfach da, den Mantel bis zum Kinn geschlossen, als wäre Höflichkeit eine Last, die er nicht mehr tragen konnte."
         },
         {
-          text: "„Meine Frau wurde vor drei Wochen ermordet“, sagte er. „Und die Polizei behandelt es wie eine schlechte Angewohnheit des Wetters.“"
+          text: "„Sie sagen, sie sei weggelaufen“, krächzte er. Seine Stimme klang wie Pergament, das zu lange in der Sonne gelegen hatte. „Aber Elena läuft nicht weg. Nicht ohne ihre Schuhe. Nicht ohne das Kind zu küssen.“"
         },
         {
-          text: "Adrian zog ein Foto aus der Innentasche und legte es auf den Tisch. Eine Frau Anfang dreißig, dunkle Haare, ruhiger Blick. Neben das Foto legte er ein abgegriffenes Notizbuch."
+          text: "Er schob ein zerknittertes Foto über den Schreibtisch. Eine Frau mit klugen Augen, die Jonas direkt anzusehen schienen. Daneben legte er ein Notizbuch, dessen Ecken so abgegriffen waren, dass sie sich nach innen rollten."
         },
         {
-          text: "„Sie wurde am Waldrand gefunden. Nicht beraubt. Nicht zufällig. Ihre Tasche war da. Ihre Kette auch. Nur ihr Ehering fehlte. Und unter ihren Fingernägeln war schwarze Asche.“"
+          text: "„Man fand sie am Waldrand. Die Polizei nennt es einen Unglücksfall. Aber unter ihren Fingernägeln klebte schwarze Asche. Und ihr Ehering... er wurde nicht gestohlen. Er wurde ersetzt.“"
         },
         {
-          text: "Jonas mochte keine Dörfer und noch weniger Gerüchte. Aber an dem Satz mit der Asche blieb sein Blick hängen. Nicht, weil er an Geister glaubte. Sondern weil echte Gewalt sich oft hinter genau solchen lächerlich klingenden Details versteckte."
+          text: "Jonas Falk hasste das Schweigen von Dörfern. Es war kein friedliches Schweigen, sondern das angespannte Luftholen eines Tieres, das darauf wartet, dass der Fremde wieder verschwindet. Aber die Erwähnung der Asche weckte seinen Instinkt – jenen dunklen Teil in ihm, der wusste, dass echte Gewalt keine Spuren hinterlässt, sondern Narben."
         }
       ],
       choices: [
         {
-          label: "Zeigen Sie mir Elenas Notizen",
+          label: "„Zeigen Sie mir Elenas Aufzeichnungen.“",
           next: "scene2",
-          set: {
-            approach: "notes"
-          }
+          set: { approach: "notes" }
         },
         {
-          label: "Was hat die Polizei übersehen?",
+          label: "„Was verschweigt die örtliche Polizei?“",
           next: "scene2",
-          set: {
-            approach: "police"
-          }
+          set: { approach: "police" }
         },
         {
-          label: "Warum glauben Sie, dass mehr dahintersteckt?",
+          label: "„Warum kommen Sie erst jetzt zu mir?“",
           next: "scene2",
-          set: {
-            approach: "instinct"
-          }
+          set: { approach: "instinct" }
         }
       ]
     },
     {
       id: "scene2",
       chapterKey: "chapter-1",
-      chapter: "Kapitel I – Das Dorf",
+      chapter: "Kapitel I – Das Tal der Schatten",
       chapterCard: {
         eyebrow: "Kapitel I",
-        title: "Das Dorf"
+        title: "Das Tal der Schatten"
       },
-      sceneTitle: "Das Dorf",
+      sceneTitle: "Die Ankunft",
       visual: "village",
       imageSrc: "./Dorf_Vallachei.png",
-      imageAlt: "Ein nebliges Dorf unter dunklen Hügeln, darüber eine beleuchtete Kirche auf einem Hang.",
+      imageAlt: "Ein nebliges Dorf, eingekesselt von schwarzen Hügeln.",
       hideImageLabel: true,
       blocks: [
         {
-          when: {
-            approach: "notes"
-          },
-          text: "Jonas blätterte zuerst durch Elenas Notizbuch. Die Schrift wurde von Seite zu Seite unruhiger. Jemand war letzte Nacht wieder hinter dem Haus. Drei Schritte. Pause. Drei Schritte. Pause. Im Wald gibt es eine Kapelle, die auf keiner Karte steht."
+          when: { approach: "notes" },
+          text: "Jonas blätterte durch das Notizbuch. Die Schrift wurde zum Ende hin hastiger, fast schon verzweifelt. 'Drei Schritte. Pause. Drei Schritte. Pause. Er wartet nicht im Wald, er wartet im Wind.' Die Sätze ergaben keinen Sinn, aber die Angst, die aus den Buchstaben troff, war fast körperlich spürbar."
         },
         {
-          when: {
-            approach: "police"
-          },
-          text: "Jonas verlangte zuerst die Akte. Polizeichef Dobre warf ihm eine Mappe auf den Tisch, die viel zu dünn war für eine ermordete Frau. Jonas hatte Akten zu toten Katzen gesehen, die dicker waren als das hier."
+          when: { approach: "police" },
+          text: "Die offizielle Akte war eine Beleidigung für jeden Ermittler. Keine Tatortfotos, keine Zeugenaussagen, nur ein knapper Bericht über 'Tod durch Unterkühlung'. Polizeichef Dobre hatte das Dokument mit der Gleichgültigkeit eines Mannes unterschrieben, der gewohnt war, dass niemand Fragen stellte."
         },
         {
-          when: {
-            approach: "instinct"
-          },
-          text: "Jonas glaubte Adrian zunächst nicht. Aber schwarze Asche unter den Fingernägeln einer Toten war kein Detail, das aus einem gewöhnlichen Eifersuchtsdrama fiel. Es roch nach Vertuschung, nicht nach Zufall."
+          when: { approach: "instinct" },
+          text: "Adrian Petrescu war kein guter Lügner, aber er war ein Mann, der von einem Geheimnis zerfressen wurde. Die schwarze Asche war kein Zufall – es war eine Signatur. In dieser Gegend gab es alte Feuer, die man besser nicht schürte."
         },
         {
-          text: "Am nächsten Mittag erreichte er das Dorf südlich von Târgoviște. Der Ort lag zwischen dunklen Hügeln und Birkenwäldern, in denen der Nebel selbst am Mittag hing. Hunde bellten, sobald Jonas langsam genug fuhr. Die Kirche stand auf einer Anhöhe, weiß gekalkt, mit einem Glockenturm, der schief wirkte, als höre er zu."
+          text: "Als Jonas das Dorf erreichte, fühlte es sich an, als würde die Landschaft ihn verschlucken. Die Hügel hingen tief über den Häusern, und der Nebel fraß das Licht der Mittagssonne. Die Kirche thronte über allem wie ein strenger Wächter, dessen Glockenturm sich leicht zur Seite neigte, als würde er dem Flüstern im Erdreich lauschen."
         },
         {
-          text: "Polizeichef Dobre empfing ihn nicht unfreundlich, sondern schlechter: gelangweilt. Er wirkte nicht wie ein Mann, der Hilfe wollte, sondern wie einer, der Kontrolle behalten wollte."
-        },
-        {
-          text: "Jonas hatte im Dorf sofort das Gefühl, dass ihm niemand freiwillig die Wahrheit geben würde. Er musste entscheiden, wo er den Faden zuerst aufnahm: in Dobres Akte oder im Haus der Petrescus."
+          text: "Polizeichef Dobre empfing ihn in einer Amtsstube, die nach kaltem Kaffee und Korruption roch. Er wirkte nicht feindselig, sondern lediglich gelangweilt – die gefährlichste Form von Widerstand. Hier würde niemand die Wahrheit sagen, solange die Lüge noch bequem war."
         }
       ],
       choices: [
         {
-          label: "Ich will die Akte sehen",
+          label: "Die Akte im Revier genauer prüfen.",
           next: "scene3",
-          set: {
-            focus: "file"
-          }
+          set: { focus: "file" }
         },
         {
-          label: "Ich will Elenas Haus sehen",
+          label: "Das Haus der Toten untersuchen.",
           next: "scene3",
-          set: {
-            focus: "house"
-          }
+          set: { focus: "house" }
         }
       ]
     },
     {
       id: "scene3",
       chapterKey: "chapter-1",
-      chapter: "Kapitel I – Das Zeichen",
+      chapter: "Kapitel I – Reliquien des Schweigens",
       chapterCard: {
         eyebrow: "Kapitel I",
-        title: "Das Zeichen"
+        title: "Reliquien des Schweigens"
       },
-      sceneTitle: "Das Zeichen",
+      sceneTitle: "Spurensuche",
       visual: "symbol",
       imageSrc: "./Das_zeichen.png",
-      imageAlt: "Ein dunkler Küchentisch mit Notizbuch, eingeritztem Zeichen, Lampe und verstreuten Gegenständen.",
+      imageAlt: "Ein Tisch mit Beweisstücken im Halbschatten.",
       hideImageLabel: true,
       blocks: [
         {
-          when: {
-            focus: "file"
-          },
-          text: "Jonas ließ sich die Akte geben. Sie war viel zu dünn für eine ermordete Frau. Die Fotos zeigten keine Raserei, sondern etwas Präzises: eine tiefe dunkle Wunde am Hals, schwarze Asche auf feuchtem Boden und einen Kreis, der nie geschlossen wurde. Dobre nannte alles Erde, Ruß, Jäger, irgendetwas Belangloses."
+          when: { focus: "file" },
+          text: "Jonas stahl sich einen Moment mit der Akte. Zwischen den lieblosen Berichten fand er ein Detail, das Dobre übersehen hatte: Ein forensisches Diagramm der Wunde am Hals. Es war kein Schnitt. Es war ein Biss – aber nicht von einem Tier. Die Zähne waren zu gleichmäßig, zu... menschlich."
         },
         {
-          when: {
-            focus: "house"
-          },
-          text: "Im Haus der Petrescus roch es nach getrocknetem Lavendel und kaltem Kaffee. Alles wirkte, als hätte jemand mitten im Satz aufgehört zu leben. Im Arbeitszimmer hinter einem losen Brett im Regal fand Jonas eine Mappe mit Zeitungsausschnitten. Verschwundene Frauen. Tote Frauen. Fast alle verheiratet. Fast alle aus Familien, die seit Generationen im Tal lebten. Immer im Abstand vieler Jahre. Immer im Herbst."
+          when: { focus: "house" },
+          text: "Im Haus der Petrescus schien die Zeit geronnen zu sein. In einer geheimen Nische hinter der Küchenverkleidung fand Jonas eine Sammlung alter Zeitungsberichte. Alle handelten von verschwundenen Frauen, alle im Abstand von genau sieben Jahren. Elena hatte ein Muster entdeckt, das älter war als das Dorf selbst."
         },
         {
-          text: "Auf einem der Ausschnitte hatte Elena mit Bleistift ein kleines Zeichen gemalt: ein Kreis, in den von außen drei kurze Striche hineinragten. Dasselbe Zeichen war in die Rückseite ihres Notizbuchs eingeritzt."
+          text: "Auf einem der vergilbten Blätter hatte sie ein Zeichen hinterlassen: Ein unvollendeter Kreis, in den drei Striche wie Splitter hineinragten. Es wirkte wie eine offene Wunde im Papier. 'Der Ring ist nicht der Schmuck', stand darunter in ihrer feinen Schrift. 'Der Ring ist die Fessel.'"
         },
         {
-          text: "Als Jonas Adrian darauf ansprach, sagte der endlich leise: „Mein Vater kannte das Zeichen.“ Dann kam die Geschichte vom alten Ring. Silber. Schwarzer Stein. Eine Großmutter, die sagte, die erste Frau, die ihn in einem bestimmten Herbst trägt, gehöre nicht mehr nur ihrem Mann."
-        },
-        {
-          text: "Elena hatte den Ring im August in einer Schatulle gefunden und getragen. Zwei Wochen später hörte sie nachts Schritte hinter dem Haus, im Stall, auf dem Dach. Im letzten Eintrag notierte sie keine Erklärung, nur eine Wegbeschreibung: „Am trockenen Brunnen links. Zwischen den Birken mit den weißen Kreuzen hindurch. Wenn man die Glocke hört, obwohl kein Wind geht, ist man nah.“"
+          text: "Adrian gestand schließlich mit gesenktem Kopf: Der Ring war ein Erbstück. Silber, besetzt mit einem Stein, so schwarz, dass er das Kerzenlicht zu verschlingen schien. Seine Großmutter hatte behauptet, der Ring gehöre jenem, der 'unter dem Berg' wacht. Elena hatte ihn nur eine Nacht lang getragen. Danach begannen die Schritte auf dem Dach."
         }
       ],
       choices: [
         {
-          label: "In der Nacht in den Wald gehen",
+          label: "Dem Pfad in den Wald folgen.",
           next: "scene4"
         },
         {
-          label: "Erst Adrian zur Rede stellen",
+          label: "Adrian zur Wahrheit zwingen.",
           next: "scene4",
-          set: {
-            confrontedHusband: true
-          }
+          set: { confrontedHusband: true }
         }
       ]
     },
     {
       id: "scene4",
       chapterKey: "chapter-2",
-      chapter: "Kapitel II – Die Kapelle",
+      chapter: "Kapitel II – Das Skelett der Kapelle",
       chapterCard: {
         eyebrow: "Kapitel II",
-        title: "Die Kapelle"
+        title: "Das Skelett der Kapelle"
       },
       sceneTitle: "Die Kapelle",
       visual: "chapel",
-      imageLabel: "Verfallene Kapelle im Wald, nasser Stein, Kerzen, schwarzer Ring auf einem Altar",
+      imageLabel: "Die Ruine im Wald bei Nacht.",
       blocks: [
         {
-          when: {
-            confrontedHusband: true
-          },
-          text: "Bevor Jonas in den Wald ging, stellte er Adrian in der Küche zur Rede. Adrian wurde bleich wie Kalk und brach fast unter dem Gewicht seiner eigenen Feigheit zusammen. Er behauptete, er habe geglaubt, man wolle Elena nur einschüchtern. Kein Mord. Nur Ritual und Dorfgehorsam. Jonas glaubte ihm nichts und nahm gerade deshalb jedes Wort mit."
+          when: { confrontedHusband: true },
+          text: "Jonas packte Adrian am Revers und drückte ihn gegen die kalte Küchenwand. Der Mann brach zusammen wie ein Kartenhaus. 'Wir hatten keine Wahl!', schluchzte er. 'Dobre, der Pater... sie sagen, es bewahrt den Frieden. Ein Opfer alle sieben Jahre, damit der Rest von uns leben kann.' Jonas fühlte eine Kälte, die nichts mit dem Wetter zu tun hatte."
         },
         {
-          unless: {
-            confrontedHusband: true
-          },
-          text: "Jonas ging allein in den Wald. Adrians Schweigen fuhr mit ihm, als säße es auf dem Beifahrersitz und atmete mit."
+          unless: { confrontedHusband: true },
+          text: "Die Dunkelheit im Wald war absolut. Die Bäume standen so dicht, dass die Luft zwischen ihnen zu stehen schien, schwer und modrig. Jonas folgte der Wegbeschreibung aus dem Notizbuch, während jeder Astbruch wie ein Pistolenschuss in der Stille hallte."
         },
         {
-          text: "Es war fast dunkel, als er die Lichtung fand. Dort stand tatsächlich eine Kapelle, oder das, was davon übrig war: zwei geborstene Mauern, ein halb eingestürztes Dach, ein steinerner Altar, überzogen von Moos und schwarzem Wachs."
+          text: "Die Kapelle war kaum mehr als ein Skelett aus Stein. Auf dem Altar, umgeben von Klumpen aus schwarzem Wachs, lag er: der Ring. Als Jonas ihn berührte, überflutete ihn eine Vision von entsetzlicher Klarheit. Er sah Elena, umringt von den Männern des Dorfes. Dobre war da. Pater Luca auch. Und abseits stand eine Gestalt im feinen Zwirn, deren Gesicht im Schatten blieb."
         },
         {
-          text: "Auf dem Altar lag ein Ring. Silber. Schwarzer Stein. Als Jonas ihn berührte, sah er Elena auf den Knien, das Haar nass im Gesicht, Männer aus dem Dorf im Kreis um sie herum: Dobre, Pater Luca, zwei weitere Gestalten in Mänteln. Etwas abseits Adrian. Und hinter dem Altar ein Mann, zu ordentlich für diesen Ort, im dunklen Anzug, mit feuchter Erde an den Hosenbeinen."
-        },
-        {
-          text: "Die Vision riss ab. Der Mann stand nun wirklich vor ihm. Nicht wie ein Geist. Wirklich. „Sie kamen zu spät für die Frau“, sagte er ruhig. „Aber noch rechtzeitig für die Wahrheit.“"
-        },
-        {
-          text: "Jonas fragte, ob er Elena getötet habe. Der Mann verneinte es ohne Hast. „Ich töte nicht. Ich nehme an, was man mir bringt. Diese Männer hier unten tun seit langer Zeit so, als müssten sie. Das beruhigt ihr Gewissen.“ Dann schob er den Ring langsam über den Stein. „Wenn Sie bleiben, zeige ich Ihnen alles.“"
+          text: "„Man gewöhnt sich an das Grauen, Herr Falk“, durchschnitt eine Stimme die Dunkelheit. Der Mann aus der Vision stand nun wirklich dort. Er wirkte fehl am Platz in diesem Verfall, zu sauber, zu ruhig. „Man nennt es Tradition, um nachts schlafen zu können. Ich bin nur der Verwalter dieser Notwendigkeit.“"
         }
       ],
       choices: [
         {
-          label: "Das Angebot anhören",
+          label: "„Was wollen Sie von mir?“",
           next: "scene5",
-          set: {
-            darkPath: true
-          }
+          set: { darkPath: true }
         },
         {
-          label: "Zurückweichen und den Ring liegen lassen",
+          label: "„Ich werde Sie alle verhaften lassen.“",
           next: "scene5",
-          set: {
-            darkPath: false
-          }
+          set: { darkPath: false }
         }
       ]
     },
     {
       id: "scene5",
       chapterKey: "chapter-3",
-      chapter: "Kapitel III – Das Angebot",
+      chapter: "Kapitel III – Die Anatomie der Lüge",
       chapterCard: {
         eyebrow: "Kapitel III",
-        title: "Das Angebot"
+        title: "Die Anatomie der Lüge"
       },
-      sceneTitle: "Das Angebot",
+      sceneTitle: "Der Abgrund",
       visual: "chamber",
-      imageLabel: "Unterirdische Kammer, Kerzenlicht, schwarzes Wasser, bleiche Gestalt",
+      imageLabel: "Die unterirdische Kammer.",
       blocks: [
         {
-          when: {
-            darkPath: true
-          },
-          text: "Jonas rannte nicht. Der Satz des Mannes blieb ihm im Kopf, während er zurück zum Auto ging, vor dem Haus der Petrescus parkte und fünf Minuten lang die Hände nicht vom Lenkrad nahm. Später, tief unter der Kapelle, nannte die Gestalt keine Namen, keine Hölle, keinen Gott. Nur Preis und Nutzen."
+          when: { darkPath: true },
+          text: "Jonas rannte nicht weg. Etwas in der ruhigen Logik des Fremden faszinierte ihn. In einer Welt voller Chaos wirkte dieses grausame System fast schon... ordentlich. Später, in der Kammer unter dem Fundament, begann er zu verstehen: Macht ist die einzige Wahrheit, die Bestand hat."
         },
         {
-          when: {
-            darkPath: false
-          },
-          text: "Jonas wich in der Kapelle zurück und ließ den Ring liegen. Doch die Wirklichkeit wurde dadurch nicht kleiner. Er fuhr ins Dorf, sprach mit Adrian und dem Priester und spürte zum ersten Mal echte Angst: nicht vor einem Mann, sondern vor etwas, das die Welt still und falsch machte."
+          when: { darkPath: false },
+          text: "Jonas wich zurück, die Hand an der Waffe. Doch im Dorf gab es kein Gesetz mehr, das ihn schützen konnte. Als er wenig später gefesselt in der feuchten Dunkelheit unter der Kapelle erwachte, sah er in die Gesichter der Männer, die er für Nachbarn gehalten hatte. Sie wirkten nicht wie Mörder, sondern wie Beamte bei einer ungeliebten Pflicht."
         },
         {
-          when: {
-            approach: "notes"
-          },
-          text: "Aus Elenas Notizbuch hing ihm jetzt vor allem eine Zeile nach: „Es ist nicht der Wald, der mich ansieht. Es ist etwas darunter.“"
-        },
-        {
-          when: {
-            approach: "police"
-          },
-          text: "Jonas dachte an Dobres viel zu dünne Mappe. Sogar in dieser beleidigend schmalen Akte hatte mehr Wahrheit gelegen, als der Polizeichef bereit gewesen war zuzugeben."
-        },
-        {
-          when: {
-            approach: "instinct"
-          },
-          text: "Jonas hasste, dass sein erster Instinkt recht behalten hatte. Echte Gewalt tarnt sich gern als Dorfgeschichte, bis jemand genau hinsieht."
-        },
-        {
-          text: "Adrian gestand schließlich, dass Dobre das Dorf zusammenhielt und Pater Luca segnete, was niemand segnen sollte. Die Leute glaubten, unter dem Hügel schlafe etwas, das Hunger, Krankheit und Unglück fernhielt, solange man ihm gehorchte. Elena hatte alte Kirchenbücher, Vermisstenanzeigen und Geburtsregister gelesen. Sie wollte den Kreis brechen."
-        },
-        {
-          text: "Noch in derselben Nacht kamen sie. Nicht heimlich, sondern mit der trägen Selbstverständlichkeit von Männern, die ihr Dorf für ihren privaten Besitz hielten. Als Jonas wieder zu sich kam, lag er in einer unterirdischen Kammer unter der Kapelle. Schwarzes Wasser sickerte aus dem Stein. In Nischen brannten Kerzen. Adrian kniete gefesselt, Pater Luca stand bleich daneben, Dobre hielt eine Pistole."
-        },
-        {
-          text: "Und vorne, dort wo die Kammer tiefer wurde, stand wieder der Mann aus der Kapelle. „Sie haben die Mechanik gesehen“, sagte er. „Gesetz, Kirche, Ehe, Angst. Alles Zahnräder. Nehmen Sie den Ring, und ich zeige Ihnen jede Lüge in diesem Tal. Lehnen Sie ab, und Sie sterben als ein weiterer Mann, der die Wahrheit sah und zu schwach war, mit ihr zu leben.“"
+          text: "Der Fremde trat ins Licht der Fackeln. „Elena Petrescu wollte den Kreis brechen, aber Kreise haben keinen Anfang und kein Ende. Sie sind die perfekte Form. Nehmen Sie den Ring, Jonas. Werden Sie das Auge, das sieht, was die anderen im Dorf ignorieren müssen. Oder werden Sie Teil des Erdreichs, so wie sie.“"
         }
       ],
       choices: [
         {
-          label: "Ich lehne ab. Es muss etwas Höheres geben als das hier.",
+          label: "„Ich werde kein Teil Ihres Wahnsinns.“",
           next: "endingA"
         },
         {
-          label: "Ich nehme den Ring. Wahrheit ist mehr wert als Unschuld.",
+          label: "„Zeigen Sie mir, wie tief das Loch geht.“",
           next: "endingB"
         }
       ]
@@ -294,24 +224,22 @@ window.EMBER_STORY = {
   endings: {
     endingA: {
       id: "endingA",
-      title: "Ende A – Der Glaube",
+      title: "Ende A – Der zerbrochene Kreis",
       paragraphs: [
-        "Jonas sah den Ring an. Dann Dobre. Dann Adrian. Dann den Priester, der die Augen nicht mehr hob. Er dachte an Elenas letzte Zeile: Wenn es wirklich etwas Dunkles gibt, dann kann Dunkelheit nicht das Erste gewesen sein.",
-        "Jonas nahm den Ring nicht. Stattdessen griff er nach dem kleinen Holzkreuz am Gürtel von Pater Luca. Er sprach kein großes schönes Gebet, nur das alte Vaterunser, stockend und halb vergessen, so wie seine Großmutter es ihm beigebracht hatte. Kein Zauberspruch. Eher eine Weigerung, irgendeinen Handel einzugehen.",
-        "Beim zweiten Satz begann Pater Luca mitzusprechen. Beim dritten fiel Adrian weinend ein. Dobre schrie sie an, hob die Pistole, und doch wich das, was unter dem Hügel wartete, zum ersten Mal zurück. Der schwarze Stein sprang. Die Kälte brach.",
-        "Später wurden Gräber geöffnet, Namen genannt, Register aus Kellern geholt. Dobre verschwand nicht heldenhaft, sondern elend. Pater Luca legte sein Amt nieder und redete zum ersten Mal offen. Adrian sagte alles aus, auch gegen sich selbst.",
-        "Monate danach blieb Jonas vor einer kleinen Kirche in der Stadt stehen. Er trat ein, setzte sich in die letzte Bank und sagte nichts. Er glaubte nicht, weil er Trost gefunden hatte. Er glaubte, weil er gesehen hatte, dass das Böse real war und dass es nicht das Einzige war, was antwortete."
+        "Jonas sah in die gähnende Leere des schwarzen Steins und spürte die Versuchung der absoluten Klarheit. Doch dann dachte er an Elenas lachende Augen auf dem Foto. Wenn das Böse eine Notwendigkeit war, dann war sein Widerstand die einzige Freiheit, die ihm blieb.",
+        "Er nahm den Ring nicht. Stattdessen begann er zu lachen – ein trockenes, freudloses Geräusch. Er konfrontierte Pater Luca mit seiner Feigheit, bis der alte Mann vor Scham zu weinen begann. Die moralische Autorität des Fremden bröckelte, als Jonas die profane Wahrheit aussprach: Das hier war kein heiliges Opfer. Es war ein billiger Mord hinter einer Fassade aus Aberglauben.",
+        "Der Bann brach. Nicht mit einem Knall, sondern mit einem Seufzen. Die Männer ließen die Waffen sinken. Dobre floh in die Nacht, während Pater Luca zum ersten Mal seit Jahrzehnten die Wahrheit sprach. Der Fremde verschwand im Schatten, als hätte er nie wirklich existiert.",
+        "Monate später saß Jonas in seinem Büro. Das Dorf war nun ein Tatort der Staatsanwaltschaft, die Gräber wurden geöffnet. Er hatte den Fall gelöst, aber er schlief nie wieder ohne Licht. Er wusste jetzt, dass das Dunkle nicht im Wald wohnte, sondern in der Bequemlichkeit des Schweigens."
       ]
     },
     endingB: {
       id: "endingB",
-      title: "Ende B – Der Komplize",
+      title: "Ende B – Das neue Auge",
       paragraphs: [
-        "Jonas sah den Ring an. Dann Dobre. Dann den Priester. Dann Adrian, der vor ihm kniete wie ein zerbrochener Zeuge. Sein ganzes Leben lang hatte er an Systeme geglaubt, die am Ende immer denselben Fehler hatten: Sie waren von Menschen gemacht. Nur das hier war grausam, verdorben und ehrlich.",
-        "Jonas streckte die Hand aus und nahm den Ring. Er war warm, wie Haut. Mehr brauchte es nicht. Keine Flammen, keine billige Theaterhölle. Nur ein Einverständnis. Etwas öffnete sich in seinem Kopf wie eine zweite Pupille. Mit einem Schlag wusste er Dinge, die niemand gesagt hatte: Dobres Ruhe beim Töten, Lucas Feigheit, Adrians Liebe, die sich als Vorsicht verkleidet hatte.",
-        "Noch vor Morgengrauen hatte Dobre alles gestanden. Nicht vor Gericht. Vor Jonas. Pater Luca führte sie zu Büchern, Namen und Orten. Adrian unterschrieb, was Jonas ihm hinlegte, und ging am Ende freiwillig den Hügel hinauf, als wäre seine Schuld schwerer als seine Angst.",
-        "Offiziell galt Elena Petrescus Fall später als aufgeklärt: ein Netz aus Korruption, Gewalt und Schweigen. Es war nicht einmal gelogen. Nur unvollständig. Jonas verließ das Tal mit einer sauberen Akte, einer geschlossenen Wunde und einem Ring, den er nie mehr abnahm.",
-        "Danach wurden seine Fälle berühmt. Er fand Vermisste schneller als jede Behörde, erkannte halbe Wahrheiten in Gesichtern und spürte Häuser an, die etwas verbargen. Nachts aber hörte er unter Beton, Kellern und Straßen ein geduldiges altes Warten. Wahrheit, hatte er gelernt, war nie kostenlos."
+        "Jonas streckte die Hand aus. Der Ring fühlte sich warm an, fast wie pulsierende Haut. Als er ihn über den Finger schob, verstummte das Hämmern in seinem Kopf. Die Welt veränderte sich. Er sah nicht mehr nur Gesichter; er sah die Fäden der Schuld, die jeden Mann im Raum mit dem Erdreich verbanden.",
+        "Er wusste nun, wo Dobre das Geld versteckt hatte, er kannte die geheimen Sünden des Paters und die feige Liebe Adrians. Es war keine Magie. Es war eine Hyper-Wahrnehmung, ein schreckliches Verständnis für die Mechanik der menschlichen Schwäche.",
+        "Innerhalb einer Woche war das Dorf 'gesäubert'. Dobre gestand alles, Adrian wurde als Sündenbock präsentiert, und der Fall Elena Petrescu wurde mit klinischer Präzision geschlossen. Jonas Falk verließ das Tal als gefeierter Held, als der Mann, der das Unmögliche aufgeklärt hatte.",
+        "Doch der Preis war hoch. Nachts, wenn es still wurde, hörte er das geduldige Atmen unter dem Asphalt der Stadt. Er fand jeden Vermissten, löste jedes Rätsel, doch er konnte nie wieder eine Hand schütteln, ohne den Verfall darunter zu spüren. Er war nun der Verwalter der Wahrheiten, die niemand hören wollte. Und der Ring saß so fest, als wäre er mit seinem Knochen verwachsen."
       ]
     }
   }
