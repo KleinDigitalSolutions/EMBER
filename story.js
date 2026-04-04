@@ -2,7 +2,7 @@ window.EMBER_STORY = {
   meta: {
     appTitle: "EMBER",
     appSubtitle: "Lies. Sieh. Entscheide.",
-    storyTitle: "Der Ring im Erdreich",
+    storyTitle: "Der\u00A0Ring\u00A0im Erdreich",
     storyDescription:
       "Ein ungelöster Mord in den Karpaten. Ein Dorf, das unter der Last seiner eigenen Geschichte erstickt. Und ein Ermittler, der lernen muss, dass manche Wahrheiten besser vergraben geblieben wären.",
     tags: ["Psychothriller", "Noir", "Okkult"]
