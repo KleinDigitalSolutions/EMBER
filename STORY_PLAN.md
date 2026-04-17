@@ -331,7 +331,7 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 ### Phase 3: AI Assist
 - Server-seitige LLM-Orchestrierung
 - Prompt-Module
-- Patch-System
+- Patch-System `erledigt` als lokales regelbasiertes Patch-Lab
 - Continuity Checks
 - Submission Reviewer
 
@@ -363,7 +363,7 @@ Als Nächstes bauen:
 4. Decision-Slot-Mechanik `erledigt`
 5. lokales Speichern `erledigt`
 6. lokales Review-/Submission-Gate `erledigt`
-7. erstes AI-Patch-Interface
+7. erstes AI-Patch-Interface `erledigt` als lokales Patch-Lab
 
 ## Offene Entscheidungen
 - Nur deutschsprachige Stories oder mehrsprachig vorbereiten?

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
@@ -516,6 +517,12 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
             {authorMode === "playtest" ? (
               <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
+            ) : authorMode === "chat" ? (
+              <PatchPanel
+                story={draftStory}
+                sceneContext={selectedSceneContext}
+                onUpdateScene={updateSelectedScene}
+              />
             ) : authorMode === "review" ? (
               <ReviewPanel
                 story={draftStory}

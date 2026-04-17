@@ -1631,6 +1631,204 @@ textarea {
   font-size: 0.72rem;
 }
 
+.patch-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  border-radius: 0.45rem;
+  border: 1px solid var(--line);
+  background: #151517;
+  overflow: hidden;
+}
+
+.patch-panel--empty {
+  place-items: center;
+}
+
+.patch-empty,
+.patch-card,
+.patch-list,
+.patch-preview,
+.patch-scene-meta {
+  display: grid;
+}
+
+.patch-empty {
+  gap: 0.55rem;
+  max-width: 18rem;
+  padding: 1.4rem;
+}
+
+.patch-empty h3,
+.patch-empty p,
+.patch-card__head h4,
+.patch-status,
+.patch-scene-meta__item strong,
+.patch-scene-meta__item p,
+.patch-list__item strong,
+.patch-list__item span,
+.patch-list__item p,
+.patch-preview strong,
+.patch-preview p {
+  margin: 0;
+}
+
+.patch-panel__header {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at top right, rgba(224, 159, 102, 0.14), transparent 34%),
+    #18181c;
+}
+
+.patch-panel__header h3,
+.patch-panel__header p {
+  margin: 0;
+}
+
+.patch-panel__header h3 {
+  margin-top: 0.28rem;
+  font-size: 1.08rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.patch-panel__header p {
+  margin-top: 0.18rem;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.patch-panel__pills,
+.patch-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.patch-panel__content {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.patch-card {
+  gap: 0.85rem;
+  padding: 0.95rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--line);
+  background: #1a1a1f;
+}
+
+.patch-card--intro {
+  background: linear-gradient(180deg, rgba(224, 159, 102, 0.08), rgba(26, 26, 31, 0.96));
+}
+
+.patch-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.patch-card__head h4 {
+  margin-top: 0.18rem;
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.patch-card__label {
+  color: #e09f66;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.patch-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: 0.68rem;
+}
+
+.patch-scene-meta {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.patch-scene-meta__item {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.72rem;
+  border-radius: 0.38rem;
+  border: 1px solid var(--line);
+  background: #141418;
+}
+
+.patch-scene-meta__item strong,
+.patch-list__item strong,
+.patch-preview strong {
+  font-size: 0.76rem;
+}
+
+.patch-scene-meta__item p,
+.patch-list__item p,
+.patch-preview p {
+  color: var(--text-faint);
+  font-size: 0.73rem;
+  line-height: 1.48;
+}
+
+.patch-list {
+  gap: 0.65rem;
+}
+
+.patch-list__item {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0.82rem;
+  border-radius: 0.38rem;
+  border: 1px solid var(--line);
+  background: #141418;
+  text-align: left;
+}
+
+.patch-list__item:hover {
+  background: #1a1a21;
+}
+
+.patch-list__item--active {
+  border-color: rgba(224, 159, 102, 0.36);
+}
+
+.patch-list__item span {
+  color: #e6b78f;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.patch-preview {
+  gap: 0.32rem;
+  padding: 0.82rem;
+  border-radius: 0.38rem;
+  border: 1px solid var(--line);
+  background: #141418;
+}
+
 .review-panel {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -1994,6 +2192,7 @@ textarea {
   .scene-choice-card__rules,
   .playtest-metrics,
   .playtest-variable-list,
+  .patch-scene-meta,
   .review-metrics,
   .review-detail-grid {
     grid-template-columns: 1fr;
@@ -2002,6 +2201,7 @@ textarea {
   .studio-status-bar,
   .playtest-card__head,
   .playtest-choice > div,
+  .patch-card__head,
   .review-card__head,
   .review-issue {
     flex-direction: column;
