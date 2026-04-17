@@ -1,8 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { SceneEditor } from "@/components/studio/scene-editor";
 import {
   countStoryStats,
+  findSceneContext,
+  updateSceneInStory,
   type StoryAct,
   type StoryChapter,
   type StoryDocument,
@@ -16,6 +20,7 @@ const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "chat", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
 export function StudioWorkspace({ story }: { story: StoryDocument }) {
+  const [draftStory, setDraftStory] = useState(story);
   const [authorMode, setAuthorMode] = useState<AuthorMode>("plan");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
@@ -24,11 +29,11 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   );
 
   const stats = useMemo(function () {
-    return countStoryStats(story);
-  }, [story]);
+    return countStoryStats(draftStory);
+  }, [draftStory]);
 
   const filteredActs = useMemo(function () {
-    return story.acts
+    return draftStory.acts
       .map(function (act) {
         const chapters = act.chapters
           .map(function (chapter) {
@@ -66,7 +71,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       .filter(function (act) {
         return act.chapters.length > 0;
       });
-  }, [search, story.acts]);
+  }, [draftStory.acts, search]);
 
   const visibleScenes = useMemo(function () {
     return filteredActs.flatMap(function (act) {
@@ -76,10 +81,38 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     });
   }, [filteredActs]);
 
-  const selectedScene =
-    visibleScenes.find(function (scene) {
-      return scene.id === selectedSceneId;
-    }) ?? visibleScenes[0] ?? null;
+  useEffect(
+    function () {
+      if (!visibleScenes.length) {
+        return;
+      }
+
+      const hasSelectedScene = visibleScenes.some(function (scene) {
+        return scene.id === selectedSceneId;
+      });
+
+      if (!hasSelectedScene) {
+        setSelectedSceneId(visibleScenes[0].id);
+      }
+    },
+    [selectedSceneId, visibleScenes]
+  );
+
+  const selectedSceneContext = useMemo(function () {
+    return selectedSceneId ? findSceneContext(draftStory, selectedSceneId) : null;
+  }, [draftStory, selectedSceneId]);
+
+  const selectedScene = selectedSceneContext?.scene ?? null;
+
+  function updateSelectedScene(updater: (scene: StoryScene) => StoryScene) {
+    if (!selectedSceneId) {
+      return;
+    }
+
+    setDraftStory(function (currentStory) {
+      return updateSceneInStory(currentStory, selectedSceneId, updater);
+    });
+  }
 
   return (
     <div className="studio-shell">
@@ -236,98 +269,132 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             </label>
           </div>
 
-          <button className="view-toggle" type="button">
-            {capitalize(authorMode)}
-          </button>
+          <div className="topbar-actions">
+            <Link href="/story" className="flat-button topbar-link">
+              Story testen
+            </Link>
+            <button className="view-toggle" type="button">
+              {capitalize(authorMode)}
+            </button>
+          </div>
         </header>
 
         <section className="board-area">
-          <div className="board-meta">
-            <div className="board-meta__title-wrap">
-              <button className="ghost-icon-button" type="button" aria-label="Reorder">
-                <span className="mini-icon mini-icon--drag" />
-              </button>
-              <h2 className="board-title">{filteredActs[0]?.title ?? story.acts[0]?.title}</h2>
-            </div>
-            <div className="board-meta__stats">
-              <span>{stats.chapterCount} chapters</span>
-              <span>-</span>
-              <span>{stats.wordCount.toLocaleString("de-DE")} words</span>
-              <span>-</span>
-              <span>{stats.choiceCount} choices</span>
-            </div>
-          </div>
-
-          <div className="board-canvas">
-            <div className="story-board" data-view={viewMode}>
-              {viewMode === "grid"
-                ? filteredActs.map(function (act) {
-                    return <ActGrid key={act.id} act={act} selectedSceneId={selectedSceneId} onSelectScene={setSelectedSceneId} />;
-                  })
-                : visibleScenes.map(function (scene) {
-                    return viewMode === "matrix" ? (
-                      <button
-                        key={scene.id}
-                        className="matrix-card"
-                        onClick={function () {
-                          setSelectedSceneId(scene.id);
-                        }}
-                        type="button"
-                      >
-                        <h3>{scene.title}</h3>
-                        <p>{scene.summary}</p>
-                        <div className="matrix-card__meta">
-                          {scene.wordCount} words · {scene.label}
-                        </div>
-                      </button>
-                    ) : (
-                      <button
-                        key={scene.id}
-                        className="outline-card"
-                        onClick={function () {
-                          setSelectedSceneId(scene.id);
-                        }}
-                        type="button"
-                      >
-                        <h3>{scene.title}</h3>
-                        <p>{scene.summary}</p>
-                        <div className="outline-card__meta">
-                          {scene.wordCount} words · {scene.label}
-                        </div>
-                      </button>
-                    );
-                  })}
-            </div>
-          </div>
-
-          <div className="board-footer">
-            <button className="flat-button" type="button">
-              + Add Act
-            </button>
-            <button className="flat-button" type="button">
-              Create from Outline
-            </button>
-            <button className="flat-button" type="button">
-              Import
-            </button>
-            <button className="flat-button" type="button">
-              Actions
-            </button>
-          </div>
-
-          {selectedScene ? (
-            <section className="studio-status-bar">
-              <div>
-                <strong>{selectedScene.title}</strong>
-                <span>{selectedScene.summary}</span>
+          <div className="workspace-panels">
+            <div className="board-panel">
+              <div className="board-meta">
+                <div className="board-meta__title-wrap">
+                  <button className="ghost-icon-button" type="button" aria-label="Reorder">
+                    <span className="mini-icon mini-icon--drag" />
+                  </button>
+                  <h2 className="board-title">
+                    {filteredActs[0]?.title ?? draftStory.acts[0]?.title}
+                  </h2>
+                </div>
+                <div className="board-meta__stats">
+                  <span>{stats.chapterCount} chapters</span>
+                  <span>-</span>
+                  <span>{stats.wordCount.toLocaleString("de-DE")} words</span>
+                  <span>-</span>
+                  <span>{stats.choiceCount} choices</span>
+                </div>
               </div>
-              <div className="studio-status-bar__meta">
-                <span>{selectedScene.label}</span>
-                <span>{selectedScene.wordCount} words</span>
-                <span>{selectedScene.choices.length} choices</span>
+
+              <div className="board-canvas">
+                {visibleScenes.length ? (
+                  <div className="story-board" data-view={viewMode}>
+                    {viewMode === "grid"
+                      ? filteredActs.map(function (act) {
+                          return (
+                            <ActGrid
+                              key={act.id}
+                              act={act}
+                              selectedSceneId={selectedSceneId}
+                              onSelectScene={setSelectedSceneId}
+                            />
+                          );
+                        })
+                      : visibleScenes.map(function (scene) {
+                          return viewMode === "matrix" ? (
+                            <button
+                              key={scene.id}
+                              className="matrix-card"
+                              onClick={function () {
+                                setSelectedSceneId(scene.id);
+                              }}
+                              type="button"
+                            >
+                              <h3>{scene.title}</h3>
+                              <p>{scene.summary}</p>
+                              <div className="matrix-card__meta">
+                                {scene.wordCount} words · {scene.label}
+                              </div>
+                            </button>
+                          ) : (
+                            <button
+                              key={scene.id}
+                              className="outline-card"
+                              onClick={function () {
+                                setSelectedSceneId(scene.id);
+                              }}
+                              type="button"
+                            >
+                              <h3>{scene.title}</h3>
+                              <p>{scene.summary}</p>
+                              <div className="outline-card__meta">
+                                {scene.wordCount} words · {scene.label}
+                              </div>
+                            </button>
+                          );
+                        })}
+                  </div>
+                ) : (
+                  <div className="board-empty-state">
+                    <strong>Keine Szenen im aktuellen Filter</strong>
+                    <p>
+                      Passe die Suche an, um Szenen wieder einzublenden oder eine
+                      andere Szene zu bearbeiten.
+                    </p>
+                  </div>
+                )}
               </div>
-            </section>
-          ) : null}
+
+              <div className="board-footer">
+                <button className="flat-button" type="button">
+                  + Add Act
+                </button>
+                <button className="flat-button" type="button">
+                  Create from Outline
+                </button>
+                <button className="flat-button" type="button">
+                  Import
+                </button>
+                <button className="flat-button" type="button">
+                  Actions
+                </button>
+              </div>
+
+              {selectedScene ? (
+                <section className="studio-status-bar">
+                  <div>
+                    <strong>{selectedScene.title}</strong>
+                    <span>{selectedScene.summary}</span>
+                  </div>
+                  <div className="studio-status-bar__meta">
+                    <span>{selectedScene.label}</span>
+                    <span>{selectedScene.wordCount} words</span>
+                    <span>{selectedScene.choices.length} choices</span>
+                  </div>
+                </section>
+              ) : null}
+            </div>
+
+            <SceneEditor
+              story={draftStory}
+              sceneContext={selectedSceneContext}
+              onUpdateScene={updateSelectedScene}
+            />
+          </div>
         </section>
       </main>
     </div>

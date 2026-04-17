@@ -2,23 +2,27 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="landing-shell">
-      <section className="landing-panel">
-        <p className="landing-kicker">EMBER Studio Foundations</p>
-        <h1>Authoring engine before marketplace plumbing.</h1>
-        <p className="landing-copy">
-          This app now has a typed studio foundation, a canonical story schema,
-          and local fixture data we can evolve into real authoring workflows.
-        </p>
-        <div className="landing-actions">
-          <Link href="/studio" className="landing-button landing-button--primary">
-            Open Studio
+    <main className="reader-shell">
+      <header className="reader-topbar">
+        <div>
+          <p className="reader-eyebrow">EMBER Store</p>
+          <h1>Kuratiertes Story-Regal</h1>
+        </div>
+        <div className="reader-actions">
+          <Link href="/story" className="landing-button landing-button--primary">
+            Direkt zur Story
           </Link>
           <Link href="/studio" className="landing-button">
-            Open Typed Foundation
+            Studio öffnen
           </Link>
         </div>
-      </section>
+      </header>
+
+      <iframe
+        className="reader-frame"
+        src="/legacy/index.html?view=store"
+        title="EMBER Storefront"
+      />
     </main>
   );
 }

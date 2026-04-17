@@ -83,17 +83,130 @@ export type ChoiceEffect = {
   setTo: boolean | string | number;
 };
 
+export type SceneContext = {
+  act: StoryAct;
+  chapter: StoryChapter;
+  scene: StoryScene;
+};
+
 export function defineStory<T extends StoryDocument>(story: T): T {
   return story;
+}
+
+export function getAllScenes(story: StoryDocument) {
+  return story.acts.flatMap(function (act) {
+    return act.chapters.flatMap(function (chapter) {
+      return chapter.scenes;
+    });
+  });
+}
+
+export function countWords(value: string) {
+  const words = value.trim().match(/\S+/g);
+  return words ? words.length : 0;
+}
+
+export function countSceneWords(scene: Pick<StoryScene, "summary" | "blocks">) {
+  return countWords(
+    [scene.summary]
+      .concat(
+        scene.blocks.map(function (block) {
+          return block.text;
+        })
+      )
+      .join(" ")
+  );
+}
+
+export function findSceneContext(
+  story: StoryDocument,
+  sceneId: string
+): SceneContext | null {
+  for (const act of story.acts) {
+    for (const chapter of act.chapters) {
+      for (const scene of chapter.scenes) {
+        if (scene.id === sceneId) {
+          return {
+            act,
+            chapter,
+            scene
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+export function updateSceneInStory(
+  story: StoryDocument,
+  sceneId: string,
+  updater: (scene: StoryScene) => StoryScene
+) {
+  let hasChanged = false;
+
+  const acts = story.acts.map(function (act) {
+    let actChanged = false;
+
+    const chapters = act.chapters.map(function (chapter) {
+      let chapterChanged = false;
+
+      const scenes = chapter.scenes.map(function (scene) {
+        if (scene.id !== sceneId) {
+          return scene;
+        }
+
+        hasChanged = true;
+        actChanged = true;
+        chapterChanged = true;
+
+        const nextScene = updater(scene);
+
+        return {
+          ...nextScene,
+          wordCount: countSceneWords(nextScene)
+        };
+      });
+
+      if (!chapterChanged) {
+        return chapter;
+      }
+
+      return {
+        ...chapter,
+        scenes,
+        wordCount: scenes.reduce(function (sum, scene) {
+          return sum + scene.wordCount;
+        }, 0)
+      };
+    });
+
+    if (!actChanged) {
+      return act;
+    }
+
+    return {
+      ...act,
+      chapters
+    };
+  });
+
+  if (!hasChanged) {
+    return story;
+  }
+
+  return {
+    ...story,
+    acts
+  };
 }
 
 export function countStoryStats(story: StoryDocument) {
   const chapters = story.acts.flatMap(function (act) {
     return act.chapters;
   });
-  const scenes = chapters.flatMap(function (chapter) {
-    return chapter.scenes;
-  });
+  const scenes = getAllScenes(story);
 
   return {
     actCount: story.acts.length,
