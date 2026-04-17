@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="EMBER Studio — Authoring-Workspace für interaktive, verzweigte Storys."
+    />
+    <title>EMBER Studio</title>
+    <link rel="stylesheet" href="./studio.css" />
+    <script src="./studio.js" defer></script>
+  </head>
+  <body>
+    <div class="studio-shell">
+      <aside class="rail" aria-label="Hauptnavigation">
+        <button class="rail-button" type="button" aria-label="Zurück">
+          <span class="rail-icon rail-icon--back"></span>
+        </button>
+        <button class="rail-button" type="button" aria-label="Workspace">
+          <span class="rail-icon rail-icon--panel"></span>
+        </button>
+        <button class="rail-button rail-button--active" type="button" aria-label="Codex">
+          <span class="rail-icon rail-icon--book"></span>
+        </button>
+      </aside>
+
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="sidebar-header__icons">
+            <button class="mini-icon-button" type="button" aria-label="Zurück">
+              <span class="mini-icon mini-icon--back"></span>
+            </button>
+            <button class="mini-icon-button" type="button" aria-label="Settings">
+              <span class="mini-icon mini-icon--gear"></span>
+            </button>
+          </div>
+          <div class="sidebar-project">
+            <h1>New Novel</h1>
+            <p>Özgür Azap</p>
+          </div>
+        </header>
+
+        <nav class="sidebar-tabs" aria-label="Bereiche">
+          <button class="sidebar-tab sidebar-tab--active" type="button">Codex</button>
+          <button class="sidebar-tab" type="button">Snippets</button>
+          <button class="sidebar-tab" type="button">Chats</button>
+        </nav>
+
+        <div class="sidebar-toolbar">
+          <label class="search-field">
+            <span class="search-icon"></span>
+            <input type="search" id="codex-search" placeholder="Search all entries..." />
+          </label>
+          <button class="flat-button" type="button">+ New Entry</button>
+          <button class="square-button" type="button" aria-label="Optionen">
+            <span class="mini-icon mini-icon--gear"></span>
+          </button>
+        </div>
+
+        <section class="sidebar-empty">
+          <h2>YOUR CODEX IS EMPTY</h2>
+          <p>
+            The Codex stores information about the world your story takes place
+            in, its inhabitants and more.
+          </p>
+          <p class="sidebar-empty__hint">
+            Create a new entry by clicking the button above.
+          </p>
+        </section>
+
+        <div class="sidebar-codex-list" id="codex-list"></div>
+
+        <footer class="sidebar-footer">
+          <div class="sidebar-user">
+            <div class="avatar"></div>
+            <span class="usage-pill">1/5</span>
+          </div>
+          <div class="sidebar-footer__links">
+            <button class="footer-link" type="button">Help</button>
+            <button class="footer-link" type="button">Prompts</button>
+            <button class="footer-link" type="button">Export</button>
+            <button class="footer-link" type="button">Save</button>
+          </div>
+        </footer>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-left">
+            <div class="pill-group" aria-label="Mode">
+              <button class="pill-button pill-button--active" data-mode="plan" type="button">Plan</button>
+              <button class="pill-button" data-mode="write" type="button">Write</button>
+              <button class="pill-button" data-mode="chat" type="button">Chat</button>
+              <button class="pill-button" data-mode="review" type="button">Review</button>
+            </div>
+
+            <div class="pill-group pill-group--view" aria-label="View">
+              <button class="pill-button pill-button--active" data-view="grid" type="button">Grid</button>
+              <button class="pill-button" data-view="matrix" type="button">Matrix</button>
+              <button class="pill-button" data-view="outline" type="button">Outline</button>
+            </div>
+
+            <span class="filter-label">FILTER:</span>
+
+            <label class="search-field search-field--topbar">
+              <span class="search-icon"></span>
+              <input type="search" id="scene-search" placeholder="Search scenes..." />
+            </label>
+          </div>
+
+          <button class="view-toggle" type="button">View</button>
+        </header>
+
+        <section class="board-area">
+          <div class="board-meta">
+            <div class="board-meta__title-wrap">
+              <button class="ghost-icon-button" type="button" aria-label="Reorder">
+                <span class="mini-icon mini-icon--drag"></span>
+              </button>
+              <h2 class="board-title">Act 1</h2>
+            </div>
+            <div class="board-meta__stats" id="board-stats"></div>
+          </div>
+
+          <div class="board-canvas">
+            <div class="story-board" id="story-board" data-view="grid"></div>
+          </div>
+
+          <div class="board-footer">
+            <button class="flat-button" type="button">+ Add Act</button>
+            <button class="flat-button" type="button">Create from Outline</button>
+            <button class="flat-button" type="button">Import</button>
+            <button class="flat-button" type="button">Actions</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
