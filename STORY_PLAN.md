@@ -321,6 +321,8 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - lokales Speichern `erledigt`
 - Playtest-Engine `erledigt`
 - lokales Review-/Submission-Gate `erledigt`
+- Create from Outline `erledigt` als lokaler Outline-Composer
+- JSON-Import `erledigt` als lokaler Draft-Import
 
 ### Phase 2: Data Backbone
 - Supabase Projekt

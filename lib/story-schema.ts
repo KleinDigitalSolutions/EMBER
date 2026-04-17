@@ -89,6 +89,24 @@ export type SceneContext = {
   scene: StoryScene;
 };
 
+export type InsertActResult = {
+  story: StoryDocument;
+  actId: string;
+  chapterId: string;
+  sceneId: string;
+};
+
+export type InsertChapterResult = {
+  story: StoryDocument;
+  chapterId: string;
+  sceneId: string;
+};
+
+export type InsertSceneResult = {
+  story: StoryDocument;
+  sceneId: string;
+};
+
 export function defineStory<T extends StoryDocument>(story: T): T {
   return story;
 }
@@ -219,4 +237,147 @@ export function countStoryStats(story: StoryDocument) {
       return sum + scene.wordCount;
     }, 0)
   };
+}
+
+export function appendActToStory(story: StoryDocument): InsertActResult {
+  const actOrder = story.acts.length + 1;
+  const actId = createLocalId("act");
+  const chapterId = createLocalId("chapter");
+  const sceneId = createLocalId("scene");
+
+  const nextScene = createEmptyScene(chapterId, sceneId, 1);
+  const nextChapter: StoryChapter = {
+    id: chapterId,
+    actId,
+    title: `Chapter ${1}`,
+    order: 1,
+    scenes: [nextScene],
+    wordCount: nextScene.wordCount
+  };
+
+  const nextAct: StoryAct = {
+    id: actId,
+    title: `Act ${actOrder}`,
+    order: actOrder,
+    chapters: [nextChapter]
+  };
+
+  return {
+    story: {
+      ...story,
+      acts: story.acts.concat(nextAct)
+    },
+    actId,
+    chapterId,
+    sceneId
+  };
+}
+
+export function appendChapterToAct(
+  story: StoryDocument,
+  actId: string
+): InsertChapterResult {
+  let insertedChapterId = "";
+  let insertedSceneId = "";
+
+  const acts = story.acts.map(function (act) {
+    if (act.id !== actId) {
+      return act;
+    }
+
+    const chapterOrder = act.chapters.length + 1;
+    const chapterId = createLocalId("chapter");
+    const sceneId = createLocalId("scene");
+    const nextScene = createEmptyScene(chapterId, sceneId, 1);
+
+    insertedChapterId = chapterId;
+    insertedSceneId = sceneId;
+
+    return {
+      ...act,
+      chapters: act.chapters.concat({
+        id: chapterId,
+        actId,
+        title: `Chapter ${chapterOrder}`,
+        order: chapterOrder,
+        scenes: [nextScene],
+        wordCount: nextScene.wordCount
+      })
+    };
+  });
+
+  return {
+    story: {
+      ...story,
+      acts
+    },
+    chapterId: insertedChapterId,
+    sceneId: insertedSceneId
+  };
+}
+
+export function appendSceneToChapter(
+  story: StoryDocument,
+  chapterId: string
+): InsertSceneResult {
+  let insertedSceneId = "";
+
+  const acts = story.acts.map(function (act) {
+    const chapters = act.chapters.map(function (chapter) {
+      if (chapter.id !== chapterId) {
+        return chapter;
+      }
+
+      const sceneOrder = chapter.scenes.length + 1;
+      const sceneId = createLocalId("scene");
+      const nextScene = createEmptyScene(chapterId, sceneId, sceneOrder);
+
+      insertedSceneId = sceneId;
+
+      return {
+        ...chapter,
+        scenes: chapter.scenes.concat(nextScene),
+        wordCount: chapter.scenes.reduce(function (sum, scene) {
+          return sum + scene.wordCount;
+        }, 0) + nextScene.wordCount
+      };
+    });
+
+    return {
+      ...act,
+      chapters
+    };
+  });
+
+  return {
+    story: {
+      ...story,
+      acts
+    },
+    sceneId: insertedSceneId
+  };
+}
+
+function createEmptyScene(chapterId: string, sceneId: string, order: number): StoryScene {
+  return {
+    id: sceneId,
+    chapterId,
+    title: `Scene ${order}`,
+    order,
+    label: "New Scene",
+    summary: "",
+    wordCount: 0,
+    blocks: [
+      {
+        id: `${sceneId}_block_1`,
+        kind: "paragraph",
+        text: ""
+      }
+    ],
+    choices: []
+  };
+}
+
+function createLocalId(prefix: string) {
+  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
@@ -8,6 +8,9 @@ import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
 import { loadStudioDraft, saveStudioDraft } from "@/lib/studio-storage";
 import {
+  appendActToStory,
+  appendChapterToAct,
+  appendSceneToChapter,
   countStoryStats,
   findSceneContext,
   updateSceneInStory,
@@ -30,12 +33,17 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [authorMode, setAuthorMode] = useState<AuthorMode>("plan");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
+  const [showOutlineComposer, setShowOutlineComposer] = useState(false);
+  const [outlineDraft, setOutlineDraft] = useState(DEFAULT_OUTLINE_TEMPLATE);
+  const [outlineError, setOutlineError] = useState<string | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
   const [selectedSceneId, setSelectedSceneId] = useState(
     story.acts[0]?.chapters[0]?.scenes[0]?.id ?? ""
   );
   const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const importInputRef = useRef<HTMLInputElement | null>(null);
 
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
@@ -203,6 +211,115 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     }
 
     setSaveState("error");
+  }
+
+  function handleAddAct() {
+    let nextSceneId = "";
+
+    setDraftStory(function (currentStory) {
+      const result = appendActToStory(currentStory);
+      nextSceneId = result.sceneId;
+      return result.story;
+    });
+
+    setSearch("");
+
+    if (nextSceneId) {
+      setSelectedSceneId(nextSceneId);
+      setAuthorMode("write");
+    }
+  }
+
+  function handleAddChapter(actId: string) {
+    let nextSceneId = "";
+
+    setDraftStory(function (currentStory) {
+      const result = appendChapterToAct(currentStory, actId);
+      nextSceneId = result.sceneId;
+      return result.story;
+    });
+
+    setSearch("");
+
+    if (nextSceneId) {
+      setSelectedSceneId(nextSceneId);
+      setAuthorMode("write");
+    }
+  }
+
+  function handleAddScene(chapterId: string) {
+    let nextSceneId = "";
+
+    setDraftStory(function (currentStory) {
+      const result = appendSceneToChapter(currentStory, chapterId);
+      nextSceneId = result.sceneId;
+      return result.story;
+    });
+
+    setSearch("");
+
+    if (nextSceneId) {
+      setSelectedSceneId(nextSceneId);
+      setAuthorMode("write");
+    }
+  }
+
+  function handleCreateFromOutline() {
+    try {
+      const nextActs = buildActsFromOutline(outlineDraft);
+      const nextSelectedSceneId = nextActs[0]?.chapters[0]?.scenes[0]?.id ?? "";
+
+      setDraftStory(function (currentStory) {
+        return {
+          ...currentStory,
+          acts: nextActs
+        };
+      });
+
+      setOutlineError(null);
+      setShowOutlineComposer(false);
+      setSearch("");
+
+      if (nextSelectedSceneId) {
+        setSelectedSceneId(nextSelectedSceneId);
+        setAuthorMode("write");
+      }
+    } catch (error) {
+      setOutlineError(error instanceof Error ? error.message : "Outline konnte nicht gelesen werden.");
+    }
+  }
+
+  function handleImportClick() {
+    importInputRef.current?.click();
+  }
+
+  async function handleImportFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const raw = await file.text();
+      const parsed = JSON.parse(raw);
+      const nextStory = normalizeImportedStory(parsed, story);
+      const nextSelectedSceneId = nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "";
+
+      setDraftStory(nextStory);
+      setImportError(null);
+      setShowOutlineComposer(false);
+      setSearch("");
+
+      if (nextSelectedSceneId) {
+        setSelectedSceneId(nextSelectedSceneId);
+        setAuthorMode("write");
+      }
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : "Import fehlgeschlagen.");
+    } finally {
+      event.target.value = "";
+    }
   }
 
   function handleExport() {
@@ -406,6 +523,14 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
         </header>
 
         <section className="board-area">
+          <input
+            ref={importInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="sr-only-input"
+            onChange={handleImportFile}
+          />
+
           <div className="workspace-panels">
             <div className="board-panel">
               <div className="board-meta">
@@ -437,6 +562,8 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
                               act={act}
                               selectedSceneId={selectedSceneId}
                               onSelectScene={setSelectedSceneId}
+                              onAddChapter={handleAddChapter}
+                              onAddScene={handleAddScene}
                             />
                           );
                         })
@@ -486,19 +613,84 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
               </div>
 
               <div className="board-footer">
-                <button className="flat-button" type="button">
+                <button className="flat-button" type="button" onClick={handleAddAct}>
                   + Add Act
                 </button>
-                <button className="flat-button" type="button">
+                <button
+                  className="flat-button"
+                  type="button"
+                  onClick={function () {
+                    setShowOutlineComposer(function (currentState) {
+                      return !currentState;
+                    });
+                    setOutlineError(null);
+                    setImportError(null);
+                  }}
+                >
                   Create from Outline
                 </button>
-                <button className="flat-button" type="button">
+                <button className="flat-button" type="button" onClick={handleImportClick}>
                   Import
                 </button>
                 <button className="flat-button" type="button">
                   Actions
                 </button>
               </div>
+
+              {showOutlineComposer ? (
+                <section className="outline-composer">
+                  <div className="outline-composer__head">
+                    <div>
+                      <strong>Outline Composer</strong>
+                      <p>
+                        Schreibe Zeilen mit `Act:`, `Chapter:` und `Scene:`. Andere
+                        Zeilen werden als Szenentitel gelesen.
+                      </p>
+                    </div>
+                    <div className="outline-composer__actions">
+                      <button className="flat-button" type="button" onClick={handleCreateFromOutline}>
+                        Outline anwenden
+                      </button>
+                      <button
+                        className="flat-button"
+                        type="button"
+                        onClick={function () {
+                          setOutlineDraft(DEFAULT_OUTLINE_TEMPLATE);
+                          setOutlineError(null);
+                        }}
+                      >
+                        Vorlage laden
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea
+                    className="editor-textarea outline-composer__textarea"
+                    value={outlineDraft}
+                    onChange={function (event) {
+                      setOutlineDraft(event.target.value);
+                    }}
+                  />
+
+                  {outlineError ? (
+                    <p className="outline-composer__feedback outline-composer__feedback--error">
+                      {outlineError}
+                    </p>
+                  ) : (
+                    <p className="outline-composer__feedback">
+                      Der aktuelle Draft wird durch die neue Outline-Struktur ersetzt.
+                    </p>
+                  )}
+                </section>
+              ) : null}
+
+              {importError ? (
+                <section className="outline-composer outline-composer--compact">
+                  <p className="outline-composer__feedback outline-composer__feedback--error">
+                    {importError}
+                  </p>
+                </section>
+              ) : null}
 
               {selectedScene ? (
                 <section className="studio-status-bar">
@@ -546,11 +738,15 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 function ActGrid({
   act,
   selectedSceneId,
-  onSelectScene
+  onSelectScene,
+  onAddChapter,
+  onAddScene
 }: {
   act: StoryAct;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
+  onAddChapter: (actId: string) => void;
+  onAddScene: (chapterId: string) => void;
 }) {
   return (
     <section className="act-stack">
@@ -561,6 +757,8 @@ function ActGrid({
             chapter={chapter}
             selectedSceneId={selectedSceneId}
             onSelectScene={onSelectScene}
+            onAddChapter={onAddChapter}
+            onAddScene={onAddScene}
           />
         );
       })}
@@ -571,16 +769,26 @@ function ActGrid({
 function ChapterCard({
   chapter,
   selectedSceneId,
-  onSelectScene
+  onSelectScene,
+  onAddChapter,
+  onAddScene
 }: {
   chapter: StoryChapter;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
+  onAddChapter: (actId: string) => void;
+  onAddScene: (chapterId: string) => void;
 }) {
   return (
     <article className="chapter-shell">
       <div className="chapter-topline">
-        <button className="chapter-add" type="button">
+        <button
+          className="chapter-add"
+          type="button"
+          onClick={function () {
+            onAddChapter(chapter.actId);
+          }}
+        >
           + New Chapter
         </button>
         <button className="square-button" type="button" aria-label="Edit chapter">
@@ -604,7 +812,13 @@ function ChapterCard({
           );
         })}
       </div>
-      <button className="chapter-new-scene" type="button">
+      <button
+        className="chapter-new-scene"
+        type="button"
+        onClick={function () {
+          onAddScene(chapter.id);
+        }}
+      >
         + New Scene
       </button>
     </article>
@@ -714,4 +928,198 @@ function formatStoryStatus(status: StoryStatus) {
   }
 
   return "Draft";
+}
+
+const DEFAULT_OUTLINE_TEMPLATE = [
+  "Act: Act 1",
+  "Chapter: Chapter 1",
+  "Scene: Opening Image",
+  "Scene: First Decision",
+  "",
+  "Act: Act 2",
+  "Chapter: Chapter 2",
+  "Scene: Consequence"
+].join("\n");
+
+function buildActsFromOutline(outlineDraft: string) {
+  const lines = outlineDraft
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim();
+    })
+    .filter(Boolean);
+
+  if (!lines.length) {
+    throw new Error("Die Outline ist leer.");
+  }
+
+  const acts: StoryAct[] = [];
+  let currentAct: StoryAct | null = null;
+  let currentChapter: StoryChapter | null = null;
+
+  lines.forEach(function (line) {
+    const actMatch = line.match(/^act(?:\s*\d+)?\s*[:\-]\s*(.+)$/i);
+    const chapterMatch = line.match(/^chapter(?:\s*\d+)?\s*[:\-]\s*(.+)$/i);
+    const sceneMatch = line.match(/^(?:scene|beat)(?:\s*\d+)?\s*[:\-]\s*(.+)$/i);
+
+    if (actMatch) {
+      currentAct = {
+        id: createLocalId("act"),
+        title: actMatch[1].trim() || `Act ${acts.length + 1}`,
+        order: acts.length + 1,
+        chapters: []
+      };
+      acts.push(currentAct);
+      currentChapter = null;
+      return;
+    }
+
+    if (chapterMatch) {
+      if (!currentAct) {
+        currentAct = {
+          id: createLocalId("act"),
+          title: `Act ${acts.length + 1}`,
+          order: acts.length + 1,
+          chapters: []
+        };
+        acts.push(currentAct);
+      }
+
+      currentChapter = {
+        id: createLocalId("chapter"),
+        actId: currentAct.id,
+        title: chapterMatch[1].trim() || `Chapter ${currentAct.chapters.length + 1}`,
+        order: currentAct.chapters.length + 1,
+        scenes: [],
+        wordCount: 0
+      };
+
+      currentAct.chapters.push(currentChapter);
+      return;
+    }
+
+    const sceneTitle = (sceneMatch?.[1] ?? line).trim();
+
+    if (!currentAct) {
+      currentAct = {
+        id: createLocalId("act"),
+        title: `Act ${acts.length + 1}`,
+        order: acts.length + 1,
+        chapters: []
+      };
+      acts.push(currentAct);
+    }
+
+    if (!currentChapter) {
+      currentChapter = {
+        id: createLocalId("chapter"),
+        actId: currentAct.id,
+        title: `Chapter ${currentAct.chapters.length + 1}`,
+        order: currentAct.chapters.length + 1,
+        scenes: [],
+        wordCount: 0
+      };
+      currentAct.chapters.push(currentChapter);
+    }
+
+    const nextScene = createOutlineScene(currentChapter.id, sceneTitle, currentChapter.scenes.length + 1);
+
+    currentChapter.scenes.push(nextScene);
+  });
+
+  const normalizedActs = acts
+    .map(function (act) {
+      const chapters = act.chapters
+        .filter(function (chapter) {
+          return chapter.scenes.length > 0;
+        })
+        .map(function (chapter, chapterIndex) {
+          const scenes = chapter.scenes.map(function (scene, sceneIndex) {
+            return {
+              ...scene,
+              order: sceneIndex + 1
+            };
+          });
+
+          return {
+            ...chapter,
+            order: chapterIndex + 1,
+            wordCount: scenes.reduce(function (sum, scene) {
+              return sum + scene.wordCount;
+            }, 0),
+            scenes
+          };
+        });
+
+      return {
+        ...act,
+        order: act.order,
+        chapters
+      };
+    })
+    .filter(function (act) {
+      return act.chapters.length > 0;
+    });
+
+  if (!normalizedActs.length) {
+    throw new Error("Die Outline enthält keine verwertbaren Szenen.");
+  }
+
+  return normalizedActs;
+}
+
+function createOutlineScene(chapterId: string, title: string, order: number): StoryScene {
+  return {
+    id: createLocalId("scene"),
+    chapterId,
+    title: title || `Scene ${order}`,
+    order,
+    label: "Outline Draft",
+    summary: "",
+    wordCount: 0,
+    blocks: [
+      {
+        id: createLocalId("block"),
+        kind: "paragraph",
+        text: ""
+      }
+    ],
+    choices: []
+  };
+}
+
+function normalizeImportedStory(value: unknown, fallbackStory: StoryDocument): StoryDocument {
+  if (!isStoryDocument(value)) {
+    throw new Error("Die JSON-Datei hat nicht das erwartete Story-Format.");
+  }
+
+  return {
+    ...value,
+    id: fallbackStory.id,
+    workspaceId: fallbackStory.workspaceId
+  };
+}
+
+function isStoryDocument(value: unknown): value is StoryDocument {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as StoryDocument;
+
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.workspaceId === "string" &&
+    typeof candidate.title === "string" &&
+    typeof candidate.authorName === "string" &&
+    typeof candidate.status === "string" &&
+    Boolean(candidate.meta) &&
+    Array.isArray(candidate.worldBible) &&
+    Array.isArray(candidate.variables) &&
+    Array.isArray(candidate.acts)
+  );
+}
+
+function createLocalId(prefix: string) {
+  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
 }
