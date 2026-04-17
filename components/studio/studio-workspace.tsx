@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { PlaytestPanel } from "@/components/studio/playtest-panel";
+import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
+import { loadStudioDraft, saveStudioDraft } from "@/lib/studio-storage";
 import {
   countStoryStats,
   findSceneContext,
@@ -10,13 +13,15 @@ import {
   type StoryAct,
   type StoryChapter,
   type StoryDocument,
+  type StoryStatus,
   type StoryScene
 } from "@/lib/story-schema";
 
 type ViewMode = "grid" | "matrix" | "outline";
-type AuthorMode = "plan" | "write" | "chat" | "review";
+type AuthorMode = "plan" | "write" | "playtest" | "chat" | "review";
+type SaveState = "idle" | "saved" | "error";
 
-const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "chat", "review"];
+const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "playtest", "chat", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
 export function StudioWorkspace({ story }: { story: StoryDocument }) {
@@ -27,10 +32,68 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [selectedSceneId, setSelectedSceneId] = useState(
     story.acts[0]?.chapters[0]?.scenes[0]?.id ?? ""
   );
+  const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
   }, [draftStory]);
+
+  useEffect(function () {
+    const snapshot = loadStudioDraft(story.id);
+
+    if (!snapshot) {
+      setHasLoadedDraft(true);
+      return;
+    }
+
+    setDraftStory(snapshot.draftStory);
+    setSelectedSceneId(snapshot.selectedSceneId);
+
+    if (isAuthorMode(snapshot.authorMode)) {
+      setAuthorMode(snapshot.authorMode);
+    }
+
+    if (isViewMode(snapshot.viewMode)) {
+      setViewMode(snapshot.viewMode);
+    }
+
+    setLastSavedAt(snapshot.savedAt);
+    setSaveState("saved");
+    setHasLoadedDraft(true);
+  }, [story.id]);
+
+  useEffect(
+    function () {
+      if (!hasLoadedDraft) {
+        return;
+      }
+
+      const timeoutId = window.setTimeout(function () {
+        const snapshot = persistStudioDraft({
+          storyId: story.id,
+          draftStory,
+          selectedSceneId,
+          authorMode,
+          viewMode
+        });
+
+        if (snapshot) {
+          setLastSavedAt(snapshot.savedAt);
+          setSaveState("saved");
+          return;
+        }
+
+        setSaveState("error");
+      }, 350);
+
+      return function () {
+        window.clearTimeout(timeoutId);
+      };
+    },
+    [authorMode, draftStory, hasLoadedDraft, selectedSceneId, story.id, viewMode]
+  );
 
   const filteredActs = useMemo(function () {
     return draftStory.acts
@@ -114,6 +177,51 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     });
   }
 
+  function updateStoryStatus(status: StoryStatus) {
+    setDraftStory(function (currentStory) {
+      return {
+        ...currentStory,
+        status
+      };
+    });
+  }
+
+  function handleManualSave() {
+    const snapshot = persistStudioDraft({
+      storyId: story.id,
+      draftStory,
+      selectedSceneId,
+      authorMode,
+      viewMode
+    });
+
+    if (snapshot) {
+      setLastSavedAt(snapshot.savedAt);
+      setSaveState("saved");
+      return;
+    }
+
+    setSaveState("error");
+  }
+
+  function handleExport() {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const payload = JSON.stringify(draftStory, null, 2);
+    const blob = new window.Blob([payload], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const link = window.document.createElement("a");
+
+    link.href = url;
+    link.download = `${slugify(draftStory.title || story.id)}.json`;
+    window.document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="studio-shell">
       <aside className="rail" aria-label="Hauptnavigation">
@@ -139,8 +247,10 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             </button>
           </div>
           <div className="sidebar-project">
-            <h1>{story.title}</h1>
-            <p>{story.authorName}</p>
+            <h1>{draftStory.title}</h1>
+            <p>
+              {draftStory.authorName} · {formatStoryStatus(draftStory.status)}
+            </p>
           </div>
         </header>
 
@@ -203,10 +313,10 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             <button className="footer-link" type="button">
               Prompts
             </button>
-            <button className="footer-link" type="button">
+            <button className="footer-link" type="button" onClick={handleExport}>
               Export
             </button>
-            <button className="footer-link" type="button">
+            <button className="footer-link" type="button" onClick={handleManualSave}>
               Save
             </button>
           </div>
@@ -270,6 +380,21 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
           </div>
 
           <div className="topbar-actions">
+            <span className={"story-status-pill story-status-pill--" + draftStory.status}>
+              {formatStoryStatus(draftStory.status)}
+            </span>
+            <span
+              className={
+                "save-indicator" +
+                (saveState === "saved"
+                  ? " save-indicator--saved"
+                  : saveState === "error"
+                    ? " save-indicator--error"
+                    : "")
+              }
+            >
+              {formatSaveState(lastSavedAt, saveState)}
+            </span>
             <Link href="/story" className="flat-button topbar-link">
               Story testen
             </Link>
@@ -389,11 +514,21 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
               ) : null}
             </div>
 
-            <SceneEditor
-              story={draftStory}
-              sceneContext={selectedSceneContext}
-              onUpdateScene={updateSelectedScene}
-            />
+            {authorMode === "playtest" ? (
+              <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
+            ) : authorMode === "review" ? (
+              <ReviewPanel
+                story={draftStory}
+                onUpdateStatus={updateStoryStatus}
+                onSelectScene={setSelectedSceneId}
+              />
+            ) : (
+              <SceneEditor
+                story={draftStory}
+                sceneContext={selectedSceneContext}
+                onUpdateScene={updateSelectedScene}
+              />
+            )}
           </div>
         </section>
       </main>
@@ -502,4 +637,74 @@ function SceneRow({
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function isAuthorMode(value: string): value is AuthorMode {
+  return AUTHOR_MODES.includes(value as AuthorMode);
+}
+
+function isViewMode(value: string): value is ViewMode {
+  return VIEW_MODES.includes(value as ViewMode);
+}
+
+function persistStudioDraft({
+  storyId,
+  draftStory,
+  selectedSceneId,
+  authorMode,
+  viewMode
+}: {
+  storyId: string;
+  draftStory: StoryDocument;
+  selectedSceneId: string;
+  authorMode: AuthorMode;
+  viewMode: ViewMode;
+}) {
+  try {
+    return saveStudioDraft(storyId, {
+      draftStory,
+      selectedSceneId,
+      authorMode,
+      viewMode
+    });
+  } catch {
+    return null;
+  }
+}
+
+function formatSaveState(lastSavedAt: string | null, saveState: SaveState) {
+  if (saveState === "error") {
+    return "Lokales Speichern fehlgeschlagen";
+  }
+
+  if (!lastSavedAt) {
+    return "Noch nicht gespeichert";
+  }
+
+  const formatter = new Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `Gespeichert ${formatter.format(new Date(lastSavedAt))}`;
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function formatStoryStatus(status: StoryStatus) {
+  if (status === "playtest") {
+    return "Playtest";
+  }
+
+  if (status === "submitted") {
+    return "Submitted";
+  }
+
+  return "Draft";
 }
