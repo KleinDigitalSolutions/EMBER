@@ -508,7 +508,7 @@ select {
   width: min(calc(100% - 1.5rem), 32rem);
   padding: 0.5rem;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.35rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.35rem;

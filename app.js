@@ -572,6 +572,14 @@
               </span>
               <span class="app-tab-label">Bibliothek</span>
             </button>
+            <button class="app-tab" type="button" data-action="studio">
+              <span class="app-tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </span>
+              <span class="app-tab-label">Studio</span>
+            </button>
             <button class="app-tab" type="button">
               <span class="app-tab-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
@@ -747,7 +755,7 @@
     window.requestAnimationFrame(function () {
       const autofocusTarget = app.querySelector("[data-autofocus='true']");
       if (autofocusTarget) {
-        autofocusTarget.focus();
+        autofocusTarget.focus({ preventScroll: true });
       }
     });
   }
@@ -789,6 +797,11 @@
       if (choice) {
         applyChoice(choice);
       }
+    }
+
+    if (action === "studio") {
+      window.parent.location.href = "/studio";
+      return;
     }
   });
 
