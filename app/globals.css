@@ -425,6 +425,41 @@ textarea {
   font-size: 0.86rem;
 }
 
+.codex-editor {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.codex-editor__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.codex-editor__head h2,
+.codex-editor__head p {
+  margin: 0;
+}
+
+.codex-editor__head h2 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.codex-editor__head p {
+  margin-top: 0.2rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+}
+
+.codex-editor__textarea {
+  min-height: 6.5rem;
+}
+
 .sidebar-codex-list {
   display: grid;
   gap: 0.4rem;
@@ -439,6 +474,7 @@ textarea {
   border-radius: 0.35rem;
   background: #1a1a1e;
   border: 1px solid var(--line);
+  text-align: left;
 }
 
 .codex-row h3 {
@@ -450,6 +486,15 @@ textarea {
   font-size: 0.74rem;
   color: var(--text-faint);
   line-height: 1.35;
+}
+
+.codex-row--active {
+  border-color: rgba(224, 159, 102, 0.34);
+  background: #202026;
+}
+
+.codex-row--empty {
+  cursor: default;
 }
 
 .sidebar-footer {
@@ -1975,6 +2020,10 @@ textarea {
   background: linear-gradient(180deg, rgba(139, 214, 173, 0.08), rgba(26, 26, 31, 0.96));
 }
 
+.review-card--memo {
+  background: linear-gradient(180deg, rgba(224, 159, 102, 0.08), rgba(26, 26, 31, 0.96));
+}
+
 .review-card__head {
   display: flex;
   align-items: flex-start;
@@ -2006,6 +2055,16 @@ textarea {
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-size: 0.68rem;
+}
+
+.review-verdict--ready {
+  color: #d4ec97;
+  border-color: rgba(123, 162, 59, 0.35);
+}
+
+.review-verdict--needs-work {
+  color: #f0c98f;
+  border-color: rgba(228, 185, 111, 0.28);
 }
 
 .review-score {
@@ -2042,9 +2101,27 @@ textarea {
 
 .review-metrics,
 .review-detail-grid,
-.review-next-steps {
+.review-next-steps,
+.review-memo {
   display: grid;
   gap: 0.65rem;
+}
+
+.review-memo__intro strong,
+.review-memo__intro p {
+  margin: 0;
+}
+
+.review-memo__intro strong {
+  display: block;
+  font-size: 0.82rem;
+}
+
+.review-memo__intro p {
+  margin-top: 0.28rem;
+  color: var(--text-faint);
+  font-size: 0.74rem;
+  line-height: 1.5;
 }
 
 .review-metrics {
@@ -2240,7 +2317,8 @@ textarea {
 
   .topbar-actions,
   .reader-topbar,
-  .outline-composer__head {
+  .outline-composer__head,
+  .codex-editor__head {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;

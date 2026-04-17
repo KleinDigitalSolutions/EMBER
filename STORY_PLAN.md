@@ -328,14 +328,14 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Supabase Projekt
 - Tabellen und RLS-Design
 - Story-Versionierung
-- World Bible
+- World Bible `erledigt` als lokale Codex-Bearbeitung im Studio
 
 ### Phase 3: AI Assist
 - Server-seitige LLM-Orchestrierung
 - Prompt-Module
 - Patch-System `erledigt` als lokales regelbasiertes Patch-Lab
-- Continuity Checks
-- Submission Reviewer
+- Continuity Checks `erledigt` als lokaler Continuity-Report im Review-Panel
+- Submission Reviewer `erledigt` als lokales Reviewer-Memo im Review-Panel
 
 ### Phase 4: Collaboration + Review
 - Workspaces

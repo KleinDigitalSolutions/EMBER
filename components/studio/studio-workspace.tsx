@@ -18,7 +18,8 @@ import {
   type StoryChapter,
   type StoryDocument,
   type StoryStatus,
-  type StoryScene
+  type StoryScene,
+  type WorldBibleEntry
 } from "@/lib/story-schema";
 
 type ViewMode = "grid" | "matrix" | "outline";
@@ -33,10 +34,14 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [authorMode, setAuthorMode] = useState<AuthorMode>("plan");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
+  const [codexSearch, setCodexSearch] = useState("");
   const [showOutlineComposer, setShowOutlineComposer] = useState(false);
   const [outlineDraft, setOutlineDraft] = useState(DEFAULT_OUTLINE_TEMPLATE);
   const [outlineError, setOutlineError] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [selectedCodexEntryId, setSelectedCodexEntryId] = useState(
+    story.worldBible[0]?.id ?? ""
+  );
   const [selectedSceneId, setSelectedSceneId] = useState(
     story.acts[0]?.chapters[0]?.scenes[0]?.id ?? ""
   );
@@ -48,6 +53,27 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
   }, [draftStory]);
+
+  const filteredCodexEntries = useMemo(function () {
+    const query = codexSearch.trim().toLowerCase();
+
+    return draftStory.worldBible.filter(function (entry) {
+      if (!query) {
+        return true;
+      }
+
+      return (
+        entry.title.toLowerCase().includes(query) ||
+        entry.summary.toLowerCase().includes(query) ||
+        entry.kind.toLowerCase().includes(query)
+      );
+    });
+  }, [codexSearch, draftStory.worldBible]);
+
+  const selectedCodexEntry =
+    draftStory.worldBible.find(function (entry) {
+      return entry.id === selectedCodexEntryId;
+    }) ?? null;
 
   useEffect(function () {
     const snapshot = loadStudioDraft(story.id);
@@ -170,6 +196,26 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     [selectedSceneId, visibleScenes]
   );
 
+  useEffect(
+    function () {
+      if (!draftStory.worldBible.length) {
+        if (selectedCodexEntryId) {
+          setSelectedCodexEntryId("");
+        }
+        return;
+      }
+
+      const hasSelectedCodexEntry = draftStory.worldBible.some(function (entry) {
+        return entry.id === selectedCodexEntryId;
+      });
+
+      if (!hasSelectedCodexEntry) {
+        setSelectedCodexEntryId(draftStory.worldBible[0].id);
+      }
+    },
+    [draftStory.worldBible, selectedCodexEntryId]
+  );
+
   const selectedSceneContext = useMemo(function () {
     return selectedSceneId ? findSceneContext(draftStory, selectedSceneId) : null;
   }, [draftStory, selectedSceneId]);
@@ -211,6 +257,55 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     }
 
     setSaveState("error");
+  }
+
+  function handleCreateCodexEntry() {
+    const nextEntry: WorldBibleEntry = {
+      id: createLocalId("wb"),
+      title: "Neue Codex-Karte",
+      kind: "character",
+      summary: ""
+    };
+
+    setDraftStory(function (currentStory) {
+      return {
+        ...currentStory,
+        worldBible: currentStory.worldBible.concat(nextEntry)
+      };
+    });
+
+    setSelectedCodexEntryId(nextEntry.id);
+    setCodexSearch("");
+  }
+
+  function updateSelectedCodexEntry(updater: (entry: WorldBibleEntry) => WorldBibleEntry) {
+    if (!selectedCodexEntryId) {
+      return;
+    }
+
+    setDraftStory(function (currentStory) {
+      return {
+        ...currentStory,
+        worldBible: currentStory.worldBible.map(function (entry) {
+          return entry.id === selectedCodexEntryId ? updater(entry) : entry;
+        })
+      };
+    });
+  }
+
+  function handleDeleteCodexEntry() {
+    if (!selectedCodexEntryId) {
+      return;
+    }
+
+    setDraftStory(function (currentStory) {
+      return {
+        ...currentStory,
+        worldBible: currentStory.worldBible.filter(function (entry) {
+          return entry.id !== selectedCodexEntryId;
+        })
+      };
+    });
   }
 
   function handleAddAct() {
@@ -387,9 +482,16 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
         <div className="sidebar-toolbar">
           <label className="search-field">
             <span className="search-icon" />
-            <input type="search" placeholder="Search all entries..." />
+            <input
+              type="search"
+              placeholder="Search all entries..."
+              value={codexSearch}
+              onChange={function (event) {
+                setCodexSearch(event.target.value);
+              }}
+            />
           </label>
-          <button className="flat-button" type="button">
+          <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
             + New Entry
           </button>
           <button className="square-button" type="button" aria-label="Optionen">
@@ -397,26 +499,110 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
           </button>
         </div>
 
-        <section className="sidebar-empty">
-          <h2>YOUR CODEX IS EMPTY</h2>
-          <p>
-            The Codex stores information about the world your story takes place
-            in, its inhabitants and more.
-          </p>
-          <p className="sidebar-empty__hint">
-            Create a new entry by clicking the button above.
-          </p>
-        </section>
+        {selectedCodexEntry ? (
+          <section className="codex-editor">
+            <div className="codex-editor__head">
+              <div>
+                <h2>Codex Editor</h2>
+                <p>{selectedCodexEntry.id}</p>
+              </div>
+              <button className="scene-block-card__remove" type="button" onClick={handleDeleteCodexEntry}>
+                Entfernen
+              </button>
+            </div>
+
+            <label className="editor-field">
+              <span>Titel</span>
+              <input
+                className="editor-input"
+                type="text"
+                value={selectedCodexEntry.title}
+                onChange={function (event) {
+                  updateSelectedCodexEntry(function (entry) {
+                    return {
+                      ...entry,
+                      title: event.target.value
+                    };
+                  });
+                }}
+              />
+            </label>
+
+            <label className="editor-field">
+              <span>Typ</span>
+              <select
+                className="editor-input editor-select"
+                value={selectedCodexEntry.kind}
+                onChange={function (event) {
+                  updateSelectedCodexEntry(function (entry) {
+                    return {
+                      ...entry,
+                      kind: event.target.value as WorldBibleEntry["kind"]
+                    };
+                  });
+                }}
+              >
+                <option value="character">Character</option>
+                <option value="location">Location</option>
+                <option value="object">Object</option>
+                <option value="theme">Theme</option>
+              </select>
+            </label>
+
+            <label className="editor-field">
+              <span>Summary</span>
+              <textarea
+                className="editor-textarea codex-editor__textarea"
+                value={selectedCodexEntry.summary}
+                onChange={function (event) {
+                  updateSelectedCodexEntry(function (entry) {
+                    return {
+                      ...entry,
+                      summary: event.target.value
+                    };
+                  });
+                }}
+              />
+            </label>
+          </section>
+        ) : (
+          <section className="sidebar-empty">
+            <h2>YOUR CODEX IS EMPTY</h2>
+            <p>
+              The Codex stores information about the world your story takes place
+              in, its inhabitants and more.
+            </p>
+            <p className="sidebar-empty__hint">
+              Create a new entry by clicking the button above.
+            </p>
+          </section>
+        )}
 
         <div className="sidebar-codex-list">
-          {story.worldBible.slice(0, 3).map(function (entry) {
+          {filteredCodexEntries.map(function (entry) {
             return (
-              <article key={entry.id} className="codex-row">
+              <button
+                key={entry.id}
+                className={
+                  "codex-row" + (entry.id === selectedCodexEntryId ? " codex-row--active" : "")
+                }
+                type="button"
+                onClick={function () {
+                  setSelectedCodexEntryId(entry.id);
+                }}
+              >
                 <h3>{entry.title}</h3>
                 <p>{entry.summary}</p>
-              </article>
+              </button>
             );
           })}
+
+          {!filteredCodexEntries.length ? (
+            <article className="codex-row codex-row--empty">
+              <h3>Keine Treffer</h3>
+              <p>Die aktuelle Suche findet keine Codex-Einträge.</p>
+            </article>
+          ) : null}
         </div>
 
         <footer className="sidebar-footer">

@@ -26,6 +26,26 @@ type ReviewAnalysis = {
   issues: ReviewIssue[];
 };
 
+type ContinuityAnalysis = {
+  anchoredSceneCount: number;
+  unanchoredSceneCount: number;
+  unusedWorldBibleCount: number;
+  orphanedVariableCount: number;
+  unresolvedSetupCount: number;
+  findings: ReviewIssue[];
+};
+
+type SubmissionReviewerMemo = {
+  verdict: "ready" | "needs_work";
+  headline: string;
+  summary: string;
+  hookAssessment: string;
+  audienceAssessment: string;
+  branchAssessment: string;
+  riskAssessment: string;
+  marketFitAssessment: string;
+};
+
 export function ReviewPanel({
   story,
   onUpdateStatus,
@@ -37,6 +57,8 @@ export function ReviewPanel({
 }) {
   const stats = countStoryStats(story);
   const analysis = analyzeStoryForReview(story);
+  const continuity = analyzeContinuity(story);
+  const memo = buildSubmissionReviewerMemo(story, analysis, continuity);
   const blockers = analysis.issues.filter(function (issue) {
     return issue.level === "error";
   });
@@ -157,6 +179,109 @@ export function ReviewPanel({
             <div className="review-detail">
               <strong>Variablen</strong>
               <span>{story.variables.length} definiert</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="review-card">
+          <div className="review-card__head">
+            <div>
+              <span className="review-card__label">Continuity Report</span>
+              <h4>Weltanker, Flags und offene Setups</h4>
+            </div>
+          </div>
+
+          <div className="review-metrics">
+            <Metric label="Anker-Szenen" value={continuity.anchoredSceneCount} />
+            <Metric label="Ohne Anker" value={continuity.unanchoredSceneCount} tone="info" />
+            <Metric label="Ungenutzte Codex" value={continuity.unusedWorldBibleCount} tone="warning" />
+            <Metric label="Orphan Flags" value={continuity.orphanedVariableCount} tone="warning" />
+            <Metric label="Offene Setups" value={continuity.unresolvedSetupCount} tone="warning" />
+            <Metric label="Findings" value={continuity.findings.length} />
+          </div>
+
+          {continuity.findings.length ? (
+            <div className="review-issue-list">
+              {continuity.findings.map(function (finding) {
+                return (
+                  <article
+                    key={finding.id}
+                    className={`review-issue review-issue--${finding.level}`}
+                  >
+                    <div className="review-issue__copy">
+                      <strong>{finding.title}</strong>
+                      <p>{finding.detail}</p>
+                    </div>
+                    {finding.sceneId ? (
+                      <button
+                        className="flat-button review-issue__action"
+                        type="button"
+                        onClick={function () {
+                          onSelectScene(finding.sceneId!);
+                        }}
+                      >
+                        Szene öffnen
+                      </button>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="review-success">
+              <strong>Keine lokalen Continuity-Auffälligkeiten</strong>
+              <p>World Bible, Szenenanker und Variablenfluss wirken im aktuellen Draft konsistent.</p>
+            </div>
+          )}
+        </section>
+
+        <section className="review-card review-card--memo">
+          <div className="review-card__head">
+            <div>
+              <span className="review-card__label">Submission Reviewer</span>
+              <h4>Lokales Reviewer-Memo</h4>
+            </div>
+            <div className="review-card__meta">
+              <span
+                className={
+                  "review-verdict" +
+                  (memo.verdict === "ready"
+                    ? " review-verdict--ready"
+                    : " review-verdict--needs-work")
+                }
+              >
+                {memo.verdict === "ready" ? "Store-tauglich" : "Überarbeiten"}
+              </span>
+            </div>
+          </div>
+
+          <div className="review-memo">
+            <div className="review-memo__intro">
+              <strong>{memo.headline}</strong>
+              <p>{memo.summary}</p>
+            </div>
+
+            <div className="review-detail-grid">
+              <div className="review-detail">
+                <strong>Hook</strong>
+                <span>{memo.hookAssessment}</span>
+              </div>
+              <div className="review-detail">
+                <strong>Audience Fit</strong>
+                <span>{memo.audienceAssessment}</span>
+              </div>
+              <div className="review-detail">
+                <strong>Branching</strong>
+                <span>{memo.branchAssessment}</span>
+              </div>
+              <div className="review-detail">
+                <strong>Risiko</strong>
+                <span>{memo.riskAssessment}</span>
+              </div>
+              <div className="review-detail">
+                <strong>Market Fit</strong>
+                <span>{memo.marketFitAssessment}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -506,6 +631,228 @@ function analyzeStoryForReview(story: StoryDocument): ReviewAnalysis {
     infoCount,
     issues
   };
+}
+
+function analyzeContinuity(story: StoryDocument): ContinuityAnalysis {
+  const scenes = getAllScenes(story);
+  const textByScene = new Map(
+    scenes.map(function (scene) {
+      return [
+        scene.id,
+        [scene.summary]
+          .concat(
+            scene.blocks.map(function (block) {
+              return block.text;
+            })
+          )
+          .join(" ")
+          .toLowerCase()
+      ];
+    })
+  );
+  const findings: ReviewIssue[] = [];
+  const usedVariableKeys = new Set<string>();
+  const checkedVariableKeys = new Set<string>();
+  const setupWithoutPayoffKeys = new Set<string>();
+
+  const worldBibleMentions = story.worldBible.map(function (entry) {
+    const normalizedTitle = entry.title.toLowerCase();
+    const titleTokens = normalizedTitle
+      .split(/\s+/)
+      .filter(function (token) {
+        return token.length > 3;
+      });
+
+    const mentionedSceneIds = scenes
+      .filter(function (scene) {
+        const sceneText = textByScene.get(scene.id) ?? "";
+
+        return (
+          sceneText.includes(normalizedTitle) ||
+          titleTokens.some(function (token) {
+            return sceneText.includes(token);
+          })
+        );
+      })
+      .map(function (scene) {
+        return scene.id;
+      });
+
+    return {
+      entry,
+      mentionedSceneIds
+    };
+  });
+
+  const anchoredSceneIds = new Set<string>();
+
+  worldBibleMentions.forEach(function (item) {
+    if (!item.mentionedSceneIds.length) {
+      findings.push({
+        id: `${item.entry.id}-unused`,
+        level: "warning",
+        title: `${item.entry.title}: Kein Szenenanker`,
+        detail: "Der Codex-Eintrag wird aktuell in keiner Szenen-Summary oder keinem Szenentext referenziert."
+      });
+      return;
+    }
+
+    item.mentionedSceneIds.forEach(function (sceneId) {
+      anchoredSceneIds.add(sceneId);
+    });
+  });
+
+  scenes.forEach(function (scene) {
+    if (!anchoredSceneIds.has(scene.id) && scene.wordCount > 0) {
+      findings.push({
+        id: `${scene.id}-no-anchor`,
+        level: "info",
+        title: `${scene.title || scene.id}: Keine Codex-Verankerung`,
+        detail: "In dieser Szene taucht aktuell kein klarer World-Bible-Anker auf.",
+        sceneId: scene.id
+      });
+    }
+
+    scene.choices.forEach(function (choice) {
+      choice.conditions.forEach(function (condition) {
+        usedVariableKeys.add(condition.variableKey);
+        checkedVariableKeys.add(condition.variableKey);
+      });
+
+      choice.effects.forEach(function (effect) {
+        usedVariableKeys.add(effect.variableKey);
+      });
+    });
+  });
+
+  story.variables.forEach(function (variable) {
+    const isUsedInConditions = scenes.some(function (scene) {
+      return scene.choices.some(function (choice) {
+        return choice.conditions.some(function (condition) {
+          return condition.variableKey === variable.key;
+        });
+      });
+    });
+    const isUsedInEffects = scenes.some(function (scene) {
+      return scene.choices.some(function (choice) {
+        return choice.effects.some(function (effect) {
+          return effect.variableKey === variable.key;
+        });
+      });
+    });
+
+    if (!isUsedInConditions && !isUsedInEffects) {
+      findings.push({
+        id: `${variable.id}-orphan`,
+        level: "warning",
+        title: `${variable.label}: Variable ohne Einsatz`,
+        detail: "Die Variable ist definiert, wird aber aktuell weder gesetzt noch abgefragt."
+      });
+      return;
+    }
+
+    if (isUsedInEffects && !isUsedInConditions) {
+      setupWithoutPayoffKeys.add(variable.key);
+      findings.push({
+        id: `${variable.id}-setup-without-payoff`,
+        level: "warning",
+        title: `${variable.label}: Setup ohne Payoff`,
+        detail: "Die Variable wird gesetzt, aber nirgends in Conditions wieder geprüft."
+      });
+    }
+
+    if (!isUsedInEffects && isUsedInConditions && variable.defaultValue === false) {
+      findings.push({
+        id: `${variable.id}-check-without-setup`,
+        level: "info",
+        title: `${variable.label}: Check ohne sichtbaren Setup-Pfad`,
+        detail: "Die Variable wird geprüft, aber im aktuellen Draft nicht aktiv gesetzt. Das kann gewollt sein, sollte aber bewusst sein."
+      });
+    }
+  });
+
+  return {
+    anchoredSceneCount: anchoredSceneIds.size,
+    unanchoredSceneCount: scenes.filter(function (scene) {
+      return scene.wordCount > 0 && !anchoredSceneIds.has(scene.id);
+    }).length,
+    unusedWorldBibleCount: worldBibleMentions.filter(function (item) {
+      return item.mentionedSceneIds.length === 0;
+    }).length,
+    orphanedVariableCount: story.variables.filter(function (variable) {
+      return !usedVariableKeys.has(variable.key);
+    }).length,
+    unresolvedSetupCount: setupWithoutPayoffKeys.size,
+    findings
+  };
+}
+
+function buildSubmissionReviewerMemo(
+  story: StoryDocument,
+  analysis: ReviewAnalysis,
+  continuity: ContinuityAnalysis
+): SubmissionReviewerMemo {
+  const stats = countStoryStats(story);
+  const openingScene = getAllScenes(story)[0] ?? null;
+  const hasClearHook =
+    Boolean(openingScene?.summary.trim()) &&
+    Boolean(openingScene?.blocks.some(function (block) {
+      return block.text.trim();
+    }));
+  const hasBranching = stats.choiceCount > 1;
+  const isAudienceDefined = Boolean(story.meta.genre.trim() && story.meta.audience.trim());
+  const continuityRisk =
+    continuity.unusedWorldBibleCount +
+    continuity.orphanedVariableCount +
+    continuity.unresolvedSetupCount;
+  const isReady = analysis.gatePassed && continuityRisk < 3;
+
+  return {
+    verdict: isReady ? "ready" : "needs_work",
+    headline: isReady
+      ? "Der Draft ist lokal nah an einer einreichbaren Form."
+      : "Der Draft hat eine erkennbare Richtung, braucht aber noch kuratorische Schärfung.",
+    summary: buildReviewerSummary(story, analysis, continuity),
+    hookAssessment: hasClearHook
+      ? "Die Eröffnung liefert bereits genug Konfliktmaterial für einen kuratierten Hook."
+      : "Die Eröffnung ist noch zu unbestimmt; Hook und Stakes sollten im ersten Beat klarer werden.",
+    audienceAssessment: isAudienceDefined
+      ? `${story.meta.genre} für ${story.meta.audience} ist lesbar positioniert.`
+      : "Genre und Zielgruppe sind noch nicht scharf genug beschrieben.",
+    branchAssessment: hasBranching
+      ? "Es gibt bereits sichtbare Verzweigung; jetzt zählt eher Konsequenz als Menge."
+      : "Die Story wirkt noch zu linear für einen starken Branching-Pitch.",
+    riskAssessment:
+      continuityRisk === 0
+        ? "Aktuell fallen keine lokalen Continuity-Risiken auf."
+        : continuityRisk < 3
+          ? "Es gibt einige Continuity-Risiken, aber sie sind noch gut überschaubar."
+          : "Mehrere Continuity-Risiken könnten Review und Leserführung sichtbar schwächen.",
+    marketFitAssessment:
+      stats.wordCount >= 250 && stats.sceneCount >= 3
+        ? "Als Premium-Prototype wirkt der Umfang zumindest plausibel genug für eine interne Sichtung."
+        : "Für einen Premium-Eindruck ist der Draft noch sehr knapp und eher als internes Prototype-Stadium lesbar."
+  };
+}
+
+function buildReviewerSummary(
+  story: StoryDocument,
+  analysis: ReviewAnalysis,
+  continuity: ContinuityAnalysis
+) {
+  const parts = [
+    `${story.title || "Der Draft"} hat ${analysis.blockerCount} Blocker`,
+    `${analysis.warningCount} Warnungen`,
+    `${continuity.findings.length} Continuity-Findings`
+  ];
+
+  if (analysis.gatePassed) {
+    parts.push("und besteht das lokale Submission Gate");
+  } else {
+    parts.push("und besteht das lokale Submission Gate noch nicht");
+  }
+
+  return parts.join(", ") + ".";
 }
 
 function collectReachableScenes(
