@@ -96,18 +96,18 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text.
 
 ## Studio-Oberfläche
 ### Kernansichten
-- `Plan`: Acts, Kapitel, Szenen, Decision Slots
-- `Write`: fokussierter Szenen-Editor
-- `Matrix`: Szenen gegen Flags, Branches, Figuren, Payoffs
-- `Outline`: lineare Übersicht
-- `Playtest`: Story als Leser testen
-- `Review`: narrative Compiler-Sicht
+- `Plan`: Acts, Kapitel, Szenen, Decision Slots `erledigt`
+- `Write`: fokussierter Szenen-Editor `erledigt`
+- `Matrix`: Szenen gegen Flags, Branches, Figuren, Payoffs `erledigt`
+- `Outline`: lineare Übersicht `erledigt`
+- `Playtest`: Story als Leser testen `erledigt`
+- `Review`: narrative Compiler-Sicht `erledigt` als lokales Submission Gate
 
 ### Wichtige Studio-Mechaniken
-- Decision Slots: Das Studio schlägt vor, wo Entscheidungen dramaturgisch Sinn ergeben.
+- Decision Slots: Das Studio schlägt vor, wo Entscheidungen dramaturgisch Sinn ergeben. `erledigt` als lokaler Editor-Flow
 - Branch Budget: Zeigt, wie stark eine Story sich verzweigt und wo Rückführungen nötig sind.
 - Continuity Graph: Prüft Figurenwissen, gesetzte Flags und unbezahlte Setups.
-- Submission Gate: Vor Einreichung werden Qualitäts-, Konsistenz- und Store-Felder geprüft.
+- Submission Gate: Vor Einreichung werden Qualitäts-, Konsistenz- und Store-Felder geprüft. `erledigt` als lokaler Review-Check
 
 ## Autoren-Workflow
 ### Ohne KI
@@ -310,16 +310,17 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 
 ## Entwicklungsphasen
 ### Phase 0: Foundations
-- Next.js + TypeScript aufsetzen
-- lokales Story-Schema definieren
-- bestehendes Studio-Prototype als visuelle Referenz übernehmen
+- Next.js + TypeScript aufsetzen `erledigt`
+- lokales Story-Schema definieren `erledigt`
+- bestehendes Studio-Prototype als visuelle Referenz übernehmen `erledigt`
 
 ### Phase 1: Local Studio Core
-- Plan/Grid/Outline Views
-- Szenen-Editor
-- Decision Slots
-- lokales Speichern
-- Playtest-Engine
+- Plan/Grid/Outline Views `erledigt`
+- Szenen-Editor `erledigt`
+- Decision Slots `erledigt`
+- lokales Speichern `erledigt`
+- Playtest-Engine `erledigt`
+- lokales Review-/Submission-Gate `erledigt`
 
 ### Phase 2: Data Backbone
 - Supabase Projekt
@@ -341,7 +342,7 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Kuratoren-Panel
 
 ### Phase 5: Store + Payments
-- Storefront
+- Storefront `erledigt` als getrennte Root-/Story-Ansicht
 - Stripe Checkout
 - Preisverwaltung
 - Orders
@@ -356,11 +357,13 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 Jetzt nicht mit Login, Stripe oder Cloudflare verbiegen.
 
 Als Nächstes bauen:
-1. echtes Story-Schema in TypeScript
-2. Studio-Views auf dieses Schema umstellen
-3. Playtest-Modus
-4. Decision-Slot-Mechanik
-5. erstes AI-Patch-Interface
+1. echtes Story-Schema in TypeScript `erledigt`
+2. Studio-Views auf dieses Schema umstellen `erledigt`
+3. Playtest-Modus `erledigt`
+4. Decision-Slot-Mechanik `erledigt`
+5. lokales Speichern `erledigt`
+6. lokales Review-/Submission-Gate `erledigt`
+7. erstes AI-Patch-Interface
 
 ## Offene Entscheidungen
 - Nur deutschsprachige Stories oder mehrsprachig vorbereiten?
