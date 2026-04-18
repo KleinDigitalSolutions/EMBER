@@ -335,13 +335,13 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 
 ### Phase 2: Data Backbone
 - Supabase Projekt
-- Tabellen und RLS-Design
-- Story-Versionierung
+- Tabellen und RLS-Design `erledigt` als initiales Supabase-Schema im Repo
+- Story-Versionierung `erledigt` als persistente Versions-Tabelle im initialen Schema
 - World Bible `erledigt` als lokale Codex-Bearbeitung im Studio
 
 ### Phase 3: AI Assist
-- Server-seitige LLM-Orchestrierung
-- Prompt-Module
+- Server-seitige LLM-Orchestrierung `erledigt` als initialer Book-Job-Service und API-Route
+- Prompt-Module `erledigt` als modularer Context-Pack- und Prompt-Stack fuer Draft-Jobs
 - Patch-System `erledigt` als lokales regelbasiertes Patch-Lab
 - Continuity Checks `erledigt` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt` als lokales Reviewer-Memo im Review-Panel
@@ -412,22 +412,27 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
   - Character State Ledger
   - Open Threads
   - Scene Cards und Timeline Beats
-  - vorberechnete Context Packs
-- Szenenbezogener Kontext-Composer mit Relevanzfilter statt Vollkontext
-- JSON-Extractor fuer State-Updates, die nach jedem akzeptierten Schreibschritt in den Kanon zurueckgeschrieben werden
+  - vorberechnete Context Packs `erledigt` lokal und im DB-Schema modelliert
+- Szenenbezogener Kontext-Composer mit Relevanzfilter statt Vollkontext `erledigt`
+- JSON-Extractor fuer State-Updates, die nach jedem akzeptierten Schreibschritt in den Kanon zurueckgeschrieben werden `erledigt` als lokaler Pipeline-Schritt
 
 ### Phase 3: Draft Engine
-- Szenenweises Drafting
-- getrennte Jobs fuer Outline, Draft, Rewrite, Extract und Continuity
-- strukturierte Rueckgaben statt Freitext-Only
-- Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs
-- stabile Prompt-Module plus kleiner dynamischer Szene-Pack
+- Szenenweises Drafting `erledigt`
+- getrennte Jobs fuer Outline, Draft, Rewrite, Extract und Continuity `erledigt` im Datenmodell und Job-Flow
+- strukturierte Rueckgaben statt Freitext-Only `erledigt`
+- Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs `erledigt` als initialer Provider-Flow
+- stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`
 
 ### Phase 4: Continuity + Quality
-- Continuity-Checks fuer Wissensstand, Timeline und Payoffs
+- Continuity-Checks fuer Wissensstand, Timeline und Payoffs `erledigt` lokal, serverseitige Persistierung noch offen
 - Stil-Drift-Erkennung
 - Marktfit-Checks fuer Hook, Packaging und Lesbarkeit
 - Submission-Gate fuer "publishing ready"
+
+## Naechste technische Prioritaeten
+1. Supabase-Projekt real anbinden und lokale Story-/Book-States aus `localStorage` in persistente Server-Flows ueberfuehren.
+2. Hintergrundjobs fuer Draft, Extract und Continuity auf Basis von `ai_runs` und `book_draft_jobs` ausfuehren.
+3. Review-/Submission-Queue auf die neuen DB-Tabellen heben und das Kuratoren-Panel darauf aufsetzen.
 
 ### Phase 5: Amazon Ops
 - KDP-Paketdaten im Projekt
