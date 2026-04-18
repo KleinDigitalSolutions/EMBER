@@ -351,18 +351,25 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Patch-System `erledigt 2026-04-18` als lokales regelbasiertes Patch-Lab
 - Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
+- **Model Selector UI:** Toggle-Interface zur Wahl des Modells (GPT vs. Claude) pro Job. `nächster Schritt`
+- **Studio Brainstormer:** RAG-basierter Chat, der Codex und Historie kennt. `geplant`
+- **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
 
 ### Phase 4: Collaboration + Review `nächste Priorität`
 - Workspaces
 - Rollen
 - Submission Queue
 - Kuratoren-Panel
+- **Codex Progressions:** Zeitlicher Status von Charakteren (Entwicklungs-Snapshots). `geplant`
+- **Narrative Analytics:** Heatmaps für Figuren-Präsenz und Themen-Dichte. `geplant`
 
 ### Phase 5: Store + Payments `geplant`
-- Storefront `erledigt` als getrennte Root-/Story-Ansicht
-- Stripe Checkout
-- Preisverwaltung
-- Orders
+- Storefront `erledigt` als getrennte Root-/Story-Ansicht.
+- Stripe Checkout für Story-Käufe.
+- Preisverwaltung.
+- Orders.
+- **Print-ready Export:** Hochwertiger Export-Flow für Manuskripte in PDF (Print) und EPUB (E-Book) Formatierung, optimiert für Amazon KDP Standards. `geplant`
+- **QR-Marketing Engine:** Tool zur Generierung von Unique-Links und QR-Codes (für Buchrücken/Innenseiten), die Leser direkt aus dem physischen Buch zu interaktiven Bonus-Szenen oder Direktkäufen im EMBER-Store führen. `geplant`
 
 ### Phase 6: Auth + Publish Ops
 - Google Login
@@ -425,9 +432,10 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 
 ### Nächste technische Prioritäten
 1. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
-2. **Draft Job UI:** Die neuen AI-Jobs im Studio-Workspace visualisieren (Status, Akzeptieren, Historie).
+2. **Draft Job UI & Model Selector:** Die neuen AI-Jobs visualisieren und Provider-Wahl ermöglichen.
 3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
-4. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
+4. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
+5. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
 
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
@@ -440,10 +448,13 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Zielbild für die Book Engine
 Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Session.
 
-### Persistente Artefakte
+### Persistente Artefakte (Temporal Ledger)
 - Master Brief
 - Writer Constitution
 - Scene Cards
+- **Temporal Canon Facts:** Snapshots von Fakten mit Szenen-Referenz.
+- **Character Evolution Ledger:** Trackt Zustandsänderungen pro Kapitel.
+- **Active Threads Dashboard:** Visualisierung offener/gelöster Plot-Points.
 - Canon Facts
 - Character State Ledger
 - Open Threads
