@@ -9,36 +9,13 @@ import {
   type WorldBibleEntry
 } from "@/lib/story-schema";
 
-export type CanonLedgerEntry = {
-  entryId: string;
-  title: string;
-  kind: WorldBibleEntry["kind"];
-  summary: string;
-  mentionCount: number;
-  sceneIds: string[];
-  importance: "high" | "medium" | "low";
-};
+export type CanonLedgerEntry = StoryDocument["book"]["memory"]["canonLedger"][number];
+export type CharacterStateEntry = StoryDocument["book"]["memory"]["characterLedger"][number];
+export type TimelineBeat = StoryDocument["book"]["memory"]["sceneCards"][number];
+export type OpenThread = StoryDocument["book"]["memory"]["openThreads"][number];
+type ContextPack = StoryDocument["book"]["memory"]["contextPacks"][number];
 
 type CanonImportance = CanonLedgerEntry["importance"];
-
-export type TimelineBeat = {
-  sceneId: string;
-  sceneTitle: string;
-  actTitle: string;
-  chapterTitle: string;
-  summary: string;
-  excerpt: string;
-  orderLabel: string;
-};
-
-export type OpenThread = {
-  id: string;
-  label: string;
-  detail: string;
-  sourceSceneId: string;
-  sourceSceneTitle: string;
-  status: "active" | "watch";
-};
 
 export type SceneContextPacket = {
   sceneId: string;
@@ -55,9 +32,12 @@ export type SceneContextPacket = {
     sceneTitle: string;
     sceneSummary: string;
     sceneExcerpt: string;
+    contextPackId: string | null;
+    memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
     nextBeat: TimelineBeat | null;
     relevantCodex: CanonLedgerEntry[];
+    relevantCharacterStates: CharacterStateEntry[];
     activeThreads: OpenThread[];
     variables: Array<{
       key: string;
@@ -70,6 +50,7 @@ export type SceneContextPacket = {
     character_state_updates: string[];
     open_threads_created: string[];
     open_threads_resolved: string[];
+    foreshadowing_added: string[];
     continuity_risks: string[];
     style_drift_notes: string[];
   };
@@ -102,88 +83,52 @@ export type AmazonLaunchPackage = {
 };
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
-  const scenes = getAllScenes(story);
+  if (story.book.memory.canonLedger.length) {
+    return story.book.memory.canonLedger;
+  }
 
-  return story.worldBible
-    .map(function (entry) {
-      const sceneIds = scenes
-        .filter(function (scene) {
-          return scoreEntryAgainstScene(entry, scene) > 0;
-        })
-        .map(function (scene) {
-          return scene.id;
-        });
+  return deriveCanonLedger(story);
+}
 
-      const mentionCount = sceneIds.length;
+export function buildCharacterLedger(story: StoryDocument): CharacterStateEntry[] {
+  if (story.book.memory.characterLedger.length) {
+    return story.book.memory.characterLedger;
+  }
 
-      return {
-        entryId: entry.id,
-        title: entry.title,
-        kind: entry.kind,
-        summary: entry.summary,
-        mentionCount,
-        sceneIds,
-        importance: getCanonImportance(mentionCount)
-      };
-    })
-    .sort(function (left, right) {
-      return right.mentionCount - left.mentionCount || left.title.localeCompare(right.title);
-    });
+  return deriveCharacterLedger(
+    story,
+    deriveCanonLedger(story),
+    deriveOpenThreads(story),
+    story.book.memory.lastSyncedAt || new Date().toISOString()
+  );
 }
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
-  return story.acts.flatMap(function (act, actIndex) {
-    return act.chapters.flatMap(function (chapter, chapterIndex) {
-      return chapter.scenes.map(function (scene, sceneIndex) {
-        return {
-          sceneId: scene.id,
-          sceneTitle: scene.title,
-          actTitle: act.title,
-          chapterTitle: chapter.title,
-          summary: scene.summary,
-          excerpt: buildSceneExcerpt(scene),
-          orderLabel: `A${actIndex + 1} · C${chapterIndex + 1} · S${sceneIndex + 1}`
-        };
-      });
-    });
-  });
+  if (story.book.memory.sceneCards.length) {
+    return story.book.memory.sceneCards;
+  }
+
+  return deriveTimelineBeats(story);
 }
 
 export function buildOpenThreads(story: StoryDocument): OpenThread[] {
-  const allScenes = getAllScenes(story);
-  const threads: OpenThread[] = [];
+  if (story.book.memory.openThreads.length) {
+    return story.book.memory.openThreads;
+  }
 
-  allScenes.forEach(function (scene) {
-    scene.choices.forEach(function (choice, choiceIndex) {
-      const targetScene = allScenes.find(function (candidate) {
-        return candidate.id === choice.toSceneId;
-      });
+  return deriveOpenThreads(story);
+}
 
-      threads.push({
-        id: `${scene.id}_choice_${choiceIndex + 1}`,
-        label: choice.label || `Choice ${choiceIndex + 1}`,
-        detail: targetScene
-          ? `Fuehrt zu ${targetScene.title} und braucht spaeter eine klare Konsequenz.`
-          : "Fuehrt aktuell auf kein bekanntes Ziel und ist damit ein offener Strukturpunkt.",
-        sourceSceneId: scene.id,
-        sourceSceneTitle: scene.title,
-        status: targetScene && targetScene.wordCount > 0 ? "watch" : "active"
-      });
-    });
+export function syncStoryBookArtifacts(story: StoryDocument): StoryDocument {
+  const memory = buildBookMemoryBackbone(story);
 
-    if (looksLikeOpenQuestion(scene.summary)) {
-      threads.push({
-        id: `${scene.id}_summary_thread`,
-        label: createThreadLabel(scene.summary, scene.title),
-        detail: "Die Szenen-Zusammenfassung signalisiert einen offenen Konflikt oder eine unbezahlte Frage.",
-        sourceSceneId: scene.id,
-        sourceSceneTitle: scene.title,
-        status: "active"
-      });
+  return {
+    ...story,
+    book: {
+      ...story.book,
+      memory
     }
-  });
-
-  return dedupeThreads(threads);
+  };
 }
 
 export function buildSceneContextPacket(
@@ -196,15 +141,42 @@ export function buildSceneContextPacket(
     return null;
   }
 
-  const timeline = buildTimelineBeats(story);
+  const syncedStory = story.book.memory.lastSyncedAt ? story : syncStoryBookArtifacts(story);
+  const timeline = buildTimelineBeats(syncedStory);
   const sceneIndex = timeline.findIndex(function (beat) {
     return beat.sceneId === sceneId;
   });
-  const currentBeat = timeline[sceneIndex];
-  const canonLedger = buildCanonLedger(story);
-  const activeThreads = buildOpenThreads(story).filter(function (thread) {
-    return thread.sourceSceneId === sceneId || thread.status === "active";
-  });
+  const canonLedger = buildCanonLedger(syncedStory);
+  const characterLedger = buildCharacterLedger(syncedStory);
+  const memory = syncedStory.book.memory;
+  const contextPack =
+    memory.contextPacks.find(function (pack) {
+      return pack.sceneId === sceneId;
+    }) ?? null;
+  const activeThreads = resolveThreadsForPacket(memory, sceneId, contextPack);
+  const relevantCodex = resolveCanonForPacket(syncedStory, sceneId, contextPack, canonLedger).slice(0, 4);
+  const relevantCharacterStates = resolveCharacterStatesForPacket(
+    sceneId,
+    contextPack,
+    characterLedger,
+    relevantCodex
+  ).slice(0, 4);
+  const previousBeats = contextPack
+    ? contextPack.previousSceneIds
+        .map(function (previousSceneId) {
+          return timeline.find(function (beat) {
+            return beat.sceneId === previousSceneId;
+          }) ?? null;
+        })
+        .filter(function (beat): beat is TimelineBeat {
+          return Boolean(beat);
+        })
+    : timeline.slice(Math.max(0, sceneIndex - 2), sceneIndex);
+  const nextBeat = contextPack?.nextSceneId
+    ? timeline.find(function (beat) {
+        return beat.sceneId === contextPack.nextSceneId;
+      }) ?? null
+    : timeline[sceneIndex + 1] ?? null;
 
   return {
     sceneId,
@@ -221,11 +193,14 @@ export function buildSceneContextPacket(
       sceneTitle: sceneContext.scene.title,
       sceneSummary: sceneContext.scene.summary,
       sceneExcerpt: buildSceneExcerpt(sceneContext.scene),
-      previousBeats: timeline.slice(Math.max(0, sceneIndex - 2), sceneIndex),
-      nextBeat: timeline[sceneIndex + 1] ?? null,
-      relevantCodex: rankRelevantCodexForScene(story, sceneId, canonLedger).slice(0, 4),
+      contextPackId: contextPack?.id ?? null,
+      memorySyncedAt: memory.lastSyncedAt,
+      previousBeats,
+      nextBeat,
+      relevantCodex,
+      relevantCharacterStates,
       activeThreads: activeThreads.slice(0, 4),
-      variables: story.variables.map(function (variable) {
+      variables: syncedStory.variables.map(function (variable) {
         return {
           key: variable.key,
           label: variable.label,
@@ -238,6 +213,7 @@ export function buildSceneContextPacket(
       character_state_updates: [],
       open_threads_created: [],
       open_threads_resolved: [],
+      foreshadowing_added: [],
       continuity_risks: [],
       style_drift_notes: []
     }
@@ -264,36 +240,11 @@ export function createLocalDraftJob(
     return null;
   }
 
-  const outline = buildOutlineSteps(packet);
-  const draftText = buildDraftText(packet, story.book.draftEngine.targetSceneWordsMin);
-  const extractedState = extractDraftState(packet, draftText);
-  const rewriteNotes = buildRewriteNotes(packet, draftText, extractedState);
-  const rewriteText = buildRewriteText(packet, draftText, rewriteNotes);
-  const now = new Date().toISOString();
-
-  const job: BookDraftJob = {
-    id: createLocalId("draft_job"),
-    sceneId,
-    sceneTitle: packet.dynamicContext.sceneTitle,
-    createdAt: now,
-    updatedAt: now,
-    status: "ready",
-    outline,
-    draftText,
-    rewriteText,
-    rewriteNotes,
-    extractedState,
-    contextSnapshot: {
-      chapterTitle: packet.dynamicContext.chapterTitle,
-      sceneSummary: packet.dynamicContext.sceneSummary,
-      relevantCodexTitles: packet.dynamicContext.relevantCodex.map(function (entry) {
-        return entry.title;
-      }),
-      activeThreadLabels: packet.dynamicContext.activeThreads.map(function (thread) {
-        return thread.label;
-      })
-    }
-  };
+  const job = createDraftJobFromPacket(
+    packet,
+    story.book.draftEngine.targetSceneWordsMin,
+    story.book.draftEngine.targetSceneWordsMax
+  );
 
   return {
     story: upsertDraftJob(story, job),
@@ -301,8 +252,388 @@ export function createLocalDraftJob(
   };
 }
 
-export function upsertDraftJob(story: StoryDocument, job: BookDraftJob): StoryDocument {
+export function createDraftJobFromPacket(
+  packet: SceneContextPacket,
+  targetSceneWordsMin: number,
+  _targetSceneWordsMax: number
+) {
+  const outline = buildOutlineSteps(packet);
+  const draftText = buildDraftText(packet, targetSceneWordsMin);
+  const extractedState = extractDraftState(packet, draftText);
+  const rewriteNotes = buildRewriteNotes(packet, draftText, extractedState);
+  const rewriteText = buildRewriteText(packet, draftText, rewriteNotes);
+  const now = new Date().toISOString();
+
   return {
+    id: createLocalId("draft_job"),
+    sceneId: packet.sceneId,
+    sceneTitle: packet.dynamicContext.sceneTitle,
+    createdAt: now,
+    updatedAt: now,
+    status: "ready" as const,
+    outline,
+    draftText,
+    rewriteText,
+    rewriteNotes,
+    extractedState,
+    contextSnapshot: {
+      contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
+      memorySyncedAt: packet.dynamicContext.memorySyncedAt,
+      chapterTitle: packet.dynamicContext.chapterTitle,
+      sceneSummary: packet.dynamicContext.sceneSummary,
+      relevantCodexTitles: packet.dynamicContext.relevantCodex.map(function (entry) {
+        return entry.title;
+      }),
+      relevantCharacterNames: packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+        return entry.characterName;
+      }),
+      activeThreadLabels: packet.dynamicContext.activeThreads.map(function (thread) {
+        return thread.label;
+      })
+    }
+  };
+}
+
+function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["memory"] {
+  const syncedAt = new Date().toISOString();
+  const canonLedger = deriveCanonLedger(story);
+  const openThreads = deriveOpenThreads(story);
+  const characterLedger = deriveCharacterLedger(story, canonLedger, openThreads, syncedAt);
+  const sceneCards = deriveTimelineBeats(story);
+  const contextPacks = deriveContextPacks(
+    story,
+    syncedAt,
+    sceneCards,
+    canonLedger,
+    characterLedger,
+    openThreads
+  );
+  const continuityNotes = story.book.draftEngine.jobs
+    .flatMap(function (job) {
+      return job.extractedState.continuityRisks.map(function (risk) {
+        return `${job.sceneTitle}: ${risk}`;
+      });
+    })
+    .slice(0, 12);
+
+  return {
+    lastSyncedAt: syncedAt,
+    canonLedger,
+    characterLedger,
+    openThreads,
+    sceneCards,
+    contextPacks,
+    continuityNotes
+  };
+}
+
+function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
+  const scenes = getAllScenes(story);
+  const ledger = new Map<string, CanonLedgerEntry>();
+
+  story.worldBible.forEach(function (entry) {
+    const sceneIds = scenes
+      .filter(function (scene) {
+        return scoreEntryAgainstScene(entry, scene) > 0;
+      })
+      .map(function (scene) {
+        return scene.id;
+      });
+    const mentionCount = sceneIds.length;
+
+    ledger.set(normalizeText(entry.title), {
+      entryId: entry.id,
+      title: entry.title,
+      kind: entry.kind,
+      summary: entry.summary,
+      mentionCount,
+      sceneIds,
+      importance: getCanonImportance(mentionCount),
+      status: mentionCount ? "active" : "watch"
+    });
+  });
+
+  story.book.draftEngine.jobs.forEach(function (job) {
+    job.extractedState.newCanonFacts.forEach(function (fact, index) {
+      const parsed = parseLedgerFact(fact, `scene_fact_${job.id}_${index + 1}`, "scene_fact");
+      mergeCanonFact(ledger, {
+        ...parsed,
+        sceneIds: [job.sceneId],
+        mentionCount: 1,
+        importance: "medium",
+        status: job.status === "accepted" ? "active" : "watch"
+      });
+    });
+
+    job.extractedState.foreshadowingAdded.forEach(function (fact, index) {
+      const parsed = parseLedgerFact(
+        fact,
+        `foreshadow_${job.id}_${index + 1}`,
+        "foreshadowing"
+      );
+      mergeCanonFact(ledger, {
+        ...parsed,
+        sceneIds: [job.sceneId],
+        mentionCount: 1,
+        importance: "medium",
+        status: "watch"
+      });
+    });
+  });
+
+  return Array.from(ledger.values()).sort(function (left, right) {
+    return right.mentionCount - left.mentionCount || left.title.localeCompare(right.title);
+  });
+}
+
+function deriveCharacterLedger(
+  story: StoryDocument,
+  canonLedger: CanonLedgerEntry[],
+  openThreads: OpenThread[],
+  syncedAt: string
+): CharacterStateEntry[] {
+  return canonLedger
+    .filter(function (entry) {
+      return entry.kind === "character";
+    })
+    .map(function (entry) {
+      const latestJob = story.book.draftEngine.jobs
+        .filter(function (job) {
+          return job.extractedState.characterStateUpdates.some(function (update) {
+            return normalizeText(update).includes(normalizeText(entry.title));
+          });
+        })
+        .sort(function (left, right) {
+          return right.updatedAt.localeCompare(left.updatedAt);
+        })[0];
+      const latestUpdate = latestJob?.extractedState.characterStateUpdates.find(function (update) {
+        return normalizeText(update).includes(normalizeText(entry.title));
+      });
+
+      return {
+        id: `character_state_${entry.entryId}`,
+        characterEntryId: entry.entryId,
+        characterName: entry.title,
+        currentState: latestUpdate || entry.summary || "Kein expliziter Status gespeichert.",
+        innerShift: latestUpdate
+          ? `Letzte beobachtete Verschiebung: ${latestUpdate}`
+          : "Noch keine extrahierte innere Verschiebung.",
+        agenda:
+          openThreads.find(function (thread) {
+            return normalizeText(thread.label).includes(normalizeText(entry.title));
+          })?.label || "Noch keine explizite Agenda abgeleitet.",
+        updatedFromSceneId: latestJob?.sceneId || entry.sceneIds[0] || "",
+        updatedAt: latestJob?.updatedAt || syncedAt
+      };
+    });
+}
+
+function deriveTimelineBeats(story: StoryDocument): TimelineBeat[] {
+  return story.acts.flatMap(function (act, actIndex) {
+    return act.chapters.flatMap(function (chapter, chapterIndex) {
+      const chapterGoal =
+        chapter.scenes.find(function (scene) {
+          return Boolean(scene.summary.trim());
+        })?.summary || chapter.title;
+
+      return chapter.scenes.map(function (scene, sceneIndex) {
+        return {
+          sceneId: scene.id,
+          sceneTitle: scene.title,
+          actTitle: act.title,
+          chapterTitle: chapter.title,
+          summary: scene.summary,
+          excerpt: buildSceneExcerpt(scene),
+          orderLabel: `A${actIndex + 1} · C${chapterIndex + 1} · S${sceneIndex + 1}`,
+          chapterGoal
+        };
+      });
+    });
+  });
+}
+
+function deriveOpenThreads(story: StoryDocument): OpenThread[] {
+  const allScenes = getAllScenes(story);
+  const threads: OpenThread[] = [];
+
+  allScenes.forEach(function (scene) {
+    scene.choices.forEach(function (choice, choiceIndex) {
+      const targetScene = allScenes.find(function (candidate) {
+        return candidate.id === choice.toSceneId;
+      });
+
+      threads.push({
+        id: `${scene.id}_choice_${choiceIndex + 1}`,
+        label: choice.label || `Choice ${choiceIndex + 1}`,
+        detail: targetScene
+          ? `Fuehrt zu ${targetScene.title} und braucht spaeter eine klare Konsequenz.`
+          : "Fuehrt aktuell auf kein bekanntes Ziel und ist damit ein offener Strukturpunkt.",
+        sourceSceneId: scene.id,
+        sourceSceneTitle: scene.title,
+        status: targetScene && targetScene.wordCount > 0 ? "watch" : "active",
+        priority: targetScene && targetScene.wordCount > 0 ? "medium" : "high",
+        payoffSceneId: targetScene?.id ?? null
+      });
+    });
+
+    if (looksLikeOpenQuestion(scene.summary)) {
+      threads.push({
+        id: `${scene.id}_summary_thread`,
+        label: createThreadLabel(scene.summary, scene.title),
+        detail: "Die Szenen-Zusammenfassung signalisiert einen offenen Konflikt oder eine unbezahlte Frage.",
+        sourceSceneId: scene.id,
+        sourceSceneTitle: scene.title,
+        status: "active",
+        priority: "high",
+        payoffSceneId: null
+      });
+    }
+  });
+
+  story.book.draftEngine.jobs.forEach(function (job) {
+    job.extractedState.openThreadsCreated.forEach(function (label, index) {
+      threads.push({
+        id: `job_thread_${job.id}_${index + 1}`,
+        label,
+        detail: `Vom Extractor nach ${job.sceneTitle} als neuer offener Faden markiert.`,
+        sourceSceneId: job.sceneId,
+        sourceSceneTitle: job.sceneTitle,
+        status: job.status === "accepted" ? "active" : "watch",
+        priority: "medium",
+        payoffSceneId: null
+      });
+    });
+  });
+
+  const dedupedThreads = dedupeThreads(threads);
+
+  story.book.draftEngine.jobs.forEach(function (job) {
+    job.extractedState.openThreadsResolved.forEach(function (resolvedLabel) {
+      dedupedThreads.forEach(function (thread) {
+        if (normalizeText(thread.label) === normalizeText(resolvedLabel)) {
+          thread.status = "resolved";
+        }
+      });
+    });
+  });
+
+  return dedupedThreads;
+}
+
+function deriveContextPacks(
+  story: StoryDocument,
+  syncedAt: string,
+  sceneCards: TimelineBeat[],
+  canonLedger: CanonLedgerEntry[],
+  characterLedger: CharacterStateEntry[],
+  openThreads: OpenThread[]
+): ContextPack[] {
+  return sceneCards.map(function (sceneCard, index) {
+    const previousSceneIds = sceneCards
+      .slice(Math.max(0, index - 2), index)
+      .map(function (beat) {
+        return beat.sceneId;
+      });
+    const nextSceneId = sceneCards[index + 1]?.sceneId ?? null;
+    const relevantCanon = rankRelevantCodexForScene(story, sceneCard.sceneId, canonLedger).slice(0, 4);
+    const relevantCharacterStates = rankCharacterStatesForScene(
+      sceneCard.sceneId,
+      characterLedger,
+      relevantCanon
+    ).slice(0, 4);
+    const activeThreadIds = openThreads
+      .filter(function (thread) {
+        return thread.sourceSceneId === sceneCard.sceneId || thread.status === "active";
+      })
+      .slice(0, 4)
+      .map(function (thread) {
+        return thread.id;
+      });
+
+    return {
+      id: `context_pack_${sceneCard.sceneId}`,
+      sceneId: sceneCard.sceneId,
+      preparedAt: syncedAt,
+      stablePrefixSignature: buildStablePrefixSignature(story, sceneCard.chapterGoal),
+      previousSceneIds,
+      nextSceneId,
+      relevantCanonEntryIds: relevantCanon.map(function (entry) {
+        return entry.entryId;
+      }),
+      relevantCharacterStateIds: relevantCharacterStates.map(function (entry) {
+        return entry.id;
+      }),
+      activeThreadIds
+    };
+  });
+}
+
+function resolveCanonForPacket(
+  story: StoryDocument,
+  sceneId: string,
+  contextPack: ContextPack | null,
+  canonLedger: CanonLedgerEntry[]
+) {
+  if (contextPack?.relevantCanonEntryIds.length) {
+    return contextPack.relevantCanonEntryIds
+      .map(function (entryId) {
+        return canonLedger.find(function (entry) {
+          return entry.entryId === entryId;
+        }) ?? null;
+      })
+      .filter(function (entry): entry is CanonLedgerEntry {
+        return Boolean(entry);
+      });
+  }
+
+  return rankRelevantCodexForScene(story, sceneId, canonLedger);
+}
+
+function resolveCharacterStatesForPacket(
+  sceneId: string,
+  contextPack: ContextPack | null,
+  characterLedger: CharacterStateEntry[],
+  relevantCodex: CanonLedgerEntry[]
+) {
+  if (contextPack?.relevantCharacterStateIds.length) {
+    return contextPack.relevantCharacterStateIds
+      .map(function (stateId) {
+        return characterLedger.find(function (entry) {
+          return entry.id === stateId;
+        }) ?? null;
+      })
+      .filter(function (entry): entry is CharacterStateEntry {
+        return Boolean(entry);
+      });
+  }
+
+  return rankCharacterStatesForScene(sceneId, characterLedger, relevantCodex);
+}
+
+function resolveThreadsForPacket(
+  memory: StoryDocument["book"]["memory"],
+  sceneId: string,
+  contextPack: ContextPack | null
+) {
+  if (contextPack?.activeThreadIds.length) {
+    return contextPack.activeThreadIds
+      .map(function (threadId) {
+        return memory.openThreads.find(function (thread) {
+          return thread.id === threadId;
+        }) ?? null;
+      })
+      .filter(function (thread): thread is OpenThread {
+        return Boolean(thread);
+      });
+  }
+
+  return memory.openThreads.filter(function (thread) {
+    return thread.sourceSceneId === sceneId || thread.status === "active";
+  });
+}
+
+export function upsertDraftJob(story: StoryDocument, job: BookDraftJob): StoryDocument {
+  return syncStoryBookArtifacts({
     ...story,
     book: {
       ...story.book,
@@ -316,7 +647,7 @@ export function upsertDraftJob(story: StoryDocument, job: BookDraftJob): StoryDo
         )
       }
     }
-  };
+  });
 }
 
 export function acceptDraftJobToScene(
@@ -348,7 +679,7 @@ export function acceptDraftJobToScene(
   });
 
   return {
-    story: {
+    story: syncStoryBookArtifacts({
       ...nextStory,
       book: {
         ...nextStory.book,
@@ -367,7 +698,7 @@ export function acceptDraftJobToScene(
           })
         }
       }
-    },
+    }),
     sceneId: job.sceneId
   };
 }
@@ -476,7 +807,9 @@ function rankRelevantCodexForScene(
   sceneId: string,
   ledger: CanonLedgerEntry[]
 ) {
-  const timeline = buildTimelineBeats(story);
+  const timeline = story.book.memory.sceneCards.length
+    ? story.book.memory.sceneCards
+    : deriveTimelineBeats(story);
   const sceneIndex = timeline.findIndex(function (beat) {
     return beat.sceneId === sceneId;
   });
@@ -520,6 +853,109 @@ function rankRelevantCodexForScene(
     });
 }
 
+function rankCharacterStatesForScene(
+  sceneId: string,
+  characterLedger: CharacterStateEntry[],
+  relevantCodex: CanonLedgerEntry[]
+) {
+  const relevantCharacterIds = new Set(
+    relevantCodex
+      .filter(function (entry) {
+        return entry.kind === "character";
+      })
+      .map(function (entry) {
+        return entry.entryId;
+      })
+  );
+
+  return characterLedger
+    .map(function (entry) {
+      let score = 0;
+
+      if (relevantCharacterIds.has(entry.characterEntryId)) {
+        score += 4;
+      }
+
+      if (entry.updatedFromSceneId === sceneId) {
+        score += 2;
+      }
+
+      return {
+        entry,
+        score
+      };
+    })
+    .sort(function (left, right) {
+      return right.score - left.score || right.entry.characterName.localeCompare(left.entry.characterName);
+    })
+    .filter(function (item) {
+      return item.score > 0;
+    })
+    .map(function (item) {
+      return item.entry;
+    });
+}
+
+function parseLedgerFact(
+  rawValue: string,
+  fallbackId: string,
+  kind: CanonLedgerEntry["kind"]
+) {
+  const parts = rawValue.split(":");
+  const title = clampText(parts[0]?.trim() || rawValue.trim() || fallbackId, 80);
+  const summary = clampText(parts.slice(1).join(":").trim() || rawValue.trim(), 220);
+
+  return {
+    entryId: fallbackId,
+    title,
+    kind,
+    summary
+  };
+}
+
+function mergeCanonFact(
+  ledger: Map<string, CanonLedgerEntry>,
+  nextEntry: CanonLedgerEntry
+) {
+  const key = normalizeText(nextEntry.title);
+  const existing = ledger.get(key);
+
+  if (!existing) {
+    ledger.set(key, nextEntry);
+    return;
+  }
+
+  const mergedSceneIds = dedupeStrings(existing.sceneIds.concat(nextEntry.sceneIds));
+  const mentionCount = Math.max(existing.mentionCount, mergedSceneIds.length, nextEntry.mentionCount);
+
+  ledger.set(key, {
+    ...existing,
+    summary: existing.summary || nextEntry.summary,
+    sceneIds: mergedSceneIds,
+    mentionCount,
+    importance: getCanonImportance(mentionCount),
+    status:
+      existing.status === "active" || nextEntry.status === "active"
+        ? "active"
+        : existing.status === "watch" || nextEntry.status === "watch"
+          ? "watch"
+          : "resolved"
+  });
+}
+
+function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
+  return clampText(
+    [
+      story.id,
+      story.book.masterBrief.premise,
+      story.book.masterBrief.readerPromise,
+      chapterGoal,
+      story.book.writerConstitution.join("|")
+    ].join(" :: "),
+    180
+  );
+}
+
 function buildOutlineSteps(packet: SceneContextPacket) {
   const steps = [
     `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "den unmittelbaren Konflikt"}.`,
@@ -533,6 +969,7 @@ function buildOutlineSteps(packet: SceneContextPacket) {
 
 function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
   const lead = packet.dynamicContext.relevantCodex[0];
+  const characterState = packet.dynamicContext.relevantCharacterStates[0];
   const thread = packet.dynamicContext.activeThreads[0];
   const previousBeat =
     packet.dynamicContext.previousBeats[packet.dynamicContext.previousBeats.length - 1] ?? null;
@@ -545,7 +982,10 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       packet.dynamicContext.sceneSummary || packet.stablePrefix.premise,
       lead
         ? `${lead.title} liegt als relevanter Kanon offen im Raum: ${lead.summary}`
-        : "Die Szene muss den Konflikt aus der Praemisse unmittelbar spueren lassen."
+        : "Die Szene muss den Konflikt aus der Praemisse unmittelbar spueren lassen.",
+      characterState
+        ? `${characterState.characterName} traegt aktuell diesen Druck: ${characterState.currentState}`
+        : "Der Figurenzustand muss aus dem vorhandenen Kanon und der Szene selbst lesbar werden."
     ].join(" "),
     [
       previousBeat
@@ -599,6 +1039,9 @@ function extractDraftState(
       })
       .slice(0, 2),
     openThreadsResolved: [],
+    foreshadowingAdded: packet.dynamicContext.nextBeat
+      ? [`Die Szene bereitet ${packet.dynamicContext.nextBeat.sceneTitle} lesbar vor.`]
+      : [],
     continuityRisks: detectContinuityRisks(packet, draftText),
     styleDriftNotes: detectStyleDrift(packet, draftText)
   };

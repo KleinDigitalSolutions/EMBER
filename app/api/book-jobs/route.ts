@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateBookDraftJob, type BookJobProvider } from "@/lib/server/book-job-service";
+import type { SceneContextPacket } from "@/lib/book-engine";
 import type { StoryDocument } from "@/lib/story-schema";
 
 export const runtime = "nodejs";
@@ -10,13 +11,16 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       story?: StoryDocument;
       sceneId?: string;
+      packet?: SceneContextPacket;
       provider?: BookJobProvider;
+      targetSceneWordsMin?: number;
+      targetSceneWordsMax?: number;
     };
 
-    if (!body.story || !body.sceneId) {
+    if (!body.sceneId || (!body.packet && !body.story)) {
       return NextResponse.json(
         {
-          error: "story and sceneId are required"
+          error: "sceneId and packet or story are required"
         },
         { status: 400 }
       );
@@ -25,7 +29,10 @@ export async function POST(request: Request) {
     const result = await generateBookDraftJob({
       story: body.story,
       sceneId: body.sceneId,
-      provider: body.provider
+      packet: body.packet,
+      provider: body.provider,
+      targetSceneWordsMin: body.targetSceneWordsMin,
+      targetSceneWordsMax: body.targetSceneWordsMax
     });
 
     return NextResponse.json(result);

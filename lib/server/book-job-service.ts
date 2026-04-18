@@ -7,7 +7,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import {
   buildSceneContextPacket,
-  createLocalDraftJob,
+  createDraftJobFromPacket,
   type SceneContextPacket
 } from "@/lib/book-engine";
 import type { BookDraftJob, StoryDocument } from "@/lib/story-schema";
@@ -22,6 +22,7 @@ const draftJobSchema = z.object({
     characterStateUpdates: z.array(z.string()).max(6),
     openThreadsCreated: z.array(z.string()).max(6),
     openThreadsResolved: z.array(z.string()).max(6),
+    foreshadowingAdded: z.array(z.string()).max(6),
     continuityRisks: z.array(z.string()).max(6),
     styleDriftNotes: z.array(z.string()).max(6)
   })
@@ -37,27 +38,39 @@ export type BookJobExecution = {
 };
 
 export async function generateBookDraftJob(params: {
-  story: StoryDocument;
+  story?: StoryDocument;
   sceneId: string;
+  packet?: SceneContextPacket;
   provider?: BookJobProvider;
+  targetSceneWordsMin?: number;
+  targetSceneWordsMax?: number;
 }): Promise<BookJobExecution> {
   const provider = params.provider ?? "auto";
-  const packet = buildSceneContextPacket(params.story, params.sceneId);
+  const packet =
+    params.packet ?? (params.story ? buildSceneContextPacket(params.story, params.sceneId) : null);
+  const targetSceneWordsMin = params.targetSceneWordsMin ?? 1200;
+  const targetSceneWordsMax = params.targetSceneWordsMax ?? 1600;
 
   if (!packet) {
     throw new Error("Scene context could not be built.");
   }
 
   if (provider === "local") {
-    return createLocalExecution(params.story, params.sceneId, "Lokaler Provider explizit gewaehlt.");
+    return createLocalExecution(
+      packet,
+      targetSceneWordsMin,
+      targetSceneWordsMax,
+      "Lokaler Provider explizit gewaehlt."
+    );
   }
 
   const remoteProvider = resolveRemoteProvider(provider);
 
   if (!remoteProvider) {
     return createLocalExecution(
-      params.story,
-      params.sceneId,
+      packet,
+      targetSceneWordsMin,
+      targetSceneWordsMax,
       "Kein OPENAI_API_KEY oder ANTHROPIC_API_KEY gesetzt; lokaler Fallback verwendet."
     );
   }
@@ -71,14 +84,15 @@ export async function generateBookDraftJob(params: {
     return {
       provider: remoteProvider,
       mode: "remote",
-      job: hydrateDraftJob(params.story, params.sceneId, packet, payload)
+      job: hydrateDraftJob(params.sceneId, packet, payload)
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown provider error.";
 
     return createLocalExecution(
-      params.story,
-      params.sceneId,
+      packet,
+      targetSceneWordsMin,
+      targetSceneWordsMax,
       `${remoteProvider} request failed; local fallback used. ${message}`
     );
   }
@@ -113,6 +127,7 @@ async function generateWithOpenAI(packet: SceneContextPacket) {
 
   const response = await client.responses.parse({
     model: process.env.OPENAI_BOOK_MODEL || "gpt-5.4",
+    store: false,
     reasoning: { effort: "medium" },
     input: [
       {
@@ -164,7 +179,6 @@ async function generateWithAnthropic(packet: SceneContextPacket) {
 }
 
 function hydrateDraftJob(
-  story: StoryDocument,
   sceneId: string,
   packet: SceneContextPacket,
   payload: DraftJobPayload
@@ -184,10 +198,15 @@ function hydrateDraftJob(
     rewriteNotes: payload.rewriteNotes,
     extractedState: payload.extractedState,
     contextSnapshot: {
+      contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
+      memorySyncedAt: packet.dynamicContext.memorySyncedAt,
       chapterTitle: packet.dynamicContext.chapterTitle,
       sceneSummary: packet.dynamicContext.sceneSummary,
       relevantCodexTitles: packet.dynamicContext.relevantCodex.map(function (entry) {
         return entry.title;
+      }),
+      relevantCharacterNames: packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+        return entry.characterName;
       }),
       activeThreadLabels: packet.dynamicContext.activeThreads.map(function (thread) {
         return thread.label;
@@ -197,20 +216,15 @@ function hydrateDraftJob(
 }
 
 function createLocalExecution(
-  story: StoryDocument,
-  sceneId: string,
+  packet: SceneContextPacket,
+  targetSceneWordsMin: number,
+  targetSceneWordsMax: number,
   warning: string
 ): BookJobExecution {
-  const result = createLocalDraftJob(story, sceneId);
-
-  if (!result) {
-    throw new Error("Local fallback could not create a draft job.");
-  }
-
   return {
     provider: "local",
     mode: "local_fallback",
-    job: result.job,
+    job: createDraftJobFromPacket(packet, targetSceneWordsMin, targetSceneWordsMax),
     warning
   };
 }
@@ -222,6 +236,7 @@ function buildSystemPrompt(packet: SceneContextPacket) {
     "Do not imitate living authors or copyrighted prose.",
     "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
     "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
+    "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
     `Writer constitution: ${packet.stablePrefix.writerConstitution.join(" | ")}`
   ].join("\n");
 }
@@ -238,6 +253,7 @@ function buildUserPrompt(packet: SceneContextPacket) {
     `Scene: ${packet.dynamicContext.sceneTitle}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
+    `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
@@ -247,6 +263,11 @@ function buildUserPrompt(packet: SceneContextPacket) {
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
         return `${entry.title}: ${entry.summary}`;
+      })
+      .join(" || ")}`,
+    `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
+      .map(function (entry) {
+        return `${entry.characterName}: ${entry.currentState}`;
       })
       .join(" || ")}`,
     `Active threads: ${packet.dynamicContext.activeThreads
@@ -259,7 +280,7 @@ function buildUserPrompt(packet: SceneContextPacket) {
     "- draftText as a scene draft",
     "- rewriteText as the cleaner revised version",
     "- rewriteNotes",
-    "- extractedState with canon facts, character updates, open threads, continuity risks, and style drift notes"
+    "- extractedState with canon facts, character updates, open threads, foreshadowing, continuity risks, and style drift notes"
   ].join("\n");
 }
 

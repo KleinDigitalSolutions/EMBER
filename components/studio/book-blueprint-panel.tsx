@@ -6,6 +6,7 @@ import {
   acceptDraftJobToScene,
   buildAmazonLaunchPackage,
   buildCanonLedger,
+  buildCharacterLedger,
   buildOpenThreads,
   buildSceneContextPacket,
   buildTimelineBeats,
@@ -35,6 +36,9 @@ export function BookBlueprintPanel({
   }, [story]);
   const canonLedger = useMemo(function () {
     return buildCanonLedger(story);
+  }, [story]);
+  const characterLedger = useMemo(function () {
+    return buildCharacterLedger(story);
   }, [story]);
   const timeline = useMemo(function () {
     return buildTimelineBeats(story);
@@ -367,6 +371,7 @@ export function BookBlueprintPanel({
 
           <div className="book-metrics">
             <Metric label="Codex" value={canonLedger.length} />
+            <Metric label="Character States" value={characterLedger.length} />
             <Metric
               label="Aktive Threads"
               value={
@@ -377,8 +382,8 @@ export function BookBlueprintPanel({
             />
             <Metric label="Timeline Beats" value={timeline.length} />
             <Metric
-              label="Relevant fuer Szene"
-              value={contextPacket?.dynamicContext.relevantCodex.length ?? 0}
+              label="Context Packs"
+              value={story.book.memory.contextPacks.length}
             />
           </div>
 
@@ -405,6 +410,29 @@ export function BookBlueprintPanel({
             </div>
 
             <div className="book-context-stack">
+              <strong>Character Ledger</strong>
+              <div className="book-thread-list">
+                {characterLedger.length ? (
+                  characterLedger.map(function (entry) {
+                    return (
+                      <article key={entry.id} className="book-thread-card">
+                        <div className="book-thread-card__head">
+                          <strong>{entry.characterName}</strong>
+                          <span>{entry.updatedFromSceneId || "global"}</span>
+                        </div>
+                        <p>{entry.currentState}</p>
+                        <span className="book-thread-card__meta">{entry.innerShift}</span>
+                      </article>
+                    );
+                  })
+                ) : (
+                  <article className="book-thread-card book-thread-card--empty">
+                    <strong>Keine Character States synchronisiert</strong>
+                    <p>Der Memory-Backbone hat aktuell noch keine extrahierten Figurenzustaende.</p>
+                  </article>
+                )}
+              </div>
+
               <strong>Open Threads</strong>
               <div className="book-thread-list">
                 {openThreads.length ? (
@@ -433,6 +461,25 @@ export function BookBlueprintPanel({
                 )}
               </div>
             </div>
+
+            <div className="book-context-stack">
+              <strong>Persistenz</strong>
+              <div className="book-mini-list">
+                <article className="book-mini-card">
+                  <strong>Letzte Synchronisation</strong>
+                  <p>{formatTimestamp(story.book.memory.lastSyncedAt)}</p>
+                </article>
+                <article className="book-mini-card">
+                  <strong>Vorbereitete Packs</strong>
+                  <p>{story.book.memory.contextPacks.length}</p>
+                </article>
+                <article className="book-mini-card">
+                  <strong>Continuity Notes</strong>
+                  <p>{story.book.memory.continuityNotes.length}</p>
+                </article>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -455,7 +502,8 @@ export function BookBlueprintPanel({
                   </div>
                   <p>{contextPacket.dynamicContext.sceneSummary || "Keine Summary hinterlegt."}</p>
                   <span className="book-thread-card__meta">
-                    {contextPacket.dynamicContext.actTitle}
+                    {contextPacket.dynamicContext.actTitle} · Pack{" "}
+                    {contextPacket.dynamicContext.contextPackId || "ohne ID"}
                   </span>
                 </div>
 
@@ -505,6 +553,24 @@ export function BookBlueprintPanel({
                       </article>
                     );
                   })}
+                </div>
+
+                <strong>Relevante Character States</strong>
+                <div className="book-mini-list">
+                  {contextPacket.dynamicContext.relevantCharacterStates.length ? (
+                    contextPacket.dynamicContext.relevantCharacterStates.map(function (entry) {
+                      return (
+                        <article key={entry.id} className="book-mini-card">
+                          <strong>{entry.characterName}</strong>
+                          <p>{entry.currentState}</p>
+                        </article>
+                      );
+                    })
+                  ) : (
+                    <article className="book-mini-card">
+                      <strong>Keine Character States im Pack</strong>
+                    </article>
+                  )}
                 </div>
 
                 <strong>Aktive Threads fuer den Job</strong>
@@ -747,9 +813,9 @@ export function BookBlueprintPanel({
               <button
                 className="flat-button"
                 type="button"
-                disabled={!selectedSceneId || isGeneratingJob}
+                disabled={!selectedSceneId || !contextPacket || isGeneratingJob}
                 onClick={async function () {
-                  if (!selectedSceneId) {
+                  if (!selectedSceneId || !contextPacket) {
                     return;
                   }
 
@@ -763,9 +829,11 @@ export function BookBlueprintPanel({
                         "content-type": "application/json"
                       },
                       body: JSON.stringify({
-                        story,
                         sceneId: selectedSceneId,
-                        provider: jobProvider
+                        packet: contextPacket,
+                        provider: jobProvider,
+                        targetSceneWordsMin: story.book.draftEngine.targetSceneWordsMin,
+                        targetSceneWordsMax: story.book.draftEngine.targetSceneWordsMax
                       })
                     });
                     const payload = await response.json();
@@ -1126,6 +1194,7 @@ function DraftJobCard({
         <div className="book-card__meta">
           <span>{job.status}</span>
           <span>{job.contextSnapshot.relevantCodexTitles.length} Codex</span>
+          <span>{job.contextSnapshot.relevantCharacterNames?.length ?? 0} Character States</span>
         </div>
       </div>
 
@@ -1150,6 +1219,7 @@ function DraftJobCard({
                 newCanonFacts: job.extractedState.newCanonFacts,
                 characterStateUpdates: job.extractedState.characterStateUpdates,
                 openThreadsCreated: job.extractedState.openThreadsCreated,
+                foreshadowingAdded: job.extractedState.foreshadowingAdded,
                 continuityRisks: job.extractedState.continuityRisks
               },
               null,
@@ -1296,7 +1366,11 @@ function formatPhaseLabel(phase: StoryDocument["book"]["activePhase"]) {
   return "Phase 1 · Foundation";
 }
 
-function formatTimestamp(value: string) {
+function formatTimestamp(value: string | null) {
+  if (!value) {
+    return "noch nicht synchronisiert";
+  }
+
   return new Intl.DateTimeFormat("de-DE", {
     day: "2-digit",
     month: "2-digit",

@@ -7,6 +7,7 @@ import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
+import { syncStoryBookArtifacts } from "@/lib/book-engine";
 import { loadStudioDraft, saveStudioDraft } from "@/lib/studio-storage";
 import {
   appendActToStory,
@@ -32,7 +33,9 @@ const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "playtest", "chat", "review
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
 export function StudioWorkspace({ story }: { story: StoryDocument }) {
-  const [draftStory, setDraftStory] = useState(story);
+  const [draftStory, setDraftStory] = useState(function () {
+    return syncStoryBookArtifacts(story);
+  });
   const [authorMode, setAuthorMode] = useState<AuthorMode>("plan");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
@@ -85,7 +88,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       return;
     }
 
-    setDraftStory(normalizeImportedStory(snapshot.draftStory, story));
+    setDraftStory(syncStoryBookArtifacts(normalizeImportedStory(snapshot.draftStory, story)));
     setSelectedSceneId(snapshot.selectedSceneId);
 
     if (isAuthorMode(snapshot.authorMode)) {
@@ -224,24 +227,30 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
   const selectedScene = selectedSceneContext?.scene ?? null;
 
+  function commitStoryUpdate(updater: (story: StoryDocument) => StoryDocument) {
+    setDraftStory(function (currentStory) {
+      return syncStoryBookArtifacts(updater(currentStory));
+    });
+  }
+
   function updateSelectedScene(updater: (scene: StoryScene) => StoryScene) {
     if (!selectedSceneId) {
       return;
     }
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return updateSceneInStory(currentStory, selectedSceneId, updater);
     });
   }
 
   function updateDraftStory(updater: (story: StoryDocument) => StoryDocument) {
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return updater(currentStory);
     });
   }
 
   function updateStoryStatus(status: StoryStatus) {
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return {
         ...currentStory,
         status
@@ -275,7 +284,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       summary: ""
     };
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return {
         ...currentStory,
         worldBible: currentStory.worldBible.concat(nextEntry)
@@ -291,7 +300,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       return;
     }
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return {
         ...currentStory,
         worldBible: currentStory.worldBible.map(function (entry) {
@@ -306,7 +315,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       return;
     }
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       return {
         ...currentStory,
         worldBible: currentStory.worldBible.filter(function (entry) {
@@ -319,7 +328,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   function handleAddAct() {
     let nextSceneId = "";
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       const result = appendActToStory(currentStory);
       nextSceneId = result.sceneId;
       return result.story;
@@ -336,7 +345,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   function handleAddChapter(actId: string) {
     let nextSceneId = "";
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       const result = appendChapterToAct(currentStory, actId);
       nextSceneId = result.sceneId;
       return result.story;
@@ -353,7 +362,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   function handleAddScene(chapterId: string) {
     let nextSceneId = "";
 
-    setDraftStory(function (currentStory) {
+    commitStoryUpdate(function (currentStory) {
       const result = appendSceneToChapter(currentStory, chapterId);
       nextSceneId = result.sceneId;
       return result.story;
@@ -372,7 +381,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       const nextActs = buildActsFromOutline(outlineDraft);
       const nextSelectedSceneId = nextActs[0]?.chapters[0]?.scenes[0]?.id ?? "";
 
-      setDraftStory(function (currentStory) {
+      commitStoryUpdate(function (currentStory) {
         return {
           ...currentStory,
           acts: nextActs
@@ -409,7 +418,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       const nextStory = normalizeImportedStory(parsed, story);
       const nextSelectedSceneId = nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "";
 
-      setDraftStory(nextStory);
+      setDraftStory(syncStoryBookArtifacts(nextStory));
       setImportError(null);
       setShowOutlineComposer(false);
       setSearch("");
@@ -1399,6 +1408,7 @@ function normalizeBookBlueprint(
       candidate.writerConstitution.length
         ? candidate.writerConstitution
         : fallback.writerConstitution,
+    memory: normalizeBookMemoryBackbone(candidate.memory, fallback.memory),
     draftEngine: {
       mode: "local",
       targetSceneWordsMin:
@@ -1492,6 +1502,31 @@ function normalizeBookBlueprint(
             : fallback.amazonOps.launchChecklist.aiDisclosureReady
       }
     }
+  };
+}
+
+function normalizeBookMemoryBackbone(
+  value: unknown,
+  fallback: StoryDocument["book"]["memory"]
+): StoryDocument["book"]["memory"] {
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+
+  const candidate = value as Partial<StoryDocument["book"]["memory"]>;
+
+  return {
+    lastSyncedAt:
+      typeof candidate.lastSyncedAt === "string" ? candidate.lastSyncedAt : fallback.lastSyncedAt,
+    canonLedger: Array.isArray(candidate.canonLedger) ? candidate.canonLedger : fallback.canonLedger,
+    characterLedger:
+      Array.isArray(candidate.characterLedger) ? candidate.characterLedger : fallback.characterLedger,
+    openThreads: Array.isArray(candidate.openThreads) ? candidate.openThreads : fallback.openThreads,
+    sceneCards: Array.isArray(candidate.sceneCards) ? candidate.sceneCards : fallback.sceneCards,
+    contextPacks:
+      Array.isArray(candidate.contextPacks) ? candidate.contextPacks : fallback.contextPacks,
+    continuityNotes:
+      Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes
   };
 }
 

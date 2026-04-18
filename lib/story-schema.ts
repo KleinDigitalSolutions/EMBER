@@ -41,6 +41,7 @@ export type BookBlueprint = {
     coverDirection: string;
   };
   writerConstitution: string[];
+  memory: BookMemoryBackbone;
   draftEngine: BookDraftEngine;
   amazonOps: AmazonOps;
 };
@@ -65,11 +66,80 @@ export type BookDraftJob = {
   rewriteNotes: string[];
   extractedState: DraftExtractionState;
   contextSnapshot: {
+    contextPackId: string;
+    memorySyncedAt: string | null;
     chapterTitle: string;
     sceneSummary: string;
     relevantCodexTitles: string[];
+    relevantCharacterNames: string[];
     activeThreadLabels: string[];
   };
+};
+
+export type BookMemoryBackbone = {
+  lastSyncedAt: string | null;
+  canonLedger: BookCanonFact[];
+  characterLedger: BookCharacterState[];
+  openThreads: BookOpenThread[];
+  sceneCards: BookSceneCard[];
+  contextPacks: BookContextPack[];
+  continuityNotes: string[];
+};
+
+export type BookCanonFact = {
+  entryId: string;
+  title: string;
+  kind: WorldBibleEntry["kind"] | "scene_fact" | "foreshadowing";
+  summary: string;
+  mentionCount: number;
+  sceneIds: string[];
+  importance: "high" | "medium" | "low";
+  status: "active" | "watch" | "resolved";
+};
+
+export type BookCharacterState = {
+  id: string;
+  characterEntryId: string;
+  characterName: string;
+  currentState: string;
+  innerShift: string;
+  agenda: string;
+  updatedFromSceneId: string;
+  updatedAt: string;
+};
+
+export type BookOpenThread = {
+  id: string;
+  label: string;
+  detail: string;
+  sourceSceneId: string;
+  sourceSceneTitle: string;
+  status: "active" | "watch" | "resolved";
+  priority: "high" | "medium" | "low";
+  payoffSceneId: string | null;
+};
+
+export type BookSceneCard = {
+  sceneId: string;
+  sceneTitle: string;
+  actTitle: string;
+  chapterTitle: string;
+  summary: string;
+  excerpt: string;
+  orderLabel: string;
+  chapterGoal: string;
+};
+
+export type BookContextPack = {
+  id: string;
+  sceneId: string;
+  preparedAt: string;
+  stablePrefixSignature: string;
+  previousSceneIds: string[];
+  nextSceneId: string | null;
+  relevantCanonEntryIds: string[];
+  relevantCharacterStateIds: string[];
+  activeThreadIds: string[];
 };
 
 export type DraftExtractionState = {
@@ -77,6 +147,7 @@ export type DraftExtractionState = {
   characterStateUpdates: string[];
   openThreadsCreated: string[];
   openThreadsResolved: string[];
+  foreshadowingAdded: string[];
   continuityRisks: string[];
   styleDriftNotes: string[];
 };
@@ -196,6 +267,18 @@ export function defineStory<T extends StoryDocument>(story: T): T {
   return story;
 }
 
+export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
+  return {
+    lastSyncedAt: null,
+    canonLedger: [],
+    characterLedger: [],
+    openThreads: [],
+    sceneCards: [],
+    contextPacks: [],
+    continuityNotes: []
+  };
+}
+
 export function createDefaultBookBlueprint(title = "Untitled Book"): BookBlueprint {
   return {
     priority: "primary",
@@ -221,6 +304,7 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       "Dialog muss Information tragen oder Spannung verschieben.",
       "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
     ],
+    memory: createDefaultBookMemoryBackbone(),
     draftEngine: {
       mode: "local",
       targetSceneWordsMin: 900,
