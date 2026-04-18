@@ -11,9 +11,94 @@ export type StoryDocument = {
     language: string;
     audience: string;
   };
+  book: BookBlueprint;
   worldBible: WorldBibleEntry[];
   variables: StoryVariable[];
   acts: StoryAct[];
+};
+
+export type BookBlueprint = {
+  priority: "primary" | "secondary";
+  activePhase:
+    | "phase_1_foundation"
+    | "phase_2_memory"
+    | "phase_3_drafting"
+    | "phase_4_continuity"
+    | "phase_5_market";
+  targetFormat: "novella" | "novel" | "series";
+  targetLengthWords: number;
+  masterBrief: {
+    premise: string;
+    readerPromise: string;
+    endingPromise: string;
+    thematicCore: string;
+  };
+  marketBrief: {
+    amazonGoal: string;
+    categoryLane: string;
+    hook: string;
+    seriesPotential: string;
+    coverDirection: string;
+  };
+  writerConstitution: string[];
+  draftEngine: BookDraftEngine;
+  amazonOps: AmazonOps;
+};
+
+export type BookDraftEngine = {
+  mode: "local";
+  targetSceneWordsMin: number;
+  targetSceneWordsMax: number;
+  jobs: BookDraftJob[];
+};
+
+export type BookDraftJob = {
+  id: string;
+  sceneId: string;
+  sceneTitle: string;
+  createdAt: string;
+  updatedAt: string;
+  status: "ready" | "accepted";
+  outline: string[];
+  draftText: string;
+  rewriteText: string;
+  rewriteNotes: string[];
+  extractedState: DraftExtractionState;
+  contextSnapshot: {
+    chapterTitle: string;
+    sceneSummary: string;
+    relevantCodexTitles: string[];
+    activeThreadLabels: string[];
+  };
+};
+
+export type DraftExtractionState = {
+  newCanonFacts: string[];
+  characterStateUpdates: string[];
+  openThreadsCreated: string[];
+  openThreadsResolved: string[];
+  continuityRisks: string[];
+  styleDriftNotes: string[];
+};
+
+export type AmazonOps = {
+  penName: string;
+  subtitle: string;
+  seriesName: string;
+  volumeNumber: string;
+  description: string;
+  keywords: string[];
+  categories: string[];
+  audienceTags: string[];
+  aiDisclosure: "generated" | "assisted" | "human_led";
+  launchChecklist: {
+    manuscriptReady: boolean;
+    coverReady: boolean;
+    blurbReady: boolean;
+    keywordsReady: boolean;
+    categoriesReady: boolean;
+    aiDisclosureReady: boolean;
+  };
 };
 
 export type WorldBibleEntry = {
@@ -109,6 +194,59 @@ export type InsertSceneResult = {
 
 export function defineStory<T extends StoryDocument>(story: T): T {
   return story;
+}
+
+export function createDefaultBookBlueprint(title = "Untitled Book"): BookBlueprint {
+  return {
+    priority: "primary",
+    activePhase: "phase_1_foundation",
+    targetFormat: "novel",
+    targetLengthWords: 70000,
+    masterBrief: {
+      premise: `${title} braucht noch eine klare Marktprämisse.`,
+      readerPromise: "",
+      endingPromise: "",
+      thematicCore: ""
+    },
+    marketBrief: {
+      amazonGoal: "Schnell validierbarer Genretitel mit sauberem Serienpotenzial.",
+      categoryLane: "",
+      hook: "",
+      seriesPotential: "",
+      coverDirection: ""
+    },
+    writerConstitution: [
+      "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
+      "Exposition bleibt knapp und wird nur dramatisch verdient platziert.",
+      "Dialog muss Information tragen oder Spannung verschieben.",
+      "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
+    ],
+    draftEngine: {
+      mode: "local",
+      targetSceneWordsMin: 900,
+      targetSceneWordsMax: 1400,
+      jobs: []
+    },
+    amazonOps: {
+      penName: "",
+      subtitle: "",
+      seriesName: "",
+      volumeNumber: "",
+      description: "",
+      keywords: [],
+      categories: [],
+      audienceTags: [],
+      aiDisclosure: "assisted",
+      launchChecklist: {
+        manuscriptReady: false,
+        coverReady: false,
+        blurbReady: false,
+        keywordsReady: false,
+        categoriesReady: false,
+        aiDisclosureReady: false
+      }
+    }
+  };
 }
 
 export function getAllScenes(story: StoryDocument) {

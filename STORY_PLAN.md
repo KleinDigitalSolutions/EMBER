@@ -133,17 +133,26 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text.
 ## KI-Strategie
 ### Modellpolitik
 Wir planen initial bewusst nur mit Premium-Modellen.
-- OpenAI: `gpt-5.2` als aktuelles Frontier-Modell
-- Anthropic: `claude-opus-4.1` als aktuelles stärkstes Claude-Modell
+- OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs
+- Anthropic: Claude Opus 4 für schwere Strukturarbeit, Claude Sonnet 4 für den täglichen Draft-/Review-Betrieb
 
 Optional später:
-- `gpt-5-mini` oder `Claude Sonnet 4` nur für günstigere Hintergrundjobs
+- kleinere GPT-5-Varianten oder Sonnet/Haiku-Klassen nur für Extraktion, Audits und Hintergrundjobs
+
+### Betriebsprinzip
+- Der Chat ist nie die Quelle der Wahrheit.
+- Persistente Kanon-Artefakte liegen im Story-System beziehungsweise später in der DB.
+- Pro Schreibschritt wird nur ein kleiner relevanter Kontext-Pack geladen.
+- Statische Prompt-Module stehen vorn, variable Szenendaten hinten, damit Caching sauber greift.
+- Provider-State wie Responses/Conversations, `previous_response_id` oder Compaction ist Infrastruktur, nicht das eigentliche Story-Gedaechtnis.
 
 ### Einsatzregeln
 - Keine KI bei jedem Tastendruck
 - Nur explizite Aktionen oder Hintergrund-Checks
 - Große Jobs asynchron in Queue
 - Ergebnisse versioniert und nachvollziehbar speichern
+- Strukturierte Rueckgaben fuer Draft, Extraktion, Continuity und Packaging
+- Keine Volltext-Ladung des gesamten Buchs in jeden Request
 
 ### KI-Rollen
 - Story Architect: Struktur, Akte, Kapitel, Spannungsbogen
@@ -373,34 +382,115 @@ Als Nächstes bauen:
 - Preis pro Story, pro Staffel oder Abo?
 - Wie streng soll menschliche Kuratierung im ersten Release sein?
 
-## Aktuelle externe Fakten, auf denen der Plan basiert
-- OpenAI empfiehlt für neue Projekte die Responses API statt Chat Completions.
-- OpenAI listet aktuell `gpt-5.2` als Frontier-Modell; `gpt-5`, `gpt-5-mini` und `gpt-5-nano` sind ebenfalls verfügbar.
-- OpenAI-Preise laut aktueller Doku: `gpt-5.2` bei $1.75 Input / $14 Output pro 1M Tokens; `gpt-5` bei $1.25 / $10.
-- Anthropic listet aktuell `Claude Opus 4.1` als stärkstes Modell und `Claude Sonnet 4` als effizientere High-Performance-Option.
-- Supabase bietet Postgres, Auth, Storage, RLS, Branching und Edge Functions in einer Plattform.
-- Vercel Storage ist eher Storage- und Blob-orientiert; Postgres dort läuft laut Doku über Marketplace-Integrationen.
-- Cloudflare Quick Tunnels sind laut offizieller Doku für Testing gedacht, mit Limits und ohne SSE.
+## Prioritaets-Track: Amazon Book Engine innerhalb von EMBER
+Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehrt. Ziel ist kein autonomer "Bestseller-Knopf", sondern ein kontrolliertes Buchsystem, das kurzfristig kommerziell nutzbare Titel vorbereiten kann und gleichzeitig Ember technologisch staerker macht.
+
+### Produktziel
+- EMBER soll neben Branching-Stories auch lineare Buchprojekte tragen koennen.
+- Der Buch-Track nutzt dieselbe Ember-Struktur: Story-Dokument, Acts, Kapitel, Szenen, World Bible, Review.
+- Der operative Fokus liegt auf Amazon-tauglicher Produktion mit menschlicher Endkontrolle statt vollautonomer Buchfabrik.
+
+### Technische Leitlinien
+- Das Modell schreibt nie das ganze Buch in einem Chat am Stueck.
+- Kanon, Figurenzustand, offene Faeden und Stilregeln liegen ausserhalb des Chats im Story-System.
+- Jede Szene ist ein eigener Job mit klarer Eingabe und strukturierter Rueckgabe.
+- Stil wird ueber Regeln, Marktmerkmale und Evals gesteuert, nicht ueber Stilkopie realer Autoren.
+- Amazon-/Markt-Optimierung bleibt ein eigenes Briefing-Modul und verunreinigt nicht den Kernkanon.
+
+### Phase 1: Foundation `jetzt`
+- Story-Schema um `book`-Blueprint im bestehenden Ember-Dokument erweitern
+- Plan-Modus als Book-Architect-Panel nutzen
+- Master Brief pflegen: Praemisse, Reader Promise, Ending Promise, thematischer Kern
+- Market Brief pflegen: Amazon Goal, Category Lane, Commercial Hook, Serienpotenzial, Cover-Richtung
+- Writer Constitution als versionierbare Regelbasis anlegen
+- Acts/Kapitel/Szenen aus Ember direkt als Buch-Architektur referenzieren statt ein zweites Outline-System zu bauen
+- Lokales Speichern, Import und Export muessen den Book-Blueprint mittragen
+
+### Phase 2: Memory Backbone
+- Persistente Artefakte fuer:
+  - Canon Facts
+  - Character State Ledger
+  - Open Threads
+  - Scene Cards und Timeline Beats
+  - vorberechnete Context Packs
+- Szenenbezogener Kontext-Composer mit Relevanzfilter statt Vollkontext
+- JSON-Extractor fuer State-Updates, die nach jedem akzeptierten Schreibschritt in den Kanon zurueckgeschrieben werden
+
+### Phase 3: Draft Engine
+- Szenenweises Drafting
+- getrennte Jobs fuer Outline, Draft, Rewrite, Extract und Continuity
+- strukturierte Rueckgaben statt Freitext-Only
+- Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs
+- stabile Prompt-Module plus kleiner dynamischer Szene-Pack
+
+### Phase 4: Continuity + Quality
+- Continuity-Checks fuer Wissensstand, Timeline und Payoffs
+- Stil-Drift-Erkennung
+- Marktfit-Checks fuer Hook, Packaging und Lesbarkeit
+- Submission-Gate fuer "publishing ready"
+
+### Phase 5: Amazon Ops
+- KDP-Paketdaten im Projekt
+- Cover-/Blurb-/Keyword-Briefing
+- AI-Offenlegung und Review-Checkliste
+- Exportfluss fuer Manuskript, Metadaten und Launch-Paket
+
+## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
+- OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
+- Responses liefert Stateful Context, Structured Outputs, bessere Cache-Nutzung und passt damit sauber zu einem serverseitigen Schreibsystem.
+- OpenAI-GPT-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; kleinere GPT-5-Modelle bleiben Kandidaten fuer Extractor- und Audit-Paesse.
+- Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option.
+- Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt.
+- Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
+
+## Zielbild fuer die Book Engine
+Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Session.
+
+### Persistente Artefakte
+- Master Brief
+- Writer Constitution
+- Scene Cards
+- Canon Facts
+- Character State Ledger
+- Open Threads
+- Timeline Beats
+- Draft Jobs inklusive Extract/Continuity-Notizen
+
+### Kleiner Context Pack pro Schreibschritt
+- stabiler Prefix: Brief, Constitution, Stilregeln, Kapitelziel
+- dynamischer Pack: aktuelle Szene, letzte 1 bis 2 Beats, relevante Canon Facts, relevante Character States, aktive Threads
+- optionaler Ausblick: naechster Beat oder Kapitelrichtung
+
+### Pipeline pro Szene
+1. `composeContext(sceneId)`
+2. `draftScene(sceneId)`
+3. `extractSceneState(sceneDraft) -> JSON`
+4. `runContinuityCheck(sceneDraft, extractedState)`
+5. `rewriteScene(sceneDraft, notes)`
+6. `acceptDraft()`
+7. `updatePersistentCanonArtifacts()`
+
+### Harte Architekturregeln
+- Das Modell erinnert nicht das Buch. Die persistenten Story-Artefakte erinnern das Buch.
+- Provider-State darf helfen, aber nie alleinige Quelle der Wahrheit sein.
+- Jeder Schreibschritt schreibt strukturierte Zustandsaenderungen zurueck.
+- Context Packs werden vorbereitet, versioniert und spaeter in der DB gespeichert.
+- Markt-/Amazon-Briefing bleibt getrennt vom Kernkanon, damit Packaging nicht das Erzaehlgedaechtnis verunreinigt.
 
 ## Quellen
-- OpenAI Models: https://platform.openai.com/docs/models
-- OpenAI Pricing: https://platform.openai.com/docs/pricing
-- OpenAI Responses API: https://platform.openai.com/docs/api-reference/responses/create
-- OpenAI Responses vs Chat Completions: https://platform.openai.com/docs/guides/responses-vs-chat-completions
-- OpenAI Reasoning: https://platform.openai.com/docs/guides/reasoning
-- OpenAI Tools: https://platform.openai.com/docs/guides/tools
-- Anthropic Models Overview: https://docs.anthropic.com/en/docs/about-claude/models/overview
-- Anthropic Pricing: https://docs.anthropic.com/en/docs/about-claude/pricing
+- OpenAI Responses Migration: https://developers.openai.com/api/docs/guides/migrate-to-responses
+- OpenAI Prompt Caching: https://developers.openai.com/api/docs/guides/prompt-caching
+- OpenAI Conversation State: https://developers.openai.com/api/docs/guides/conversation-state
+- OpenAI GPT-5 Prompting Guide: https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+- Anthropic Models Overview: https://docs.anthropic.com/en/docs/models-overview
 - Anthropic Prompt Caching: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
+- Anthropic Pricing: https://docs.anthropic.com/en/docs/about-claude/pricing
 - Supabase Auth: https://supabase.com/docs/guides/auth
-- Supabase Google Login: https://supabase.com/docs/guides/auth/social-login/auth-google
 - Supabase Storage: https://supabase.com/docs/guides/storage
 - Supabase Edge Functions: https://supabase.com/docs/guides/functions
 - Supabase Branching: https://supabase.com/docs/guides/deployment/branching
 - Vercel Storage Overview: https://vercel.com/docs/storage
-- Vercel Postgres: https://vercel.com/docs/storage/vercel-postgres
 - Vercel Functions: https://vercel.com/docs/functions
 - Cloudflare Tunnel: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
 - Cloudflare Quick Tunnels: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/
 - Stripe Connect: https://docs.stripe.com/connect
-- Stripe Connect Overview: https://docs.stripe.com/connect/overview

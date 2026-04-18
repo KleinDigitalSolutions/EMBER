@@ -131,6 +131,275 @@ textarea {
   color: #17171a;
 }
 
+.book-panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: 1rem;
+  background: #1a1a1e;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  min-width: 0;
+}
+
+.book-panel__header,
+.book-card,
+.book-architecture-card,
+.book-rule-card {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 0.85rem;
+}
+
+.book-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.book-panel__header h3,
+.book-card__head h4,
+.book-architecture-card__head strong {
+  margin: 0;
+}
+
+.book-panel__header p,
+.book-card__head p,
+.book-architecture-card__head p {
+  margin: 0.35rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.book-panel__pills,
+.book-card__meta,
+.book-metrics,
+.book-scene-chip-list {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.book-panel__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.book-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.book-card__head,
+.book-architecture-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.book-card__label {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  color: var(--text-faint);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.book-metric {
+  min-width: 5.5rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+}
+
+.book-metric strong,
+.book-scene-chip strong {
+  display: block;
+}
+
+.book-metric span,
+.book-scene-chip span,
+.book-card__meta,
+.book-architecture-card__head span {
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
+.book-rule-list,
+.book-architecture-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.book-phase-switch,
+.book-context-grid,
+.book-mini-list,
+.book-ledger-list,
+.book-thread-list,
+.book-job-list,
+.book-checklist-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.book-context-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.book-context-stack {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.book-rule-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.85rem;
+}
+
+.book-rule-card__index {
+  display: inline-flex;
+  width: 1.9rem;
+  height: 1.9rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-soft);
+}
+
+.book-architecture-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+}
+
+.book-ledger-card,
+.book-thread-card,
+.book-mini-card,
+.book-job-card {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.book-ledger-card__head,
+.book-thread-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.book-ledger-card p,
+.book-thread-card p,
+.book-mini-card p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.book-thread-card__meta {
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}
+
+.book-card__actions,
+.book-job-card__footer {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.book-job-card {
+  gap: 1rem;
+}
+
+.book-job-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.book-checklist-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.book-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.book-checklist-item input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.book-thread-card--empty,
+.book-mini-card {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.book-code-block {
+  margin: 0;
+  padding: 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line);
+  background: #141417;
+  color: #d6d6d8;
+  overflow: auto;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.book-scene-chip {
+  min-width: 10rem;
+  padding: 0.7rem 0.8rem;
+  text-align: left;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.book-scene-chip--active {
+  border-color: rgba(241, 241, 242, 0.38);
+  background: rgba(241, 241, 242, 0.08);
+}
+
+.flat-button--active {
+  background: #f1f1f2;
+  color: #17171a;
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 1180px) {
+  .book-context-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .book-checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .studio-shell {
   display: grid;
   grid-template-columns: 2.85rem 18rem minmax(0, 1fr);

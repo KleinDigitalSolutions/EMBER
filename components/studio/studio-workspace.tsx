@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { BookBlueprintPanel } from "@/components/studio/book-blueprint-panel";
 import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
@@ -12,6 +13,7 @@ import {
   appendChapterToAct,
   appendSceneToChapter,
   countStoryStats,
+  createDefaultBookBlueprint,
   findSceneContext,
   updateSceneInStory,
   type StoryAct,
@@ -83,7 +85,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       return;
     }
 
-    setDraftStory(snapshot.draftStory);
+    setDraftStory(normalizeImportedStory(snapshot.draftStory, story));
     setSelectedSceneId(snapshot.selectedSceneId);
 
     if (isAuthorMode(snapshot.authorMode)) {
@@ -229,6 +231,12 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
     setDraftStory(function (currentStory) {
       return updateSceneInStory(currentStory, selectedSceneId, updater);
+    });
+  }
+
+  function updateDraftStory(updater: (story: StoryDocument) => StoryDocument) {
+    setDraftStory(function (currentStory) {
+      return updater(currentStory);
     });
   }
 
@@ -893,7 +901,14 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
               ) : null}
             </div>
 
-            {authorMode === "playtest" ? (
+            {authorMode === "plan" ? (
+              <BookBlueprintPanel
+                story={draftStory}
+                selectedSceneId={selectedSceneId}
+                onSelectScene={setSelectedSceneId}
+                onUpdateStory={updateDraftStory}
+              />
+            ) : authorMode === "playtest" ? (
               <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
             ) : authorMode === "chat" ? (
               <PatchPanel
@@ -1282,7 +1297,8 @@ function normalizeImportedStory(value: unknown, fallbackStory: StoryDocument): S
   return {
     ...value,
     id: fallbackStory.id,
-    workspaceId: fallbackStory.workspaceId
+    workspaceId: fallbackStory.workspaceId,
+    book: normalizeBookBlueprint(value.book, value.title)
   };
 }
 
@@ -1308,4 +1324,183 @@ function isStoryDocument(value: unknown): value is StoryDocument {
 
 function createLocalId(prefix: string) {
   return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function normalizeBookBlueprint(
+  value: unknown,
+  title: string
+): StoryDocument["book"] {
+  const fallback = createDefaultBookBlueprint(title);
+
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+
+  const candidate = value as Partial<StoryDocument["book"]>;
+
+  return {
+    priority: candidate.priority === "secondary" ? "secondary" : fallback.priority,
+    activePhase: isBookPhase(candidate.activePhase) ? candidate.activePhase : fallback.activePhase,
+    targetFormat:
+      candidate.targetFormat === "novella" ||
+      candidate.targetFormat === "novel" ||
+      candidate.targetFormat === "series"
+        ? candidate.targetFormat
+        : fallback.targetFormat,
+    targetLengthWords:
+      typeof candidate.targetLengthWords === "number"
+        ? candidate.targetLengthWords
+        : fallback.targetLengthWords,
+    masterBrief: {
+      premise:
+        typeof candidate.masterBrief?.premise === "string"
+          ? candidate.masterBrief.premise
+          : fallback.masterBrief.premise,
+      readerPromise:
+        typeof candidate.masterBrief?.readerPromise === "string"
+          ? candidate.masterBrief.readerPromise
+          : fallback.masterBrief.readerPromise,
+      endingPromise:
+        typeof candidate.masterBrief?.endingPromise === "string"
+          ? candidate.masterBrief.endingPromise
+          : fallback.masterBrief.endingPromise,
+      thematicCore:
+        typeof candidate.masterBrief?.thematicCore === "string"
+          ? candidate.masterBrief.thematicCore
+          : fallback.masterBrief.thematicCore
+    },
+    marketBrief: {
+      amazonGoal:
+        typeof candidate.marketBrief?.amazonGoal === "string"
+          ? candidate.marketBrief.amazonGoal
+          : fallback.marketBrief.amazonGoal,
+      categoryLane:
+        typeof candidate.marketBrief?.categoryLane === "string"
+          ? candidate.marketBrief.categoryLane
+          : fallback.marketBrief.categoryLane,
+      hook:
+        typeof candidate.marketBrief?.hook === "string"
+          ? candidate.marketBrief.hook
+          : fallback.marketBrief.hook,
+      seriesPotential:
+        typeof candidate.marketBrief?.seriesPotential === "string"
+          ? candidate.marketBrief.seriesPotential
+          : fallback.marketBrief.seriesPotential,
+      coverDirection:
+        typeof candidate.marketBrief?.coverDirection === "string"
+          ? candidate.marketBrief.coverDirection
+          : fallback.marketBrief.coverDirection
+    },
+    writerConstitution:
+      Array.isArray(candidate.writerConstitution) &&
+      candidate.writerConstitution.every(function (rule) {
+        return typeof rule === "string";
+      }) &&
+      candidate.writerConstitution.length
+        ? candidate.writerConstitution
+        : fallback.writerConstitution,
+    draftEngine: {
+      mode: "local",
+      targetSceneWordsMin:
+        typeof candidate.draftEngine?.targetSceneWordsMin === "number"
+          ? candidate.draftEngine.targetSceneWordsMin
+          : fallback.draftEngine.targetSceneWordsMin,
+      targetSceneWordsMax:
+        typeof candidate.draftEngine?.targetSceneWordsMax === "number"
+          ? candidate.draftEngine.targetSceneWordsMax
+          : fallback.draftEngine.targetSceneWordsMax,
+      jobs:
+        Array.isArray(candidate.draftEngine?.jobs) &&
+        candidate.draftEngine.jobs.every(function (job) {
+          return Boolean(job) && typeof job === "object";
+        })
+          ? candidate.draftEngine.jobs
+          : fallback.draftEngine.jobs
+    },
+    amazonOps: {
+      penName:
+        typeof candidate.amazonOps?.penName === "string"
+          ? candidate.amazonOps.penName
+          : fallback.amazonOps.penName,
+      subtitle:
+        typeof candidate.amazonOps?.subtitle === "string"
+          ? candidate.amazonOps.subtitle
+          : fallback.amazonOps.subtitle,
+      seriesName:
+        typeof candidate.amazonOps?.seriesName === "string"
+          ? candidate.amazonOps.seriesName
+          : fallback.amazonOps.seriesName,
+      volumeNumber:
+        typeof candidate.amazonOps?.volumeNumber === "string"
+          ? candidate.amazonOps.volumeNumber
+          : fallback.amazonOps.volumeNumber,
+      description:
+        typeof candidate.amazonOps?.description === "string"
+          ? candidate.amazonOps.description
+          : fallback.amazonOps.description,
+      keywords:
+        Array.isArray(candidate.amazonOps?.keywords) &&
+        candidate.amazonOps.keywords.every(function (item) {
+          return typeof item === "string";
+        })
+          ? candidate.amazonOps.keywords
+          : fallback.amazonOps.keywords,
+      categories:
+        Array.isArray(candidate.amazonOps?.categories) &&
+        candidate.amazonOps.categories.every(function (item) {
+          return typeof item === "string";
+        })
+          ? candidate.amazonOps.categories
+          : fallback.amazonOps.categories,
+      audienceTags:
+        Array.isArray(candidate.amazonOps?.audienceTags) &&
+        candidate.amazonOps.audienceTags.every(function (item) {
+          return typeof item === "string";
+        })
+          ? candidate.amazonOps.audienceTags
+          : fallback.amazonOps.audienceTags,
+      aiDisclosure:
+        candidate.amazonOps?.aiDisclosure === "generated" ||
+        candidate.amazonOps?.aiDisclosure === "assisted" ||
+        candidate.amazonOps?.aiDisclosure === "human_led"
+          ? candidate.amazonOps.aiDisclosure
+          : fallback.amazonOps.aiDisclosure,
+      launchChecklist: {
+        manuscriptReady:
+          typeof candidate.amazonOps?.launchChecklist?.manuscriptReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.manuscriptReady
+            : fallback.amazonOps.launchChecklist.manuscriptReady,
+        coverReady:
+          typeof candidate.amazonOps?.launchChecklist?.coverReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.coverReady
+            : fallback.amazonOps.launchChecklist.coverReady,
+        blurbReady:
+          typeof candidate.amazonOps?.launchChecklist?.blurbReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.blurbReady
+            : fallback.amazonOps.launchChecklist.blurbReady,
+        keywordsReady:
+          typeof candidate.amazonOps?.launchChecklist?.keywordsReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.keywordsReady
+            : fallback.amazonOps.launchChecklist.keywordsReady,
+        categoriesReady:
+          typeof candidate.amazonOps?.launchChecklist?.categoriesReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.categoriesReady
+            : fallback.amazonOps.launchChecklist.categoriesReady,
+        aiDisclosureReady:
+          typeof candidate.amazonOps?.launchChecklist?.aiDisclosureReady === "boolean"
+            ? candidate.amazonOps.launchChecklist.aiDisclosureReady
+            : fallback.amazonOps.launchChecklist.aiDisclosureReady
+      }
+    }
+  };
+}
+
+function isBookPhase(value: unknown): value is StoryDocument["book"]["activePhase"] {
+  return (
+    value === "phase_1_foundation" ||
+    value === "phase_2_memory" ||
+    value === "phase_3_drafting" ||
+    value === "phase_4_continuity" ||
+    value === "phase_5_market"
+  );
 }

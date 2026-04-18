@@ -1,4 +1,4 @@
-import { defineStory } from "@/lib/story-schema";
+import { createDefaultBookBlueprint, defineStory } from "@/lib/story-schema";
 
 export const studioStory = defineStory({
   id: "story_ring_im_erdreich",
@@ -10,6 +10,51 @@ export const studioStory = defineStory({
     genre: "Psychothriller",
     language: "de",
     audience: "Adult"
+  },
+  book: {
+    ...createDefaultBookBlueprint("New Novel"),
+    activePhase: "phase_5_market",
+    masterBrief: {
+      premise:
+        "Ein Ermittler zieht einen scheinbar lokalen Vermisstenfall auf und oeffnet dabei eine soziale Druckkammer, die ihn selbst verschiebt.",
+      readerPromise:
+        "Ein psychologischer Ermittlungsroman mit klarer Spannung, eskalierendem Dorfdruck und lesbarem kommerziellem Zug.",
+      endingPromise:
+        "Der Fall loest sich nicht nur im Aussen, sondern zwingt Jonas in einen Rollenwechsel mit Kosten.",
+      thematicCore:
+        "Kontrolle kippt in Mitschuld, sobald Ordnung wichtiger wird als Wahrheit."
+    },
+    marketBrief: {
+      amazonGoal:
+        "Ein sauber paketierbarer Genretitel, der als erster Band oder Standalone verkauft werden kann.",
+      categoryLane: "Psychothriller / Dorfgeheimnis / Ermittler mit moralischer Reibung",
+      hook:
+        "Ein Ermittler sucht eine verschwundene Frau und merkt zu spaet, dass das Dorf nicht luegt, sondern gemeinsam redigiert.",
+      seriesPotential:
+        "Jonas Falk kann weitere Faelle mit strukturgetriebenem Blick tragen, sofern jeder Fall einen anderen sozialen Mechanismus oeffnet.",
+      coverDirection:
+        "Nebel, Dorfkante, reduzierte Symbolik statt generischer Crime-Collage."
+    },
+    amazonOps: {
+      penName: "Oezguer Azap",
+      subtitle: "Ein Dorf, ein Notizbuch, ein Ermittler ohne sicheren Boden",
+      seriesName: "Jonas-Falk-Faelle",
+      volumeNumber: "1",
+      description:
+        "Als eine Frau verschwindet, glaubt Ermittler Jonas Falk an einen lokalen Fall. Doch je tiefer er in das Dorf eindringt, desto deutlicher wird: Hier wird nicht gelogen, hier wird kollektiv redigiert. Ein psychologischer Spannungsroman ueber Kontrolle, Mitschuld und die Kosten von Ordnung.",
+      keywords: ["psychothriller", "dorfgeheimnis", "ermittler", "spannung", "notizbuch"],
+      categories: ["Psychothriller", "Kriminalroman", "Mystery-Thriller"],
+      audienceTags: ["adult", "dark", "german-market"],
+      aiDisclosure: "assisted",
+      launchChecklist: {
+        manuscriptReady: false,
+        coverReady: false,
+        blurbReady: true,
+        keywordsReady: true,
+        categoriesReady: true,
+        aiDisclosureReady: true
+      }
+    }
   },
   worldBible: [
     {
