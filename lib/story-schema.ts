@@ -1,4 +1,8 @@
+import { createUuid } from "@/lib/id";
+
 export type StoryStatus = "draft" | "playtest" | "submitted";
+export type BookJobProvider = "openai" | "anthropic" | "local";
+export type BookJobMode = "remote" | "local_fallback";
 
 export type StoryDocument = {
   id: string;
@@ -59,7 +63,11 @@ export type BookDraftJob = {
   sceneTitle: string;
   createdAt: string;
   updatedAt: string;
+  provider: BookJobProvider;
+  mode: BookJobMode;
+  modelName: string | null;
   status: "ready" | "accepted";
+  acceptedAt: string | null;
   outline: string[];
   draftText: string;
   rewriteText: string;
@@ -600,6 +608,6 @@ function createEmptyScene(chapterId: string, sceneId: string, order: number): St
   };
 }
 
-function createLocalId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+function createLocalId(_prefix: string) {
+  return createUuid();
 }

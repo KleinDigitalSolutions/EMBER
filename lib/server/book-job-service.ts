@@ -11,6 +11,7 @@ import {
   type SceneContextPacket
 } from "@/lib/book-engine";
 import type { BookDraftJob, StoryDocument } from "@/lib/story-schema";
+import { createUuid } from "@/lib/id";
 
 const draftJobSchema = z.object({
   outline: z.array(z.string()).min(3).max(6),
@@ -76,7 +77,7 @@ export async function generateBookDraftJob(params: {
   }
 
   try {
-    const payload =
+    const result =
       remoteProvider === "openai"
         ? await generateWithOpenAI(packet)
         : await generateWithAnthropic(packet);
@@ -84,7 +85,11 @@ export async function generateBookDraftJob(params: {
     return {
       provider: remoteProvider,
       mode: "remote",
-      job: hydrateDraftJob(params.sceneId, packet, payload)
+      job: hydrateDraftJob(params.sceneId, packet, result.payload, {
+        provider: remoteProvider,
+        mode: "remote",
+        modelName: result.modelName
+      })
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown provider error.";
@@ -121,12 +126,13 @@ function resolveRemoteProvider(provider: BookJobProvider) {
 }
 
 async function generateWithOpenAI(packet: SceneContextPacket) {
+  const modelName = process.env.OPENAI_BOOK_MODEL || "gpt-5.4";
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
 
   const response = await client.responses.parse({
-    model: process.env.OPENAI_BOOK_MODEL || "gpt-5.4",
+    model: modelName,
     store: false,
     reasoning: { effort: "medium" },
     input: [
@@ -148,16 +154,20 @@ async function generateWithOpenAI(packet: SceneContextPacket) {
     throw new Error("OpenAI returned no parsed output.");
   }
 
-  return response.output_parsed;
+  return {
+    modelName,
+    payload: response.output_parsed
+  };
 }
 
 async function generateWithAnthropic(packet: SceneContextPacket) {
+  const modelName = process.env.ANTHROPIC_BOOK_MODEL || "claude-sonnet-4-5";
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
 
   const message = await client.messages.parse({
-    model: process.env.ANTHROPIC_BOOK_MODEL || "claude-sonnet-4-5",
+    model: modelName,
     max_tokens: 2200,
     system: buildSystemPrompt(packet),
     messages: [
@@ -175,13 +185,21 @@ async function generateWithAnthropic(packet: SceneContextPacket) {
     throw new Error("Anthropic returned no parsed output.");
   }
 
-  return message.parsed_output;
+  return {
+    modelName,
+    payload: message.parsed_output
+  };
 }
 
 function hydrateDraftJob(
   sceneId: string,
   packet: SceneContextPacket,
-  payload: DraftJobPayload
+  payload: DraftJobPayload,
+  meta: {
+    provider: BookDraftJob["provider"];
+    mode: BookDraftJob["mode"];
+    modelName: string | null;
+  }
 ): BookDraftJob {
   const now = new Date().toISOString();
 
@@ -191,7 +209,11 @@ function hydrateDraftJob(
     sceneTitle: packet.dynamicContext.sceneTitle,
     createdAt: now,
     updatedAt: now,
-    status: "ready",
+    provider: meta.provider,
+    mode: meta.mode,
+    modelName: meta.modelName,
+    status: "ready" as const,
+    acceptedAt: null,
     outline: payload.outline,
     draftText: payload.draftText,
     rewriteText: payload.rewriteText,
@@ -285,5 +307,5 @@ function buildUserPrompt(packet: SceneContextPacket) {
 }
 
 function createLocalId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+  return createUuid();
 }

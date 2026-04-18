@@ -8,7 +8,7 @@ import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
 import { syncStoryBookArtifacts } from "@/lib/book-engine";
-import { loadStudioDraft, saveStudioDraft } from "@/lib/studio-storage";
+import { createUuid, isUuid } from "@/lib/id";
 import {
   appendActToStory,
   appendChapterToAct,
@@ -27,7 +27,7 @@ import {
 
 type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "write" | "playtest" | "chat" | "review";
-type SaveState = "idle" | "saved" | "error";
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "playtest", "chat", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
@@ -50,10 +50,10 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [selectedSceneId, setSelectedSceneId] = useState(
     story.acts[0]?.chapters[0]?.scenes[0]?.id ?? ""
   );
-  const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement | null>(null);
+  const lastPersistedPayloadRef = useRef(JSON.stringify(syncStoryBookArtifacts(story)));
 
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
@@ -80,59 +80,47 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       return entry.id === selectedCodexEntryId;
     }) ?? null;
 
-  useEffect(function () {
-    const snapshot = loadStudioDraft(story.id);
+  useEffect(
+    function () {
+      const nextStory = syncStoryBookArtifacts(story);
 
-    if (!snapshot) {
-      setHasLoadedDraft(true);
-      return;
-    }
-
-    setDraftStory(syncStoryBookArtifacts(normalizeImportedStory(snapshot.draftStory, story)));
-    setSelectedSceneId(snapshot.selectedSceneId);
-
-    if (isAuthorMode(snapshot.authorMode)) {
-      setAuthorMode(snapshot.authorMode);
-    }
-
-    if (isViewMode(snapshot.viewMode)) {
-      setViewMode(snapshot.viewMode);
-    }
-
-    setLastSavedAt(snapshot.savedAt);
-    setSaveState("saved");
-    setHasLoadedDraft(true);
-  }, [story.id]);
+      setDraftStory(nextStory);
+      setSelectedCodexEntryId(nextStory.worldBible[0]?.id ?? "");
+      setSelectedSceneId(nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "");
+      setLastSavedAt(null);
+      setSaveState("idle");
+      lastPersistedPayloadRef.current = JSON.stringify(nextStory);
+    },
+    [story]
+  );
 
   useEffect(
     function () {
-      if (!hasLoadedDraft) {
+      const payload = JSON.stringify(draftStory);
+
+      if (payload === lastPersistedPayloadRef.current) {
         return;
       }
 
+      setSaveState("saving");
+
       const timeoutId = window.setTimeout(function () {
-        const snapshot = persistStudioDraft({
-          storyId: story.id,
-          draftStory,
-          selectedSceneId,
-          authorMode,
-          viewMode
-        });
-
-        if (snapshot) {
-          setLastSavedAt(snapshot.savedAt);
-          setSaveState("saved");
-          return;
-        }
-
-        setSaveState("error");
-      }, 350);
+        void persistStudioStoryRemote(draftStory)
+          .then(function (snapshot) {
+            lastPersistedPayloadRef.current = payload;
+            setLastSavedAt(snapshot.savedAt);
+            setSaveState("saved");
+          })
+          .catch(function () {
+            setSaveState("error");
+          });
+      }, 1200);
 
       return function () {
         window.clearTimeout(timeoutId);
       };
     },
-    [authorMode, draftStory, hasLoadedDraft, selectedSceneId, story.id, viewMode]
+    [draftStory]
   );
 
   const filteredActs = useMemo(function () {
@@ -259,21 +247,17 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   }
 
   function handleManualSave() {
-    const snapshot = persistStudioDraft({
-      storyId: story.id,
-      draftStory,
-      selectedSceneId,
-      authorMode,
-      viewMode
-    });
+    setSaveState("saving");
 
-    if (snapshot) {
-      setLastSavedAt(snapshot.savedAt);
-      setSaveState("saved");
-      return;
-    }
-
-    setSaveState("error");
+    void persistStudioStoryRemote(draftStory)
+      .then(function (snapshot) {
+        lastPersistedPayloadRef.current = JSON.stringify(draftStory);
+        setLastSavedAt(snapshot.savedAt);
+        setSaveState("saved");
+      })
+      .catch(function () {
+        setSaveState("error");
+      });
   }
 
   function handleCreateCodexEntry() {
@@ -1078,34 +1062,35 @@ function isViewMode(value: string): value is ViewMode {
   return VIEW_MODES.includes(value as ViewMode);
 }
 
-function persistStudioDraft({
-  storyId,
-  draftStory,
-  selectedSceneId,
-  authorMode,
-  viewMode
-}: {
-  storyId: string;
-  draftStory: StoryDocument;
-  selectedSceneId: string;
-  authorMode: AuthorMode;
-  viewMode: ViewMode;
-}) {
-  try {
-    return saveStudioDraft(storyId, {
-      draftStory,
-      selectedSceneId,
-      authorMode,
-      viewMode
-    });
-  } catch {
-    return null;
+async function persistStudioStoryRemote(draftStory: StoryDocument) {
+  const response = await fetch(`/api/stories/${draftStory.id}`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(draftStory)
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      typeof payload.error === "string" ? payload.error : "Remote saving failed."
+    );
   }
+
+  return {
+    savedAt:
+      typeof payload.savedAt === "string" ? payload.savedAt : new Date().toISOString()
+  };
 }
 
 function formatSaveState(lastSavedAt: string | null, saveState: SaveState) {
+  if (saveState === "saving") {
+    return "Speichert nach Supabase...";
+  }
+
   if (saveState === "error") {
-    return "Lokales Speichern fehlgeschlagen";
+    return "Supabase-Speichern fehlgeschlagen";
   }
 
   if (!lastSavedAt) {
@@ -1303,11 +1288,23 @@ function normalizeImportedStory(value: unknown, fallbackStory: StoryDocument): S
     throw new Error("Die JSON-Datei hat nicht das erwartete Story-Format.");
   }
 
+  const normalizedBook = normalizeBookBlueprint(value.book, value.title)
+
   return {
     ...value,
     id: fallbackStory.id,
     workspaceId: fallbackStory.workspaceId,
-    book: normalizeBookBlueprint(value.book, value.title)
+    worldBible: normalizeImportedWorldBible(value.worldBible),
+    variables: normalizeImportedVariables(value.variables),
+    acts: normalizeImportedActs(value.acts),
+    book: {
+      ...normalizedBook,
+      memory: createDefaultBookBlueprint(value.title).memory,
+      draftEngine: {
+        ...normalizedBook.draftEngine,
+        jobs: []
+      }
+    }
   };
 }
 
@@ -1332,7 +1329,84 @@ function isStoryDocument(value: unknown): value is StoryDocument {
 }
 
 function createLocalId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+  return createUuid();
+}
+
+function normalizeImportedWorldBible(worldBible: StoryDocument["worldBible"]) {
+  return worldBible.map(function (entry) {
+    return {
+      ...entry,
+      id: isUuid(entry.id) ? entry.id : createLocalId("world_bible")
+    };
+  });
+}
+
+function normalizeImportedVariables(variables: StoryDocument["variables"]) {
+  return variables.map(function (variable) {
+    return {
+      ...variable,
+      id: isUuid(variable.id) ? variable.id : createLocalId("variable")
+    };
+  });
+}
+
+function normalizeImportedActs(acts: StoryDocument["acts"]) {
+  const sceneIdMap = new Map<string, string>();
+
+  acts.forEach(function (act) {
+    act.chapters.forEach(function (chapter) {
+      chapter.scenes.forEach(function (scene) {
+        sceneIdMap.set(scene.id, isUuid(scene.id) ? scene.id : createLocalId("scene"));
+      });
+    });
+  });
+
+  return acts.map(function (act, actIndex) {
+    const actId = isUuid(act.id) ? act.id : createLocalId("act");
+
+    const chapters = act.chapters.map(function (chapter, chapterIndex) {
+      const chapterId = isUuid(chapter.id) ? chapter.id : createLocalId("chapter");
+
+      const scenes = chapter.scenes.map(function (scene, sceneIndex) {
+        const sceneId = sceneIdMap.get(scene.id) ?? createLocalId("scene");
+
+        return {
+          ...scene,
+          id: sceneId,
+          chapterId,
+          order: sceneIndex + 1,
+          blocks: scene.blocks.map(function (block) {
+            return {
+              ...block,
+              id: isUuid(block.id) ? block.id : createLocalId("block")
+            };
+          }),
+          choices: scene.choices.map(function (choice) {
+            return {
+              ...choice,
+              id: isUuid(choice.id) ? choice.id : createLocalId("choice"),
+              toSceneId: sceneIdMap.get(choice.toSceneId) ?? sceneId
+            };
+          })
+        };
+      });
+
+      return {
+        ...chapter,
+        id: chapterId,
+        actId,
+        order: chapterIndex + 1,
+        scenes
+      };
+    });
+
+    return {
+      ...act,
+      id: actId,
+      order: actIndex + 1,
+      chapters
+    };
+  });
 }
 
 function normalizeBookBlueprint(

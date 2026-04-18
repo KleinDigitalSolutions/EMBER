@@ -8,6 +8,7 @@ import {
   type StoryScene,
   type WorldBibleEntry
 } from "@/lib/story-schema";
+import { createUuid, isUuid } from "@/lib/id";
 
 export type CanonLedgerEntry = StoryDocument["book"]["memory"]["canonLedger"][number];
 export type CharacterStateEntry = StoryDocument["book"]["memory"]["characterLedger"][number];
@@ -256,7 +257,7 @@ export function createDraftJobFromPacket(
   packet: SceneContextPacket,
   targetSceneWordsMin: number,
   _targetSceneWordsMax: number
-) {
+): BookDraftJob {
   const outline = buildOutlineSteps(packet);
   const draftText = buildDraftText(packet, targetSceneWordsMin);
   const extractedState = extractDraftState(packet, draftText);
@@ -270,7 +271,11 @@ export function createDraftJobFromPacket(
     sceneTitle: packet.dynamicContext.sceneTitle,
     createdAt: now,
     updatedAt: now,
+    provider: "local" as const,
+    mode: "local_fallback" as const,
+    modelName: null,
     status: "ready" as const,
+    acceptedAt: null,
     outline,
     draftText,
     rewriteText,
@@ -354,8 +359,8 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   });
 
   story.book.draftEngine.jobs.forEach(function (job) {
-    job.extractedState.newCanonFacts.forEach(function (fact, index) {
-      const parsed = parseLedgerFact(fact, `scene_fact_${job.id}_${index + 1}`, "scene_fact");
+    job.extractedState.newCanonFacts.forEach(function (fact) {
+      const parsed = parseLedgerFact(fact, createLocalId("scene_fact"), "scene_fact");
       mergeCanonFact(ledger, {
         ...parsed,
         sceneIds: [job.sceneId],
@@ -365,10 +370,10 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
       });
     });
 
-    job.extractedState.foreshadowingAdded.forEach(function (fact, index) {
+    job.extractedState.foreshadowingAdded.forEach(function (fact) {
       const parsed = parseLedgerFact(
         fact,
-        `foreshadow_${job.id}_${index + 1}`,
+        createLocalId("foreshadow"),
         "foreshadowing"
       );
       mergeCanonFact(ledger, {
@@ -411,7 +416,7 @@ function deriveCharacterLedger(
       });
 
       return {
-        id: `character_state_${entry.entryId}`,
+        id: isUuid(entry.entryId) ? entry.entryId : createLocalId("character_state"),
         characterEntryId: entry.entryId,
         characterName: entry.title,
         currentState: latestUpdate || entry.summary || "Kein expliziter Status gespeichert.",
@@ -463,7 +468,7 @@ function deriveOpenThreads(story: StoryDocument): OpenThread[] {
       });
 
       threads.push({
-        id: `${scene.id}_choice_${choiceIndex + 1}`,
+        id: choice.id,
         label: choice.label || `Choice ${choiceIndex + 1}`,
         detail: targetScene
           ? `Fuehrt zu ${targetScene.title} und braucht spaeter eine klare Konsequenz.`
@@ -478,7 +483,7 @@ function deriveOpenThreads(story: StoryDocument): OpenThread[] {
 
     if (looksLikeOpenQuestion(scene.summary)) {
       threads.push({
-        id: `${scene.id}_summary_thread`,
+        id: createLocalId("summary_thread"),
         label: createThreadLabel(scene.summary, scene.title),
         detail: "Die Szenen-Zusammenfassung signalisiert einen offenen Konflikt oder eine unbezahlte Frage.",
         sourceSceneId: scene.id,
@@ -491,9 +496,9 @@ function deriveOpenThreads(story: StoryDocument): OpenThread[] {
   });
 
   story.book.draftEngine.jobs.forEach(function (job) {
-    job.extractedState.openThreadsCreated.forEach(function (label, index) {
+    job.extractedState.openThreadsCreated.forEach(function (label) {
       threads.push({
-        id: `job_thread_${job.id}_${index + 1}`,
+        id: createLocalId("job_thread"),
         label,
         detail: `Vom Extractor nach ${job.sceneTitle} als neuer offener Faden markiert.`,
         sourceSceneId: job.sceneId,
@@ -551,7 +556,7 @@ function deriveContextPacks(
       });
 
     return {
-      id: `context_pack_${sceneCard.sceneId}`,
+      id: sceneCard.sceneId,
       sceneId: sceneCard.sceneId,
       preparedAt: syncedAt,
       stablePrefixSignature: buildStablePrefixSignature(story, sceneCard.chapterGoal),
@@ -693,6 +698,7 @@ export function acceptDraftJobToScene(
             return {
               ...currentJob,
               status: "accepted",
+              acceptedAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
           })
@@ -1276,7 +1282,7 @@ function splitIntoParagraphs(value: string) {
 }
 
 function createLocalId(prefix: string) {
-  return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+  return createUuid();
 }
 
 function dedupeStrings(values: string[]) {

@@ -13,6 +13,7 @@ import {
   type StoryScene,
   type StoryVariable
 } from "@/lib/story-schema";
+import { createUuid } from "@/lib/id";
 
 export function SceneEditor({
   story,
@@ -655,11 +656,11 @@ function getDecisionHealth(scene: StoryScene) {
 }
 
 function createBlockId(scene: StoryScene) {
-  return scene.id + "_block_" + (scene.blocks.length + 1) + "_" + Date.now().toString(36);
+  return createUuid();
 }
 
 function createChoiceId(scene: StoryScene) {
-  return scene.id + "_choice_" + (scene.choices.length + 1) + "_" + Date.now().toString(36);
+  return createUuid();
 }
 
 function createCondition(variables: StoryVariable[]): ChoiceCondition {
