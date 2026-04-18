@@ -13,7 +13,7 @@ EMBER soll kein gewöhnliches CMS werden, sondern ein Authoring-Studio für verz
 ## Entscheidung zum Stack
 ### Empfehlung
 - Frontend/App: Next.js mit TypeScript auf Vercel
-- Datenbank/Auth/Storage: Supabase
+- Datenbank/Auth/Storage: Supabase `erledigt 2026-04-18`
 - Zahlungen: Stripe
 - Lokales Teilen von Prototypen: Cloudflare Quick Tunnel oder regulärer Cloudflare Tunnel
 
@@ -24,7 +24,7 @@ EMBER soll kein gewöhnliches CMS werden, sondern ein Authoring-Studio für verz
 
 ## Architektur
 ### Schicht 1: Story Schema
-Ein einziges Story-Dokument als Quelle der Wahrheit.
+Ein einziges Story-Dokument als Quelle der Wahrheit. `erledigt 2026-04-18` (inkl. Book-Blueprint)
 
 ```ts
 Story {
@@ -64,7 +64,7 @@ Choice {
 ```
 
 ### Schicht 2: Authoring Engine
-Commands statt direkter Wild-West-Edits.
+Commands statt direkter Wild-West-Edits. `erledigt 2026-04-18` (Server-side Persistence implementiert)
 - `create_act`
 - `create_chapter`
 - `create_scene`
@@ -82,9 +82,10 @@ Verwendet dasselbe Story-Dokument für:
 - Playtest
 - Branch-Validierung
 - Review-Vorschau
+`erledigt 2026-04-18`
 
 ### Schicht 4: AI Orchestration
-Die KI arbeitet nie direkt auf dem finalen Story-Text.
+Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Book-Job-Service implementiert)
 - Eingabe: Story-Kontext, World Bible, Stilregeln, Ziel der Aktion
 - Ausgabe: strukturierter Vorschlag
 - Formen:
@@ -106,7 +107,7 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text.
 ### Wichtige Studio-Mechaniken
 - Decision Slots: Das Studio schlägt vor, wo Entscheidungen dramaturgisch Sinn ergeben. `erledigt` als lokaler Editor-Flow
 - Branch Budget: Zeigt, wie stark eine Story sich verzweigt und wo Rückführungen nötig sind.
-- Continuity Graph: Prüft Figurenwissen, gesetzte Flags und unbezahlte Setups.
+- Continuity Graph: Prüft Figurenwissen, gesetzte Flags und unbezahlte Setups. `erledigt 2026-04-18` (lokaler Review-Check & Memory Ledger)
 - Submission Gate: Vor Einreichung werden Qualitäts-, Konsistenz- und Store-Felder geprüft. `erledigt` als lokaler Review-Check
 
 ## Autoren-Workflow
@@ -119,7 +120,7 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text.
 6. Für Review einreichen
 
 ### Mit KI
-1. Autor schreibt oder skizziert Kapitel
+1. Autor schreibt oder skizziert Kapitel oder nutzt AI Drafting. `erledigt 2026-04-18`
 2. KI bietet Hilfe auf Knopfdruck:
    - Szene erweitern
    - Szene kürzen
@@ -133,16 +134,16 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text.
 ## KI-Strategie
 ### Modellpolitik
 Wir planen initial bewusst nur mit Premium-Modellen.
-- OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs
-- Anthropic: Claude Opus 4 für schwere Strukturarbeit, Claude Sonnet 4 für den täglichen Draft-/Review-Betrieb
+- OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
+- Anthropic: Claude Opus 4 für schwere Strukturarbeit, Claude Sonnet 4 für den täglichen Draft-/Review-Betrieb `erledigt 2026-04-18`
 
 Optional später:
 - kleinere GPT-5-Varianten oder Sonnet/Haiku-Klassen nur für Extraktion, Audits und Hintergrundjobs
 
 ### Betriebsprinzip
 - Der Chat ist nie die Quelle der Wahrheit.
-- Persistente Kanon-Artefakte liegen im Story-System beziehungsweise später in der DB.
-- Pro Schreibschritt wird nur ein kleiner relevanter Kontext-Pack geladen.
+- Persistente Kanon-Artefakte liegen im Story-System beziehungsweise später in der DB (Memory Ledger). `erledigt 2026-04-18`
+- Pro Schreibschritt wird nur ein kleiner relevanter Kontext-Pack geladen (Context Composer). `erledigt 2026-04-18`
 - Statische Prompt-Module stehen vorn, variable Szenendaten hinten, damit Caching sauber greift.
 - Provider-State wie Responses/Conversations, `previous_response_id` oder Compaction ist Infrastruktur, nicht das eigentliche Story-Gedaechtnis.
 
@@ -151,7 +152,7 @@ Optional später:
 - Nur explizite Aktionen oder Hintergrund-Checks
 - Große Jobs asynchron in Queue
 - Ergebnisse versioniert und nachvollziehbar speichern
-- Strukturierte Rueckgaben fuer Draft, Extraktion, Continuity und Packaging
+- Strukturierte Rueckgaben fuer Draft, Extraktion, Continuity und Packaging `erledigt 2026-04-18`
 - Keine Volltext-Ladung des gesamten Buchs in jeden Request
 
 ### KI-Rollen
@@ -221,22 +222,27 @@ Das Studio sollte pro Kapitel automatisch bewerten:
 
 ## Datenmodell
 ### Kern-Tabellen
-- `profiles`
-- `workspaces`
+- `profiles` `erledigt 2026-04-18`
+- `workspaces` `erledigt 2026-04-18`
 - `workspace_members`
-- `stories`
-- `story_versions`
-- `acts`
-- `chapters`
-- `scenes`
-- `scene_blocks`
-- `choices`
-- `story_variables`
-- `choice_effects`
-- `choice_conditions`
-- `world_bible_entries`
-- `ai_runs`
-- `ai_patches`
+- `stories` `erledigt 2026-04-18`
+- `story_versions` `erledigt 2026-04-18`
+- `acts` `erledigt 2026-04-18`
+- `chapters` `erledigt 2026-04-18`
+- `scenes` `erledigt 2026-04-18`
+- `scene_blocks` `erledigt 2026-04-18`
+- `choices` `erledigt 2026-04-18`
+- `story_variables` `erledigt 2026-04-18`
+- `choice_effects` `erledigt 2026-04-18`
+- `choice_conditions` `erledigt 2026-04-18`
+- `world_bible_entries` `erledigt 2026-04-18`
+- `ai_runs` `erledigt 2026-04-18`
+- `ai_patches` `erledigt 2026-04-18`
+- `book_projects` `erledigt 2026-04-18`
+- `book_draft_jobs` `erledigt 2026-04-18`
+- `book_canon_facts` `erledigt 2026-04-18`
+- `book_character_states` `erledigt 2026-04-18`
+- `book_open_threads` `erledigt 2026-04-18`
 - `playtest_sessions`
 - `submissions`
 - `submission_reviews`
@@ -246,14 +252,14 @@ Das Studio sollte pro Kapitel automatisch bewerten:
 - `author_payouts`
 
 ### Wichtig
-Story-Inhalt nicht nur als ein riesiges JSON-Feld speichern. Zusätzlich normalisierte Tabellen für Query, Analyse, Review und spätere Shop-Filter.
+Story-Inhalt nicht nur als ein riesiges JSON-Feld speichern. Zusätzlich normalisierte Tabellen für Query, Analyse, Review und spätere Shop-Filter. `erledigt 2026-04-18` (Supabase Schema implementiert)
 
 ## Backend-Entscheidungen
 ### Lokal jetzt
 - noch kein Login
 - noch kein Stripe
 - noch keine öffentliche Veröffentlichung
-- Studio arbeitet lokal oder gegen eine lokale Dev-Datenbank
+- Studio arbeitet lokal oder gegen eine lokale Dev-Datenbank `erledigt 2026-04-18` (Supabase Dev Anbindung aktiv)
 
 ### Später
 - Google Login über Supabase Auth
@@ -310,8 +316,8 @@ Optional vor Vercel für zusätzliche Netzwerk- oder Routing-Anforderungen.
 Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte externe Nutzung später regulären Tunnel oder normales Deployment verwenden.
 
 ## Sicherheits- und Qualitätsregeln
-- KI nur über Server-Seite ansprechen, nie Browser direkt
-- API-Keys nur serverseitig
+- KI nur über Server-Seite ansprechen, nie Browser direkt `erledigt 2026-04-18`
+- API-Keys nur serverseitig `erledigt 2026-04-18`
 - Audit-Log für AI-Patches und Review-Entscheidungen
 - Rate Limits auf AI-Aktionen
 - Moderation für eingereichte Inhalte
@@ -335,24 +341,24 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 
 ### Phase 2: Data Backbone
 - Supabase Projekt
-- Tabellen und RLS-Design `erledigt` als initiales Supabase-Schema im Repo
-- Story-Versionierung `erledigt` als persistente Versions-Tabelle im initialen Schema
-- World Bible `erledigt` als lokale Codex-Bearbeitung im Studio
+- Tabellen und RLS-Design `erledigt 2026-04-18` als initiales Supabase-Schema im Repo
+- Story-Versionierung `erledigt 2026-04-18` als persistente Versions-Tabelle im initialen Schema
+- World Bible `erledigt 2026-04-18` als lokale Codex-Bearbeitung im Studio mit Supabase Persistence
 
 ### Phase 3: AI Assist
-- Server-seitige LLM-Orchestrierung `erledigt` als initialer Book-Job-Service und API-Route
-- Prompt-Module `erledigt` als modularer Context-Pack- und Prompt-Stack fuer Draft-Jobs
-- Patch-System `erledigt` als lokales regelbasiertes Patch-Lab
-- Continuity Checks `erledigt` als lokaler Continuity-Report im Review-Panel
-- Submission Reviewer `erledigt` als lokales Reviewer-Memo im Review-Panel
+- Server-seitige LLM-Orchestrierung `erledigt 2026-04-18` als initialer Book-Job-Service und API-Route
+- Prompt-Module `erledigt 2026-04-18` als modularer Context-Pack- und Prompt-Stack fuer Draft-Jobs
+- Patch-System `erledigt 2026-04-18` als lokales regelbasiertes Patch-Lab
+- Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
+- Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
 
-### Phase 4: Collaboration + Review
+### Phase 4: Collaboration + Review `nächste Priorität`
 - Workspaces
 - Rollen
 - Submission Queue
 - Kuratoren-Panel
 
-### Phase 5: Store + Payments
+### Phase 5: Store + Payments `geplant`
 - Storefront `erledigt` als getrennte Root-/Story-Ansicht
 - Stripe Checkout
 - Preisverwaltung
@@ -363,24 +369,6 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Autoren-Onboarding
 - später Stripe Connect Express
 - Veröffentlichungs- und Payout-Flow
-
-## Konkrete Empfehlung für den Start
-Jetzt nicht mit Login, Stripe oder Cloudflare verbiegen.
-
-Als Nächstes bauen:
-1. echtes Story-Schema in TypeScript `erledigt`
-2. Studio-Views auf dieses Schema umstellen `erledigt`
-3. Playtest-Modus `erledigt`
-4. Decision-Slot-Mechanik `erledigt`
-5. lokales Speichern `erledigt`
-6. lokales Review-/Submission-Gate `erledigt`
-7. erstes AI-Patch-Interface `erledigt` als lokales Patch-Lab
-
-## Offene Entscheidungen
-- Nur deutschsprachige Stories oder mehrsprachig vorbereiten?
-- Premium-only oder Community + Premium von Anfang an?
-- Preis pro Story, pro Staffel oder Abo?
-- Wie streng soll menschliche Kuratierung im ersten Release sein?
 
 ## Prioritaets-Track: Amazon Book Engine innerhalb von EMBER
 Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehrt. Ziel ist kein autonomer "Bestseller-Knopf", sondern ein kontrolliertes Buchsystem, das kurzfristig kommerziell nutzbare Titel vorbereiten kann und gleichzeitig Ember technologisch staerker macht.
@@ -397,7 +385,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - Stil wird ueber Regeln, Marktmerkmale und Evals gesteuert, nicht ueber Stilkopie realer Autoren.
 - Amazon-/Markt-Optimierung bleibt ein eigenes Briefing-Modul und verunreinigt nicht den Kernkanon.
 
-### Phase 1: Foundation `jetzt`
+### Phase 1: Foundation `erledigt 2026-04-18`
 - Story-Schema um `book`-Blueprint im bestehenden Ember-Dokument erweitern
 - Plan-Modus als Book-Architect-Panel nutzen
 - Master Brief pflegen: Praemisse, Reader Promise, Ending Promise, thematischer Kern
@@ -406,7 +394,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - Acts/Kapitel/Szenen aus Ember direkt als Buch-Architektur referenzieren statt ein zweites Outline-System zu bauen
 - Lokales Speichern, Import und Export muessen den Book-Blueprint mittragen
 
-### Phase 2: Memory Backbone
+### Phase 2: Memory Backbone `erledigt 2026-04-18`
 - Persistente Artefakte fuer:
   - Canon Facts
   - Character State Ledger
@@ -416,29 +404,30 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - Szenenbezogener Kontext-Composer mit Relevanzfilter statt Vollkontext `erledigt`
 - JSON-Extractor fuer State-Updates, die nach jedem akzeptierten Schreibschritt in den Kanon zurueckgeschrieben werden `erledigt` als lokaler Pipeline-Schritt
 
-### Phase 3: Draft Engine
+### Phase 3: Draft Engine `erledigt 2026-04-18`
 - Szenenweises Drafting `erledigt`
 - getrennte Jobs fuer Outline, Draft, Rewrite, Extract und Continuity `erledigt` im Datenmodell und Job-Flow
 - strukturierte Rueckgaben statt Freitext-Only `erledigt`
 - Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs `erledigt` als initialer Provider-Flow
 - stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`
 
-### Phase 4: Continuity + Quality
-- Continuity-Checks fuer Wissensstand, Timeline und Payoffs `erledigt` lokal, serverseitige Persistierung noch offen
+### Phase 4: Continuity + Quality `in Arbeit`
+- Continuity-Checks fuer Wissensstand, Timeline und Payoffs `erledigt 2026-04-18` lokal, serverseitige Persistierung aktiv
 - Stil-Drift-Erkennung
 - Marktfit-Checks fuer Hook, Packaging und Lesbarkeit
 - Submission-Gate fuer "publishing ready"
 
-## Naechste technische Prioritaeten
-1. Supabase-Projekt real anbinden und lokale Story-/Book-States aus `localStorage` in persistente Server-Flows ueberfuehren.
-2. Hintergrundjobs fuer Draft, Extract und Continuity auf Basis von `ai_runs` und `book_draft_jobs` ausfuehren.
-3. Review-/Submission-Queue auf die neuen DB-Tabellen heben und das Kuratoren-Panel darauf aufsetzen.
+## Status Report `2026-04-18`
+- **Foundation:** `erledigt`. Book-Blueprint in Schema integriert. Plan-Modus unterstützt Master Brief & Market Brief.
+- **Memory Backbone:** `erledigt`. Canon Ledger, Character Ledger und Open Threads werden persistent in Supabase verwaltet.
+- **Draft Engine:** `erledigt`. `BookJobProvider` unterstützt OpenAI (`gpt-5.4`) und Anthropic (`claude-sonnet-4-5`). Context-Packs werden server-seitig generiert.
+- **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
-### Phase 5: Amazon Ops
-- KDP-Paketdaten im Projekt
-- Cover-/Blurb-/Keyword-Briefing
-- AI-Offenlegung und Review-Checkliste
-- Exportfluss fuer Manuskript, Metadaten und Launch-Paket
+### Nächste technische Prioritäten
+1. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
+2. **Draft Job UI:** Die neuen AI-Jobs im Studio-Workspace visualisieren (Status, Akzeptieren, Historie).
+3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
+4. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
 
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
@@ -448,7 +437,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt.
 - Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
 
-## Zielbild fuer die Book Engine
+## Zielbild für die Book Engine
 Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Session.
 
 ### Persistente Artefakte
