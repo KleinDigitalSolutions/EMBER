@@ -1,4 +1,4 @@
-import { createDefaultBookBlueprint, defineStory } from "@/lib/story-schema";
+import { createDefaultAssistantWorkspace, createDefaultBookBlueprint, defineStory } from "@/lib/story-schema";
 
 export const studioStory = defineStory({
   id: "story_ring_im_erdreich",
@@ -59,6 +59,7 @@ export const studioStory = defineStory({
       }
     }
   },
+  assistant: createDefaultAssistantWorkspace(),
   worldBible: [
     {
       id: "wb_jonas",

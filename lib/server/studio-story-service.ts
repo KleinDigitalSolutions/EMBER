@@ -2,7 +2,9 @@ import { createFallbackDraftStageRuns, syncStoryBookArtifacts } from "@/lib/book
 import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
+  createDefaultAssistantWorkspace,
   normalizeBookRuleList,
+  normalizeAssistantWorkspace,
   type BookDraftJob,
   type BookDraftStageRun,
   type BookDraftStageRuns,
@@ -432,6 +434,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
       audience: typeof storyMeta.audience === "string" ? storyMeta.audience : ""
     },
     book,
+    assistant: normalizeAssistantWorkspace(storyMeta.assistant),
     worldBible: (worldBibleResult.data ?? []).map(function (row) {
       return {
         id: row.id as string,
@@ -458,6 +461,7 @@ export async function saveStudioStory(story: StoryDocument) {
   const ownerProfileId = await loadWorkspaceOwnerId(nextStory.workspaceId)
   const meta = {
     ...nextStory.meta,
+    assistant: nextStory.assistant,
     draftEngine: {
       targetSceneWordsMin: nextStory.book.draftEngine.targetSceneWordsMin,
       targetSceneWordsMax: nextStory.book.draftEngine.targetSceneWordsMax
@@ -997,6 +1001,7 @@ function buildBootstrapStory(workspaceId: string): StoryDocument {
         }
       }
     },
+    assistant: createDefaultAssistantWorkspace(),
     worldBible: [
       {
         id: jonasId,

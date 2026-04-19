@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BookBlueprintPanel } from "@/components/studio/book-blueprint-panel";
 import { BookWriterPanel } from "@/components/studio/book-writer-panel";
+import { ChatWorkspace } from "@/components/studio/chat-workspace";
 import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
@@ -12,9 +13,25 @@ import { SceneEditor } from "@/components/studio/scene-editor";
 import { syncStoryBookArtifacts } from "@/lib/book-engine";
 import { createUuid, isUuid } from "@/lib/id";
 import {
+  appendAssistantArtifact,
+  appendAssistantMessage,
+  appendAssistantThread,
+  buildThreadSummary,
+  createAssistantArtifact,
+  createAssistantMessage,
+  createAssistantThread,
+  deriveThreadTitleFromPrompt,
+  getAssistantArtifact,
+  getAssistantThread,
+  updateAssistantPreferences,
+  updateAssistantThread
+} from "@/lib/story-assistant";
+import {
   appendActToStory,
   appendChapterToAct,
   appendSceneToChapter,
+  createDefaultAssistantContextSelection,
+  normalizeAssistantWorkspace,
   countStoryStats,
   createDefaultBookBlueprint,
   findSceneContext,
@@ -26,18 +43,21 @@ import {
   type StoryDocument,
   type StoryLibraryEntry,
   type StoryMode,
+  type SceneContext,
   type StoryStatus,
   type StoryScene,
-  type WorldBibleEntry
+  type WorldBibleEntry,
+  type AssistantContextSelection,
+  type AssistantOutputMode
 } from "@/lib/story-schema";
 
 type ViewMode = "grid" | "matrix" | "outline";
-type AuthorMode = "plan" | "book" | "write" | "playtest" | "chat" | "review";
-type SidebarMode = "library" | "codex";
+type AuthorMode = "plan" | "book" | "write" | "playtest" | "patch" | "review";
+type SidebarMode = "library" | "chat" | "codex";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
-const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "chat", "review"];
+const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "patch", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
 export function StudioWorkspace({
@@ -61,11 +81,20 @@ export function StudioWorkspace({
   const [libraryStories, setLibraryStories] = useState(stories);
   const [libraryActionId, setLibraryActionId] = useState<string | null>(null);
   const [libraryError, setLibraryError] = useState<string | null>(null);
+  const [assistantSearch, setAssistantSearch] = useState("");
+  const [assistantError, setAssistantError] = useState<string | null>(null);
+  const [isAssistantLoading, setIsAssistantLoading] = useState(false);
   const [codexSearch, setCodexSearch] = useState("");
   const [showOutlineComposer, setShowOutlineComposer] = useState(false);
   const [outlineDraft, setOutlineDraft] = useState(DEFAULT_OUTLINE_TEMPLATE);
   const [outlineError, setOutlineError] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [selectedAssistantThreadId, setSelectedAssistantThreadId] = useState(
+    story.assistant.threads[0]?.id ?? ""
+  );
+  const [selectedAssistantArtifactId, setSelectedAssistantArtifactId] = useState(
+    story.assistant.artifacts[0]?.id ?? ""
+  );
   const [selectedCodexEntryId, setSelectedCodexEntryId] = useState(
     story.worldBible[0]?.id ?? ""
   );
@@ -128,11 +157,50 @@ export function StudioWorkspace({
       );
     });
   }, [codexSearch, draftStory.worldBible]);
+  const filteredAssistantThreads = useMemo(function () {
+    const query = assistantSearch.trim().toLowerCase();
+
+    return draftStory.assistant.threads
+      .slice()
+      .sort(function (left, right) {
+        return right.updatedAt.localeCompare(left.updatedAt);
+      })
+      .filter(function (thread) {
+        if (!query) {
+          return true;
+        }
+
+        return (
+          thread.title.toLowerCase().includes(query) ||
+          thread.summary.toLowerCase().includes(query) ||
+          thread.messages.some(function (message) {
+            return message.content.toLowerCase().includes(query);
+          }) ||
+          draftStory.assistant.artifacts.some(function (artifact) {
+            return (
+              artifact.threadId === thread.id &&
+              (artifact.title.toLowerCase().includes(query) ||
+                artifact.summary.toLowerCase().includes(query))
+            );
+          })
+        );
+      });
+  }, [assistantSearch, draftStory.assistant.artifacts, draftStory.assistant.threads]);
 
   const selectedCodexEntry =
     draftStory.worldBible.find(function (entry) {
       return entry.id === selectedCodexEntryId;
     }) ?? null;
+  const activeLibraryEntry =
+    libraryStories.find(function (entry) {
+      return entry.id === draftStory.id;
+    }) ?? null;
+  const selectedAssistantThread = selectedAssistantThreadId
+    ? getAssistantThread(draftStory, selectedAssistantThreadId)
+    : null;
+  const selectedAssistantArtifact = selectedAssistantArtifactId
+    ? getAssistantArtifact(draftStory, selectedAssistantArtifactId)
+    : null;
   const footerStatus = latestDraftJob ? formatFooterStatus(latestDraftJob.mode) : null;
 
   useEffect(
@@ -148,11 +216,16 @@ export function StudioWorkspace({
 
       setDraftStory(nextStory);
       setAuthorMode(getDefaultAuthorMode(nextStory.mode));
+      setSelectedAssistantThreadId(nextStory.assistant.threads[0]?.id ?? "");
+      setSelectedAssistantArtifactId(nextStory.assistant.artifacts[0]?.id ?? "");
       setSelectedCodexEntryId(nextStory.worldBible[0]?.id ?? "");
       setSelectedSceneId(nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "");
       setLastSavedAt(null);
       setSaveState("idle");
       setLibraryError(null);
+      setAssistantError(null);
+      setAssistantSearch("");
+      setIsAssistantLoading(false);
       setLibraryActionId(null);
       setIsMobileSidebarOpen(false);
       pendingPersistRef.current = null;
@@ -297,11 +370,59 @@ export function StudioWorkspace({
     [draftStory.worldBible, selectedCodexEntryId]
   );
 
+  useEffect(
+    function () {
+      if (!draftStory.assistant.threads.length) {
+        if (selectedAssistantThreadId) {
+          setSelectedAssistantThreadId("");
+        }
+        return;
+      }
+
+      const hasSelectedThread = draftStory.assistant.threads.some(function (thread) {
+        return thread.id === selectedAssistantThreadId;
+      });
+
+      if (!hasSelectedThread) {
+        setSelectedAssistantThreadId(draftStory.assistant.threads[0].id);
+      }
+    },
+    [draftStory.assistant.threads, selectedAssistantThreadId]
+  );
+
+  useEffect(
+    function () {
+      if (!draftStory.assistant.artifacts.length) {
+        if (selectedAssistantArtifactId) {
+          setSelectedAssistantArtifactId("");
+        }
+        return;
+      }
+
+      const hasSelectedArtifact = draftStory.assistant.artifacts.some(function (artifact) {
+        return artifact.id === selectedAssistantArtifactId;
+      });
+
+      if (!hasSelectedArtifact) {
+        const artifactForThread = draftStory.assistant.artifacts.find(function (artifact) {
+          return artifact.threadId === selectedAssistantThreadId;
+        });
+
+        setSelectedAssistantArtifactId(artifactForThread?.id ?? draftStory.assistant.artifacts[0].id);
+      }
+    },
+    [draftStory.assistant.artifacts, selectedAssistantArtifactId, selectedAssistantThreadId]
+  );
+
   const selectedSceneContext = useMemo(function () {
     return selectedSceneId ? findSceneContext(draftStory, selectedSceneId) : null;
   }, [draftStory, selectedSceneId]);
 
   const selectedScene = selectedSceneContext?.scene ?? null;
+  const isChatSidebar = sidebarMode === "chat";
+  const defaultAssistantContext = selectedSceneContext
+    ? createAssistantContextSelectionFromSceneContext(selectedSceneContext)
+    : createDefaultAssistantContextSelection();
 
   async function flushPersistQueue() {
     if (isPersistingRef.current) {
@@ -556,6 +677,152 @@ export function StudioWorkspace({
           return entry.id !== selectedCodexEntryId;
         })
       };
+    });
+  }
+
+  function handleCreateAssistantThread() {
+    const nextThread = createAssistantThread(
+      selectedSceneContext ? `Szene: ${selectedSceneContext.scene.title}` : "Neues Gespräch",
+      defaultAssistantContext
+    );
+
+    commitStoryUpdate(function (currentStory) {
+      return appendAssistantThread(currentStory, nextThread);
+    });
+
+    setSelectedAssistantThreadId(nextThread.id);
+    setSelectedAssistantArtifactId("");
+    setAssistantSearch("");
+    setSidebarMode("chat");
+    setIsSidebarCollapsed(false);
+    setIsMobileSidebarOpen(false);
+  }
+
+  async function handleSubmitAssistantPrompt(params: {
+    prompt: string;
+    outputMode: AssistantOutputMode;
+    contextSelection: AssistantContextSelection;
+  }) {
+    const baseThread =
+      selectedAssistantThread ??
+      createAssistantThread(
+        deriveThreadTitleFromPrompt(params.prompt),
+        params.contextSelection
+      );
+    const userMessage = createAssistantMessage({
+      role: "user",
+      content: params.prompt,
+      outputMode: params.outputMode,
+      provider: draftStory.assistant.preferences.provider,
+      context: params.contextSelection
+    });
+    let nextStory = draftStory;
+
+    if (!selectedAssistantThread) {
+      nextStory = appendAssistantThread(nextStory, baseThread);
+    }
+
+    nextStory = appendAssistantMessage(nextStory, baseThread.id, userMessage);
+
+    if (!selectedAssistantThread) {
+      nextStory = updateAssistantThread(nextStory, baseThread.id, function (thread) {
+        return {
+          ...thread,
+          title: deriveThreadTitleFromPrompt(params.prompt)
+        };
+      });
+    }
+
+    setDraftStory(syncStoryBookArtifacts(nextStory));
+    setSelectedAssistantThreadId(baseThread.id);
+    setAssistantError(null);
+    setIsAssistantLoading(true);
+
+    try {
+      const response = await fetch("/api/story-chat", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          story: nextStory,
+          threadId: baseThread.id,
+          provider: nextStory.assistant.preferences.provider,
+          modelSelection: nextStory.assistant.preferences.modelSelection,
+          outputMode: params.outputMode,
+          contextSelection: params.contextSelection
+        })
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(typeof payload.error === "string" ? payload.error : "Story-Chat fehlgeschlagen.");
+      }
+
+      const assistantArtifact = payload.artifact
+        ? createAssistantArtifact({
+            threadId: baseThread.id,
+            title: payload.artifact.title,
+            kind: payload.artifact.kind,
+            summary: payload.artifact.summary,
+            content: payload.artifact.content,
+            context: params.contextSelection
+          })
+        : null;
+      const assistantMessage = createAssistantMessage({
+        role: "assistant",
+        content: payload.reply,
+        outputMode: params.outputMode,
+        provider: payload.provider,
+        modelName: payload.modelName,
+        context: params.contextSelection,
+        artifactId: assistantArtifact?.id ?? null
+      });
+
+      setDraftStory(function (currentStory) {
+        let updatedStory = appendAssistantMessage(currentStory, baseThread.id, assistantMessage);
+
+        if (assistantArtifact) {
+          updatedStory = appendAssistantArtifact(updatedStory, assistantArtifact);
+        }
+
+        updatedStory = updateAssistantThread(updatedStory, baseThread.id, function (thread) {
+          const nextTitle =
+            thread.title === "Neues Gespräch" || thread.title.startsWith("Szene:")
+              ? payload.suggestedThreadTitle || deriveThreadTitleFromPrompt(params.prompt)
+              : thread.title;
+
+          return {
+            ...thread,
+            title: nextTitle,
+            summary: buildThreadSummary(thread.messages.concat(assistantMessage)),
+            context:
+              thread.context.scope === "project" && params.contextSelection.scope !== "project"
+                ? params.contextSelection
+                : thread.context
+          };
+        });
+
+        return syncStoryBookArtifacts(updatedStory);
+      });
+
+      if (assistantArtifact) {
+        setSelectedAssistantArtifactId(assistantArtifact.id);
+      }
+
+      setAssistantError(payload.warning ?? null);
+    } catch (error) {
+      setAssistantError(error instanceof Error ? error.message : "Story-Chat fehlgeschlagen.");
+    } finally {
+      setIsAssistantLoading(false);
+    }
+  }
+
+  function handleUpdateAssistantPreferences(
+    updater: (preferences: StoryDocument["assistant"]["preferences"]) => StoryDocument["assistant"]["preferences"]
+  ) {
+    commitStoryUpdate(function (currentStory) {
+      return updateAssistantPreferences(currentStory, updater);
     });
   }
 
@@ -843,6 +1110,19 @@ export function StudioWorkspace({
         <div className="rail-divider" />
 
         <button
+          className={"rail-button" + (sidebarMode === "chat" ? " rail-button--active" : "")}
+          type="button"
+          aria-label="Chat"
+          title="Brainstorming und Regie"
+          onClick={function () {
+            setSidebarMode("chat");
+            setIsSidebarCollapsed(false);
+          }}
+        >
+          <span className="rail-icon rail-icon--chat" />
+        </button>
+
+        <button
           className={"rail-button" + (sidebarMode === "codex" ? " rail-button--active" : "")}
           type="button"
           aria-label="Codex"
@@ -860,14 +1140,24 @@ export function StudioWorkspace({
         <header className="sidebar-header">
           <div className="sidebar-project">
             <span className="landing-kicker">
-              {sidebarMode === "library" ? "Projektbibliothek" : "Codex"}
-            </span>
-            <h1>{sidebarMode === "library" ? "Projekte" : draftStory.title}</h1>
-            <p>
               {sidebarMode === "library"
-                ? `${libraryStories.length} Projekte in Supabase`
-                : `${draftStory.authorName || "Ohne Autor"} · ${formatStoryStatus(draftStory.status)}`}
-            </p>
+                ? "Projektbibliothek"
+                : sidebarMode === "chat"
+                  ? "Assistant"
+                  : "Codex"}
+            </span>
+            <h1>
+              {sidebarMode === "library"
+                ? "Projekte"
+                : sidebarMode === "chat"
+                  ? "Chat"
+                  : draftStory.title}
+            </h1>
+            {sidebarMode === "library" ? null : sidebarMode === "chat" ? (
+              <p>Brainstorming, Fragen und Regie-Dokumente für {draftStory.title}</p>
+            ) : (
+              <p>{`${draftStory.authorName || "Ohne Autor"} · ${formatStoryStatus(draftStory.status)}`}</p>
+            )}
           </div>
           <div className="sidebar-header__actions">
             <button
@@ -894,6 +1184,15 @@ export function StudioWorkspace({
             Bibliothek
           </button>
           <button
+            className={"sidebar-tab" + (sidebarMode === "chat" ? " sidebar-tab--active" : "")}
+            type="button"
+            onClick={function () {
+              setSidebarMode("chat");
+            }}
+          >
+            Chat
+          </button>
+          <button
             className={"sidebar-tab" + (sidebarMode === "codex" ? " sidebar-tab--active" : "")}
             type="button"
             onClick={function () {
@@ -909,11 +1208,28 @@ export function StudioWorkspace({
             <span className="search-icon" />
             <input
               type="search"
-              placeholder={sidebarMode === "library" ? "Projekte suchen..." : "Codex durchsuchen..."}
-              value={sidebarMode === "library" ? librarySearch : codexSearch}
+              placeholder={
+                sidebarMode === "library"
+                  ? "Projekte suchen..."
+                  : sidebarMode === "chat"
+                    ? "Threads durchsuchen..."
+                    : "Codex durchsuchen..."
+              }
+              value={
+                sidebarMode === "library"
+                  ? librarySearch
+                  : sidebarMode === "chat"
+                    ? assistantSearch
+                    : codexSearch
+              }
               onChange={function (event) {
                 if (sidebarMode === "library") {
                   setLibrarySearch(event.target.value);
+                  return;
+                }
+
+                if (sidebarMode === "chat") {
+                  setAssistantSearch(event.target.value);
                   return;
                 }
 
@@ -932,6 +1248,10 @@ export function StudioWorkspace({
             >
               {libraryActionId === "create" ? "Lädt..." : "+ Projekt"}
             </button>
+          ) : sidebarMode === "chat" ? (
+            <button className="flat-button" type="button" onClick={handleCreateAssistantThread}>
+              + Thread
+            </button>
           ) : (
             <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
               + Eintrag
@@ -940,6 +1260,10 @@ export function StudioWorkspace({
           {sidebarMode === "library" ? (
             <span className="square-button square-button--info" aria-hidden="true">
               {libraryStories.length}
+            </span>
+          ) : sidebarMode === "chat" ? (
+            <span className="square-button square-button--info" aria-hidden="true">
+              {draftStory.assistant.threads.length}
             </span>
           ) : (
             <button
@@ -960,7 +1284,10 @@ export function StudioWorkspace({
               <div className="sidebar-library-summary__card">
                 <strong>{draftStory.title || "Unbenanntes Projekt"}</strong>
                 <span>
-                  {formatStoryModeLabel(draftStory.mode)} · {formatStoryStatus(draftStory.status)}
+                  {getLibraryProjectDetails(
+                    draftStory.authorName,
+                    activeLibraryEntry?.updatedAt ?? lastSavedAt ?? ""
+                  ).summary}
                 </span>
               </div>
               {libraryError ? <p className="sidebar-inline-error">{libraryError}</p> : null}
@@ -971,6 +1298,7 @@ export function StudioWorkspace({
                 const isActive = entry.id === draftStory.id;
                 const isDeleting = libraryActionId === `delete:${entry.id}`;
                 const isOpening = libraryActionId === entry.id;
+                const projectDetails = getLibraryProjectDetails(entry.authorName, entry.updatedAt);
 
                 return (
                   <article
@@ -989,12 +1317,12 @@ export function StudioWorkspace({
                         <h3>{entry.title || "Unbenanntes Projekt"}</h3>
                         {isActive ? <span className="project-row__active-pill">Aktiv</span> : null}
                       </div>
-                      <p>{entry.authorName || "Ohne Autor"}</p>
-                      <div className="project-row__meta">
-                        <span>{formatStoryModeLabel(entry.mode)}</span>
-                        <span>{formatStoryStatus(entry.status)}</span>
-                        <span>{formatLibraryTimestamp(entry.updatedAt)}</span>
-                      </div>
+                      <p>{projectDetails.subtitle}</p>
+                      {projectDetails.meta ? (
+                        <div className="project-row__meta">
+                          <span>{projectDetails.meta}</span>
+                        </div>
+                      ) : null}
                     </button>
                     <button
                       className="project-row__delete"
@@ -1017,6 +1345,98 @@ export function StudioWorkspace({
                   <p>Die Suche findet aktuell kein Projekt.</p>
                 </article>
               ) : null}
+            </div>
+          </>
+        ) : sidebarMode === "chat" ? (
+          <>
+            <section className="sidebar-library-summary">
+              <div className="sidebar-library-summary__card">
+                <strong>{selectedAssistantThread?.title || "Neues Gespräch"}</strong>
+                <span>
+                  {selectedAssistantThread
+                    ? `${selectedAssistantThread.messages.length} Nachrichten · ${
+                        draftStory.assistant.artifacts.filter(function (artifact) {
+                          return artifact.threadId === selectedAssistantThread.id;
+                        }).length
+                      } Dokumente`
+                    : "Noch kein Thread aktiv"}
+                </span>
+              </div>
+              {assistantError ? <p className="sidebar-inline-error">{assistantError}</p> : null}
+            </section>
+
+            <div className="sidebar-chat-section">
+              <div className="sidebar-section-label">Threads</div>
+              <div className="sidebar-codex-list">
+                {filteredAssistantThreads.map(function (thread) {
+                  return (
+                    <button
+                      key={thread.id}
+                      className={
+                        "codex-row" + (thread.id === selectedAssistantThreadId ? " codex-row--active" : "")
+                      }
+                      type="button"
+                      onClick={function () {
+                        setSelectedAssistantThreadId(thread.id);
+                        const firstArtifact = draftStory.assistant.artifacts.find(function (artifact) {
+                          return artifact.threadId === thread.id;
+                        });
+                        setSelectedAssistantArtifactId(firstArtifact?.id ?? "");
+                      }}
+                    >
+                      <h3>{thread.title}</h3>
+                      <p>{thread.summary || "Noch keine Assistant-Antwort."}</p>
+                    </button>
+                  );
+                })}
+
+                {!filteredAssistantThreads.length ? (
+                  <article className="codex-row codex-row--empty">
+                    <h3>Keine Treffer</h3>
+                    <p>Die aktuelle Suche findet keinen Chat-Thread.</p>
+                  </article>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="sidebar-chat-section">
+              <div className="sidebar-section-label">Dokumente</div>
+              <div className="sidebar-codex-list">
+                {draftStory.assistant.artifacts
+                  .filter(function (artifact) {
+                    return selectedAssistantThread ? artifact.threadId === selectedAssistantThread.id : true;
+                  })
+                  .slice()
+                  .sort(function (left, right) {
+                    return right.updatedAt.localeCompare(left.updatedAt);
+                  })
+                  .map(function (artifact) {
+                    return (
+                      <button
+                        key={artifact.id}
+                        className={
+                          "codex-row" + (artifact.id === selectedAssistantArtifactId ? " codex-row--active" : "")
+                        }
+                        type="button"
+                        onClick={function () {
+                          setSelectedAssistantArtifactId(artifact.id);
+                        }}
+                      >
+                        <h3>{artifact.title}</h3>
+                        <p>{artifact.summary}</p>
+                      </button>
+                    );
+                  })}
+
+                {!draftStory.assistant.artifacts.filter(function (artifact) {
+                  return selectedAssistantThread ? artifact.threadId === selectedAssistantThread.id : true;
+                }).length ? (
+                  <article className="codex-row codex-row--empty">
+                    <h3>Noch keine Dokumente</h3>
+                    <p>Stelle eine Frage im Modus `Regie`, um ein speicherbares Dokument zu erzeugen.</p>
+                  </article>
+                ) : null}
+              </div>
             </div>
           </>
         ) : selectedCodexEntry ? (
@@ -1164,7 +1584,9 @@ export function StudioWorkspace({
               }}
             >
               <span className="mini-icon mini-icon--menu" />
-              <span>{sidebarMode === "library" ? "Projekte" : "Codex"}</span>
+              <span>
+                {sidebarMode === "library" ? "Projekte" : sidebarMode === "chat" ? "Chat" : "Codex"}
+              </span>
             </button>
 
             <div className="pill-group pill-group--mode-switch" aria-label="Engine Mode">
@@ -1190,27 +1612,33 @@ export function StudioWorkspace({
               </button>
             </div>
 
-            <div className="pill-group" aria-label="Mode">
-              {availableAuthorModes.map(function (mode) {
-                return (
-                  <button
-                    key={mode}
-                    className={
-                      "pill-button" + (authorMode === mode ? " pill-button--active" : "")
-                    }
-                    onClick={function () {
-                      setAuthorMode(mode);
-                    }}
-                    type="button"
-                    title={getAuthorModeTooltip(mode)}
-                  >
-                    {formatAuthorModeLabel(mode)}
-                  </button>
-                );
-              })}
-            </div>
+            {!isChatSidebar ? (
+              <div className="pill-group" aria-label="Mode">
+                {availableAuthorModes.map(function (mode) {
+                  return (
+                    <button
+                      key={mode}
+                      className={
+                        "pill-button" + (authorMode === mode ? " pill-button--active" : "")
+                      }
+                      onClick={function () {
+                        setAuthorMode(mode);
+                      }}
+                      type="button"
+                      title={getAuthorModeTooltip(mode)}
+                    >
+                      {formatAuthorModeLabel(mode)}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="pill-group" aria-label="Assistant Workspace">
+                <span className="pill-button pill-button--active">Assistant</span>
+              </div>
+            )}
 
-            {authorMode !== "book" ? (
+            {!isChatSidebar && authorMode !== "book" ? (
               <div className="pill-group pill-group--view" aria-label="View">
                 {VIEW_MODES.map(function (mode) {
                   return (
@@ -1231,9 +1659,9 @@ export function StudioWorkspace({
               </div>
             ) : null}
 
-            {authorMode !== "book" ? <span className="filter-label">FILTER:</span> : null}
+            {!isChatSidebar && authorMode !== "book" ? <span className="filter-label">FILTER:</span> : null}
 
-            {authorMode !== "book" ? (
+            {!isChatSidebar && authorMode !== "book" ? (
               <label className="search-field search-field--topbar">
                 <span className="search-icon" />
                 <input
@@ -1270,7 +1698,7 @@ export function StudioWorkspace({
               </Link>
             ) : null}
             <span className="view-toggle" aria-hidden="true">
-              {formatAuthorModeLabel(authorMode)}
+              {isChatSidebar ? "Chat" : formatAuthorModeLabel(authorMode)}
             </span>
           </div>
         </header>
@@ -1284,7 +1712,20 @@ export function StudioWorkspace({
             onChange={handleImportFile}
           />
 
-          {authorMode === "book" ? (
+          {isChatSidebar ? (
+            <ChatWorkspace
+              story={draftStory}
+              selectedThread={selectedAssistantThread}
+              selectedArtifactId={selectedAssistantArtifact?.id ?? null}
+              selectedSceneContext={selectedSceneContext}
+              isLoading={isAssistantLoading}
+              error={assistantError}
+              onSubmit={handleSubmitAssistantPrompt}
+              onSelectArtifact={setSelectedAssistantArtifactId}
+              onCreateThread={handleCreateAssistantThread}
+              onUpdatePreferences={handleUpdateAssistantPreferences}
+            />
+          ) : authorMode === "book" ? (
             <BookWriterPanel
               story={draftStory}
               sceneContext={selectedSceneContext}
@@ -1503,7 +1944,7 @@ export function StudioWorkspace({
                 />
               ) : authorMode === "playtest" ? (
                 <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
-              ) : authorMode === "chat" ? (
+              ) : authorMode === "patch" ? (
                 <PatchPanel
                   story={draftStory}
                   sceneContext={selectedSceneContext}
@@ -1651,6 +2092,16 @@ function SceneRow({
   );
 }
 
+function createAssistantContextSelectionFromSceneContext(
+  sceneContext: SceneContext
+): AssistantContextSelection {
+  return createDefaultAssistantContextSelection("scene", {
+    actId: sceneContext.act.id,
+    chapterId: sceneContext.chapter.id,
+    sceneId: sceneContext.scene.id
+  });
+}
+
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -1665,7 +2116,7 @@ function formatAuthorModeLabel(mode: AuthorMode) {
       return "Branch";
     case "playtest":
       return "Playtest";
-    case "chat":
+    case "patch":
       return "Patch";
     case "review":
       return "Review";
@@ -1684,7 +2135,7 @@ function getAuthorModeTooltip(mode: AuthorMode) {
       return "Interaktiver Editor: Verzweigungen (Choices) und Story-Logik bearbeiten.";
     case "playtest":
       return "Vorschau: Die Story aus der Sicht eines Lesers testen.";
-    case "chat":
+    case "patch":
       return "KI-Patching: Gezielte Änderungen am Text über KI-Vorschläge vornehmen.";
     case "review":
       return "Qualitätskontrolle: Kontinuität prüfen und Veröffentlichungs-Check durchführen.";
@@ -1826,6 +2277,18 @@ function formatLibraryTimestamp(value: string) {
     hour: "2-digit",
     minute: "2-digit"
   }).format(timestamp);
+}
+
+function getLibraryProjectDetails(authorName?: string | null, updatedAt?: string) {
+  const normalizedAuthor = authorName?.trim();
+  const formattedTimestamp = formatLibraryTimestamp(updatedAt || "");
+  const hasTimestamp = formattedTimestamp !== "ohne Datum";
+
+  return {
+    summary: [normalizedAuthor, hasTimestamp ? formattedTimestamp : null].filter(Boolean).join(" · ") || "Ohne Autor",
+    subtitle: normalizedAuthor || (hasTimestamp ? formattedTimestamp : "Ohne Autor"),
+    meta: normalizedAuthor && hasTimestamp ? formattedTimestamp : null
+  };
 }
 
 function formatFooterStatus(mode: StoryDocument["book"]["draftEngine"]["jobs"][number]["mode"]) {
@@ -2013,6 +2476,7 @@ function normalizeImportedStory(value: unknown, fallbackStory: StoryDocument): S
     id: fallbackStory.id,
     workspaceId: fallbackStory.workspaceId,
     mode: storyMode,
+    assistant: normalizeAssistantWorkspace(value.assistant),
     worldBible: normalizeImportedWorldBible(value.worldBible),
     variables: normalizeImportedVariables(value.variables),
     acts: normalizeImportedActs(value.acts),

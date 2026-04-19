@@ -2,6 +2,7 @@ export type BookJobProviderOption = "auto" | "openai" | "anthropic" | "gemini" |
 export type BookJobModelKey = "openai" | "anthropic" | "anthropicContinuity" | "gemini";
 
 export type BookJobModelSelection = Record<BookJobModelKey, string>;
+export type BookJobModelOverrides = Partial<BookJobModelSelection>;
 
 export const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember_book_job_provider";
 export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
@@ -43,8 +44,8 @@ export function parseBookJobModelSelection(value: string | null): BookJobModelSe
   }
 }
 
-export function buildBookJobModelOverrides(selection: BookJobModelSelection): Partial<BookJobModelSelection> {
-  const overrides: Partial<BookJobModelSelection> = {};
+export function buildBookJobModelOverrides(selection: BookJobModelSelection): BookJobModelOverrides {
+  const overrides: BookJobModelOverrides = {};
 
   if (selection.openai) overrides.openai = selection.openai;
   if (selection.anthropic) overrides.anthropic = selection.anthropic;
@@ -52,6 +53,26 @@ export function buildBookJobModelOverrides(selection: BookJobModelSelection): Pa
   if (selection.gemini) overrides.gemini = selection.gemini;
 
   return overrides;
+}
+
+export function resolveBookJobModelValue(
+  overrideValue: string | undefined,
+  environmentValue: string | undefined | null,
+  fallbackValue: string
+) {
+  const override = overrideValue?.trim();
+
+  if (override) {
+    return override;
+  }
+
+  const environment = environmentValue?.trim();
+
+  if (environment) {
+    return environment;
+  }
+
+  return fallbackValue;
 }
 
 export function isBookJobProviderOption(value: string): value is BookJobProviderOption {

@@ -80,9 +80,72 @@ export type StoryDocument = {
     audience: string;
   };
   book: BookBlueprint;
+  assistant: AssistantWorkspace;
   worldBible: WorldBibleEntry[];
   variables: StoryVariable[];
   acts: StoryAct[];
+};
+
+export type AssistantProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
+export type AssistantOutputMode = "chat" | "regie";
+export type AssistantArtifactKind = "regie" | "note";
+export type AssistantContextScope = "project" | "act" | "chapter" | "scene";
+export type AssistantContextSelection = {
+  scope: AssistantContextScope;
+  actId: string | null;
+  chapterId: string | null;
+  sceneId: string | null;
+};
+export type AssistantModelSelection = {
+  openai: string;
+  anthropic: string;
+  gemini: string;
+};
+
+export type AssistantWorkspace = {
+  preferences: {
+    provider: AssistantProvider;
+    outputMode: AssistantOutputMode;
+    modelSelection: AssistantModelSelection;
+  };
+  threads: AssistantThread[];
+  artifacts: AssistantArtifact[];
+};
+
+export type AssistantThread = {
+  id: string;
+  title: string;
+  summary: string;
+  context: AssistantContextSelection;
+  createdAt: string;
+  updatedAt: string;
+  messages: AssistantMessage[];
+};
+
+export type AssistantMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: string;
+  outputMode: AssistantOutputMode;
+  provider: AssistantProvider;
+  modelName: string | null;
+  context: AssistantContextSelection;
+  artifactId: string | null;
+};
+
+export type AssistantArtifact = {
+  id: string;
+  threadId: string;
+  sourceMessageId: string | null;
+  title: string;
+  kind: AssistantArtifactKind;
+  format: "markdown";
+  summary: string;
+  content: string;
+  context: AssistantContextSelection;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type StoryLibraryEntry = {
@@ -398,6 +461,65 @@ export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
     sceneCards: [],
     contextPacks: [],
     continuityNotes: []
+  };
+}
+
+export function createDefaultAssistantWorkspace(): AssistantWorkspace {
+  return {
+    preferences: {
+      provider: "auto",
+      outputMode: "chat",
+      modelSelection: createDefaultAssistantModelSelection()
+    },
+    threads: [],
+    artifacts: []
+  };
+}
+
+export function createDefaultAssistantModelSelection(): AssistantModelSelection {
+  return {
+    openai: "",
+    anthropic: "",
+    gemini: ""
+  };
+}
+
+export function createDefaultAssistantContextSelection(
+  scope: AssistantContextScope = "project",
+  ids?: Partial<AssistantContextSelection>
+): AssistantContextSelection {
+  return {
+    scope,
+    actId: ids?.actId ?? null,
+    chapterId: ids?.chapterId ?? null,
+    sceneId: ids?.sceneId ?? null
+  };
+}
+
+export function normalizeAssistantWorkspace(value: unknown): AssistantWorkspace {
+  const fallback = createDefaultAssistantWorkspace();
+  const candidate = value && typeof value === "object" ? (value as Partial<AssistantWorkspace>) : null;
+
+  return {
+    preferences: {
+      provider: normalizeAssistantProvider(candidate?.preferences?.provider),
+      outputMode: normalizeAssistantOutputMode(candidate?.preferences?.outputMode),
+      modelSelection: normalizeAssistantModelSelection(candidate?.preferences?.modelSelection)
+    },
+    threads: Array.isArray(candidate?.threads)
+      ? candidate.threads
+          .filter(function (thread): thread is AssistantThread {
+            return Boolean(thread) && typeof thread === "object";
+          })
+          .map(normalizeAssistantThread)
+      : fallback.threads,
+    artifacts: Array.isArray(candidate?.artifacts)
+      ? candidate.artifacts
+          .filter(function (artifact): artifact is AssistantArtifact {
+            return Boolean(artifact) && typeof artifact === "object";
+          })
+          .map(normalizeAssistantArtifact)
+      : fallback.artifacts
   };
 }
 
@@ -752,9 +874,145 @@ export function createEmptyStoryDocument(
       audience: "Adult"
     },
     book: createDefaultBookBlueprint(title),
+    assistant: createDefaultAssistantWorkspace(),
     worldBible: [],
     variables: [],
     acts: []
+  };
+}
+
+function normalizeAssistantThread(thread: AssistantThread): AssistantThread {
+  const now = new Date().toISOString();
+  const legacySceneId = typeof (thread as { sceneId?: unknown }).sceneId === "string"
+    ? ((thread as { sceneId?: string }).sceneId ?? null)
+    : null;
+
+  return {
+    id: typeof thread.id === "string" && thread.id ? thread.id : createUuid(),
+    title: typeof thread.title === "string" && thread.title.trim() ? thread.title.trim() : "Neues Gespräch",
+    summary: typeof thread.summary === "string" ? thread.summary : "",
+    context: normalizeAssistantContextSelection(thread.context, legacySceneId),
+    createdAt:
+      typeof thread.createdAt === "string" && thread.createdAt ? thread.createdAt : now,
+    updatedAt:
+      typeof thread.updatedAt === "string" && thread.updatedAt ? thread.updatedAt : now,
+    messages: Array.isArray(thread.messages)
+      ? thread.messages
+          .filter(function (message): message is AssistantMessage {
+            return Boolean(message) && typeof message === "object";
+          })
+          .map(normalizeAssistantMessage)
+      : []
+  };
+}
+
+function normalizeAssistantMessage(message: AssistantMessage): AssistantMessage {
+  const legacySceneId = typeof (message as { sceneId?: unknown }).sceneId === "string"
+    ? ((message as { sceneId?: string }).sceneId ?? null)
+    : null;
+
+  return {
+    id: typeof message.id === "string" && message.id ? message.id : createUuid(),
+    role: message.role === "assistant" ? "assistant" : "user",
+    content: typeof message.content === "string" ? message.content : "",
+    createdAt:
+      typeof message.createdAt === "string" && message.createdAt
+        ? message.createdAt
+        : new Date().toISOString(),
+    outputMode: normalizeAssistantOutputMode(message.outputMode),
+    provider: normalizeAssistantProvider(message.provider),
+    modelName: typeof message.modelName === "string" && message.modelName ? message.modelName : null,
+    context: normalizeAssistantContextSelection(message.context, legacySceneId),
+    artifactId: typeof message.artifactId === "string" && message.artifactId ? message.artifactId : null
+  };
+}
+
+function normalizeAssistantArtifact(artifact: AssistantArtifact): AssistantArtifact {
+  const now = new Date().toISOString();
+  const legacySceneId = typeof (artifact as { sceneId?: unknown }).sceneId === "string"
+    ? ((artifact as { sceneId?: string }).sceneId ?? null)
+    : null;
+
+  return {
+    id: typeof artifact.id === "string" && artifact.id ? artifact.id : createUuid(),
+    threadId: typeof artifact.threadId === "string" ? artifact.threadId : "",
+    sourceMessageId:
+      typeof artifact.sourceMessageId === "string" && artifact.sourceMessageId
+        ? artifact.sourceMessageId
+        : null,
+    title:
+      typeof artifact.title === "string" && artifact.title.trim()
+        ? artifact.title.trim()
+        : "Unbenanntes Dokument",
+    kind: artifact.kind === "regie" ? "regie" : "note",
+    format: "markdown",
+    summary: typeof artifact.summary === "string" ? artifact.summary : "",
+    content: typeof artifact.content === "string" ? artifact.content : "",
+    context: normalizeAssistantContextSelection(artifact.context, legacySceneId),
+    createdAt:
+      typeof artifact.createdAt === "string" && artifact.createdAt ? artifact.createdAt : now,
+    updatedAt:
+      typeof artifact.updatedAt === "string" && artifact.updatedAt ? artifact.updatedAt : now
+  };
+}
+
+function normalizeAssistantProvider(value: unknown): AssistantProvider {
+  if (
+    value === "auto" ||
+    value === "openai" ||
+    value === "anthropic" ||
+    value === "gemini" ||
+    value === "local"
+  ) {
+    return value;
+  }
+
+  return "auto";
+}
+
+function normalizeAssistantOutputMode(value: unknown): AssistantOutputMode {
+  return value === "regie" ? "regie" : "chat";
+}
+
+function normalizeAssistantModelSelection(value: unknown): AssistantModelSelection {
+  const candidate =
+    value && typeof value === "object" ? (value as Partial<AssistantModelSelection>) : null;
+
+  return {
+    openai: typeof candidate?.openai === "string" ? candidate.openai : "",
+    anthropic: typeof candidate?.anthropic === "string" ? candidate.anthropic : "",
+    gemini: typeof candidate?.gemini === "string" ? candidate.gemini : ""
+  };
+}
+
+function normalizeAssistantContextSelection(
+  value: unknown,
+  legacySceneId?: string | null
+): AssistantContextSelection {
+  const candidate =
+    value && typeof value === "object" ? (value as Partial<AssistantContextSelection>) : null;
+  const sceneId =
+    typeof candidate?.sceneId === "string" && candidate.sceneId
+      ? candidate.sceneId
+      : legacySceneId ?? null;
+  const chapterId =
+    typeof candidate?.chapterId === "string" && candidate.chapterId ? candidate.chapterId : null;
+  const actId = typeof candidate?.actId === "string" && candidate.actId ? candidate.actId : null;
+  const scope =
+    candidate?.scope === "act" ||
+    candidate?.scope === "chapter" ||
+    candidate?.scope === "scene" ||
+    candidate?.scope === "project"
+      ? candidate.scope
+      : sceneId
+        ? "scene"
+        : "project";
+
+  return {
+    scope,
+    actId,
+    chapterId,
+    sceneId
   };
 }
 
