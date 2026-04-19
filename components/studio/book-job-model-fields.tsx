@@ -78,8 +78,12 @@ export function BookJobModelFields(props: {
                     }
                   }}
                 >
-                  <option value="default">{copy.resetLabel} ({DEFAULT_BOOK_JOB_MODELS[key]})</option>
+                  <option value="default">{DEFAULT_BOOK_JOB_MODELS[key]}</option>
                   {presets.map(function (preset) {
+                    if (preset === DEFAULT_BOOK_JOB_MODELS[key]) {
+                      return null;
+                    }
+
                     return (
                       <option key={preset} value={preset}>
                         {preset}

@@ -38,8 +38,7 @@ const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
   { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
-  { id: "gemini", label: "Gemini", detail: "schnell" },
-  { id: "local", label: "Local", detail: "Fallback" }
+  { id: "gemini", label: "Gemini", detail: "schnell" }
 ];
 
 const DIRECTOR_PRESETS = [
@@ -517,10 +516,6 @@ export function BookWriterPanel({
               );
             })}
           </div>
-
-          <p className="book-writer-status">
-            Ohne API-Key oder bei Provider-Fehlern wird der Copilot als lokaler Fallback ausgeführt.
-          </p>
 
           <BookJobModelFields
             provider={jobProvider}
