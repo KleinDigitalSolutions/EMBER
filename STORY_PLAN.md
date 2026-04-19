@@ -439,10 +439,12 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Book Writer Panel:** `erledigt`. Dediziertes Schreib-Interface für fokussiertes Authoring von Buch-Projekten implementiert.
 - **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review).
 - **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic` / `Gemini`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
+- **Per-Job Model Switcher:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel koennen jetzt pro Job konkrete Modell-IDs je Provider ueberschreiben; die Auswahl wird lokal gespeichert und als Request-Override an den Server gereicht.
 - **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-2.5-flash` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
 - **Schema & Persistence:** `erledigt`. Supabase-Enum `ai_provider` um `gemini` erweitert; `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
 - **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
 - **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; ein separater Continuity-Audit kann auf einem leichteren Anthropic-Modell statt auf dem Haupt-Draft-Modell laufen.
+- **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind Sonnet/Opus/GPT/Gemini-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
 - **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
 
