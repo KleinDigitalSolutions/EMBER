@@ -495,6 +495,36 @@ textarea {
   transform: translate(-50%, -50%);
 }
 
+.mini-icon--trash {
+  position: relative;
+  width: 0.9rem;
+  height: 0.9rem;
+  display: block;
+}
+
+.mini-icon--trash::before {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  right: 0.15rem;
+  bottom: 0.05rem;
+  border: 1.5px solid currentColor;
+  border-top-width: 0;
+  border-radius: 0 0 0.15rem 0.15rem;
+}
+
+.mini-icon--trash::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.05rem;
+  right: 0.05rem;
+  height: 1.5px;
+  background: currentColor;
+  box-shadow: 0 0.12rem 0 -0.04rem var(--bg), 0 0.12rem 0 0 currentColor;
+}
+
 .rail-button,
 .mini-icon-button,
 .square-button,
@@ -958,13 +988,17 @@ textarea {
 
 .project-row__delete {
   align-self: center;
-  min-width: 4.5rem;
-  padding: 0 0.65rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 0;
   border: 1px solid var(--line);
   background: #18181d;
   color: var(--text-faint);
-  font-size: 0.73rem;
+  flex-shrink: 0;
 }
 
 .project-row--empty {

@@ -856,8 +856,9 @@ export function StudioWorkspace({
                         void handleDeleteProject(entry.id);
                       }}
                       disabled={isDeleting || libraryActionId === "create"}
+                      title="Projekt dauerhaft löschen"
                     >
-                      {isDeleting ? "..." : "Löschen"}
+                      {isDeleting ? "..." : <span className="mini-icon mini-icon--trash" />}
                     </button>
                   </article>
                 );
