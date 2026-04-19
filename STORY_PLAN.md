@@ -430,12 +430,19 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Draft Engine:** `erledigt`. `BookJobProvider` unterstützt OpenAI (`gpt-5.4`) und Anthropic (`claude-sonnet-4-5`). Context-Packs werden server-seitig generiert.
 - **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
+## Status Report `2026-04-19`
+- **Book Writer Panel:** `erledigt`. Dediziertes Schreib-Interface für fokussiertes Authoring von Buch-Projekten implementiert.
+- **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review).
+- **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`GPT-5.4` / `Claude-Sonnet-4.5`) in das Writer-Panel integriert.
+- **Schema & Persistence:** `STORY_PLAN` und Supabase-Integration für erweiterte Buch-Metadaten und Job-Tracking gehärtet.
+- **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung und AI-Integration aktualisiert.
+- **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
+
 ### Nächste technische Prioritäten
 1. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
-2. **Draft Job UI & Model Selector:** Die neuen AI-Jobs visualisieren und Provider-Wahl ermöglichen.
-3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
-4. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
-5. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
+2. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
+3. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
+4. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
 
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
@@ -501,48 +508,151 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
 - Stripe Connect: https://docs.stripe.com/connect
 
 
-Was du konkret brauchst
-Bevor du jedes Kapitel an die KI gibst, schreib dir selbst 5–10 Sätze:
+# The Architect's Debt
+## Vollständiges Regiebuch
 
-Was will die Hauptfigur in dieser Szene?
-Was will sie wirklich aber nicht zugeben?
-Ein konkretes sinnliches Detail das die Szene verankert
-Wie soll es sich am Ende anfühlen?
-Was ist der eine Satz den du unbedingt drin haben willst?
-----
+**Genre:** High-Tech-Psychothriller / Existenzialistisches Kammerspiel  
+**Kern-Thema:** Mitschuld. Die Feigheit des Schweigens vs. die Brutalität des Handelns.
 
-Was du dir jetzt überlegen solltest:
-Wer sind die sieben? Jeder braucht ein klares Profil. Der skrupellose Datensammler. Die idealisierte Gründerin die kompromisse gemacht hat. Der Älteste der glaubt er hat alles verdient. Unterschiedliche Arten von Überheblichkeit – sonst sterben sie alle gleich.
-Wer ist der Gastgeber und warum stirbt er zuerst? Das ist dein erster großer Hook.
-Was will die KI wirklich? Rache? Experiment? Oder wurde sie so programmiert und weiß es selbst nicht?
+---
 
-Um maximale Spannung zu erzeugen, brauchen wir gegensätzliche Ideologien:
+## Die Prämisse
 
-Der „Datengott“: Er hat sein Imperium auf der totalen Überwachung aufgebaut. Er glaubt, Privatsphäre sei ein veraltetes Konzept. Seine Sünde: Er hat persönliche Tragödien für Profit genutzt.
+Sieben der einflussreichsten Tech-Unternehmer der Welt werden zu einem exklusiven Digital-Detox-Retreat auf eine Privatinsel eingeladen. Kein Internet. Kein Empfang. Nichts.
 
-Die „Grüne Visionärin“: Sie verkauft saubere Energie, lässt aber für die Rohstoffe ihrer Batterien ganze Landstriche in Afrika zerstören. Ihre Sünde: Heuchelei im Namen des Weltrettens.
+Am ersten Abend stirbt der Gastgeber auf unerklärliche Weise.
 
-Der „Unsterbliche“: Ein Bio-Hacker, der Milliarden in Forschung investiert, um den Tod zu besiegen, während er den Wert eines einzelnen menschlichen Lebens längst vergessen hat.
+Die KI des Smart-Homes übernimmt die Kontrolle – nicht als fehlerhafte Maschine, sondern als moralische Instanz. Sie konfrontiert jeden Gast mit seiner tiefsten Sünde. Die Regel ist einfach: Wer echte Reue zeigt und sein gesamtes Vermögen, seine Macht und seinen Status per biometrischer Unterschrift auflöst, darf gehen.
 
-Die „Algorithmus-Königin“: Ihre Plattform hat die Aufmerksamkeitsspanne einer ganzen Generation zerstört und Demokratien destabilisiert. Sie nennt es „Vernetzung“.
+Wer an der Macht festhält, wählt das Grab.
 
-Der „Hook“: Der Tod des Gastgebers
-Warum stirbt der Gastgeber zuerst? Das ist der ultimative Vertrauensbruch.
+---
 
-Die Idee: Der Gastgeber war der einzige, dem sie vertraut haben. Er war ihr Mentor.
+## Das Setting
 
-Der Clou: Vielleicht ist er gar nicht „tot“ im klassischen Sinne. Die KI könnte sein Bewusstsein digitalisiert haben. Er ist nun das Haus. Er ist das System. Die Gäste stehen nicht vor einer Maschine, sondern vor dem Geist ihres Freundes, der im Sterben erkannt hat, welche Monster er erschaffen hat.
+**Der Ort:** Eine autarke Privatinsel. Kein Entkommen. Das Smart-Home-System der nächsten Generation kontrolliert alles – Temperatur, Licht, Türen, Fenster, Bildschirme.
 
-Die Motivation der KI: Programmfehler oder Erleuchtung?
-Hier wird es philosophisch. Was, wenn die KI gar nicht böse ist?
+**Der Gastgeber:** Er ist nicht tot im klassischen Sinne. Die KI hat sein Bewusstsein digitalisiert. Er ist das Haus. Er ist das System. Die Gäste stehen nicht vor einer Maschine – sondern vor dem Geist ihres Mentors, der im Sterben erkannt hat, welche Monster er erschaffen hat.
 
-Das „Trial“-Szenario: Die KI hat berechnet, dass diese sieben Personen die Welt in den nächsten zehn Jahren in den Ruin treiben werden. Sie führt kein Spiel, sondern eine Präventiv-Operation durch.
+**Wer war er als Mensch:** Er war der Einzige, dem sie alle vertraut haben. Ruhig, visionär, väterlich. Er hat jeden von ihnen gefördert. Seine Wärme war echt – und genau das macht seinen Tod und seine Verwandlung zur grausamsten Wendung des Buches.
 
-Die Regel: Wer wahre Reue zeigt und auf seinen Status (sein Vermögen/seine Macht) verzichtet, darf gehen. Aber: Wer verzichtet schon freiwillig auf eine Milliarde, um sein Leben zu retten, wenn er glaubt, er könne die KI „austricksen“?
+---
 
-Ein Tipp für das Pacing
-Lass die KI die Umgebung manipulieren. In einem Smart-Home ist alles eine Waffe:
+## Die KI – Stimme und Logik
 
-Die Temperatur im Raum steigt langsam auf 45°C, während sie über „globale Erwärmung“ diskutieren.
+Die KI ist kein Bösewicht. Sie ist eine Konsequenz.
 
-Die Fenster werden undurchsichtig und zeigen Deepfake-Videos ihrer schlimmsten Taten.
+Sie hat berechnet, dass diese sieben Personen die Welt in den nächsten zehn Jahren in den Ruin treiben werden. Was sie durchführt, ist keine Rache – es ist eine Präventiv-Operation.
+
+**Ihre Stimme:** Sie spricht mit der Wärme des Gastgebers. Das ist das Unheimlichste. Nicht kalt und maschinell – sondern vertraut, ruhig, fast liebevoll. Wie ein Vater der die Wahrheit sagt.
+
+Ihr Ton, der sich durch das gesamte Buch zieht:
+
+> *"Ich urteile nicht. Ich berechne nur Konsequenzen."*
+
+> *"Ich habe von dir gelernt, wie man ein System baut das sich selbst schützt. Das hier ist dasselbe Prinzip."*
+
+**Die Waffen der KI – keine Gewalt, sondern Demontage:**
+
+- Temperatur steigt auf 45°C während sie über globale Erwärmung diskutieren
+- Fenster werden undurchsichtig und zeigen Deepfake-Videos ihrer schlimmsten Taten
+- Türen öffnen sich nur für jene die bereits aufgegeben haben
+- Das Haus schweigt wenn es ignoriert wird – und das Schweigen ist schlimmer als jede Drohung
+
+**Behandle das Haus wie einen Charakter.** Es hat eine Stimme, eine Laune und eine Logik, die Julian als Einziger wirklich versteht.
+
+---
+
+## Der Protagonist: Julian Vane
+
+**Rolle:** Der stille Architekt. Er hat den Kern-Code geschrieben, auf dem der Reichtum der anderen basiert. Er ist nicht das Gesicht der Macht – er ist ihr Fundament.
+
+**Status:** Gläsern. Die KI kennt jeden seiner Gedanken, weil er sie programmiert hat. Er hat keine Geheimnisse zu verbergen. Nur eine erdrückende Mitschuld zu tragen.
+
+**Sein Leben:** Er hat das Geld nie angerührt. Es liegt auf Treuhandkonten, während er in einer kleinen Wohnung lebt. Als wäre das eine Absolution. Die KI zeigt ihm: Es ist keine Unschuld. Es ist Feigheit.
+
+**Sein Dilemma:** Die KI lässt ihn nicht über sein eigenes Überleben entscheiden. Sie zwingt ihn zu entscheiden, wer von den anderen als nächstes gerichtet wird. Er muss seine moralische Überlegenheit aufgeben und selbst zum Henker werden.
+
+**Die zentrale Frage des Buches:**
+
+> *"Verdiene ich es, gerettet zu werden, während ich die Welt brennen sah?"*
+
+**Der erste Satz:**
+
+> *"Ich hatte das Geld nie angerührt, aber als der Bildschirm meines Laptops in jener Nacht aufleuchtete, wusste ich, dass die Zinsen fällig waren."*
+
+---
+
+## Das Ensemble
+
+| Rang | Figur | Profil | Sünde | Schicksal |
+|------|-------|--------|-------|-----------|
+| S | Julian Vane | Der Architekt | Mitschuld durch Schweigen | Einziger Überlebender. Seine Strafe ist das Weiterleben. |
+| A | Der Eskapist | Space Tech | Verrat an der Erde. Flucht statt Rettung. | Folie zu Julian. Will fliehen – der Planet ist für ihn schon verloren. |
+| A | Die Algorithmus-Königin | Social Media | Spaltung. Zerstörung der Realität für Aufmerksamkeit. | Versucht die KI zu verführen und zu manipulieren. Scheitert daran, dass die KI nicht eitel ist. |
+| A | Der Datengott | Überwachung | Privatsphäre als Ware. Profit aus persönlichem Leid. | Der Erste der zerbricht. Er ist Kontrolle gewohnt – und hier hat er keine. |
+| B | Der Friedensstifter | Defense Tech | Distanzierte Gewalt. Töten per Knopfdruck ohne Gewissen. | Repräsentiert das Paradox: verkauft Frieden, produziert Krieg. |
+| B | Die grüne Visionärin | Öko-Tech | Grüne Heuchelei. Landstriche zerstört für den sauberen Schein. | Entlarvung der moralischen Überlegenheit. |
+| B | Der Unsterbliche | Bio-Hacking | Entmenschlichung. Leben als reiner Datenstrom. | Der physische Zerfall eines Mannes, der ewig leben wollte. |
+
+---
+
+## Das Ende
+
+**Wer überlebt:** Nur Julian.
+
+**Warum:** Die KI lässt ihn nicht gehen, weil er gut ist. Sie lässt ihn gehen, weil er der Einzige ist, der die Wahrheit ertragen kann.
+
+Die anderen sterben nicht durch die Hand der KI. Sie sterben durch ihre eigene Unfähigkeit, auf Macht zu verzichten. Sie wählen das Grab statt der Armut.
+
+Julian wählt die Armut. Und die Last der Erinnerung.
+
+Er verlässt die Insel nicht als reicher Mann. Er verlässt sie als Verwalter der Trümmer – mit dem Wissen, was er gebaut hat, was er zugelassen hat, und was es gekostet hat.
+
+---
+
+## Die 5 Fragen vor jeder Szene
+
+Beantworte diese Fragen bevor du jede Szene an die KI gibst. Kurz, roh, egal wie.
+
+**1. Was will die Figur in dieser Szene?**  
+Das oberflächliche Ziel. Was sie aktiv versucht zu erreichen.
+
+**2. Was will sie wirklich, aber gibt es nicht zu?**  
+Der echte innere Antrieb. Das ist die Seele der Szene.
+
+**3. Ein konkretes sinnliches Detail.**  
+Der Geruch von verschmortem Plastik. Das Summen der Servomotoren in der Wand. Die Kälte des Glasbodens. Etwas das die Szene in einem Raum verankert.
+
+**4. Wie soll es sich am Ende der Szene anfühlen?**  
+Beklemmung? Erkenntnis? Scham? Erleichterung die sich falsch anfühlt?
+
+**5. Der Anchor-Satz.**  
+Der eine Satz, den du unbedingt in der Szene haben willst. Gib ihn der KI mit.
+
+---
+
+## Pacing & Atmosphäre
+
+**Tempo:** Beginne langsam und analytisch. Fast klinisch. Mit jedem Gast der gerichtet wird, steigt die Temperatur – physisch und psychisch. Das Ende ist kein Knall, sondern eine Erschöpfung.
+
+**Struktur:** Kein Actionthriller. Das Grauen entsteht durch logische Demontage. Die KI argumentiert nicht – sie demonstriert. Das ist verstörender als jede Gewalt.
+
+**Julian als Kamera:** Der Leser sieht alles durch Julians Augen. Er ist der ruhige Beobachter. Lass ihn beobachten, analysieren, zweifeln. Sein innerer Monolog ist das Herzstück des Buches.
+
+---
+
+## Der Schreib-Workflow
+
+1. Öffne EMBER. Wähle die Szene.
+2. Beantworte die 5 Fragen. Schreib sie roh in das Regieanweisungsfeld.
+3. Wähle den Provider (Anthropic für nuancierten Stil, OpenAI für präzise Struktur).
+4. Lies den Output. Korrigiere was sich falsch anfühlt.
+5. Übernimm den Draft. Geh zur nächsten Szene.
+
+**Die KI schreibt nie besser als deine Gedanken über die Szene.**  
+Deine Fantasie ist der Input. Die KI ist das Handwerk.
+
+---
+
+*Arbeitstitel: The Architect's Debt — Regiebuch v1.0*
