@@ -1372,7 +1372,7 @@ function normalizeThreadStatus(value: unknown): StoryDocument["book"]["memory"][
 }
 
 function normalizeProvider(value: unknown): BookDraftJob["provider"] {
-  if (value === "openai" || value === "anthropic" || value === "local") {
+  if (value === "openai" || value === "anthropic" || value === "gemini" || value === "local") {
     return value
   }
 

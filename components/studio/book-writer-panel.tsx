@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   acceptDraftJobToScene,
   buildSceneContextPacket,
@@ -20,13 +20,14 @@ import {
   type StoryScene
 } from "@/lib/story-schema";
 
-type JobProviderOption = "auto" | "openai" | "anthropic" | "local";
+type JobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type AiPanelView = "rewrite" | "outline" | "notes" | "extract";
 
 const PROVIDER_OPTIONS: Array<{ id: JobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
   { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
+  { id: "gemini", label: "Gemini", detail: "schnell" },
   { id: "local", label: "Local", detail: "Fallback" }
 ];
 
@@ -43,6 +44,7 @@ const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "notes", label: "Notes" },
   { id: "extract", label: "Extract" }
 ];
+const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember-book-job-provider";
 
 export function BookWriterPanel({
   story,
@@ -72,6 +74,27 @@ export function BookWriterPanel({
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
   const [directorNote, setDirectorNote] = useState("");
   const [activePanelView, setActivePanelView] = useState<AiPanelView>("rewrite");
+
+  useEffect(function () {
+    const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
+
+    if (
+      storedProvider === "auto" ||
+      storedProvider === "openai" ||
+      storedProvider === "anthropic" ||
+      storedProvider === "gemini" ||
+      storedProvider === "local"
+    ) {
+      setJobProvider(storedProvider);
+    }
+  }, []);
+
+  useEffect(
+    function () {
+      window.localStorage.setItem(BOOK_JOB_PROVIDER_STORAGE_KEY, jobProvider);
+    },
+    [jobProvider]
+  );
 
   const stats = useMemo(function () {
     return countStoryStats(story);
@@ -403,7 +426,7 @@ export function BookWriterPanel({
           <div className="book-writer-card__head">
             <div>
               <span className="scene-editor__eyebrow">AI Copilot</span>
-              <h4>OpenAI und Anthropic</h4>
+              <h4>OpenAI, Anthropic, Gemini</h4>
             </div>
           </div>
 
@@ -750,6 +773,10 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | JobProviderOpt
 
   if (provider === "anthropic") {
     return "Anthropic";
+  }
+
+  if (provider === "gemini") {
+    return "Gemini";
   }
 
   if (provider === "local") {

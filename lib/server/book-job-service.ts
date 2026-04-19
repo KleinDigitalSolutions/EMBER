@@ -2,6 +2,7 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
@@ -30,7 +31,8 @@ const draftJobSchema = z.object({
 });
 
 type DraftJobPayload = z.infer<typeof draftJobSchema>;
-export type BookJobProvider = "auto" | "openai" | "anthropic" | "local";
+export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
+type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
 export type BookJobExecution = {
   provider: Exclude<BookJobProvider, "auto">;
   mode: "remote" | "local_fallback";
@@ -74,23 +76,23 @@ export async function generateBookDraftJob(params: {
       packet,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      "Kein OPENAI_API_KEY oder ANTHROPIC_API_KEY gesetzt; lokaler Fallback verwendet."
+      "Kein OPENAI_API_KEY, ANTHROPIC_API_KEY oder GEMINI_API_KEY gesetzt; lokaler Fallback verwendet."
     );
   }
 
   try {
+    const providerOptions = {
+      targetSceneWordsMin,
+      targetSceneWordsMax,
+      directorNote
+    };
+
     const result =
       remoteProvider === "openai"
-        ? await generateWithOpenAI(packet, {
-            targetSceneWordsMin,
-            targetSceneWordsMax,
-            directorNote
-          })
-        : await generateWithAnthropic(packet, {
-            targetSceneWordsMin,
-            targetSceneWordsMax,
-            directorNote
-          });
+        ? await generateWithOpenAI(packet, providerOptions)
+        : remoteProvider === "anthropic"
+          ? await generateWithAnthropic(packet, providerOptions)
+          : await generateWithGemini(packet, providerOptions);
 
     return {
       provider: remoteProvider,
@@ -122,6 +124,10 @@ function resolveRemoteProvider(provider: BookJobProvider) {
     return "anthropic" as const;
   }
 
+  if (provider === "gemini" && getGeminiApiKey()) {
+    return "gemini" as const;
+  }
+
   if (provider === "auto") {
     if (process.env.OPENAI_API_KEY) {
       return "openai" as const;
@@ -129,6 +135,10 @@ function resolveRemoteProvider(provider: BookJobProvider) {
 
     if (process.env.ANTHROPIC_API_KEY) {
       return "anthropic" as const;
+    }
+
+    if (getGeminiApiKey()) {
+      return "gemini" as const;
     }
   }
 
@@ -213,6 +223,55 @@ async function generateWithAnthropic(
     modelName,
     payload: message.parsed_output
   };
+}
+
+async function generateWithGemini(
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  }
+) {
+  const apiKey = getGeminiApiKey();
+
+  if (!apiKey) {
+    throw new Error("Missing Gemini API key.");
+  }
+
+  const modelName =
+    process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL || "gemini-2.5-flash";
+  const client = new GoogleGenAI({
+    apiKey
+  });
+
+  const response = await client.models.generateContent({
+    model: modelName,
+    contents: buildUserPrompt(packet, options),
+    config: {
+      systemInstruction: buildSystemPrompt(packet),
+      responseMimeType: "application/json",
+      responseJsonSchema: z.toJSONSchema(draftJobSchema)
+    }
+  });
+
+  if (!response.text) {
+    throw new Error("Gemini returned no text output.");
+  }
+
+  return {
+    modelName,
+    payload: draftJobSchema.parse(JSON.parse(response.text))
+  };
+}
+
+function getGeminiApiKey() {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.GOOGLE_GEMINI_API_KEY ||
+    null
+  );
 }
 
 function hydrateDraftJob(
