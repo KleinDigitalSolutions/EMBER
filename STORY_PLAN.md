@@ -499,3 +499,50 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
 - Cloudflare Tunnel: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
 - Cloudflare Quick Tunnels: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/
 - Stripe Connect: https://docs.stripe.com/connect
+
+
+Was du konkret brauchst
+Bevor du jedes Kapitel an die KI gibst, schreib dir selbst 5–10 Sätze:
+
+Was will die Hauptfigur in dieser Szene?
+Was will sie wirklich aber nicht zugeben?
+Ein konkretes sinnliches Detail das die Szene verankert
+Wie soll es sich am Ende anfühlen?
+Was ist der eine Satz den du unbedingt drin haben willst?
+----
+
+Was du dir jetzt überlegen solltest:
+Wer sind die sieben? Jeder braucht ein klares Profil. Der skrupellose Datensammler. Die idealisierte Gründerin die kompromisse gemacht hat. Der Älteste der glaubt er hat alles verdient. Unterschiedliche Arten von Überheblichkeit – sonst sterben sie alle gleich.
+Wer ist der Gastgeber und warum stirbt er zuerst? Das ist dein erster großer Hook.
+Was will die KI wirklich? Rache? Experiment? Oder wurde sie so programmiert und weiß es selbst nicht?
+
+Um maximale Spannung zu erzeugen, brauchen wir gegensätzliche Ideologien:
+
+Der „Datengott“: Er hat sein Imperium auf der totalen Überwachung aufgebaut. Er glaubt, Privatsphäre sei ein veraltetes Konzept. Seine Sünde: Er hat persönliche Tragödien für Profit genutzt.
+
+Die „Grüne Visionärin“: Sie verkauft saubere Energie, lässt aber für die Rohstoffe ihrer Batterien ganze Landstriche in Afrika zerstören. Ihre Sünde: Heuchelei im Namen des Weltrettens.
+
+Der „Unsterbliche“: Ein Bio-Hacker, der Milliarden in Forschung investiert, um den Tod zu besiegen, während er den Wert eines einzelnen menschlichen Lebens längst vergessen hat.
+
+Die „Algorithmus-Königin“: Ihre Plattform hat die Aufmerksamkeitsspanne einer ganzen Generation zerstört und Demokratien destabilisiert. Sie nennt es „Vernetzung“.
+
+Der „Hook“: Der Tod des Gastgebers
+Warum stirbt der Gastgeber zuerst? Das ist der ultimative Vertrauensbruch.
+
+Die Idee: Der Gastgeber war der einzige, dem sie vertraut haben. Er war ihr Mentor.
+
+Der Clou: Vielleicht ist er gar nicht „tot“ im klassischen Sinne. Die KI könnte sein Bewusstsein digitalisiert haben. Er ist nun das Haus. Er ist das System. Die Gäste stehen nicht vor einer Maschine, sondern vor dem Geist ihres Freundes, der im Sterben erkannt hat, welche Monster er erschaffen hat.
+
+Die Motivation der KI: Programmfehler oder Erleuchtung?
+Hier wird es philosophisch. Was, wenn die KI gar nicht böse ist?
+
+Das „Trial“-Szenario: Die KI hat berechnet, dass diese sieben Personen die Welt in den nächsten zehn Jahren in den Ruin treiben werden. Sie führt kein Spiel, sondern eine Präventiv-Operation durch.
+
+Die Regel: Wer wahre Reue zeigt und auf seinen Status (sein Vermögen/seine Macht) verzichtet, darf gehen. Aber: Wer verzichtet schon freiwillig auf eine Milliarde, um sein Leben zu retten, wenn er glaubt, er könne die KI „austricksen“?
+
+Ein Tipp für das Pacing
+Lass die KI die Umgebung manipulieren. In einem Smart-Home ist alles eine Waffe:
+
+Die Temperatur im Raum steigt langsam auf 45°C, während sie über „globale Erwärmung“ diskutieren.
+
+Die Fenster werden undurchsichtig und zeigen Deepfake-Videos ihrer schlimmsten Taten.
