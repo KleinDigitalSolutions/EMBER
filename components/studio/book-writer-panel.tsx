@@ -61,7 +61,9 @@ export function BookWriterPanel({
   story,
   sceneContext,
   selectedSceneId,
+  saveLabel,
   onSelectScene,
+  onManualSave,
   onCreateFirstScene,
   onAddAct,
   onAddChapter,
@@ -76,7 +78,9 @@ export function BookWriterPanel({
   story: StoryDocument;
   sceneContext: SceneContext | null;
   selectedSceneId: string;
+  saveLabel: string;
   onSelectScene: (sceneId: string) => void;
+  onManualSave: () => void;
   onCreateFirstScene: () => void;
   onAddAct: () => void;
   onAddChapter: (actId: string) => void;
@@ -333,6 +337,45 @@ export function BookWriterPanel({
           <span>{sceneContext.chapter.title}</span>
           <span>{liveWordCount} Wörter</span>
         </div>
+
+        <section className="book-writer-mobile-scenes" aria-label="Szenen im Kapitel">
+          <div className="book-writer-mobile-scenes__head">
+            <strong>{sceneContext.chapter.title}</strong>
+            <span>{sceneContext.chapter.scenes.length} Szenen</span>
+          </div>
+          <div className="book-writer-mobile-scenes__list">
+            {sceneContext.chapter.scenes.map(function (chapterScene) {
+              const isActive = chapterScene.id === scene.id;
+
+              return (
+                <button
+                  key={chapterScene.id}
+                  className={
+                    "book-writer-mobile-scenes__chip" +
+                    (isActive ? " book-writer-mobile-scenes__chip--active" : "")
+                  }
+                  type="button"
+                  onClick={function () {
+                    onSelectScene(chapterScene.id);
+                  }}
+                >
+                  <strong>{chapterScene.title}</strong>
+                  <span>{chapterScene.wordCount} Wörter</span>
+                </button>
+              );
+            })}
+            <button
+              className="book-writer-mobile-scenes__chip book-writer-mobile-scenes__chip--add"
+              type="button"
+              onClick={function () {
+                onAddScene(scene.chapterId);
+              }}
+            >
+              <strong>+ Szene</strong>
+              <span>{sceneContext.chapter.title}</span>
+            </button>
+          </div>
+        </section>
 
         <article className="book-writer-document">
           <header className="book-writer-document__header">
@@ -764,6 +807,37 @@ export function BookWriterPanel({
           )}
         </section>
       </aside>
+
+      <div className="book-writer-mobile-bar" aria-label="Schnellaktionen">
+        <div className="book-writer-mobile-bar__status">
+          <strong>{scene.title || `Szene ${scene.order}`}</strong>
+          <span>
+            {liveWordCount} Wörter · {saveLabel}
+          </span>
+        </div>
+        <div className="book-writer-mobile-bar__actions">
+          <button className="flat-button" type="button" onClick={onManualSave}>
+            Speichern
+          </button>
+          <button
+            className="flat-button"
+            type="button"
+            onClick={function () {
+              onAddScene(scene.chapterId);
+            }}
+          >
+            + Szene
+          </button>
+          <button
+            className="flat-button flat-button--active"
+            type="button"
+            disabled={!contextPacket || isGeneratingJob}
+            onClick={handleGenerateJob}
+          >
+            {isGeneratingJob ? "Läuft..." : "AI-Job"}
+          </button>
+        </div>
+      </div>
     </section>
   );
 }

@@ -54,6 +54,7 @@ export function StudioWorkspace({
   const [authorMode, setAuthorMode] = useState<AuthorMode>(getDefaultAuthorMode(story.mode));
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("library");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
   const [librarySearch, setLibrarySearch] = useState("");
@@ -153,11 +154,32 @@ export function StudioWorkspace({
       setSaveState("idle");
       setLibraryError(null);
       setLibraryActionId(null);
+      setIsMobileSidebarOpen(false);
       pendingPersistRef.current = null;
       lastPersistedPayloadRef.current = JSON.stringify(nextStory);
     },
     [story]
   );
+
+  useEffect(function () {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (!window.matchMedia("(max-width: 980px)").matches) {
+      return;
+    }
+
+    const previousOverflow = window.document.body.style.overflow;
+
+    if (isMobileSidebarOpen) {
+      window.document.body.style.overflow = "hidden";
+    }
+
+    return function () {
+      window.document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileSidebarOpen]);
 
   useEffect(
     function () {
@@ -410,6 +432,7 @@ export function StudioWorkspace({
       });
       setSidebarMode("library");
       setIsSidebarCollapsed(false);
+      setIsMobileSidebarOpen(false);
       router.push(`/studio?storyId=${created.storyId}`);
     } catch (error) {
       setLibraryError(error instanceof Error ? error.message : "Neues Projekt konnte nicht angelegt werden.");
@@ -433,6 +456,7 @@ export function StudioWorkspace({
         return;
       }
 
+      setIsMobileSidebarOpen(false);
       router.push(`/studio?storyId=${nextStoryId}`);
     } finally {
       setLibraryActionId(null);
@@ -463,6 +487,7 @@ export function StudioWorkspace({
 
       if (targetStoryId === draftStory.id) {
         const nextStoryId = remainingStories[0]?.id ?? null;
+        setIsMobileSidebarOpen(false);
         router.push(nextStoryId ? `/studio?storyId=${nextStoryId}` : "/studio");
       }
     } catch (error) {
@@ -766,7 +791,13 @@ export function StudioWorkspace({
   }
 
   return (
-    <div className={"studio-shell" + (isSidebarCollapsed ? " studio-shell--collapsed" : "")}>
+    <div
+      className={
+        "studio-shell" +
+        (isSidebarCollapsed ? " studio-shell--collapsed" : "") +
+        (isMobileSidebarOpen ? " studio-shell--mobile-sidebar-open" : "")
+      }
+    >
       <aside className="rail" aria-label="Hauptnavigation">
         <button
           className="rail-button rail-button--toggle"
@@ -837,6 +868,18 @@ export function StudioWorkspace({
                 ? `${libraryStories.length} Projekte in Supabase`
                 : `${draftStory.authorName || "Ohne Autor"} · ${formatStoryStatus(draftStory.status)}`}
             </p>
+          </div>
+          <div className="sidebar-header__actions">
+            <button
+              className="mobile-sidebar-close"
+              type="button"
+              aria-label="Sidebar schließen"
+              onClick={function () {
+                setIsMobileSidebarOpen(false);
+              }}
+            >
+              <span className="mini-icon mini-icon--close" />
+            </button>
           </div>
         </header>
 
@@ -1100,10 +1143,30 @@ export function StudioWorkspace({
           </div>
         </footer>
       </aside>
+      <button
+        className="mobile-sidebar-backdrop"
+        type="button"
+        aria-label="Sidebar schließen"
+        onClick={function () {
+          setIsMobileSidebarOpen(false);
+        }}
+      />
 
       <main className="main">
         <header className="topbar">
           <div className="topbar-left">
+            <button
+              className="mobile-sidebar-toggle"
+              type="button"
+              aria-label="Projektmenü öffnen"
+              onClick={function () {
+                setIsMobileSidebarOpen(true);
+              }}
+            >
+              <span className="mini-icon mini-icon--menu" />
+              <span>{sidebarMode === "library" ? "Projekte" : "Codex"}</span>
+            </button>
+
             <div className="pill-group pill-group--mode-switch" aria-label="Engine Mode">
               <button
                 className={
@@ -1226,7 +1289,9 @@ export function StudioWorkspace({
               story={draftStory}
               sceneContext={selectedSceneContext}
               selectedSceneId={selectedSceneId}
+              saveLabel={formatSaveState(lastSavedAt, saveState)}
               onSelectScene={setSelectedSceneId}
+              onManualSave={handleManualSave}
               onCreateFirstScene={handleCreateFirstScene}
               onAddAct={handleAddAct}
               onAddChapter={handleAddChapter}
