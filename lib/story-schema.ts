@@ -769,7 +769,7 @@ function createEmptyScene(chapterId: string, sceneId: string, order: number): St
     wordCount: 0,
     blocks: [
       {
-        id: `${sceneId}_block_1`,
+        id: createUuid(),
         kind: "paragraph",
         text: ""
       }
