@@ -1663,6 +1663,64 @@ textarea {
   background: rgba(148, 176, 212, 0.1);
 }
 
+.book-model-config {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.book-model-config__head {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.book-model-config__head strong {
+  font-size: 0.78rem;
+}
+
+.book-model-config__head span {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.book-model-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.book-model-field {
+  gap: 0.45rem;
+}
+
+.book-model-field__hint {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.book-model-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.book-model-preset {
+  padding: 0.42rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-soft);
+  font-size: 0.68rem;
+}
+
+.book-model-preset--active {
+  border-color: rgba(148, 176, 212, 0.36);
+  background: rgba(148, 176, 212, 0.1);
+  color: var(--text);
+}
+
 .book-writer-director-note {
   min-height: 6.4rem;
 }
@@ -3183,7 +3241,8 @@ textarea {
   }
 
   .book-writer-document__inspector,
-  .book-writer-provider-grid {
+  .book-writer-provider-grid,
+  .book-model-grid {
     grid-template-columns: 1fr;
   }
 

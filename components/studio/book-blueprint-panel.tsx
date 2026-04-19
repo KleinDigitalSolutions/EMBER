@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   analyzeBookDraftReadiness,
   acceptDraftJobToScene,
@@ -14,6 +15,16 @@ import {
   getDraftJobsForScene,
   upsertDraftJob
 } from "@/lib/book-engine";
+import {
+  BOOK_JOB_MODEL_STORAGE_KEY,
+  BOOK_JOB_PROVIDER_STORAGE_KEY,
+  buildBookJobModelOverrides,
+  createEmptyBookJobModelSelection,
+  isBookJobProviderOption,
+  parseBookJobModelSelection,
+  type BookJobModelKey,
+  type BookJobProviderOption
+} from "@/lib/book-job-models";
 import {
   countStoryStats,
   isBranchingStory,
@@ -60,9 +71,36 @@ export function BookBlueprintPanel({
   const launchPackage = useMemo(function () {
     return buildAmazonLaunchPackage(story);
   }, [story]);
-  const [jobProvider, setJobProvider] = useState<"auto" | "openai" | "anthropic" | "local">("auto");
+  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("auto");
+  const [jobModels, setJobModels] = useState(createEmptyBookJobModelSelection);
   const [jobStatus, setJobStatus] = useState<string>("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
+
+  useEffect(function () {
+    const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
+
+    if (storedProvider && isBookJobProviderOption(storedProvider)) {
+      setJobProvider(storedProvider);
+    }
+
+    setJobModels(
+      parseBookJobModelSelection(window.localStorage.getItem(BOOK_JOB_MODEL_STORAGE_KEY))
+    );
+  }, []);
+
+  useEffect(
+    function () {
+      window.localStorage.setItem(BOOK_JOB_PROVIDER_STORAGE_KEY, jobProvider);
+    },
+    [jobProvider]
+  );
+
+  useEffect(
+    function () {
+      window.localStorage.setItem(BOOK_JOB_MODEL_STORAGE_KEY, JSON.stringify(jobModels));
+    },
+    [jobModels]
+  );
 
   const chapters = useMemo(function () {
     return story.acts.flatMap(function (act) {
@@ -74,6 +112,24 @@ export function BookBlueprintPanel({
       });
     });
   }, [story.acts]);
+
+  function handleModelChange(key: BookJobModelKey, value: string) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: value
+      };
+    });
+  }
+
+  function handleModelReset(key: BookJobModelKey) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: ""
+      };
+    });
+  }
 
   return (
     <aside className="book-panel" aria-label="Book Blueprint Panel">
@@ -844,7 +900,11 @@ export function BookBlueprintPanel({
                 className="editor-input editor-select book-provider-select"
                 value={jobProvider}
                 onChange={function (event) {
-                  setJobProvider(event.target.value as typeof jobProvider);
+                  const nextProvider = event.target.value;
+
+                  if (isBookJobProviderOption(nextProvider)) {
+                    setJobProvider(nextProvider);
+                  }
                 }}
               >
                 <option value="auto">Auto</option>
@@ -875,6 +935,7 @@ export function BookBlueprintPanel({
                         sceneId: selectedSceneId,
                         packet: contextPacket,
                         provider: jobProvider,
+                        modelOverrides: buildBookJobModelOverrides(jobModels),
                         targetSceneWordsMin: story.book.draftEngine.targetSceneWordsMin,
                         targetSceneWordsMax: story.book.draftEngine.targetSceneWordsMax
                       })
@@ -896,7 +957,7 @@ export function BookBlueprintPanel({
                     setJobStatus(
                       payload.warning
                         ? `${payload.provider}: ${payload.warning}`
-                        : `Job erzeugt via ${payload.provider}.`
+                        : `Job erzeugt via ${payload.provider} · ${(payload.job as BookDraftJob).modelName || "ohne Modell-ID"}.`
                     );
                   } catch (error) {
                     setJobStatus(
@@ -911,6 +972,13 @@ export function BookBlueprintPanel({
               </button>
             </div>
           </div>
+
+          <BookJobModelFields
+            provider={jobProvider}
+            models={jobModels}
+            onChangeModel={handleModelChange}
+            onResetModel={handleModelReset}
+          />
 
           <div className="editor-grid">
             <label className="editor-field">

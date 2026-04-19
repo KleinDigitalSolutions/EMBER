@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
@@ -9,6 +10,16 @@ import {
   upsertDraftJob
 } from "@/lib/book-engine";
 import { createUuid } from "@/lib/id";
+import {
+  BOOK_JOB_MODEL_STORAGE_KEY,
+  BOOK_JOB_PROVIDER_STORAGE_KEY,
+  buildBookJobModelOverrides,
+  createEmptyBookJobModelSelection,
+  isBookJobProviderOption,
+  parseBookJobModelSelection,
+  type BookJobModelKey,
+  type BookJobProviderOption
+} from "@/lib/book-job-models";
 import {
   countSceneWords,
   countStoryStats,
@@ -21,10 +32,9 @@ import {
   type StoryScene
 } from "@/lib/story-schema";
 
-type JobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "continuity";
 
-const PROVIDER_OPTIONS: Array<{ id: JobProviderOption; label: string; detail: string }> = [
+const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
   { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
@@ -47,7 +57,6 @@ const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "notes", label: "Notes" },
   { id: "outline", label: "Outline" }
 ];
-const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember-book-job-provider";
 
 export function BookWriterPanel({
   story,
@@ -72,7 +81,8 @@ export function BookWriterPanel({
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
   onOpenBranchEditor: () => void;
 }) {
-  const [jobProvider, setJobProvider] = useState<JobProviderOption>("auto");
+  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("auto");
+  const [jobModels, setJobModels] = useState(createEmptyBookJobModelSelection);
   const [jobStatus, setJobStatus] = useState("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
   const [directorNote, setDirectorNote] = useState("");
@@ -81,15 +91,13 @@ export function BookWriterPanel({
   useEffect(function () {
     const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
 
-    if (
-      storedProvider === "auto" ||
-      storedProvider === "openai" ||
-      storedProvider === "anthropic" ||
-      storedProvider === "gemini" ||
-      storedProvider === "local"
-    ) {
+    if (storedProvider && isBookJobProviderOption(storedProvider)) {
       setJobProvider(storedProvider);
     }
+
+    setJobModels(
+      parseBookJobModelSelection(window.localStorage.getItem(BOOK_JOB_MODEL_STORAGE_KEY))
+    );
   }, []);
 
   useEffect(
@@ -97,6 +105,13 @@ export function BookWriterPanel({
       window.localStorage.setItem(BOOK_JOB_PROVIDER_STORAGE_KEY, jobProvider);
     },
     [jobProvider]
+  );
+
+  useEffect(
+    function () {
+      window.localStorage.setItem(BOOK_JOB_MODEL_STORAGE_KEY, JSON.stringify(jobModels));
+    },
+    [jobModels]
   );
 
   const stats = useMemo(function () {
@@ -171,6 +186,7 @@ export function BookWriterPanel({
           sceneId: scene.id,
           packet: contextPacket,
           provider: jobProvider,
+          modelOverrides: buildBookJobModelOverrides(jobModels),
           targetSceneWordsMin: story.book.draftEngine.targetSceneWordsMin,
           targetSceneWordsMax: story.book.draftEngine.targetSceneWordsMax,
           directorNote
@@ -189,11 +205,12 @@ export function BookWriterPanel({
       });
 
       setActivePanelView("rewrite");
+      const job = payload.job as BookDraftJob;
       const executionLabel = formatExecutionModeLabel((payload.job as BookDraftJob).mode);
       setJobStatus(
         payload.warning
           ? `${formatProviderLabel(payload.provider)} · ${executionLabel}: ${payload.warning}`
-          : `Job erzeugt via ${formatProviderLabel(payload.provider)} · ${executionLabel}.`
+          : `Job erzeugt via ${formatProviderLabel(payload.provider)} · ${executionLabel} · ${job.modelName || "ohne Modell-ID"}.`
       );
     } catch (error) {
       setJobStatus(error instanceof Error ? error.message : "Book job request failed.");
@@ -209,6 +226,24 @@ export function BookWriterPanel({
     });
 
     setJobStatus("Rewrite in die aktuelle Szene übernommen.");
+  }
+
+  function handleModelChange(key: BookJobModelKey, value: string) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: value
+      };
+    });
+  }
+
+  function handleModelReset(key: BookJobModelKey) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: ""
+      };
+    });
   }
 
   return (
@@ -457,6 +492,13 @@ export function BookWriterPanel({
           <p className="book-writer-status">
             Ohne API-Key oder bei Provider-Fehlern wird der Copilot als lokaler Fallback ausgeführt.
           </p>
+
+          <BookJobModelFields
+            provider={jobProvider}
+            models={jobModels}
+            onChangeModel={handleModelChange}
+            onResetModel={handleModelReset}
+          />
 
           <div className="editor-grid">
             <label className="editor-field">
@@ -823,7 +865,7 @@ function buildContinuityCards(job: BookDraftJob) {
   ];
 }
 
-function formatProviderLabel(provider: BookDraftJob["provider"] | JobProviderOption) {
+function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProviderOption) {
   if (provider === "openai") {
     return "OpenAI";
   }

@@ -7,6 +7,11 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import {
+  DEFAULT_BOOK_JOB_MODELS,
+  resolveBookJobModelValue,
+  type BookJobModelOverrides
+} from "@/lib/book-job-models";
+import {
   buildSceneContextPacket,
   createCompletedDraftStageRuns,
   createDraftJobFromPacket,
@@ -41,11 +46,6 @@ type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
 
-const DEFAULT_OPENAI_BOOK_MODEL = "gpt-5.4";
-const DEFAULT_ANTHROPIC_BOOK_MODEL = "claude-sonnet-4-6";
-const DEFAULT_ANTHROPIC_CONTINUITY_MODEL = "claude-3-5-haiku-20241022";
-const DEFAULT_GEMINI_BOOK_MODEL = "gemini-2.5-flash";
-
 export type BookJobExecution = {
   provider: Exclude<BookJobProvider, "auto">;
   mode: "remote" | "local_fallback";
@@ -58,6 +58,7 @@ export async function generateBookDraftJob(params: {
   sceneId: string;
   packet?: SceneContextPacket;
   provider?: BookJobProvider;
+  modelOverrides?: BookJobModelOverrides;
   targetSceneWordsMin?: number;
   targetSceneWordsMax?: number;
   directorNote?: string;
@@ -95,6 +96,7 @@ export async function generateBookDraftJob(params: {
 
   try {
     const providerOptions = {
+      modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
       directorNote
@@ -162,12 +164,17 @@ function resolveRemoteProvider(provider: BookJobProvider) {
 async function generateWithOpenAI(
   packet: SceneContextPacket,
   options: {
+    modelOverrides?: BookJobModelOverrides;
     targetSceneWordsMin: number;
     targetSceneWordsMax: number;
     directorNote: string;
   }
 ) {
-  const modelName = readModelEnv(process.env.OPENAI_BOOK_MODEL, DEFAULT_OPENAI_BOOK_MODEL);
+  const modelName = resolveBookJobModelValue(
+    options.modelOverrides?.openai,
+    process.env.OPENAI_BOOK_MODEL,
+    DEFAULT_BOOK_JOB_MODELS.openai
+  );
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
@@ -205,12 +212,17 @@ async function generateWithOpenAI(
 async function generateWithAnthropic(
   packet: SceneContextPacket,
   options: {
+    modelOverrides?: BookJobModelOverrides;
     targetSceneWordsMin: number;
     targetSceneWordsMax: number;
     directorNote: string;
   }
 ) {
-  const modelName = readModelEnv(process.env.ANTHROPIC_BOOK_MODEL, DEFAULT_ANTHROPIC_BOOK_MODEL);
+  const modelName = resolveBookJobModelValue(
+    options.modelOverrides?.anthropic,
+    process.env.ANTHROPIC_BOOK_MODEL,
+    DEFAULT_BOOK_JOB_MODELS.anthropic
+  );
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
@@ -243,9 +255,10 @@ async function generateWithAnthropic(
     modelName,
     continuityModelName:
       continuityAudit && continuityAudit.continuityRisks.concat(continuityAudit.styleDriftNotes).length
-        ? readModelEnv(
+        ? resolveBookJobModelValue(
+            options.modelOverrides?.anthropicContinuity,
             process.env.ANTHROPIC_CONTINUITY_MODEL,
-            DEFAULT_ANTHROPIC_CONTINUITY_MODEL
+            DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
           )
         : modelName,
     payload: continuityAudit
@@ -257,6 +270,7 @@ async function generateWithAnthropic(
 async function generateWithGemini(
   packet: SceneContextPacket,
   options: {
+    modelOverrides?: BookJobModelOverrides;
     targetSceneWordsMin: number;
     targetSceneWordsMax: number;
     directorNote: string;
@@ -269,9 +283,10 @@ async function generateWithGemini(
   }
 
   const modelName =
-    readModelEnv(
+    resolveBookJobModelValue(
+      options.modelOverrides?.gemini,
       process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
-      DEFAULT_GEMINI_BOOK_MODEL
+      DEFAULT_BOOK_JOB_MODELS.gemini
     );
   const client = new GoogleGenAI({
     apiKey
@@ -305,10 +320,6 @@ function getGeminiApiKey() {
     process.env.GOOGLE_GEMINI_API_KEY ||
     null
   );
-}
-
-function readModelEnv(value: string | undefined, fallback: string) {
-  return value?.trim() || fallback;
 }
 
 function hydrateDraftJob(
@@ -496,6 +507,7 @@ async function runAnthropicContinuityAudit(
   client: Anthropic,
   packet: SceneContextPacket,
   options: {
+    modelOverrides?: BookJobModelOverrides;
     targetSceneWordsMin: number;
     targetSceneWordsMax: number;
     directorNote: string;
@@ -505,7 +517,11 @@ async function runAnthropicContinuityAudit(
   }
 ) {
   const continuityModelName =
-    readModelEnv(process.env.ANTHROPIC_CONTINUITY_MODEL, DEFAULT_ANTHROPIC_CONTINUITY_MODEL);
+    resolveBookJobModelValue(
+      options.modelOverrides?.anthropicContinuity,
+      process.env.ANTHROPIC_CONTINUITY_MODEL,
+      DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
+    );
 
   try {
     const message = await client.messages.parse({
