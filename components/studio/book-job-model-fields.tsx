@@ -12,22 +12,22 @@ const MODEL_FIELD_COPY: Record<
 > = {
   openai: {
     label: "OpenAI Modell-ID",
-    hint: "Leer = OPENAI_BOOK_MODEL oder gpt-5.4.",
+    hint: "Hauptmodell für Generierung",
     resetLabel: "Env/Default"
   },
   anthropic: {
     label: "Anthropic Modell-ID",
-    hint: "Leer = ANTHROPIC_BOOK_MODEL oder claude-sonnet-4-6.",
+    hint: "Hauptmodell für literarische Qualität",
     resetLabel: "Env/Default"
   },
   anthropicContinuity: {
     label: "Anthropic Continuity-ID",
-    hint: "Leer = ANTHROPIC_CONTINUITY_MODEL oder claude-3-5-haiku-20241022.",
+    hint: "Modell für Kontinuitäts-Checks",
     resetLabel: "Env/Default"
   },
   gemini: {
     label: "Gemini Modell-ID",
-    hint: "Leer = GEMINI_BOOK_MODEL oder gemini-2.5-flash.",
+    hint: "Modell für schnelles Iterieren",
     resetLabel: "Env/Default"
   }
 };
@@ -45,13 +45,13 @@ export function BookJobModelFields(props: {
   }
 
   return (
-    <div className="book-model-config">
+    <div className="book-model-config" style={{ borderRadius: 0 }}>
       <div className="book-model-config__head">
         <strong>Modelle</strong>
         <span>
           {props.provider === "auto"
-            ? "Auto berücksichtigt die gespeicherten Overrides des Providers, der den Job übernimmt."
-            : "Freie Modell-IDs werden direkt an den ausgewählten Provider übergeben."}
+            ? "Auto-Modus nutzt die Standardeinstellungen."
+            : "Wähle das Modell für diesen Provider aus."}
         </span>
       </div>
 
@@ -59,49 +59,36 @@ export function BookJobModelFields(props: {
         {visibleKeys.map(function (key) {
           const copy = MODEL_FIELD_COPY[key];
           const value = props.models[key];
+          const presets = BOOK_JOB_MODEL_PRESETS[key];
 
           return (
             <label key={key} className="editor-field book-model-field">
               <span>{copy.label}</span>
-              <input
-                className="editor-input"
-                type="text"
-                value={value}
-                placeholder={DEFAULT_BOOK_JOB_MODELS[key]}
-                onChange={function (event) {
-                  props.onChangeModel(key, event.target.value);
-                }}
-              />
-              <small className="book-model-field__hint">{copy.hint}</small>
-              <div className="book-model-preset-row">
-                {BOOK_JOB_MODEL_PRESETS[key].map(function (preset) {
-                  return (
-                    <button
-                      key={preset}
-                      className={
-                        "book-model-preset" +
-                        (value.trim() === preset ? " book-model-preset--active" : "")
-                      }
-                      type="button"
-                      onClick={function () {
-                        props.onChangeModel(key, preset);
-                      }}
-                    >
-                      {preset}
-                    </button>
-                  );
-                })}
-
-                <button
-                  className="book-model-preset"
-                  type="button"
-                  onClick={function () {
-                    props.onResetModel(key);
+              <div className="book-dropdown-group">
+                <select
+                  className="editor-input editor-select"
+                  style={{ borderRadius: 0 }}
+                  value={value || ""}
+                  onChange={function (event) {
+                    const nextValue = event.target.value;
+                    if (nextValue === "default") {
+                      props.onResetModel(key);
+                    } else {
+                      props.onChangeModel(key, nextValue);
+                    }
                   }}
                 >
-                  {copy.resetLabel}
-                </button>
+                  <option value="default">{copy.resetLabel} ({DEFAULT_BOOK_JOB_MODELS[key]})</option>
+                  {presets.map(function (preset) {
+                    return (
+                      <option key={preset} value={preset}>
+                        {preset}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
+              <small className="book-model-field__hint">{copy.hint}</small>
             </label>
           );
         })}

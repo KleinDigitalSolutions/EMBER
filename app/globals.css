@@ -80,7 +80,7 @@ textarea {
 .landing-panel {
   width: min(100%, 42rem);
   padding: 2rem;
-  border-radius: 1rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1d1d22;
 }
@@ -121,7 +121,7 @@ textarea {
   justify-content: center;
   min-height: 2.5rem;
   padding: 0 1rem;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #232329;
 }
@@ -138,7 +138,7 @@ textarea {
   padding: 1rem;
   background: #1a1a1e;
   border: 1px solid var(--line);
-  border-radius: 1rem;
+  border-radius: 0;
   min-width: 0;
 }
 
@@ -148,7 +148,7 @@ textarea {
 .book-rule-card {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
-  border-radius: 0.85rem;
+  border-radius: 0;
 }
 
 .book-panel__header {
@@ -212,7 +212,7 @@ textarea {
 .book-metric {
   min-width: 5.5rem;
   padding: 0.7rem 0.85rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--line);
 }
@@ -271,7 +271,7 @@ textarea {
   height: 1.9rem;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-soft);
 }
@@ -289,7 +289,7 @@ textarea {
   display: grid;
   gap: 0.4rem;
   padding: 0.8rem 0.9rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
 }
@@ -342,7 +342,7 @@ textarea {
   align-items: center;
   gap: 0.6rem;
   padding: 0.8rem 0.9rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
 }
@@ -360,7 +360,7 @@ textarea {
 .book-code-block {
   margin: 0;
   padding: 0.9rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141417;
   color: #d6d6d8;
@@ -374,7 +374,7 @@ textarea {
   min-width: 10rem;
   padding: 0.7rem 0.8rem;
   text-align: left;
-  border-radius: 0.75rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
 }
@@ -387,7 +387,7 @@ textarea {
 .flat-button--active {
   background: #f1f1f2;
   color: #17171a;
-  border-radius: 0.5rem;
+  border-radius: 0;
 }
 
 @media (max-width: 1180px) {
@@ -501,7 +501,7 @@ textarea {
 .ghost-icon-button {
   display: grid;
   place-items: center;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid transparent;
   background: transparent;
 }
@@ -550,7 +550,7 @@ textarea {
   position: absolute;
   inset: 0;
   border: 1.8px solid currentColor;
-  border-radius: 0.18rem;
+  border-radius: 0;
   box-shadow: inset -0.32rem 0 0 0 currentColor;
 }
 
@@ -559,7 +559,7 @@ textarea {
   position: absolute;
   inset: 0;
   border: 1.8px solid currentColor;
-  border-radius: 0.18rem;
+  border-radius: 0;
 }
 
 .rail-icon--book::after {
@@ -577,7 +577,7 @@ textarea {
   position: absolute;
   inset: 0.1rem;
   border: 1.8px solid currentColor;
-  border-radius: 50%;
+  border-radius: 0;
   box-shadow:
     0 -0.46rem 0 -0.26rem currentColor,
     0 0.46rem 0 -0.26rem currentColor,
@@ -678,7 +678,7 @@ textarea {
 .view-toggle {
   height: 1.75rem;
   padding: 0 0.65rem;
-  border-radius: 0.32rem;
+  border-radius: 0;
   border: 1px solid transparent;
   color: var(--text-soft);
   font-size: 0.77rem;
@@ -728,7 +728,7 @@ textarea {
   width: 100%;
   height: 1.8rem;
   padding: 0 0.65rem 0 1.85rem;
-  border-radius: 0.3rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1b1b1f;
   outline: none;
@@ -750,7 +750,7 @@ textarea {
   width: 0.68rem;
   height: 0.68rem;
   border: 1.5px solid var(--text-faint);
-  border-radius: 50%;
+  border-radius: 0;
   transform: translateY(-58%);
 }
 
@@ -797,7 +797,7 @@ textarea {
   display: grid;
   gap: 0.2rem;
   padding: 0.75rem 0.8rem;
-  border-radius: 0.5rem;
+  border-radius: 0;
   border: 1px solid rgba(224, 159, 102, 0.22);
   background: rgba(224, 159, 102, 0.08);
 }
@@ -901,7 +901,7 @@ textarea {
   gap: 0.25rem;
   min-width: 0;
   padding: 0.7rem 0.8rem;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1e;
   text-align: left;
@@ -949,7 +949,7 @@ textarea {
   align-items: center;
   min-height: 1.15rem;
   padding: 0 0.45rem;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(224, 159, 102, 0.14);
   color: #f3c59d;
   font-size: 0.67rem;
@@ -960,7 +960,7 @@ textarea {
   align-self: center;
   min-width: 4.5rem;
   padding: 0 0.65rem;
-  border-radius: 0.4rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #18181d;
   color: var(--text-faint);
@@ -971,7 +971,7 @@ textarea {
   display: grid;
   gap: 0.2rem;
   padding: 0.8rem;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1e;
 }
@@ -980,7 +980,7 @@ textarea {
   display: grid;
   gap: 0.14rem;
   padding: 0.55rem 0.65rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   background: #1a1a1e;
   border: 1px solid var(--line);
   text-align: left;
@@ -1026,7 +1026,7 @@ textarea {
 .avatar {
   width: 1.55rem;
   height: 1.55rem;
-  border-radius: 50%;
+  border-radius: 0;
   background: linear-gradient(180deg, #d4b494, #8b6549);
 }
 
@@ -1037,7 +1037,7 @@ textarea {
   min-width: 1.9rem;
   height: 1.25rem;
   padding: 0 0.3rem;
-  border-radius: 999px;
+  border-radius: 0;
   font-size: 0.68rem;
   font-weight: 700;
 }
@@ -1112,7 +1112,7 @@ textarea {
   align-items: center;
   min-height: 1.75rem;
   padding: 0 0.7rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #18181d;
   color: var(--text-faint);
@@ -1135,7 +1135,7 @@ textarea {
   align-items: center;
   min-height: 1.75rem;
   padding: 0 0.75rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #18181d;
   color: var(--text-soft);
@@ -1250,7 +1250,7 @@ textarea {
 .chapter-shell {
   width: 14.2rem;
   padding: 0.45rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   background: #222228;
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
@@ -1277,7 +1277,7 @@ textarea {
 .chapter-add {
   height: 1.55rem;
   padding: 0 0.48rem;
-  border-radius: 0.26rem;
+  border-radius: 0;
   background: #2a2a31;
   border: 1px solid var(--line);
   font-size: 0.75rem;
@@ -1311,7 +1311,7 @@ textarea {
 
 .scene-row {
   padding: 0.42rem;
-  border-radius: 0.25rem;
+  border-radius: 0;
   background: #1a1a1f;
   border: 1px solid rgba(255, 255, 255, 0.04);
   text-align: left;
@@ -1355,7 +1355,7 @@ textarea {
   content: "";
   width: 0.42rem;
   height: 0.42rem;
-  border-radius: 50%;
+  border-radius: 0;
   border: 1px solid currentColor;
   opacity: 0.55;
 }
@@ -1368,7 +1368,7 @@ textarea {
   width: 100%;
   margin-top: 0.35rem;
   height: 1.7rem;
-  border-radius: 0.26rem;
+  border-radius: 0;
   color: var(--text-soft);
   font-size: 0.75rem;
 }
@@ -1376,7 +1376,7 @@ textarea {
 .matrix-card,
 .outline-card {
   padding: 0.65rem;
-  border-radius: 0.32rem;
+  border-radius: 0;
   background: #1d1d22;
   border: 1px solid var(--line);
   text-align: left;
@@ -1413,7 +1413,7 @@ textarea {
   gap: 0.8rem;
   margin-top: 0.8rem;
   padding: 0.9rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #17171b;
 }
@@ -1466,7 +1466,7 @@ textarea {
   display: grid;
   gap: 0.35rem;
   padding: 1rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -1491,7 +1491,7 @@ textarea {
   gap: 1rem;
   margin-top: 0.75rem;
   padding: 0.7rem 0.85rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -1510,7 +1510,7 @@ textarea {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #151517;
   overflow: hidden;
@@ -1587,7 +1587,7 @@ textarea {
   align-items: center;
   height: 1.7rem;
   padding: 0 0.65rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-soft);
@@ -1623,7 +1623,7 @@ textarea {
   justify-items: start;
   min-height: 22rem;
   padding: 1.4rem;
-  border-radius: 0.7rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #17171b;
 }
@@ -1660,7 +1660,7 @@ textarea {
   gap: 0.85rem;
   min-height: 0;
   padding: 0.9rem;
-  border-radius: 0.7rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #17171b;
 }
@@ -1732,7 +1732,7 @@ textarea {
 
 .book-writer-nav__chapter {
   padding: 0.75rem;
-  border-radius: 0.6rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
 }
@@ -1753,7 +1753,7 @@ textarea {
   justify-content: space-between;
   gap: 0.6rem;
   padding: 0.55rem 0.65rem;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid transparent;
   background: #141418;
   color: var(--text-soft);
@@ -1801,7 +1801,7 @@ textarea {
   display: grid;
   gap: 1.2rem;
   padding: 2rem 2.2rem;
-  border-radius: 0.8rem;
+  border-radius: 0;
   border: 1px solid rgba(255, 255, 255, 0.06);
   background:
     radial-gradient(circle at top, rgba(148, 176, 212, 0.08), transparent 30%),
@@ -1879,7 +1879,7 @@ textarea {
 
 .book-writer-card {
   padding: 0.95rem;
-  border-radius: 0.7rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #17171b;
 }
@@ -1904,7 +1904,7 @@ textarea {
   display: grid;
   gap: 0.2rem;
   padding: 0.75rem 0.8rem;
-  border-radius: 0.6rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   text-align: left;
@@ -1974,7 +1974,7 @@ textarea {
 
 .book-model-preset {
   padding: 0.42rem 0.62rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-soft);
@@ -1999,7 +1999,7 @@ textarea {
 
 .book-writer-preset {
   padding: 0.5rem 0.72rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-soft);
@@ -2009,7 +2009,7 @@ textarea {
 .book-writer-status {
   margin: 0;
   padding: 0.72rem 0.8rem;
-  border-radius: 0.6rem;
+  border-radius: 0;
   border: 1px solid rgba(148, 176, 212, 0.18);
   background: rgba(148, 176, 212, 0.08);
   color: #dbe7f7;
@@ -2026,7 +2026,7 @@ textarea {
   align-items: center;
   min-height: 1.45rem;
   padding: 0 0.5rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-size: 0.68rem;
@@ -2067,7 +2067,7 @@ textarea {
   display: grid;
   gap: 0.8rem;
   padding: 0.95rem;
-  border-radius: 0.4rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -2112,7 +2112,7 @@ textarea {
   display: grid;
   gap: 0.35rem;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(148, 176, 212, 0.08), rgba(20, 20, 24, 0.96));
 }
@@ -2150,7 +2150,7 @@ textarea {
   display: grid;
   gap: 0.22rem;
   padding: 0.8rem 0.85rem;
-  border-radius: 0.65rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   text-align: left;
@@ -2197,7 +2197,7 @@ textarea {
 
 .book-writer-panel__preset {
   padding: 0.5rem 0.7rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-soft);
@@ -2212,7 +2212,7 @@ textarea {
 .book-writer-panel__status {
   margin: 0;
   padding: 0.72rem 0.8rem;
-  border-radius: 0.7rem;
+  border-radius: 0;
   border: 1px solid rgba(148, 176, 212, 0.2);
   background: rgba(148, 176, 212, 0.08);
   color: #dbe7f7;
@@ -2231,7 +2231,7 @@ textarea {
   align-items: center;
   min-height: 1.55rem;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-soft);
@@ -2261,7 +2261,7 @@ textarea {
 .editor-input,
 .editor-textarea {
   width: 100%;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #111114;
   outline: none;
@@ -2311,7 +2311,7 @@ textarea {
   display: grid;
   gap: 0.7rem;
   padding: 0.8rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -2426,7 +2426,7 @@ textarea {
   display: grid;
   gap: 0.3rem;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px dashed var(--line);
   background: #141418;
 }
@@ -2445,7 +2445,7 @@ textarea {
   display: grid;
   gap: 0.45rem;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(212, 180, 148, 0.08), rgba(20, 20, 24, 0.95));
 }
@@ -2478,7 +2478,7 @@ textarea {
   justify-content: center;
   min-height: 1.5rem;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   font-size: 0.68rem;
   font-weight: 700;
@@ -2510,7 +2510,7 @@ textarea {
   display: grid;
   gap: 0.7rem;
   padding: 0.7rem;
-  border-radius: 0.35rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #101015;
 }
@@ -2533,7 +2533,7 @@ textarea {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #151517;
   overflow: hidden;
@@ -2618,7 +2618,7 @@ textarea {
   display: grid;
   gap: 0.85rem;
   padding: 0.95rem;
-  border-radius: 0.4rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -2661,7 +2661,7 @@ textarea {
   align-items: center;
   min-height: 1.6rem;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-size: 0.68rem;
@@ -2684,7 +2684,7 @@ textarea {
   display: grid;
   gap: 0.25rem;
   padding: 0.7rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: rgba(12, 12, 16, 0.45);
 }
@@ -2714,7 +2714,7 @@ textarea {
   display: grid;
   gap: 0.25rem;
   padding: 0.75rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -2747,7 +2747,7 @@ textarea {
 
 .playtest-route {
   padding: 0.65rem 0.75rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px dashed var(--line);
   color: var(--text-soft);
   font-size: 0.74rem;
@@ -2763,7 +2763,7 @@ textarea {
 .playtest-scene-block {
   margin: 0;
   padding: 0.8rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #131318;
   color: var(--text-soft);
@@ -2775,7 +2775,7 @@ textarea {
   gap: 0.3rem;
   width: 100%;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
   text-align: left;
@@ -2816,7 +2816,7 @@ textarea {
   display: grid;
   gap: 0.28rem;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #131318;
 }
@@ -2839,7 +2839,7 @@ textarea {
   display: grid;
   gap: 0.2rem;
   padding: 0.72rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -2871,7 +2871,7 @@ textarea {
   justify-content: center;
   width: 1.45rem;
   height: 1.45rem;
-  border-radius: 50%;
+  border-radius: 0;
   background: #242432;
   color: #c9d5ff;
   font-size: 0.7rem;
@@ -2893,7 +2893,7 @@ textarea {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #151517;
   overflow: hidden;
@@ -2979,7 +2979,7 @@ textarea {
 .patch-card {
   gap: 0.85rem;
   padding: 0.95rem;
-  border-radius: 0.4rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -3015,7 +3015,7 @@ textarea {
   align-items: center;
   min-height: 1.6rem;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-size: 0.68rem;
@@ -3030,7 +3030,7 @@ textarea {
   display: grid;
   gap: 0.25rem;
   padding: 0.72rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -3057,7 +3057,7 @@ textarea {
   display: grid;
   gap: 0.28rem;
   padding: 0.82rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
   text-align: left;
@@ -3082,7 +3082,7 @@ textarea {
 .patch-preview {
   gap: 0.32rem;
   padding: 0.82rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -3091,7 +3091,7 @@ textarea {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #151517;
   overflow: hidden;
@@ -3158,7 +3158,7 @@ textarea {
   display: grid;
   gap: 0.85rem;
   padding: 0.95rem;
-  border-radius: 0.4rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #1a1a1f;
 }
@@ -3198,7 +3198,7 @@ textarea {
   align-items: center;
   min-height: 1.6rem;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid var(--line);
   color: var(--text-soft);
   font-size: 0.68rem;
@@ -3227,7 +3227,7 @@ textarea {
   justify-content: center;
   width: 4.25rem;
   height: 4.25rem;
-  border-radius: 1rem;
+  border-radius: 0;
   background: #141418;
   border: 1px solid var(--line);
   font-size: 1.45rem;
@@ -3281,7 +3281,7 @@ textarea {
   display: grid;
   gap: 0.25rem;
   padding: 0.72rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -3336,7 +3336,7 @@ textarea {
   justify-content: space-between;
   gap: 0.8rem;
   padding: 0.82rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid var(--line);
   background: #141418;
 }
@@ -3374,7 +3374,7 @@ textarea {
   display: grid;
   gap: 0.25rem;
   padding: 0.85rem;
-  border-radius: 0.38rem;
+  border-radius: 0;
   border: 1px solid rgba(120, 192, 132, 0.26);
   background: #141418;
 }

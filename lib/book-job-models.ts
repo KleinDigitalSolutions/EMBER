@@ -1,27 +1,23 @@
 export type BookJobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "local";
-export type BookJobRemoteProvider = Exclude<BookJobProviderOption, "auto" | "local">;
 export type BookJobModelKey = "openai" | "anthropic" | "anthropicContinuity" | "gemini";
+
 export type BookJobModelSelection = Record<BookJobModelKey, string>;
-export type BookJobModelOverrides = Partial<BookJobModelSelection>;
 
-export const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember-book-job-provider";
-export const BOOK_JOB_MODEL_STORAGE_KEY = "ember-book-job-models-v1";
+export const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember_book_job_provider";
+export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
 
-export const DEFAULT_BOOK_JOB_MODELS: BookJobModelSelection = {
-  openai: "gpt-5.4",
-  anthropic: "claude-sonnet-4-6",
-  anthropicContinuity: "claude-3-5-haiku-20241022",
-  gemini: "gemini-2.5-flash"
+export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
+  openai: "gpt-5.4-pro",
+  anthropic: "claude-opus-4-7",
+  anthropicContinuity: "claude-haiku-4-5",
+  gemini: "gemini-3.1-pro"
 };
 
 export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
-  openai: [DEFAULT_BOOK_JOB_MODELS.openai],
-  anthropic: [DEFAULT_BOOK_JOB_MODELS.anthropic, "claude-opus-4-6"],
-  anthropicContinuity: [
-    DEFAULT_BOOK_JOB_MODELS.anthropicContinuity,
-    DEFAULT_BOOK_JOB_MODELS.anthropic
-  ],
-  gemini: [DEFAULT_BOOK_JOB_MODELS.gemini]
+  openai: ["gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
+  anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5"],
+  anthropicContinuity: ["claude-haiku-4-5", "claude-sonnet-4-6", "claude-opus-4-7"],
+  gemini: ["gemini-3.1-pro", "gemini-3.1-flash-lite", "gemini-2.0-flash-exp"]
 };
 
 export function createEmptyBookJobModelSelection(): BookJobModelSelection {
@@ -33,29 +29,13 @@ export function createEmptyBookJobModelSelection(): BookJobModelSelection {
   };
 }
 
-export function isBookJobProviderOption(value: string): value is BookJobProviderOption {
-  return (
-    value === "auto" ||
-    value === "openai" ||
-    value === "anthropic" ||
-    value === "gemini" ||
-    value === "local"
-  );
-}
-
 export function parseBookJobModelSelection(value: string | null): BookJobModelSelection {
-  if (!value) {
-    return createEmptyBookJobModelSelection();
-  }
-
   try {
-    const parsed = JSON.parse(value) as Partial<Record<BookJobModelKey, unknown>>;
-
+    const parsed = value ? JSON.parse(value) : {};
     return {
       openai: typeof parsed.openai === "string" ? parsed.openai : "",
       anthropic: typeof parsed.anthropic === "string" ? parsed.anthropic : "",
-      anthropicContinuity:
-        typeof parsed.anthropicContinuity === "string" ? parsed.anthropicContinuity : "",
+      anthropicContinuity: typeof parsed.anthropicContinuity === "string" ? parsed.anthropicContinuity : "",
       gemini: typeof parsed.gemini === "string" ? parsed.gemini : ""
     };
   } catch {
@@ -63,26 +43,17 @@ export function parseBookJobModelSelection(value: string | null): BookJobModelSe
   }
 }
 
-export function buildBookJobModelOverrides(
-  models: BookJobModelSelection
-): BookJobModelOverrides | undefined {
-  const overrides: BookJobModelOverrides = {};
+export function buildBookJobModelOverrides(selection: BookJobModelSelection): Partial<BookJobModelSelection> {
+  const overrides: Partial<BookJobModelSelection> = {};
 
-  (Object.keys(models) as BookJobModelKey[]).forEach(function (key) {
-    const value = models[key].trim();
+  if (selection.openai) overrides.openai = selection.openai;
+  if (selection.anthropic) overrides.anthropic = selection.anthropic;
+  if (selection.anthropicContinuity) overrides.anthropicContinuity = selection.anthropicContinuity;
+  if (selection.gemini) overrides.gemini = selection.gemini;
 
-    if (value) {
-      overrides[key] = value;
-    }
-  });
-
-  return Object.keys(overrides).length ? overrides : undefined;
+  return overrides;
 }
 
-export function resolveBookJobModelValue(
-  overrideValue: string | undefined,
-  envValue: string | undefined,
-  fallbackValue: string
-) {
-  return overrideValue?.trim() || envValue?.trim() || fallbackValue;
+export function isBookJobProviderOption(value: string): value is BookJobProviderOption {
+  return value === "auto" || value === "openai" || value === "anthropic" || value === "gemini" || value === "local";
 }
