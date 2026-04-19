@@ -8,6 +8,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import {
   buildSceneContextPacket,
+  createCompletedDraftStageRuns,
   createDraftJobFromPacket,
   type SceneContextPacket
 } from "@/lib/book-engine";
@@ -30,9 +31,21 @@ const draftJobSchema = z.object({
   })
 });
 
+const continuityAuditSchema = z.object({
+  continuityRisks: z.array(z.string()).max(6),
+  styleDriftNotes: z.array(z.string()).max(6)
+});
+
 type DraftJobPayload = z.infer<typeof draftJobSchema>;
+type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
+
+const DEFAULT_OPENAI_BOOK_MODEL = "gpt-5.4";
+const DEFAULT_ANTHROPIC_BOOK_MODEL = "claude-sonnet-4-6";
+const DEFAULT_ANTHROPIC_CONTINUITY_MODEL = "claude-3-5-haiku-20241022";
+const DEFAULT_GEMINI_BOOK_MODEL = "gemini-2.5-flash";
+
 export type BookJobExecution = {
   provider: Exclude<BookJobProvider, "auto">;
   mode: "remote" | "local_fallback";
@@ -100,7 +113,8 @@ export async function generateBookDraftJob(params: {
       job: hydrateDraftJob(params.sceneId, packet, result.payload, {
         provider: remoteProvider,
         mode: "remote",
-        modelName: result.modelName
+        modelName: result.modelName,
+        continuityModelName: result.continuityModelName ?? null
       })
     };
   } catch (error) {
@@ -153,7 +167,7 @@ async function generateWithOpenAI(
     directorNote: string;
   }
 ) {
-  const modelName = process.env.OPENAI_BOOK_MODEL || "gpt-5.4";
+  const modelName = readModelEnv(process.env.OPENAI_BOOK_MODEL, DEFAULT_OPENAI_BOOK_MODEL);
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
@@ -169,7 +183,7 @@ async function generateWithOpenAI(
       },
       {
         role: "user",
-        content: buildUserPrompt(packet, options)
+        content: buildDynamicUserPrompt(packet, options)
       }
     ],
     text: {
@@ -183,6 +197,7 @@ async function generateWithOpenAI(
 
   return {
     modelName,
+    continuityModelName: null,
     payload: response.output_parsed
   };
 }
@@ -195,19 +210,20 @@ async function generateWithAnthropic(
     directorNote: string;
   }
 ) {
-  const modelName = process.env.ANTHROPIC_BOOK_MODEL || "claude-sonnet-4-5";
+  const modelName = readModelEnv(process.env.ANTHROPIC_BOOK_MODEL, DEFAULT_ANTHROPIC_BOOK_MODEL);
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
 
+  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
   const message = await client.messages.parse({
     model: modelName,
     max_tokens: 2200,
-    system: buildSystemPrompt(packet),
+    system: systemPromptBlocks,
     messages: [
       {
         role: "user",
-        content: buildUserPrompt(packet, options)
+        content: buildDynamicUserPrompt(packet, options)
       }
     ],
     output_config: {
@@ -219,9 +235,22 @@ async function generateWithAnthropic(
     throw new Error("Anthropic returned no parsed output.");
   }
 
+  const continuityAudit = await runAnthropicContinuityAudit(client, packet, options, {
+    payload: message.parsed_output
+  });
+
   return {
     modelName,
-    payload: message.parsed_output
+    continuityModelName:
+      continuityAudit && continuityAudit.continuityRisks.concat(continuityAudit.styleDriftNotes).length
+        ? readModelEnv(
+            process.env.ANTHROPIC_CONTINUITY_MODEL,
+            DEFAULT_ANTHROPIC_CONTINUITY_MODEL
+          )
+        : modelName,
+    payload: continuityAudit
+      ? mergeContinuityAudit(message.parsed_output, continuityAudit)
+      : message.parsed_output
   };
 }
 
@@ -240,14 +269,17 @@ async function generateWithGemini(
   }
 
   const modelName =
-    process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL || "gemini-2.5-flash";
+    readModelEnv(
+      process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
+      DEFAULT_GEMINI_BOOK_MODEL
+    );
   const client = new GoogleGenAI({
     apiKey
   });
 
   const response = await client.models.generateContent({
     model: modelName,
-    contents: buildUserPrompt(packet, options),
+    contents: buildDynamicUserPrompt(packet, options),
     config: {
       systemInstruction: buildSystemPrompt(packet),
       responseMimeType: "application/json",
@@ -261,6 +293,7 @@ async function generateWithGemini(
 
   return {
     modelName,
+    continuityModelName: null,
     payload: draftJobSchema.parse(JSON.parse(response.text))
   };
 }
@@ -274,6 +307,10 @@ function getGeminiApiKey() {
   );
 }
 
+function readModelEnv(value: string | undefined, fallback: string) {
+  return value?.trim() || fallback;
+}
+
 function hydrateDraftJob(
   sceneId: string,
   packet: SceneContextPacket,
@@ -282,6 +319,7 @@ function hydrateDraftJob(
     provider: BookDraftJob["provider"];
     mode: BookDraftJob["mode"];
     modelName: string | null;
+    continuityModelName: string | null;
   }
 ): BookDraftJob {
   const now = new Date().toISOString();
@@ -302,6 +340,16 @@ function hydrateDraftJob(
     rewriteText: payload.rewriteText,
     rewriteNotes: payload.rewriteNotes,
     extractedState: payload.extractedState,
+    stages: createCompletedDraftStageRuns({
+      provider: meta.provider,
+      modelName: meta.modelName,
+      continuityModelName: meta.continuityModelName,
+      updatedAt: now,
+      continuityNotes: payload.extractedState.continuityRisks.concat(
+        payload.extractedState.styleDriftNotes
+      ),
+      rewriteNotes: payload.rewriteNotes
+    }),
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
       memorySyncedAt: packet.dynamicContext.memorySyncedAt,
@@ -336,27 +384,12 @@ function createLocalExecution(
 
 function buildSystemPrompt(packet: SceneContextPacket) {
   return [
-    "You are the drafting engine for EMBER Book Studio.",
-    "Return only structured output matching the requested schema.",
-    "Do not imitate living authors or copyrighted prose.",
-    "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
-    "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
-    "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
-    packet.stablePrefix.categoryLane
-      ? `Commercial lane: ${packet.stablePrefix.categoryLane}`
-      : "",
-    packet.stablePrefix.marketHook
-      ? `Commercial hook: ${packet.stablePrefix.marketHook}`
-      : "",
-    formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
-    formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
-    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails),
-    "Publishing and KDP rules shape readability, quality, and packaging; they must never appear as meta commentary inside the scene prose.",
-    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation."
+    buildCoreSystemPrompt(),
+    buildStablePrefixPrompt(packet)
   ].join("\n");
 }
 
-function buildUserPrompt(
+function buildDynamicUserPrompt(
   packet: SceneContextPacket,
   options: {
     targetSceneWordsMin: number;
@@ -367,13 +400,6 @@ function buildUserPrompt(
   return [
     "Create one drafting job for the selected scene.",
     `Target rewrite length: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    `Premise: ${packet.stablePrefix.premise}`,
-    `Reader promise: ${packet.stablePrefix.readerPromise}`,
-    `Ending promise: ${packet.stablePrefix.endingPromise}`,
-    `Thematic core: ${packet.stablePrefix.thematicCore}`,
-    `Market lane: ${packet.stablePrefix.categoryLane || "not set"}`,
-    `Market hook: ${packet.stablePrefix.marketHook || "not set"}`,
-    formatPromptList("Architecture anchors", packet.stablePrefix.storyArchitecture),
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
@@ -401,7 +427,6 @@ function buildUserPrompt(
         return `${thread.label}: ${thread.detail}`;
       })
       .join(" || ")}`,
-    formatPromptList("Prose rules", packet.stablePrefix.writerConstitution),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     "Produce:",
     "- outline beats",
@@ -424,6 +449,161 @@ function formatPromptList(label: string, items: string[]) {
   }
 
   return `${label}: ${compactItems.join(" | ")}`;
+}
+
+function buildCoreSystemPrompt() {
+  return [
+    "You are the drafting engine for EMBER Book Studio.",
+    "Return only structured output matching the requested schema.",
+    "Do not imitate living authors or copyrighted prose.",
+    "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
+    "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
+    "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
+    "Publishing and KDP rules shape readability, quality, and packaging; they must never appear as meta commentary inside the scene prose.",
+    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation."
+  ].join("\n");
+}
+
+function buildStablePrefixPrompt(packet: SceneContextPacket) {
+  return [
+    `Premise: ${packet.stablePrefix.premise}`,
+    `Reader promise: ${packet.stablePrefix.readerPromise}`,
+    `Ending promise: ${packet.stablePrefix.endingPromise}`,
+    `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
+    `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
+    formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
+    formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
+    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails)
+  ].join("\n");
+}
+
+function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
+  return [
+    {
+      type: "text" as const,
+      text: buildCoreSystemPrompt()
+    },
+    {
+      type: "text" as const,
+      text: buildStablePrefixPrompt(packet),
+      cache_control: { type: "ephemeral" as const }
+    }
+  ];
+}
+
+async function runAnthropicContinuityAudit(
+  client: Anthropic,
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  },
+  draft: {
+    payload: DraftJobPayload;
+  }
+) {
+  const continuityModelName =
+    readModelEnv(process.env.ANTHROPIC_CONTINUITY_MODEL, DEFAULT_ANTHROPIC_CONTINUITY_MODEL);
+
+  try {
+    const message = await client.messages.parse({
+      model: continuityModelName,
+      max_tokens: 800,
+      system: buildAnthropicSystemPromptBlocks(packet),
+      messages: [
+        {
+          role: "user",
+          content: buildContinuityAuditPrompt(packet, options, draft.payload)
+        }
+      ],
+      output_config: {
+        format: zodOutputFormat(continuityAuditSchema)
+      }
+    });
+
+    return message.parsed_output ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function buildContinuityAuditPrompt(
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  },
+  payload: DraftJobPayload
+) {
+  return [
+    "Audit the generated scene draft for continuity and style drift only.",
+    "This is not a creative writing pass.",
+    `Target rewrite length remains ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Act: ${packet.dynamicContext.actTitle}`,
+    `Chapter: ${packet.dynamicContext.chapterTitle}`,
+    `Scene: ${packet.dynamicContext.sceneTitle}`,
+    `Scene summary: ${packet.dynamicContext.sceneSummary}`,
+    `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
+    `Previous beats: ${packet.dynamicContext.previousBeats
+      .map(function (beat) {
+        return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
+      })
+      .join(" || ")}`,
+    `Next beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "none"}`,
+    `Relevant codex: ${packet.dynamicContext.relevantCodex
+      .map(function (entry) {
+        return `${entry.title}: ${entry.summary}`;
+      })
+      .join(" || ")}`,
+    `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
+      .map(function (entry) {
+        return `${entry.characterName}: ${entry.currentState}`;
+      })
+      .join(" || ")}`,
+    `Active threads: ${packet.dynamicContext.activeThreads
+      .map(function (thread) {
+        return `${thread.label}: ${thread.detail}`;
+      })
+      .join(" || ")}`,
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
+    `Outline beats: ${payload.outline.join(" | ")}`,
+    `Draft text: ${payload.draftText}`,
+    `Rewrite text: ${payload.rewriteText}`,
+    `Existing continuity risks: ${payload.extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Existing style drift notes: ${payload.extractedState.styleDriftNotes.join(" | ") || "none"}`,
+    "Return only:",
+    "- continuityRisks",
+    "- styleDriftNotes"
+  ].join("\n");
+}
+
+function mergeContinuityAudit(payload: DraftJobPayload, audit: ContinuityAuditPayload): DraftJobPayload {
+  return {
+    ...payload,
+    extractedState: {
+      ...payload.extractedState,
+      continuityRisks: dedupeStrings(
+        payload.extractedState.continuityRisks.concat(audit.continuityRisks)
+      ).slice(0, 6),
+      styleDriftNotes: dedupeStrings(
+        payload.extractedState.styleDriftNotes.concat(audit.styleDriftNotes)
+      ).slice(0, 6)
+    }
+  };
+}
+
+function dedupeStrings(values: string[]) {
+  return values
+    .map(function (value) {
+      return value.trim();
+    })
+    .filter(Boolean)
+    .filter(function (value, index, list) {
+      return list.indexOf(value) === index;
+    });
 }
 
 function createLocalId(prefix: string) {

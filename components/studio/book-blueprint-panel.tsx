@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import {
   analyzeBookDraftReadiness,
   acceptDraftJobToScene,
+  BOOK_DRAFT_STAGE_SEQUENCE,
   buildAmazonLaunchPackage,
   buildCanonLedger,
   buildCharacterLedger,
@@ -836,7 +837,7 @@ export function BookBlueprintPanel({
           <div className="book-card__head">
             <div>
               <span className="book-card__label">Draft Engine</span>
-              <h4>Lokaler Job-Flow: outline → draft → extract → rewrite</h4>
+              <h4>Job-Flow: context → outline → draft → extract → continuity → rewrite</h4>
             </div>
             <div className="book-card__actions">
               <select
@@ -849,6 +850,7 @@ export function BookBlueprintPanel({
                 <option value="auto">Auto</option>
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
+                <option value="gemini">Gemini</option>
                 <option value="local">Local</option>
               </select>
               <button
@@ -1241,6 +1243,23 @@ function DraftJobCard({
 
       <div className="book-context-grid">
         <div className="book-context-stack">
+          <strong>Stages</strong>
+          <div className="book-mini-list">
+            {BOOK_DRAFT_STAGE_SEQUENCE.map(function (stageId) {
+              const stage = job.stages[stageId];
+
+              return (
+                <article key={`${job.id}_${stageId}`} className="book-mini-card">
+                  <strong>{formatDraftStageLabel(stageId)}</strong>
+                  <p>
+                    {formatProviderLabel(stage.provider)} · {stage.status}
+                    {stage.modelName ? ` · ${stage.modelName}` : ""}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+
           <strong>Outline</strong>
           <div className="book-mini-list">
             {job.outline.map(function (step, index) {
@@ -1270,6 +1289,22 @@ function DraftJobCard({
         </div>
 
         <div className="book-context-stack">
+          <strong>Draft</strong>
+          <pre className="book-code-block">{job.draftText}</pre>
+
+          <strong>Continuity</strong>
+          <pre className="book-code-block">
+            {JSON.stringify(
+              {
+                continuityRisks: job.extractedState.continuityRisks,
+                styleDriftNotes: job.extractedState.styleDriftNotes,
+                stageNotes: job.stages.continuity.notes
+              },
+              null,
+              2
+            )}
+          </pre>
+
           <strong>Rewrite Notes</strong>
           <div className="book-mini-list">
             {job.rewriteNotes.map(function (note, index) {
@@ -1293,6 +1328,30 @@ function DraftJobCard({
       </div>
     </article>
   );
+}
+
+function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
+  if (stageId === "context") {
+    return "Context";
+  }
+
+  if (stageId === "outline") {
+    return "Outline";
+  }
+
+  if (stageId === "draft") {
+    return "Draft";
+  }
+
+  if (stageId === "extract") {
+    return "Extract";
+  }
+
+  if (stageId === "continuity") {
+    return "Continuity";
+  }
+
+  return "Rewrite";
 }
 
 function EditableStringListSection({
@@ -1489,6 +1548,22 @@ function formatTimestamp(value: string | null) {
     hour: "2-digit",
     minute: "2-digit"
   }).format(new Date(value));
+}
+
+function formatProviderLabel(provider: BookDraftJob["provider"]) {
+  if (provider === "openai") {
+    return "OpenAI";
+  }
+
+  if (provider === "anthropic") {
+    return "Anthropic";
+  }
+
+  if (provider === "gemini") {
+    return "Gemini";
+  }
+
+  return "Local";
 }
 
 function formatChecklistLabel(value: string) {

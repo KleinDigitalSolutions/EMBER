@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
+  BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
   buildSceneContextPacket,
   getDraftJobsForScene,
@@ -21,7 +22,7 @@ import {
 } from "@/lib/story-schema";
 
 type JobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "local";
-type AiPanelView = "rewrite" | "outline" | "notes" | "extract";
+type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "continuity";
 
 const PROVIDER_OPTIONS: Array<{ id: JobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
@@ -39,10 +40,12 @@ const DIRECTOR_PRESETS = [
 ];
 
 const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
+  { id: "draft", label: "Draft" },
   { id: "rewrite", label: "Rewrite" },
-  { id: "outline", label: "Outline" },
+  { id: "extract", label: "Extract" },
+  { id: "continuity", label: "Continuity" },
   { id: "notes", label: "Notes" },
-  { id: "extract", label: "Extract" }
+  { id: "outline", label: "Outline" }
 ];
 const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember-book-job-provider";
 
@@ -590,15 +593,44 @@ export function BookWriterPanel({
                 })}
               </div>
 
-              {activePanelView === "rewrite" ? (
+              <div className="book-mini-list">
+                {BOOK_DRAFT_STAGE_SEQUENCE.map(function (stageId) {
+                  const stage = latestJob.stages[stageId];
+
+                  return (
+                    <article key={stageId} className="book-mini-card">
+                      <strong>{formatStageLabel(stageId)}</strong>
+                      <p>
+                        {formatProviderLabel(stage.provider)} · {stage.status}
+                        {stage.modelName ? ` · ${stage.modelName}` : ""}
+                      </p>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {activePanelView === "draft" ? (
+                <pre className="book-code-block book-writer-output">{latestJob.draftText}</pre>
+              ) : activePanelView === "rewrite" ? (
                 <pre className="book-code-block book-writer-output">{latestJob.rewriteText}</pre>
-              ) : activePanelView === "outline" ? (
+              ) : activePanelView === "extract" ? (
                 <div className="book-mini-list">
-                  {latestJob.outline.map(function (step, index) {
+                  {buildExtractCards(latestJob).map(function (card) {
                     return (
-                      <article key={`${latestJob.id}_outline_${index}`} className="book-mini-card">
-                        <strong>Beat {index + 1}</strong>
-                        <p>{step}</p>
+                      <article key={card.title} className="book-mini-card">
+                        <strong>{card.title}</strong>
+                        <p>{card.content}</p>
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : activePanelView === "continuity" ? (
+                <div className="book-mini-list">
+                  {buildContinuityCards(latestJob).map(function (card) {
+                    return (
+                      <article key={card.title} className="book-mini-card">
+                        <strong>{card.title}</strong>
+                        <p>{card.content}</p>
                       </article>
                     );
                   })}
@@ -615,11 +647,11 @@ export function BookWriterPanel({
                 </div>
               ) : (
                 <div className="book-mini-list">
-                  {buildExtractCards(latestJob).map(function (card) {
+                  {latestJob.outline.map(function (step, index) {
                     return (
-                      <article key={card.title} className="book-mini-card">
-                        <strong>{card.title}</strong>
-                        <p>{card.content}</p>
+                      <article key={`${latestJob.id}_outline_${index}`} className="book-mini-card">
+                        <strong>Beat {index + 1}</strong>
+                        <p>{step}</p>
                       </article>
                     );
                   })}
@@ -759,9 +791,34 @@ function buildExtractCards(job: BookDraftJob) {
         job.extractedState.openThreadsCreated.join(" | ") || "Keine neuen offenen Fäden erkannt."
     },
     {
+      title: "Resolved Threads",
+      content:
+        job.extractedState.openThreadsResolved.join(" | ") ||
+        "Keine aufgeloesten offenen Fäden erkannt."
+    },
+    {
+      title: "Foreshadowing",
+      content:
+        job.extractedState.foreshadowingAdded.join(" | ") || "Kein neues Foreshadowing erkannt."
+    }
+  ];
+}
+
+function buildContinuityCards(job: BookDraftJob) {
+  return [
+    {
       title: "Continuity Risks",
       content:
         job.extractedState.continuityRisks.join(" | ") || "Keine unmittelbaren Continuity-Risiken."
+    },
+    {
+      title: "Style Drift",
+      content:
+        job.extractedState.styleDriftNotes.join(" | ") || "Keine Style-Drift-Hinweise erkannt."
+    },
+    {
+      title: "Stage Notes",
+      content: job.stages.continuity.notes.join(" | ") || "Keine weiteren Continuity-Notizen."
     }
   ];
 }
@@ -788,6 +845,30 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | JobProviderOpt
 
 function formatExecutionModeLabel(mode: BookDraftJob["mode"]) {
   return mode === "remote" ? "Remote" : "Lokaler Fallback";
+}
+
+function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
+  if (stageId === "context") {
+    return "Context";
+  }
+
+  if (stageId === "outline") {
+    return "Outline";
+  }
+
+  if (stageId === "draft") {
+    return "Draft";
+  }
+
+  if (stageId === "extract") {
+    return "Extract";
+  }
+
+  if (stageId === "continuity") {
+    return "Continuity";
+  }
+
+  return "Rewrite";
 }
 
 function createBlockId() {

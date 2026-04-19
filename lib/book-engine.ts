@@ -1,9 +1,13 @@
 import {
+  type BookDraftStageId,
   findSceneContext,
   getAllScenes,
   normalizeStoryWordCounts,
   updateSceneInStory,
   type BookDraftJob,
+  type BookDraftStageRun,
+  type BookDraftStageRuns,
+  type BookJobProvider,
   type DraftExtractionState,
   type StoryDocument,
   type StoryScene,
@@ -87,6 +91,15 @@ export type AmazonLaunchPackage = {
   }>;
   readinessScore: number;
 };
+
+export const BOOK_DRAFT_STAGE_SEQUENCE: BookDraftStageId[] = [
+  "context",
+  "outline",
+  "draft",
+  "extract",
+  "continuity",
+  "rewrite"
+];
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   if (story.book.memory.canonLedger.length) {
@@ -291,6 +304,13 @@ export function createDraftJobFromPacket(
     rewriteText,
     rewriteNotes,
     extractedState,
+    stages: createCompletedDraftStageRuns({
+      provider: "local",
+      modelName: null,
+      updatedAt: now,
+      continuityNotes: extractedState.continuityRisks.concat(extractedState.styleDriftNotes),
+      rewriteNotes
+    }),
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
       memorySyncedAt: packet.dynamicContext.memorySyncedAt,
@@ -306,6 +326,73 @@ export function createDraftJobFromPacket(
         return thread.label;
       })
     }
+  };
+}
+
+export function createCompletedDraftStageRuns(params: {
+  provider: BookJobProvider;
+  modelName: string | null;
+  updatedAt: string;
+  continuityModelName?: string | null;
+  continuityNotes?: string[];
+  rewriteNotes?: string[];
+}): BookDraftStageRuns {
+  return {
+    context: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
+      "Context-Pack vorbereitet."
+    ]),
+    outline: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
+      "Outline fuer die Szene erzeugt."
+    ]),
+    draft: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
+      "Szenendraft erzeugt."
+    ]),
+    extract: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
+      "State-Extraktion aus dem Draft abgeschlossen."
+    ]),
+    continuity: createCompletedStageRun(
+      params.provider,
+      params.continuityModelName ?? params.modelName,
+      params.updatedAt,
+      params.continuityNotes && params.continuityNotes.length
+        ? params.continuityNotes
+        : ["Keine offenen Continuity-Hinweise."]
+    ),
+    rewrite: createCompletedStageRun(
+      params.provider,
+      params.modelName,
+      params.updatedAt,
+      params.rewriteNotes && params.rewriteNotes.length
+        ? params.rewriteNotes
+        : ["Rewrite abgeschlossen."]
+    )
+  };
+}
+
+export function createFallbackDraftStageRuns(params: {
+  provider: BookJobProvider;
+  modelName: string | null;
+  updatedAt: string;
+}): BookDraftStageRuns {
+  return createCompletedDraftStageRuns({
+    provider: params.provider,
+    modelName: params.modelName,
+    updatedAt: params.updatedAt
+  });
+}
+
+function createCompletedStageRun(
+  provider: BookJobProvider,
+  modelName: string | null,
+  updatedAt: string,
+  notes: string[]
+): BookDraftStageRun {
+  return {
+    status: "completed",
+    provider,
+    modelName,
+    updatedAt,
+    notes
   };
 }
 

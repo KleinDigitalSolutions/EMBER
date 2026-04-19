@@ -137,6 +137,7 @@ Wir fahren initial einen Hybrid-Ansatz aus Premium-Modellen und einem guenstigen
 - OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
 - Anthropic: Claude Opus 4 für schwere Strukturarbeit, Claude Sonnet 4 für den täglichen Draft-/Review-Betrieb `erledigt 2026-04-18`
 - Gemini: `gemini-2.5-flash` als dritter Provider fuer schnelle und guenstigere Draft-/Testlaeufe via Google AI Studio / Gemini API `erledigt 2026-04-19`
+- Anthropic-Livepfad aktuell auf `claude-sonnet-4-6`; der konkrete Anthropic-Default liegt in `ANTHROPIC_BOOK_MODEL`, sodass Sonnet/Opus-Wechsel pro Deployment nur ueber Env-Konfiguration laufen; Continuity-Audits koennen separat auf einem leichteren Modell (`ANTHROPIC_CONTINUITY_MODEL`, Default Haiku) laufen `erledigt 2026-04-19`
 
 Optional später:
 - kleinere GPT-5-Varianten oder Sonnet/Haiku-Klassen nur für Extraktion, Audits und Hintergrundjobs
@@ -147,6 +148,7 @@ Optional später:
 - Persistente Kanon-Artefakte liegen im Story-System beziehungsweise später in der DB (Memory Ledger). `erledigt 2026-04-18`
 - Pro Schreibschritt wird nur ein kleiner relevanter Kontext-Pack geladen (Context Composer). `erledigt 2026-04-18`
 - Statische Prompt-Module stehen vorn, variable Szenendaten hinten, damit Caching sauber greift.
+- Prompt Caching ist im Anthropic-Pfad fuer den stabilen Prefix des System-Prompts umgesetzt; variabel bleibt der Scene Pack `erledigt 2026-04-19`
 - Provider-State wie Responses/Conversations, `previous_response_id` oder Compaction ist Infrastruktur, nicht das eigentliche Story-Gedaechtnis.
 
 ### Einsatzregeln
@@ -354,6 +356,7 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
 - **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`OpenAI` / `Anthropic` / `Gemini` / `Local Fallback`) im Writer-Panel integriert.
+- **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → outline → draft → extract → continuity → rewrite`.
 - **Studio Brainstormer:** RAG-basierter Chat, der Codex und Historie kennt. `geplant`
 - **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
 
@@ -415,10 +418,10 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 
 ### Phase 3: Draft Engine `erledigt 2026-04-18`
 - Szenenweises Drafting `erledigt`
-- getrennte Jobs fuer Outline, Draft, Rewrite, Extract und Continuity `erledigt` im Datenmodell und Job-Flow
+- getrennte Jobs bzw. Stufen fuer Context, Outline, Draft, Extract, Continuity und Rewrite `erledigt` im Datenmodell, Persistenzlayer und UI-Flow
 - strukturierte Rueckgaben statt Freitext-Only `erledigt`
 - Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs `erledigt` als initialer Provider-Flow; aktuell OpenAI, Anthropic und Gemini plus lokaler Fallback
-- stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`
+- stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`; Anthropic nutzt fuer den stabilen Prefix Prompt Caching
 
 ### Phase 4: Continuity + Quality `in Arbeit`
 - Continuity-Checks fuer Wissensstand, Timeline und Payoffs `erledigt 2026-04-18` lokal, serverseitige Persistierung aktiv
@@ -429,7 +432,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-18`
 - **Foundation:** `erledigt`. Book-Blueprint in Schema integriert. Plan-Modus unterstützt Master Brief & Market Brief.
 - **Memory Backbone:** `erledigt`. Canon Ledger, Character Ledger und Open Threads werden persistent in Supabase verwaltet.
-- **Draft Engine:** `erledigt`. `BookJobProvider` startete mit OpenAI (`gpt-5.4`) und Anthropic (`claude-sonnet-4-5`). Context-Packs werden server-seitig generiert.
+- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-5.4`) und Anthropic (`claude-sonnet-4-6`) als Defaults; die konkreten Provider-Modelle bleiben ueber die jeweiligen Env-Variablen pro Umgebung austauschbar. Context-Packs werden server-seitig generiert.
 - **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
 ## Status Report `2026-04-19`
@@ -437,8 +440,10 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review).
 - **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic` / `Gemini`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
 - **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-2.5-flash` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
-- **Schema & Persistence:** `erledigt`. Supabase-Enum `ai_provider` um `gemini` erweitert; Persistenzpfad für echte Gemini-Draft-Jobs verifiziert.
-- **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung und AI-Integration aktualisiert.
+- **Schema & Persistence:** `erledigt`. Supabase-Enum `ai_provider` um `gemini` erweitert; `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
+- **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
+- **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; ein separater Continuity-Audit kann auf einem leichteren Anthropic-Modell statt auf dem Haupt-Draft-Modell laufen.
+- **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
 
 ### Nächste technische Prioritäten
@@ -453,7 +458,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - OpenAI-GPT-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; kleinere GPT-5-Modelle bleiben Kandidaten fuer Extractor- und Audit-Paesse.
 - Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option.
 - Gemini 2.5 Flash ist als schnellerer und guenstigerer Provider fuer Drafting-/Testpfade angebunden; die Architektur traegt damit bewusst mehr als einen Premium-Pfad.
-- Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt.
+- Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt; dieser Split ist fuer Anthropic jetzt konkret umgesetzt.
 - Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
 
 ## Zielbild für die Book Engine

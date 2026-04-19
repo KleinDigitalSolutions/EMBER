@@ -1,8 +1,10 @@
-import { syncStoryBookArtifacts } from "@/lib/book-engine"
+import { createFallbackDraftStageRuns, syncStoryBookArtifacts } from "@/lib/book-engine"
 import {
   createDefaultBookBlueprint,
   normalizeBookRuleList,
   type BookDraftJob,
+  type BookDraftStageRun,
+  type BookDraftStageRuns,
   type StoryDocument,
   type StoryVariable,
   type WorldBibleEntry
@@ -726,6 +728,7 @@ export async function saveStudioStory(story: StoryDocument) {
       rewrite_text: job.rewriteText,
       rewrite_notes: job.rewriteNotes,
       extracted_state: job.extractedState,
+      stage_runs: job.stages,
       accepted_at: job.acceptedAt
     }
   })
@@ -1106,23 +1109,35 @@ function buildDraftJobs(params: {
     const sceneCard = params.sceneCardMap.get(sceneId)
     const chapterRow = sceneRow ? params.chapterMap.get(sceneRow.chapter_id as string) : null
     const contextPackId = (row.context_pack_id as string) ?? sceneId
+    const provider = normalizeProvider(row.provider)
+    const modelName = typeof row.model_name === "string" ? row.model_name : null
+    const updatedAt = (row.updated_at as string) ?? ""
+    const rewriteNotes = normalizeStringArray(row.rewrite_notes)
+    const extractedState = normalizeExtractedState(row.extracted_state)
 
     return {
       id: row.id as string,
       sceneId,
       sceneTitle: (sceneRow?.title as string) ?? (sceneCard?.scene_title as string) ?? "",
       createdAt: (row.created_at as string) ?? "",
-      updatedAt: (row.updated_at as string) ?? "",
-      provider: normalizeProvider(row.provider),
+      updatedAt,
+      provider,
       mode: row.mode === "remote" ? "remote" : "local_fallback",
-      modelName: typeof row.model_name === "string" ? row.model_name : null,
+      modelName,
       status: row.status === "accepted" ? "accepted" : "ready",
       acceptedAt: typeof row.accepted_at === "string" ? row.accepted_at : null,
       outline: normalizeStringArray(row.outline),
       draftText: (row.draft_text as string) ?? "",
       rewriteText: (row.rewrite_text as string) ?? "",
-      rewriteNotes: normalizeStringArray(row.rewrite_notes),
-      extractedState: normalizeExtractedState(row.extracted_state),
+      rewriteNotes,
+      extractedState,
+      stages: normalizeStageRuns(row.stage_runs, {
+        provider,
+        modelName,
+        updatedAt,
+        rewriteNotes,
+        extractedState
+      }),
       contextSnapshot: {
         contextPackId,
         memorySyncedAt: params.memoryLastSyncedAt,
@@ -1390,6 +1405,56 @@ function normalizeExtractedState(value: unknown): BookDraftJob["extractedState"]
     foreshadowingAdded: normalizeStringArray(record.foreshadowingAdded),
     continuityRisks: normalizeStringArray(record.continuityRisks),
     styleDriftNotes: normalizeStringArray(record.styleDriftNotes)
+  }
+}
+
+function normalizeStageRuns(
+  value: unknown,
+  fallback: {
+    provider: BookDraftJob["provider"]
+    modelName: string | null
+    updatedAt: string
+    rewriteNotes: string[]
+    extractedState: BookDraftJob["extractedState"]
+  }
+): BookDraftStageRuns {
+  const record = toRecord(value)
+  const fallbackRuns = createFallbackDraftStageRuns({
+    provider: fallback.provider,
+    modelName: fallback.modelName,
+    updatedAt: fallback.updatedAt
+  })
+
+  fallbackRuns.continuity.notes =
+    fallback.extractedState.continuityRisks.concat(fallback.extractedState.styleDriftNotes).length > 0
+      ? fallback.extractedState.continuityRisks.concat(fallback.extractedState.styleDriftNotes)
+      : fallbackRuns.continuity.notes
+  fallbackRuns.rewrite.notes = fallback.rewriteNotes.length > 0
+    ? fallback.rewriteNotes
+    : fallbackRuns.rewrite.notes
+
+  return {
+    context: normalizeStageRun(record.context, fallbackRuns.context),
+    outline: normalizeStageRun(record.outline, fallbackRuns.outline),
+    draft: normalizeStageRun(record.draft, fallbackRuns.draft),
+    extract: normalizeStageRun(record.extract, fallbackRuns.extract),
+    continuity: normalizeStageRun(record.continuity, fallbackRuns.continuity),
+    rewrite: normalizeStageRun(record.rewrite, fallbackRuns.rewrite)
+  }
+}
+
+function normalizeStageRun(value: unknown, fallback: BookDraftStageRun): BookDraftStageRun {
+  const record = toRecord(value)
+
+  return {
+    status:
+      record.status === "failed" || record.status === "skipped" || record.status === "completed"
+        ? record.status
+        : fallback.status,
+    provider: normalizeProvider(record.provider ?? fallback.provider),
+    modelName: typeof record.modelName === "string" ? record.modelName : fallback.modelName,
+    updatedAt: typeof record.updatedAt === "string" ? record.updatedAt : fallback.updatedAt,
+    notes: normalizeStringArray(record.notes).length > 0 ? normalizeStringArray(record.notes) : fallback.notes
   }
 }
 

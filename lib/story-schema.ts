@@ -4,6 +4,29 @@ export type StoryStatus = "draft" | "playtest" | "submitted";
 export type StoryMode = "book" | "branching";
 export type BookJobProvider = "openai" | "anthropic" | "gemini" | "local";
 export type BookJobMode = "remote" | "local_fallback";
+export type BookDraftStageId =
+  | "context"
+  | "outline"
+  | "draft"
+  | "extract"
+  | "continuity"
+  | "rewrite";
+export type BookDraftStageStatus = "completed" | "failed" | "skipped";
+export type BookDraftStageRun = {
+  status: BookDraftStageStatus;
+  provider: BookJobProvider;
+  modelName: string | null;
+  updatedAt: string | null;
+  notes: string[];
+};
+export type BookDraftStageRuns = {
+  context: BookDraftStageRun;
+  outline: BookDraftStageRun;
+  draft: BookDraftStageRun;
+  extract: BookDraftStageRun;
+  continuity: BookDraftStageRun;
+  rewrite: BookDraftStageRun;
+};
 
 export const LEGACY_BOOK_WRITER_CONSTITUTION = [
   "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
@@ -25,7 +48,10 @@ export const DEFAULT_BOOK_WRITER_CONSTITUTION = [
   "Zeige Emotion ueber Verhalten, Koerper, Handlung und sinnliche Details statt sie nur zu benennen.",
   "Dialog ist dramatische Verdichtung; jede Zeile muss Konflikt, Information oder Machtbalance verschieben.",
   "Starker Dialog traegt Subtext: Was Figuren sagen und was sie meinen, darf auseinanderliegen.",
+  "Negative Regel: Figuren erklaeren ihre Emotion nicht essayistisch; sie reagieren konkret, treffen Entscheidungen und tragen die Spannung ueber Handlung.",
+  "Negative Regel: Hauptfiguren klingen nie generisch, passiv-aggressiv oder austauschbar; jede Stimme bleibt klar, gerichtsfest und wiedererkennbar.",
   "Pacing wird bewusst gesteuert: kurze Saetze fuer Druck, laengere fuer Reflexion und Nachhall.",
+  "Kapitel und Szenen enden nach Moeglichkeit mit einem klaren Haken, einer offenen Reibung oder einer neuen Drohung, nicht mit weichem Auslaufen.",
   "Jede Hauptfigur braucht eine eigene Stimme, Wortwahl und Rhythmik.",
   "Bevorzuge aktive Verben, starke Nomen und konkrete Bilder statt schwacher Konstruktionen.",
   "Redundanzen, Fuellwoerter und dekorative Adverbien werden gestrichen, nicht gesammelt.",
@@ -113,6 +139,7 @@ export type BookDraftJob = {
   rewriteText: string;
   rewriteNotes: string[];
   extractedState: DraftExtractionState;
+  stages: BookDraftStageRuns;
   contextSnapshot: {
     contextPackId: string;
     memorySyncedAt: string | null;
