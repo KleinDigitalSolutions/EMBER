@@ -62,9 +62,13 @@ export function BookWriterPanel({
   sceneContext,
   selectedSceneId,
   onSelectScene,
+  onCreateFirstScene,
   onAddAct,
   onAddChapter,
   onAddScene,
+  onDeleteAct,
+  onDeleteChapter,
+  onDeleteScene,
   onUpdateScene,
   onUpdateStory,
   onOpenBranchEditor
@@ -73,9 +77,13 @@ export function BookWriterPanel({
   sceneContext: SceneContext | null;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
+  onCreateFirstScene: () => void;
   onAddAct: () => void;
   onAddChapter: (actId: string) => void;
   onAddScene: (chapterId: string) => void;
+  onDeleteAct: (actId: string) => void;
+  onDeleteChapter: (chapterId: string) => void;
+  onDeleteScene: (sceneId: string) => void;
   onUpdateScene: (updater: (scene: StoryScene) => StoryScene) => void;
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
   onOpenBranchEditor: () => void;
@@ -144,7 +152,7 @@ export function BookWriterPanel({
   }, [sceneContext, story]);
 
   const firstSceneId = useMemo(function () {
-    return story.acts[0]?.chapters[0]?.scenes[0]?.id ?? "";
+    return findFirstSceneId(story);
   }, [story.acts]);
 
   if (!sceneContext) {
@@ -170,7 +178,11 @@ export function BookWriterPanel({
                 Erste Szene öffnen
               </button>
             ) : (
-              <button className="flat-button flat-button--active" type="button" onClick={onAddAct}>
+              <button
+                className="flat-button flat-button--active"
+                type="button"
+                onClick={onCreateFirstScene}
+              >
                 Erste Szene anlegen
               </button>
             )}
@@ -295,6 +307,9 @@ export function BookWriterPanel({
                 onSelectScene={onSelectScene}
                 onAddChapter={onAddChapter}
                 onAddScene={onAddScene}
+                onDeleteAct={onDeleteAct}
+                onDeleteChapter={onDeleteChapter}
+                onDeleteScene={onDeleteScene}
               />
             );
           })}
@@ -758,23 +773,41 @@ function BookActNav({
   selectedSceneId,
   onSelectScene,
   onAddChapter,
-  onAddScene
+  onAddScene,
+  onDeleteAct,
+  onDeleteChapter,
+  onDeleteScene
 }: {
   act: StoryAct;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
   onAddChapter: (actId: string) => void;
   onAddScene: (chapterId: string) => void;
+  onDeleteAct: (actId: string) => void;
+  onDeleteChapter: (chapterId: string) => void;
+  onDeleteScene: (sceneId: string) => void;
 }) {
   return (
     <section className="book-writer-nav__act">
       <div className="book-writer-nav__act-head">
         <h4>{act.title}</h4>
-        <button className="flat-button" type="button" onClick={function () {
-          onAddChapter(act.id);
-        }}>
-          + Kapitel
-        </button>
+        <div className="book-writer-nav__actions">
+          <button className="flat-button" type="button" onClick={function () {
+            onAddChapter(act.id);
+          }}>
+            + Kapitel
+          </button>
+          <button
+            className="sidebar-row-delete"
+            type="button"
+            title="Akt löschen"
+            onClick={function () {
+              onDeleteAct(act.id);
+            }}
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       <div className="book-writer-nav__chapter-list">
@@ -786,6 +819,8 @@ function BookActNav({
               selectedSceneId={selectedSceneId}
               onSelectScene={onSelectScene}
               onAddScene={onAddScene}
+              onDeleteChapter={onDeleteChapter}
+              onDeleteScene={onDeleteScene}
             />
           );
         })}
@@ -798,41 +833,73 @@ function BookChapterNav({
   chapter,
   selectedSceneId,
   onSelectScene,
-  onAddScene
+  onAddScene,
+  onDeleteChapter,
+  onDeleteScene
 }: {
   chapter: StoryChapter;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
   onAddScene: (chapterId: string) => void;
+  onDeleteChapter: (chapterId: string) => void;
+  onDeleteScene: (sceneId: string) => void;
 }) {
   return (
     <article className="book-writer-nav__chapter">
       <div className="book-writer-nav__chapter-head">
         <strong>{chapter.title}</strong>
-        <button className="flat-button" type="button" onClick={function () {
-          onAddScene(chapter.id);
-        }}>
-          + Szene
-        </button>
+        <div className="book-writer-nav__actions">
+          <button className="flat-button" type="button" onClick={function () {
+            onAddScene(chapter.id);
+          }}>
+            + Szene
+          </button>
+          <button
+            className="sidebar-row-delete"
+            type="button"
+            title="Kapitel löschen"
+            onClick={function () {
+              onDeleteChapter(chapter.id);
+            }}
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       <div className="book-writer-nav__scene-list">
         {chapter.scenes.map(function (scene) {
+          const isActive = scene.id === selectedSceneId;
+
           return (
-            <button
+            <div
               key={scene.id}
               className={
-                "book-writer-nav__scene" +
-                (scene.id === selectedSceneId ? " book-writer-nav__scene--active" : "")
+                "book-writer-nav__scene-row" +
+                (isActive ? " book-writer-nav__scene-row--active" : "")
               }
-              type="button"
-              onClick={function () {
-                onSelectScene(scene.id);
-              }}
             >
-              <span>{scene.title}</span>
-              <small>{scene.wordCount} Wörter</small>
-            </button>
+              <button
+                className="book-writer-nav__scene"
+                type="button"
+                onClick={function () {
+                  onSelectScene(scene.id);
+                }}
+              >
+                <span>{scene.title}</span>
+                <small>{scene.wordCount} Wörter</small>
+              </button>
+              <button
+                className="sidebar-row-delete"
+                type="button"
+                title="Szene löschen"
+                onClick={function () {
+                  onDeleteScene(scene.id);
+                }}
+              >
+                ×
+              </button>
+            </div>
           );
         })}
       </div>
@@ -887,6 +954,20 @@ function buildContinuityCards(job: BookDraftJob) {
       content: job.stages.continuity.notes.join(" | ") || "Keine weiteren Continuity-Notizen."
     }
   ];
+}
+
+function findFirstSceneId(story: StoryDocument) {
+  for (const act of story.acts) {
+    for (const chapter of act.chapters) {
+      const firstSceneId = chapter.scenes[0]?.id;
+
+      if (firstSceneId) {
+        return firstSceneId;
+      }
+    }
+  }
+
+  return "";
 }
 
 function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProviderOption) {

@@ -585,6 +585,110 @@ export function StudioWorkspace({
     }
   }
 
+  function handleCreateFirstScene() {
+    let nextSceneId = "";
+
+    commitStoryUpdate(function (currentStory) {
+      const firstAct = currentStory.acts[0];
+
+      if (!firstAct) {
+        const result = appendActToStory(currentStory);
+        nextSceneId = result.sceneId;
+        return result.story;
+      }
+
+      const firstChapter = firstAct.chapters[0];
+
+      if (!firstChapter) {
+        const result = appendChapterToAct(currentStory, firstAct.id);
+        nextSceneId = result.sceneId;
+        return result.story;
+      }
+
+      if (!firstChapter.scenes.length) {
+        const result = appendSceneToChapter(currentStory, firstChapter.id);
+        nextSceneId = result.sceneId;
+        return result.story;
+      }
+
+      nextSceneId = firstChapter.scenes[0].id;
+      return currentStory;
+    });
+
+    setSearch("");
+
+    if (nextSceneId) {
+      setSelectedSceneId(nextSceneId);
+      setAuthorMode("book");
+    }
+  }
+
+  function handleDeleteAct(actId: string) {
+    if (!window.confirm("Bist du sicher? Dieser Akt und alle enthaltenen Kapitel und Szenen werden unwiderruflich gelöscht.")) {
+      return;
+    }
+
+    commitStoryUpdate(function (currentStory) {
+      return {
+        ...currentStory,
+        acts: currentStory.acts.filter(function (act) {
+          return act.id !== actId;
+        })
+      };
+    });
+  }
+
+  function handleDeleteChapter(chapterId: string) {
+    if (!window.confirm("Bist du sicher? Dieses Kapitel und alle enthaltenen Szenen werden unwiderruflich gelöscht.")) {
+      return;
+    }
+
+    commitStoryUpdate(function (currentStory) {
+      return {
+        ...currentStory,
+        acts: currentStory.acts.map(function (act) {
+          return {
+            ...act,
+            chapters: act.chapters.filter(function (chapter) {
+              return chapter.id !== chapterId;
+            })
+          };
+        })
+      };
+    });
+  }
+
+  function handleDeleteScene(sceneId: string) {
+    if (!window.confirm("Bist du sicher? Diese Szene wird unwiderruflich gelöscht.")) {
+      return;
+    }
+
+    commitStoryUpdate(function (currentStory) {
+      const nextStory = {
+        ...currentStory,
+        acts: currentStory.acts.map(function (act) {
+          return {
+            ...act,
+            chapters: act.chapters.map(function (chapter) {
+              return {
+                ...chapter,
+                scenes: chapter.scenes.filter(function (scene) {
+                  return scene.id !== sceneId;
+                })
+              };
+            })
+          };
+        })
+      };
+
+      if (selectedSceneId === sceneId) {
+        setSelectedSceneId("");
+      }
+
+      return nextStory;
+    });
+  }
+
   function handleCreateFromOutline() {
     try {
       const nextActs = buildActsFromOutline(outlineDraft);
@@ -1123,9 +1227,13 @@ export function StudioWorkspace({
               sceneContext={selectedSceneContext}
               selectedSceneId={selectedSceneId}
               onSelectScene={setSelectedSceneId}
+              onCreateFirstScene={handleCreateFirstScene}
               onAddAct={handleAddAct}
               onAddChapter={handleAddChapter}
               onAddScene={handleAddScene}
+              onDeleteAct={handleDeleteAct}
+              onDeleteChapter={handleDeleteChapter}
+              onDeleteScene={handleDeleteScene}
               onUpdateScene={updateSelectedScene}
               onUpdateStory={updateDraftStory}
               onOpenBranchEditor={function () {

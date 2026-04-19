@@ -51,7 +51,11 @@ export async function deleteStudioStory(storyId: string) {
 }
 
 export async function loadStudioStory(preferredStoryId?: string | null) {
-  const storyRow = await loadStoryRow(preferredStoryId)
+  let storyRow = await loadStoryRow(preferredStoryId)
+
+  if (!storyRow && preferredStoryId) {
+    storyRow = await loadStoryRow(null)
+  }
 
   if (!storyRow) {
     return ensureBootstrapStory()
