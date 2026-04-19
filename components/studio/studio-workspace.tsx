@@ -715,9 +715,9 @@ export function StudioWorkspace({
         <header className="sidebar-header">
           <div className="sidebar-project">
             <span className="landing-kicker">
-              {sidebarMode === "library" ? "Projektbibliothek" : "Story Codex"}
+              {sidebarMode === "library" ? "Projektbibliothek" : "Codex"}
             </span>
-            <h1>{sidebarMode === "library" ? "Stories" : draftStory.title}</h1>
+            <h1>{sidebarMode === "library" ? "Projekte" : draftStory.title}</h1>
             <p>
               {sidebarMode === "library"
                 ? `${libraryStories.length} Projekte in Supabase`
@@ -777,7 +777,7 @@ export function StudioWorkspace({
             </button>
           ) : (
             <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
-              + New Entry
+              + Eintrag
             </button>
           )}
           {sidebarMode === "library" ? (
@@ -866,7 +866,7 @@ export function StudioWorkspace({
             <section className="codex-editor">
               <div className="codex-editor__head">
                 <div>
-                  <h2>Codex Editor</h2>
+                  <h2>Codex-Eintrag</h2>
                   <p>{selectedCodexEntry.id}</p>
                 </div>
                 <button className="scene-block-card__remove" type="button" onClick={handleDeleteCodexEntry}>
@@ -967,20 +967,14 @@ export function StudioWorkspace({
         <footer className="sidebar-footer">
           <div className="sidebar-user">
             <div className="avatar" />
-            <span className="usage-pill">Local</span>
+            <span className="usage-pill">Lokal</span>
           </div>
           <div className="sidebar-footer__links">
-            <button className="footer-link" type="button" title="Noch nicht aktiv" disabled>
-              Help
-            </button>
-            <button className="footer-link" type="button" title="Noch nicht aktiv" disabled>
-              Prompts
-            </button>
             <button className="footer-link" type="button" onClick={handleExport}>
-              Export
+              Exportieren
             </button>
             <button className="footer-link" type="button" onClick={handleManualSave}>
-              Save
+              Speichern
             </button>
           </div>
         </footer>
@@ -1140,13 +1134,13 @@ export function StudioWorkspace({
                     </h2>
                   </div>
                   <div className="board-meta__stats">
-                    <span>{stats.chapterCount} chapters</span>
+                    <span>{stats.chapterCount} Kapitel</span>
                     <span>-</span>
-                    <span>{stats.wordCount.toLocaleString("de-DE")} words</span>
+                    <span>{stats.wordCount.toLocaleString("de-DE")} Wörter</span>
                     {isBranchingStory(draftStory) ? (
                       <>
                         <span>-</span>
-                        <span>{stats.choiceCount} choices</span>
+                        <span>{stats.choiceCount} Choices</span>
                       </>
                     ) : null}
                   </div>
@@ -1615,14 +1609,14 @@ function formatStoryStatus(status: StoryStatus) {
   }
 
   if (status === "submitted") {
-    return "Submitted";
+    return "Eingereicht";
   }
 
-  return "Draft";
+  return "Entwurf";
 }
 
 function formatStoryModeLabel(mode: StoryMode) {
-  return mode === "branching" ? "Ember" : "Book";
+  return mode === "branching" ? "Ember" : "Buch";
 }
 
 function formatLibraryTimestamp(value: string) {

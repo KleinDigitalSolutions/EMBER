@@ -152,7 +152,7 @@ export function BookWriterPanel({
     return (
       <section className="book-writer-shell">
         <div className="book-writer-empty">
-          <span className="scene-editor__eyebrow">Book Writer</span>
+          <span className="scene-editor__eyebrow">Writer</span>
           <h3>Keine Szene ausgewählt</h3>
           <p>
             {firstSceneId
@@ -275,10 +275,10 @@ export function BookWriterPanel({
   }
 
   return (
-    <section className="book-writer-shell" aria-label="Book Writer">
+    <section className="book-writer-shell" aria-label="Writer">
       <aside className="book-writer-nav">
         <div className="book-writer-nav__header">
-          <span className="scene-editor__eyebrow">Full Manuscript</span>
+          <span className="scene-editor__eyebrow">Manuskript</span>
           <h3>{story.title || "Untitled Book"}</h3>
           <p>
             {stats.wordCount.toLocaleString("de-DE")} Wörter · {stats.chapterCount} Kapitel ·{" "}
@@ -908,7 +908,7 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
   }
 
   if (provider === "local") {
-    return "Local";
+    return "Lokal";
   }
 
   return "Auto";
@@ -937,7 +937,7 @@ function formatExecutionModeLabel(mode: BookDraftJob["mode"]) {
 
 function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
   if (stageId === "context") {
-    return "Context";
+    return "Kontext";
   }
 
   if (stageId === "outline") {
@@ -945,15 +945,15 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
   }
 
   if (stageId === "draft") {
-    return "Draft";
+    return "Entwurf";
   }
 
   if (stageId === "extract") {
-    return "Extract";
+    return "Extrakt";
   }
 
   if (stageId === "continuity") {
-    return "Continuity";
+    return "Kontinuität";
   }
 
   return "Rewrite";
