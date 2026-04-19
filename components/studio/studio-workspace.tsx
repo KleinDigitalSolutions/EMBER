@@ -84,6 +84,15 @@ export function StudioWorkspace({
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
   }, [draftStory]);
+  const latestDraftJob = useMemo(function () {
+    return draftStory.book.draftEngine.jobs.reduce(function (latestJob, currentJob) {
+      if (!latestJob) {
+        return currentJob;
+      }
+
+      return currentJob.updatedAt.localeCompare(latestJob.updatedAt) > 0 ? currentJob : latestJob;
+    }, null as StoryDocument["book"]["draftEngine"]["jobs"][number] | null);
+  }, [draftStory.book.draftEngine.jobs]);
   const availableAuthorModes = useMemo(function () {
     return getAuthorModesForStory(draftStory.mode);
   }, [draftStory.mode]);
@@ -123,6 +132,7 @@ export function StudioWorkspace({
     draftStory.worldBible.find(function (entry) {
       return entry.id === selectedCodexEntryId;
     }) ?? null;
+  const footerStatus = latestDraftJob ? formatFooterStatus(latestDraftJob.mode) : null;
 
   useEffect(
     function () {
@@ -967,7 +977,13 @@ export function StudioWorkspace({
         <footer className="sidebar-footer">
           <div className="sidebar-user">
             <div className="avatar" />
-            <span className="usage-pill">Lokal</span>
+            {footerStatus ? (
+              <span className={"usage-pill usage-pill--" + footerStatus.tone}>
+                {footerStatus.label}
+              </span>
+            ) : (
+              <span className="usage-pill usage-pill--idle">Bereit</span>
+            )}
           </div>
           <div className="sidebar-footer__links">
             <button className="footer-link" type="button" onClick={handleExport}>
@@ -1636,6 +1652,20 @@ function formatLibraryTimestamp(value: string) {
     hour: "2-digit",
     minute: "2-digit"
   }).format(timestamp);
+}
+
+function formatFooterStatus(mode: StoryDocument["book"]["draftEngine"]["jobs"][number]["mode"]) {
+  if (mode === "remote") {
+    return {
+      label: "Remote",
+      tone: "remote"
+    };
+  }
+
+  return {
+    label: "Lokal",
+    tone: "local"
+  };
 }
 
 const DEFAULT_OUTLINE_TEMPLATE = [
