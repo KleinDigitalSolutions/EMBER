@@ -6,6 +6,7 @@ export const studioStory = defineStory({
   title: "New Novel",
   authorName: "Özgür Azap",
   status: "draft",
+  mode: "book",
   meta: {
     genre: "Psychothriller",
     language: "de",
@@ -15,6 +16,7 @@ export const studioStory = defineStory({
     ...createDefaultBookBlueprint("New Novel"),
     activePhase: "phase_5_market",
     masterBrief: {
+      ...createDefaultBookBlueprint("New Novel").masterBrief,
       premise:
         "Ein Ermittler zieht einen scheinbar lokalen Vermisstenfall auf und oeffnet dabei eine soziale Druckkammer, die ihn selbst verschiebt.",
       readerPromise:
@@ -25,6 +27,7 @@ export const studioStory = defineStory({
         "Kontrolle kippt in Mitschuld, sobald Ordnung wichtiger wird als Wahrheit."
     },
     marketBrief: {
+      ...createDefaultBookBlueprint("New Novel").marketBrief,
       amazonGoal:
         "Ein sauber paketierbarer Genretitel, der als erster Band oder Standalone verkauft werden kann.",
       categoryLane: "Psychothriller / Dorfgeheimnis / Ermittler mit moralischer Reibung",

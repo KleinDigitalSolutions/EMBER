@@ -45,12 +45,14 @@ export async function generateBookDraftJob(params: {
   provider?: BookJobProvider;
   targetSceneWordsMin?: number;
   targetSceneWordsMax?: number;
+  directorNote?: string;
 }): Promise<BookJobExecution> {
   const provider = params.provider ?? "auto";
   const packet =
     params.packet ?? (params.story ? buildSceneContextPacket(params.story, params.sceneId) : null);
   const targetSceneWordsMin = params.targetSceneWordsMin ?? 1200;
   const targetSceneWordsMax = params.targetSceneWordsMax ?? 1600;
+  const directorNote = params.directorNote?.trim() || "";
 
   if (!packet) {
     throw new Error("Scene context could not be built.");
@@ -79,8 +81,16 @@ export async function generateBookDraftJob(params: {
   try {
     const result =
       remoteProvider === "openai"
-        ? await generateWithOpenAI(packet)
-        : await generateWithAnthropic(packet);
+        ? await generateWithOpenAI(packet, {
+            targetSceneWordsMin,
+            targetSceneWordsMax,
+            directorNote
+          })
+        : await generateWithAnthropic(packet, {
+            targetSceneWordsMin,
+            targetSceneWordsMax,
+            directorNote
+          });
 
     return {
       provider: remoteProvider,
@@ -125,7 +135,14 @@ function resolveRemoteProvider(provider: BookJobProvider) {
   return null;
 }
 
-async function generateWithOpenAI(packet: SceneContextPacket) {
+async function generateWithOpenAI(
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  }
+) {
   const modelName = process.env.OPENAI_BOOK_MODEL || "gpt-5.4";
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -142,7 +159,7 @@ async function generateWithOpenAI(packet: SceneContextPacket) {
       },
       {
         role: "user",
-        content: buildUserPrompt(packet)
+        content: buildUserPrompt(packet, options)
       }
     ],
     text: {
@@ -160,7 +177,14 @@ async function generateWithOpenAI(packet: SceneContextPacket) {
   };
 }
 
-async function generateWithAnthropic(packet: SceneContextPacket) {
+async function generateWithAnthropic(
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  }
+) {
   const modelName = process.env.ANTHROPIC_BOOK_MODEL || "claude-sonnet-4-5";
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
@@ -173,7 +197,7 @@ async function generateWithAnthropic(packet: SceneContextPacket) {
     messages: [
       {
         role: "user",
-        content: buildUserPrompt(packet)
+        content: buildUserPrompt(packet, options)
       }
     ],
     output_config: {
@@ -259,17 +283,38 @@ function buildSystemPrompt(packet: SceneContextPacket) {
     "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
     "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
     "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
-    `Writer constitution: ${packet.stablePrefix.writerConstitution.join(" | ")}`
+    packet.stablePrefix.categoryLane
+      ? `Commercial lane: ${packet.stablePrefix.categoryLane}`
+      : "",
+    packet.stablePrefix.marketHook
+      ? `Commercial hook: ${packet.stablePrefix.marketHook}`
+      : "",
+    formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
+    formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
+    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails),
+    "Publishing and KDP rules shape readability, quality, and packaging; they must never appear as meta commentary inside the scene prose.",
+    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation."
   ].join("\n");
 }
 
-function buildUserPrompt(packet: SceneContextPacket) {
+function buildUserPrompt(
+  packet: SceneContextPacket,
+  options: {
+    targetSceneWordsMin: number;
+    targetSceneWordsMax: number;
+    directorNote: string;
+  }
+) {
   return [
     "Create one drafting job for the selected scene.",
+    `Target rewrite length: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     `Premise: ${packet.stablePrefix.premise}`,
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
     `Ending promise: ${packet.stablePrefix.endingPromise}`,
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `Market lane: ${packet.stablePrefix.categoryLane || "not set"}`,
+    `Market hook: ${packet.stablePrefix.marketHook || "not set"}`,
+    formatPromptList("Architecture anchors", packet.stablePrefix.storyArchitecture),
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
@@ -297,6 +342,8 @@ function buildUserPrompt(packet: SceneContextPacket) {
         return `${thread.label}: ${thread.detail}`;
       })
       .join(" || ")}`,
+    formatPromptList("Prose rules", packet.stablePrefix.writerConstitution),
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     "Produce:",
     "- outline beats",
     "- draftText as a scene draft",
@@ -304,6 +351,20 @@ function buildUserPrompt(packet: SceneContextPacket) {
     "- rewriteNotes",
     "- extractedState with canon facts, character updates, open threads, foreshadowing, continuity risks, and style drift notes"
   ].join("\n");
+}
+
+function formatPromptList(label: string, items: string[]) {
+  const compactItems = items
+    .map(function (item) {
+      return item.trim();
+    })
+    .filter(Boolean);
+
+  if (!compactItems.length) {
+    return `${label}: none`;
+  }
+
+  return `${label}: ${compactItems.join(" | ")}`;
 }
 
 function createLocalId(prefix: string) {

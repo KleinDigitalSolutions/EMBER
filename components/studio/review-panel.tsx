@@ -3,6 +3,7 @@
 import {
   countStoryStats,
   getAllScenes,
+  isBranchingStory,
   type StoryDocument,
   type StoryStatus
 } from "@/lib/story-schema";
@@ -142,7 +143,11 @@ export function ReviewPanel({
             <Metric label="Warnungen" value={analysis.warningCount} tone="warning" />
             <Metric label="Hinweise" value={analysis.infoCount} tone="info" />
             <Metric label="Szenen" value={stats.sceneCount} />
-            <Metric label="Choices" value={stats.choiceCount} />
+            {isBranchingStory(story) ? (
+              <Metric label="Choices" value={stats.choiceCount} />
+            ) : (
+              <Metric label="Modus" value="Buch" />
+            )}
             <Metric label="Wörter" value={stats.wordCount.toLocaleString("de-DE")} />
           </div>
         </section>
@@ -187,7 +192,11 @@ export function ReviewPanel({
           <div className="review-card__head">
             <div>
               <span className="review-card__label">Continuity Report</span>
-              <h4>Weltanker, Flags und offene Setups</h4>
+              <h4>
+                {isBranchingStory(story)
+                  ? "Weltanker, Flags und offene Setups"
+                  : "Weltanker, offene Fragen und Szenenkohärenz"}
+              </h4>
             </div>
           </div>
 
@@ -397,6 +406,7 @@ function Metric({
 function analyzeStoryForReview(story: StoryDocument): ReviewAnalysis {
   const issues: ReviewIssue[] = [];
   const scenes = getAllScenes(story);
+  const branchingEnabled = isBranchingStory(story);
   const sceneIndex = new Map(
     scenes.map(function (scene) {
       return [scene.id, scene];
@@ -474,7 +484,7 @@ function analyzeStoryForReview(story: StoryDocument): ReviewAnalysis {
   const reachableSceneIds = new Set<string>();
   const startScene = scenes[0] ?? null;
 
-  if (startScene) {
+  if (branchingEnabled && startScene) {
     collectReachableScenes(startScene.id, sceneIndex, reachableSceneIds);
   }
 
@@ -511,97 +521,101 @@ function analyzeStoryForReview(story: StoryDocument): ReviewAnalysis {
       });
     }
 
-    if (!scene.choices.length) {
+    if (branchingEnabled) {
+      if (!scene.choices.length) {
+        issues.push({
+          id: `${scene.id}-ending`,
+          level: "info",
+          title: `${scene.title || scene.id}: Terminale Szene`,
+          detail: "Diese Szene beendet aktuell einen Pfad ohne weitere Entscheidung.",
+          sceneId: scene.id
+        });
+      }
+
+      scene.choices.forEach(function (choice, index) {
+        if (!choice.label.trim()) {
+          issues.push({
+            id: `${scene.id}-${choice.id}-label`,
+            level: "error",
+            title: `${scene.title || scene.id}: Choice ${index + 1} ohne Label`,
+            detail: "Im Reader wäre diese Entscheidung ohne Label nicht verständlich.",
+            sceneId: scene.id
+          });
+        }
+
+        if (!sceneIndex.has(choice.toSceneId)) {
+          issues.push({
+            id: `${scene.id}-${choice.id}-target`,
+            level: "error",
+            title: `${scene.title || scene.id}: Choice-Ziel fehlt`,
+            detail: `Die Choice verweist auf ${choice.toSceneId}, aber diese Szene existiert nicht.`,
+            sceneId: scene.id
+          });
+        }
+
+        choice.conditions.forEach(function (condition, conditionIndex) {
+          if (!variableKeys.has(condition.variableKey)) {
+            issues.push({
+              id: `${scene.id}-${choice.id}-condition-${conditionIndex}`,
+              level: "error",
+              title: `${scene.title || scene.id}: Unbekannte Condition-Variable`,
+              detail: `${condition.variableKey} ist im Story-Schema nicht definiert.`,
+              sceneId: scene.id
+            });
+          }
+        });
+
+        choice.effects.forEach(function (effect, effectIndex) {
+          if (!variableKeys.has(effect.variableKey)) {
+            issues.push({
+              id: `${scene.id}-${choice.id}-effect-${effectIndex}`,
+              level: "error",
+              title: `${scene.title || scene.id}: Unbekannte Effect-Variable`,
+              detail: `${effect.variableKey} ist im Story-Schema nicht definiert.`,
+              sceneId: scene.id
+            });
+          }
+        });
+      });
+    }
+  });
+
+  if (branchingEnabled) {
+    scenes
+      .filter(function (scene) {
+        return startScene && !reachableSceneIds.has(scene.id);
+      })
+      .forEach(function (scene) {
+        issues.push({
+          id: `${scene.id}-unreachable`,
+          level: "warning",
+          title: `${scene.title || scene.id}: Derzeit unerreichbar`,
+          detail: "Vom Startpunkt führt aktuell kein statischer Pfad in diese Szene.",
+          sceneId: scene.id
+        });
+      });
+
+    if (!scenes.some(function (scene) {
+      return scene.choices.length === 0;
+    })) {
       issues.push({
-        id: `${scene.id}-ending`,
-        level: "info",
-        title: `${scene.title || scene.id}: Terminale Szene`,
-        detail: "Diese Szene beendet aktuell einen Pfad ohne weitere Entscheidung.",
-        sceneId: scene.id
+        id: "story-no-ending",
+        level: "error",
+        title: "Kein Ende vorhanden",
+        detail: "Mindestens eine terminale Szene ist nötig, damit ein Run sauber enden kann."
       });
     }
 
-    scene.choices.forEach(function (choice, index) {
-      if (!choice.label.trim()) {
-        issues.push({
-          id: `${scene.id}-${choice.id}-label`,
-          level: "error",
-          title: `${scene.title || scene.id}: Choice ${index + 1} ohne Label`,
-          detail: "Im Reader wäre diese Entscheidung ohne Label nicht verständlich.",
-          sceneId: scene.id
-        });
-      }
-
-      if (!sceneIndex.has(choice.toSceneId)) {
-        issues.push({
-          id: `${scene.id}-${choice.id}-target`,
-          level: "error",
-          title: `${scene.title || scene.id}: Choice-Ziel fehlt`,
-          detail: `Die Choice verweist auf ${choice.toSceneId}, aber diese Szene existiert nicht.`,
-          sceneId: scene.id
-        });
-      }
-
-      choice.conditions.forEach(function (condition, conditionIndex) {
-        if (!variableKeys.has(condition.variableKey)) {
-          issues.push({
-            id: `${scene.id}-${choice.id}-condition-${conditionIndex}`,
-            level: "error",
-            title: `${scene.title || scene.id}: Unbekannte Condition-Variable`,
-            detail: `${condition.variableKey} ist im Story-Schema nicht definiert.`,
-            sceneId: scene.id
-          });
-        }
-      });
-
-      choice.effects.forEach(function (effect, effectIndex) {
-        if (!variableKeys.has(effect.variableKey)) {
-          issues.push({
-            id: `${scene.id}-${choice.id}-effect-${effectIndex}`,
-            level: "error",
-            title: `${scene.title || scene.id}: Unbekannte Effect-Variable`,
-            detail: `${effect.variableKey} ist im Story-Schema nicht definiert.`,
-            sceneId: scene.id
-          });
-        }
-      });
-    });
-  });
-
-  scenes
-    .filter(function (scene) {
-      return startScene && !reachableSceneIds.has(scene.id);
-    })
-    .forEach(function (scene) {
+    if (!scenes.some(function (scene) {
+      return scene.choices.length > 1;
+    })) {
       issues.push({
-        id: `${scene.id}-unreachable`,
+        id: "story-no-branching",
         level: "warning",
-        title: `${scene.title || scene.id}: Derzeit unerreichbar`,
-        detail: "Vom Startpunkt führt aktuell kein statischer Pfad in diese Szene.",
-        sceneId: scene.id
+        title: "Keine echte Verzweigung",
+        detail: "Aktuell gibt es keine Szene mit mehr als einer Choice."
       });
-    });
-
-  if (!scenes.some(function (scene) {
-    return scene.choices.length === 0;
-  })) {
-    issues.push({
-      id: "story-no-ending",
-      level: "error",
-      title: "Kein Ende vorhanden",
-      detail: "Mindestens eine terminale Szene ist nötig, damit ein Run sauber enden kann."
-    });
-  }
-
-  if (!scenes.some(function (scene) {
-    return scene.choices.length > 1;
-  })) {
-    issues.push({
-      id: "story-no-branching",
-      level: "warning",
-      title: "Keine echte Verzweigung",
-      detail: "Aktuell gibt es keine Szene mit mehr als einer Choice."
-    });
+    }
   }
 
   if (countStoryStats(story).wordCount < 120) {
@@ -635,6 +649,7 @@ function analyzeStoryForReview(story: StoryDocument): ReviewAnalysis {
 
 function analyzeContinuity(story: StoryDocument): ContinuityAnalysis {
   const scenes = getAllScenes(story);
+  const branchingEnabled = isBranchingStory(story);
   const textByScene = new Map(
     scenes.map(function (scene) {
       return [
@@ -713,63 +728,67 @@ function analyzeContinuity(story: StoryDocument): ContinuityAnalysis {
       });
     }
 
-    scene.choices.forEach(function (choice) {
-      choice.conditions.forEach(function (condition) {
-        usedVariableKeys.add(condition.variableKey);
-        checkedVariableKeys.add(condition.variableKey);
-      });
-
-      choice.effects.forEach(function (effect) {
-        usedVariableKeys.add(effect.variableKey);
-      });
-    });
-  });
-
-  story.variables.forEach(function (variable) {
-    const isUsedInConditions = scenes.some(function (scene) {
-      return scene.choices.some(function (choice) {
-        return choice.conditions.some(function (condition) {
-          return condition.variableKey === variable.key;
+    if (branchingEnabled) {
+      scene.choices.forEach(function (choice) {
+        choice.conditions.forEach(function (condition) {
+          usedVariableKeys.add(condition.variableKey);
+          checkedVariableKeys.add(condition.variableKey);
         });
-      });
-    });
-    const isUsedInEffects = scenes.some(function (scene) {
-      return scene.choices.some(function (choice) {
-        return choice.effects.some(function (effect) {
-          return effect.variableKey === variable.key;
+
+        choice.effects.forEach(function (effect) {
+          usedVariableKeys.add(effect.variableKey);
         });
-      });
-    });
-
-    if (!isUsedInConditions && !isUsedInEffects) {
-      findings.push({
-        id: `${variable.id}-orphan`,
-        level: "warning",
-        title: `${variable.label}: Variable ohne Einsatz`,
-        detail: "Die Variable ist definiert, wird aber aktuell weder gesetzt noch abgefragt."
-      });
-      return;
-    }
-
-    if (isUsedInEffects && !isUsedInConditions) {
-      setupWithoutPayoffKeys.add(variable.key);
-      findings.push({
-        id: `${variable.id}-setup-without-payoff`,
-        level: "warning",
-        title: `${variable.label}: Setup ohne Payoff`,
-        detail: "Die Variable wird gesetzt, aber nirgends in Conditions wieder geprüft."
-      });
-    }
-
-    if (!isUsedInEffects && isUsedInConditions && variable.defaultValue === false) {
-      findings.push({
-        id: `${variable.id}-check-without-setup`,
-        level: "info",
-        title: `${variable.label}: Check ohne sichtbaren Setup-Pfad`,
-        detail: "Die Variable wird geprüft, aber im aktuellen Draft nicht aktiv gesetzt. Das kann gewollt sein, sollte aber bewusst sein."
       });
     }
   });
+
+  if (branchingEnabled) {
+    story.variables.forEach(function (variable) {
+      const isUsedInConditions = scenes.some(function (scene) {
+        return scene.choices.some(function (choice) {
+          return choice.conditions.some(function (condition) {
+            return condition.variableKey === variable.key;
+          });
+        });
+      });
+      const isUsedInEffects = scenes.some(function (scene) {
+        return scene.choices.some(function (choice) {
+          return choice.effects.some(function (effect) {
+            return effect.variableKey === variable.key;
+          });
+        });
+      });
+
+      if (!isUsedInConditions && !isUsedInEffects) {
+        findings.push({
+          id: `${variable.id}-orphan`,
+          level: "warning",
+          title: `${variable.label}: Variable ohne Einsatz`,
+          detail: "Die Variable ist definiert, wird aber aktuell weder gesetzt noch abgefragt."
+        });
+        return;
+      }
+
+      if (isUsedInEffects && !isUsedInConditions) {
+        setupWithoutPayoffKeys.add(variable.key);
+        findings.push({
+          id: `${variable.id}-setup-without-payoff`,
+          level: "warning",
+          title: `${variable.label}: Setup ohne Payoff`,
+          detail: "Die Variable wird gesetzt, aber nirgends in Conditions wieder geprüft."
+        });
+      }
+
+      if (!isUsedInEffects && isUsedInConditions && variable.defaultValue === false) {
+        findings.push({
+          id: `${variable.id}-check-without-setup`,
+          level: "info",
+          title: `${variable.label}: Check ohne sichtbaren Setup-Pfad`,
+          detail: "Die Variable wird geprüft, aber im aktuellen Draft nicht aktiv gesetzt. Das kann gewollt sein, sollte aber bewusst sein."
+        });
+      }
+      });
+  }
 
   return {
     anchoredSceneCount: anchoredSceneIds.size,
@@ -779,10 +798,12 @@ function analyzeContinuity(story: StoryDocument): ContinuityAnalysis {
     unusedWorldBibleCount: worldBibleMentions.filter(function (item) {
       return item.mentionedSceneIds.length === 0;
     }).length,
-    orphanedVariableCount: story.variables.filter(function (variable) {
-      return !usedVariableKeys.has(variable.key);
-    }).length,
-    unresolvedSetupCount: setupWithoutPayoffKeys.size,
+    orphanedVariableCount: branchingEnabled
+      ? story.variables.filter(function (variable) {
+          return !usedVariableKeys.has(variable.key);
+        }).length
+      : 0,
+    unresolvedSetupCount: branchingEnabled ? setupWithoutPayoffKeys.size : 0,
     findings
   };
 }
@@ -794,12 +815,12 @@ function buildSubmissionReviewerMemo(
 ): SubmissionReviewerMemo {
   const stats = countStoryStats(story);
   const openingScene = getAllScenes(story)[0] ?? null;
+  const branchingEnabled = isBranchingStory(story);
   const hasClearHook =
     Boolean(openingScene?.summary.trim()) &&
     Boolean(openingScene?.blocks.some(function (block) {
       return block.text.trim();
     }));
-  const hasBranching = stats.choiceCount > 1;
   const isAudienceDefined = Boolean(story.meta.genre.trim() && story.meta.audience.trim());
   const continuityRisk =
     continuity.unusedWorldBibleCount +
@@ -819,9 +840,11 @@ function buildSubmissionReviewerMemo(
     audienceAssessment: isAudienceDefined
       ? `${story.meta.genre} für ${story.meta.audience} ist lesbar positioniert.`
       : "Genre und Zielgruppe sind noch nicht scharf genug beschrieben.",
-    branchAssessment: hasBranching
-      ? "Es gibt bereits sichtbare Verzweigung; jetzt zählt eher Konsequenz als Menge."
-      : "Die Story wirkt noch zu linear für einen starken Branching-Pitch.",
+    branchAssessment: branchingEnabled
+      ? stats.choiceCount > 1
+        ? "Es gibt bereits sichtbare Verzweigung; jetzt zählt eher Konsequenz als Menge."
+        : "Die Story wirkt noch zu linear für einen starken Branching-Pitch."
+      : "Das Projekt läuft im Buchmodus; bewertet werden Kapitelzug, Lesefluss und Kontinuität statt Choice-Dichte.",
     riskAssessment:
       continuityRisk === 0
         ? "Aktuell fallen keine lokalen Continuity-Risiken auf."

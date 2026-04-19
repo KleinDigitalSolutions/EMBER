@@ -1,8 +1,45 @@
 import { createUuid } from "@/lib/id";
 
 export type StoryStatus = "draft" | "playtest" | "submitted";
+export type StoryMode = "book" | "branching";
 export type BookJobProvider = "openai" | "anthropic" | "local";
 export type BookJobMode = "remote" | "local_fallback";
+
+export const LEGACY_BOOK_WRITER_CONSTITUTION = [
+  "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
+  "Exposition bleibt knapp und wird nur dramatisch verdient platziert.",
+  "Dialog muss Information tragen oder Spannung verschieben.",
+  "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
+] as const;
+
+export const DEFAULT_BOOK_STORY_ARCHITECTURE = [
+  "Akt 1: Setup. Fuehre Figur, Welt und zentrales Problem ein und ende mit dem ausloesenden Ereignis.",
+  "Akt 2: Konfrontation. Lass den Widerstand wachsen, setze einen klaren Midpoint-Turn und ende in einer scheinbar hoffnungslosen Lage.",
+  "Akt 3: Aufloesung. Liefere Klimax, Konsequenzen und einen befriedigenden Schluss fuer Plot und Emotion.",
+  "Tracke Wollen vs. Brauchen: Das sichtbare Ziel zieht die erste Haelfte, die tiefere innere Notwendigkeit loest die zweite Haelfte."
+] as const;
+
+export const DEFAULT_BOOK_WRITER_CONSTITUTION = [
+  "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
+  "Steige spaet in die Szene ein und verlasse sie frueh, sobald der dramatische Punkt gesetzt ist.",
+  "Zeige Emotion ueber Verhalten, Koerper, Handlung und sinnliche Details statt sie nur zu benennen.",
+  "Dialog ist dramatische Verdichtung; jede Zeile muss Konflikt, Information oder Machtbalance verschieben.",
+  "Starker Dialog traegt Subtext: Was Figuren sagen und was sie meinen, darf auseinanderliegen.",
+  "Pacing wird bewusst gesteuert: kurze Saetze fuer Druck, laengere fuer Reflexion und Nachhall.",
+  "Jede Hauptfigur braucht eine eigene Stimme, Wortwahl und Rhythmik.",
+  "Bevorzuge aktive Verben, starke Nomen und konkrete Bilder statt schwacher Konstruktionen.",
+  "Redundanzen, Fuellwoerter und dekorative Adverbien werden gestrichen, nicht gesammelt.",
+  "Dialogtags bleiben in der Regel bei sagte oder fragte; Haltung und Intensitaet zeigt die Szene selbst.",
+  "Tempus bleibt konsistent und Prosa muss laut gelesen standhalten.",
+  "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
+] as const;
+
+export const DEFAULT_BOOK_PUBLISHING_GUARDRAILS = [
+  "Commercial fiction muss Genre-Erwartungen erfuellen, ohne mechanisch zu wirken.",
+  "Lesbarkeit geht vor Eitelkeit: klare Struktur, saubere Orientierung und niedrige Reibung fuer den Leser.",
+  "Packaging darf nichts versprechen, was Manuskript, Hook und Ending Promise nicht einloesen.",
+  "Formatierungs- und Qualitaetsfehler sind keine Nebensache; sie schaedigen Marktvertrauen und KDP-Tauglichkeit."
+] as const;
 
 export type StoryDocument = {
   id: string;
@@ -10,6 +47,7 @@ export type StoryDocument = {
   title: string;
   authorName: string;
   status: StoryStatus;
+  mode: StoryMode;
   meta: {
     genre: string;
     language: string;
@@ -36,6 +74,7 @@ export type BookBlueprint = {
     readerPromise: string;
     endingPromise: string;
     thematicCore: string;
+    storyArchitecture: string[];
   };
   marketBrief: {
     amazonGoal: string;
@@ -43,6 +82,7 @@ export type BookBlueprint = {
     hook: string;
     seriesPotential: string;
     coverDirection: string;
+    publishingGuardrails: string[];
   };
   writerConstitution: string[];
   memory: BookMemoryBackbone;
@@ -275,6 +315,42 @@ export function defineStory<T extends StoryDocument>(story: T): T {
   return story;
 }
 
+export function isBookStory(story: Pick<StoryDocument, "mode">) {
+  return story.mode === "book";
+}
+
+export function isBranchingStory(story: Pick<StoryDocument, "mode">) {
+  return story.mode === "branching";
+}
+
+export function normalizeBookRuleList(value: unknown, fallback: readonly string[]) {
+  const nextRules = Array.isArray(value)
+    ? value
+        .filter(function (entry): entry is string {
+          return typeof entry === "string";
+        })
+        .map(function (entry) {
+          return entry.trim();
+        })
+        .filter(Boolean)
+    : [];
+
+  if (!nextRules.length) {
+    return fallback.slice();
+  }
+
+  if (
+    nextRules.length === LEGACY_BOOK_WRITER_CONSTITUTION.length &&
+    nextRules.every(function (rule, index) {
+      return rule === LEGACY_BOOK_WRITER_CONSTITUTION[index];
+    })
+  ) {
+    return DEFAULT_BOOK_WRITER_CONSTITUTION.slice();
+  }
+
+  return nextRules;
+}
+
 export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
   return {
     lastSyncedAt: null,
@@ -297,21 +373,18 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       premise: `${title} braucht noch eine klare Marktprämisse.`,
       readerPromise: "",
       endingPromise: "",
-      thematicCore: ""
+      thematicCore: "",
+      storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
     },
     marketBrief: {
       amazonGoal: "Schnell validierbarer Genretitel mit sauberem Serienpotenzial.",
       categoryLane: "",
       hook: "",
       seriesPotential: "",
-      coverDirection: ""
+      coverDirection: "",
+      publishingGuardrails: DEFAULT_BOOK_PUBLISHING_GUARDRAILS.slice()
     },
-    writerConstitution: [
-      "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
-      "Exposition bleibt knapp und wird nur dramatisch verdient platziert.",
-      "Dialog muss Information tragen oder Spannung verschieben.",
-      "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
-    ],
+    writerConstitution: DEFAULT_BOOK_WRITER_CONSTITUTION.slice(),
     memory: createDefaultBookMemoryBackbone(),
     draftEngine: {
       mode: "local",
@@ -364,6 +437,37 @@ export function countSceneWords(scene: Pick<StoryScene, "summary" | "blocks">) {
       )
       .join(" ")
   );
+}
+
+export function normalizeStoryWordCounts(story: StoryDocument): StoryDocument {
+  const acts = story.acts.map(function (act) {
+    const chapters = act.chapters.map(function (chapter) {
+      const scenes = chapter.scenes.map(function (scene) {
+        return {
+          ...scene,
+          wordCount: countSceneWords(scene)
+        };
+      });
+
+      return {
+        ...chapter,
+        scenes,
+        wordCount: scenes.reduce(function (sum, scene) {
+          return sum + scene.wordCount;
+        }, 0)
+      };
+    });
+
+    return {
+      ...act,
+      chapters
+    };
+  });
+
+  return {
+    ...story,
+    acts
+  };
 }
 
 export function findSceneContext(
@@ -455,16 +559,19 @@ export function countStoryStats(story: StoryDocument) {
     return act.chapters;
   });
   const scenes = getAllScenes(story);
+  const choiceCount = isBranchingStory(story)
+    ? scenes.reduce(function (sum, scene) {
+        return sum + scene.choices.length;
+      }, 0)
+    : 0;
 
   return {
     actCount: story.acts.length,
     chapterCount: chapters.length,
     sceneCount: scenes.length,
-    choiceCount: scenes.reduce(function (sum, scene) {
-      return sum + scene.choices.length;
-    }, 0),
+    choiceCount,
     wordCount: scenes.reduce(function (sum, scene) {
-      return sum + scene.wordCount;
+      return sum + countSceneWords(scene);
     }, 0)
   };
 }

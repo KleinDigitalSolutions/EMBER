@@ -1,6 +1,7 @@
 import { syncStoryBookArtifacts } from "@/lib/book-engine"
 import {
   createDefaultBookBlueprint,
+  normalizeBookRuleList,
   type BookDraftJob,
   type StoryDocument,
   type StoryVariable,
@@ -249,11 +250,12 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
         masterBrief: normalizeMasterBrief(bookProject.master_brief, fallbackBook.masterBrief),
         marketBrief: normalizeMarketBrief(bookProject.market_brief, fallbackBook.marketBrief),
         writerConstitution:
-          (writerRulesResult.data ?? []).length > 0
-            ? (writerRulesResult.data ?? []).map(function (row) {
-                return (row.rule_text as string) ?? ""
-              })
-            : fallbackBook.writerConstitution,
+          normalizeBookRuleList(
+            (writerRulesResult.data ?? []).map(function (row) {
+              return (row.rule_text as string) ?? ""
+            }),
+            fallbackBook.writerConstitution
+          ),
         memory: {
           lastSyncedAt: memoryLastSyncedAt,
           canonLedger: canonFacts.map(function (row) {
@@ -381,6 +383,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
     title: (storyRow.title as string) ?? "",
     authorName: (storyRow.author_name as string) ?? "",
     status: normalizeStoryStatus(storyRow.status),
+    mode: normalizeStoryMode(storyRow.mode),
     meta: {
       genre: typeof storyMeta.genre === "string" ? storyMeta.genre : "",
       language: typeof storyMeta.language === "string" ? storyMeta.language : "",
@@ -425,7 +428,7 @@ export async function saveStudioStory(story: StoryDocument) {
     title: nextStory.title,
     author_name: nextStory.authorName,
     status: denormalizeStoryStatus(nextStory.status),
-    mode: "book",
+    mode: nextStory.mode,
     meta,
     created_by: ownerProfileId,
     current_version_id: null
@@ -754,7 +757,7 @@ export async function saveStudioStory(story: StoryDocument) {
 async function loadStoryRow(preferredStoryId?: string | null) {
   const query = supabaseAdmin
     .from("stories")
-    .select("id, workspace_id, title, author_name, status, meta")
+    .select("id, workspace_id, title, author_name, status, mode, meta")
     .eq("mode", "book")
 
   const result = preferredStoryId
@@ -893,6 +896,7 @@ function buildBootstrapStory(workspaceId: string): StoryDocument {
     title: "New Novel",
     authorName: "Özgür Azap",
     status: "draft",
+    mode: "book",
     meta: {
       genre: "Psychothriller",
       language: "de",
@@ -902,6 +906,7 @@ function buildBootstrapStory(workspaceId: string): StoryDocument {
       ...createDefaultBookBlueprint("New Novel"),
       activePhase: "phase_5_market",
       masterBrief: {
+        ...createDefaultBookBlueprint("New Novel").masterBrief,
         premise:
           "Ein Ermittler zieht einen scheinbar lokalen Vermisstenfall auf und öffnet dabei eine soziale Druckkammer, die ihn selbst verschiebt.",
         readerPromise:
@@ -912,6 +917,7 @@ function buildBootstrapStory(workspaceId: string): StoryDocument {
           "Kontrolle kippt in Mitschuld, sobald Ordnung wichtiger wird als Wahrheit."
       },
       marketBrief: {
+        ...createDefaultBookBlueprint("New Novel").marketBrief,
         amazonGoal:
           "Ein sauber paketierbarer Genretitel, der als erster Band oder Standalone verkauft werden kann.",
         categoryLane: "Psychothriller / Dorfgeheimnis / Ermittler mit moralischer Reibung",
@@ -1183,6 +1189,10 @@ function normalizeStoryStatus(value: unknown): StoryDocument["status"] {
   return "draft"
 }
 
+function normalizeStoryMode(value: unknown): StoryDocument["mode"] {
+  return value === "branching" ? "branching" : "book"
+}
+
 function denormalizeStoryStatus(value: StoryDocument["status"]) {
   if (value === "playtest") {
     return "playtest"
@@ -1230,7 +1240,8 @@ function normalizeMasterBrief(
     endingPromise:
       typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
     thematicCore:
-      typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore
+      typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
+    storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture)
   }
 }
 
@@ -1252,7 +1263,11 @@ function normalizeMarketBrief(
     coverDirection:
       typeof record.coverDirection === "string"
         ? record.coverDirection
-        : fallback.coverDirection
+        : fallback.coverDirection,
+    publishingGuardrails: normalizeBookRuleList(
+      record.publishingGuardrails,
+      fallback.publishingGuardrails
+    )
   }
 }
 

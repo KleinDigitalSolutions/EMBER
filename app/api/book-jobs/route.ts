@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       provider?: BookJobProvider;
       targetSceneWordsMin?: number;
       targetSceneWordsMax?: number;
+      directorNote?: string;
     };
 
     if (!body.sceneId || (!body.packet && !body.story)) {
@@ -32,7 +33,8 @@ export async function POST(request: Request) {
       packet: body.packet,
       provider: body.provider,
       targetSceneWordsMin: body.targetSceneWordsMin,
-      targetSceneWordsMax: body.targetSceneWordsMax
+      targetSceneWordsMax: body.targetSceneWordsMax,
+      directorNote: body.directorNote
     });
 
     return NextResponse.json(result);

@@ -1,6 +1,7 @@
 import {
   findSceneContext,
   getAllScenes,
+  normalizeStoryWordCounts,
   updateSceneInStory,
   type BookDraftJob,
   type DraftExtractionState,
@@ -25,6 +26,10 @@ export type SceneContextPacket = {
     readerPromise: string;
     endingPromise: string;
     thematicCore: string;
+    storyArchitecture: string[];
+    categoryLane: string;
+    marketHook: string;
+    publishingGuardrails: string[];
     writerConstitution: string[];
   };
   dynamicContext: {
@@ -121,12 +126,13 @@ export function buildOpenThreads(story: StoryDocument): OpenThread[] {
 }
 
 export function syncStoryBookArtifacts(story: StoryDocument): StoryDocument {
-  const memory = buildBookMemoryBackbone(story);
+  const normalizedStory = normalizeStoryWordCounts(story);
+  const memory = buildBookMemoryBackbone(normalizedStory);
 
   return {
-    ...story,
+    ...normalizedStory,
     book: {
-      ...story.book,
+      ...normalizedStory.book,
       memory
     }
   };
@@ -186,6 +192,10 @@ export function buildSceneContextPacket(
       readerPromise: story.book.masterBrief.readerPromise,
       endingPromise: story.book.masterBrief.endingPromise,
       thematicCore: story.book.masterBrief.thematicCore,
+      storyArchitecture: story.book.masterBrief.storyArchitecture,
+      categoryLane: story.book.marketBrief.categoryLane,
+      marketHook: story.book.marketBrief.hook,
+      publishingGuardrails: story.book.marketBrief.publishingGuardrails,
       writerConstitution: story.book.writerConstitution
     },
     dynamicContext: {
@@ -955,6 +965,9 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
       story.id,
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
+      story.book.masterBrief.storyArchitecture.join("|"),
+      story.book.marketBrief.categoryLane,
+      story.book.marketBrief.hook,
       chapterGoal,
       story.book.writerConstitution.join("|")
     ].join(" :: "),
@@ -965,6 +978,9 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
 function buildOutlineSteps(packet: SceneContextPacket) {
   const steps = [
     `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "den unmittelbaren Konflikt"}.`,
+    packet.stablePrefix.storyArchitecture[0]
+      ? `Strukturanker: ${packet.stablePrefix.storyArchitecture[0]}`
+      : "",
     `Druck aufbauen: ${packet.dynamicContext.activeThreads[0]?.label || "eine offene Frage"} konkretisieren.`,
     `Wendung: ${packet.dynamicContext.relevantCodex[0]?.title || "der Kernkonflikt"} neu rahmen.`,
     `Nachhall: in ${packet.dynamicContext.nextBeat?.sceneTitle || "den naechsten Plot-Schritt"} ueberleiten.`
@@ -986,6 +1002,9 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
     [
       packet.dynamicContext.sceneTitle,
       packet.dynamicContext.sceneSummary || packet.stablePrefix.premise,
+      packet.stablePrefix.marketHook
+        ? `Der kommerzielle Zug der Szene bleibt am Hook ausgerichtet: ${packet.stablePrefix.marketHook}`
+        : "",
       lead
         ? `${lead.title} liegt als relevanter Kanon offen im Raum: ${lead.summary}`
         : "Die Szene muss den Konflikt aus der Praemisse unmittelbar spueren lassen.",
@@ -997,6 +1016,9 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       previousBeat
         ? `Direkt davor stand ${previousBeat.sceneTitle}: ${previousBeat.summary || previousBeat.excerpt}`
         : "Es gibt keinen langen Rueckblick; die Szene steigt schnell in die aktuelle Lage ein.",
+      packet.stablePrefix.storyArchitecture[1]
+        ? `Der Szenendruck bleibt kompatibel mit dem groesseren Strukturziel: ${packet.stablePrefix.storyArchitecture[1]}`
+        : "",
       thread
         ? `Der offene Thread lautet im Kern: ${thread.label}. ${thread.detail}`
         : "Der Druck kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
@@ -1007,6 +1029,9 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       packet.stablePrefix.thematicCore
         ? `Unter der Aktion arbeitet das Thema: ${packet.stablePrefix.thematicCore}.`
         : "Die Szene soll bereits eine lesbare emotionale Verschiebung erzeugen.",
+      packet.stablePrefix.categoryLane
+        ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
+        : "",
       nextBeat
         ? `Am Ende muss genug Zug in Richtung ${nextBeat.sceneTitle} bleiben.`
         : "Das Ende muss wie ein bewusst gesetzter Nachhall wirken."
@@ -1098,6 +1123,9 @@ function buildRewriteText(
     draftText,
     "",
     `Rewrite-Fokus: ${rewriteNotes.join(" ")}`,
+    packet.stablePrefix.publishingGuardrails[0]
+      ? `Lesbarkeits-Guardrail: ${packet.stablePrefix.publishingGuardrails[0]}`
+      : "",
     codexTail,
     ending
   ]

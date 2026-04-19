@@ -15,6 +15,7 @@ import {
 } from "@/lib/book-engine";
 import {
   countStoryStats,
+  isBranchingStory,
   type BookDraftJob,
   type StoryChapter,
   type StoryDocument
@@ -111,7 +112,7 @@ export function BookBlueprintPanel({
             <Metric label="Acts" value={stats.actCount} />
             <Metric label="Kapitel" value={stats.chapterCount} />
             <Metric label="Szenen" value={stats.sceneCount} />
-            <Metric label="Choices" value={stats.choiceCount} />
+            <Metric label="Modus" value={story.mode === "book" ? "Buch" : "Branching"} />
             <Metric label="Woerter" value={stats.wordCount.toLocaleString("de-DE")} />
           </div>
         </section>
@@ -289,6 +290,26 @@ export function BookBlueprintPanel({
               />
             </label>
           </div>
+
+          <EditableStringListSection
+            label="Architecture Guide"
+            title="Strukturanker fuer Plot und Figurenbogen"
+            items={story.book.masterBrief.storyArchitecture}
+            onUpdate={function (nextItems) {
+              onUpdateStory(function (currentStory) {
+                return {
+                  ...currentStory,
+                  book: {
+                    ...currentStory.book,
+                    masterBrief: {
+                      ...currentStory.book.masterBrief,
+                      storyArchitecture: nextItems
+                    }
+                  }
+                };
+              });
+            }}
+          />
         </section>
 
         <section className="book-card">
@@ -359,6 +380,26 @@ export function BookBlueprintPanel({
               />
             </label>
           </div>
+
+          <EditableStringListSection
+            label="Publishing Guardrails"
+            title="Markt- und Qualitaetsregeln fuer Packaging und Lesbarkeit"
+            items={story.book.marketBrief.publishingGuardrails}
+            onUpdate={function (nextItems) {
+              onUpdateStory(function (currentStory) {
+                return {
+                  ...currentStory,
+                  book: {
+                    ...currentStory.book,
+                    marketBrief: {
+                      ...currentStory.book.marketBrief,
+                      publishingGuardrails: nextItems
+                    }
+                  }
+                };
+              });
+            }}
+          />
         </section>
 
         <section className="book-card">
@@ -454,8 +495,8 @@ export function BookBlueprintPanel({
                   <article className="book-thread-card book-thread-card--empty">
                     <strong>Keine offenen Threads erkannt</strong>
                     <p>
-                      Der lokale Heuristik-Layer sieht aktuell keine Choices oder
-                      markanten offenen Fragen.
+                      Der lokale Heuristik-Layer sieht aktuell keine markanten offenen Fragen
+                      {isBranchingStory(story) ? " oder Branching-Folgen." : "."}
                     </p>
                   </article>
                 )}
@@ -1254,10 +1295,81 @@ function DraftJobCard({
   );
 }
 
+function EditableStringListSection({
+  label,
+  title,
+  items,
+  onUpdate
+}: {
+  label: string;
+  title: string;
+  items: string[];
+  onUpdate: (nextItems: string[]) => void;
+}) {
+  return (
+    <div className="book-context-stack">
+      <div className="book-card__head">
+        <div>
+          <span className="book-card__label">{label}</span>
+          <h4>{title}</h4>
+        </div>
+        <button
+          className="flat-button"
+          type="button"
+          onClick={function () {
+            onUpdate(items.concat(""));
+          }}
+        >
+          + Regel
+        </button>
+      </div>
+
+      <div className="book-rule-list">
+        {items.map(function (item, index) {
+          return (
+            <article key={`${label}_${index}`} className="book-rule-card">
+              <span className="book-rule-card__index">{index + 1}</span>
+              <textarea
+                className="editor-textarea"
+                value={item}
+                onChange={function (event) {
+                  onUpdate(
+                    items.map(function (currentItem, currentIndex) {
+                      return currentIndex === index ? event.target.value : currentItem;
+                    })
+                  );
+                }}
+              />
+              <button
+                className="scene-block-card__remove"
+                type="button"
+                disabled={items.length === 1}
+                onClick={function () {
+                  if (items.length === 1) {
+                    return;
+                  }
+
+                  onUpdate(
+                    items.filter(function (_, currentIndex) {
+                      return currentIndex !== index;
+                    })
+                  );
+                }}
+              >
+                Entfernen
+              </button>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function updateMasterBrief(
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void,
   story: StoryDocument,
-  key: keyof StoryDocument["book"]["masterBrief"],
+  key: "premise" | "readerPromise" | "endingPromise" | "thematicCore",
   value: string
 ) {
   onUpdateStory(function (currentStory) {
@@ -1276,7 +1388,7 @@ function updateMasterBrief(
 
 function updateMarketBrief(
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void,
-  key: keyof StoryDocument["book"]["marketBrief"],
+  key: "amazonGoal" | "categoryLane" | "hook" | "seriesPotential" | "coverDirection",
   value: string
 ) {
   onUpdateStory(function (currentStory) {

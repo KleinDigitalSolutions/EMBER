@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { BookBlueprintPanel } from "@/components/studio/book-blueprint-panel";
+import { BookWriterPanel } from "@/components/studio/book-writer-panel";
 import { PatchPanel } from "@/components/studio/patch-panel";
 import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
@@ -16,27 +17,31 @@ import {
   countStoryStats,
   createDefaultBookBlueprint,
   findSceneContext,
+  isBranchingStory,
+  normalizeBookRuleList,
   updateSceneInStory,
   type StoryAct,
   type StoryChapter,
   type StoryDocument,
+  type StoryMode,
   type StoryStatus,
   type StoryScene,
   type WorldBibleEntry
 } from "@/lib/story-schema";
 
 type ViewMode = "grid" | "matrix" | "outline";
-type AuthorMode = "plan" | "write" | "playtest" | "chat" | "review";
+type AuthorMode = "plan" | "book" | "write" | "playtest" | "chat" | "review";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
-const AUTHOR_MODES: AuthorMode[] = ["plan", "write", "playtest", "chat", "review"];
+const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
+const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "chat", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
 export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [draftStory, setDraftStory] = useState(function () {
     return syncStoryBookArtifacts(story);
   });
-  const [authorMode, setAuthorMode] = useState<AuthorMode>("plan");
+  const [authorMode, setAuthorMode] = useState<AuthorMode>(getDefaultAuthorMode(story.mode));
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
   const [codexSearch, setCodexSearch] = useState("");
@@ -54,10 +59,18 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const lastPersistedPayloadRef = useRef(JSON.stringify(syncStoryBookArtifacts(story)));
+  const pendingPersistRef = useRef<{
+    story: StoryDocument;
+    payload: string;
+  } | null>(null);
+  const isPersistingRef = useRef(false);
 
   const stats = useMemo(function () {
     return countStoryStats(draftStory);
   }, [draftStory]);
+  const availableAuthorModes = useMemo(function () {
+    return getAuthorModesForStory(draftStory.mode);
+  }, [draftStory.mode]);
 
   const filteredCodexEntries = useMemo(function () {
     const query = codexSearch.trim().toLowerCase();
@@ -85,13 +98,24 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       const nextStory = syncStoryBookArtifacts(story);
 
       setDraftStory(nextStory);
+      setAuthorMode(getDefaultAuthorMode(nextStory.mode));
       setSelectedCodexEntryId(nextStory.worldBible[0]?.id ?? "");
       setSelectedSceneId(nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "");
       setLastSavedAt(null);
       setSaveState("idle");
+      pendingPersistRef.current = null;
       lastPersistedPayloadRef.current = JSON.stringify(nextStory);
     },
     [story]
+  );
+
+  useEffect(
+    function () {
+      if (!availableAuthorModes.includes(authorMode)) {
+        setAuthorMode(getDefaultAuthorMode(draftStory.mode));
+      }
+    },
+    [authorMode, availableAuthorModes, draftStory.mode]
   );
 
   useEffect(
@@ -105,15 +129,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       setSaveState("saving");
 
       const timeoutId = window.setTimeout(function () {
-        void persistStudioStoryRemote(draftStory)
-          .then(function (snapshot) {
-            lastPersistedPayloadRef.current = payload;
-            setLastSavedAt(snapshot.savedAt);
-            setSaveState("saved");
-          })
-          .catch(function () {
-            setSaveState("error");
-          });
+        enqueuePersist(draftStory, payload);
       }, 1200);
 
       return function () {
@@ -215,6 +231,46 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
   const selectedScene = selectedSceneContext?.scene ?? null;
 
+  async function flushPersistQueue() {
+    if (isPersistingRef.current) {
+      return;
+    }
+
+    isPersistingRef.current = true;
+
+    try {
+      while (pendingPersistRef.current) {
+        const nextPersist = pendingPersistRef.current;
+        pendingPersistRef.current = null;
+        setSaveState("saving");
+
+        try {
+          const snapshot = await persistStudioStoryRemote(nextPersist.story);
+          lastPersistedPayloadRef.current = nextPersist.payload;
+          setLastSavedAt(snapshot.savedAt);
+          setSaveState(pendingPersistRef.current ? "saving" : "saved");
+        } catch {
+          setSaveState("error");
+        }
+      }
+    } finally {
+      isPersistingRef.current = false;
+
+      if (pendingPersistRef.current) {
+        void flushPersistQueue();
+      }
+    }
+  }
+
+  function enqueuePersist(storySnapshot: StoryDocument, payload: string) {
+    pendingPersistRef.current = {
+      story: storySnapshot,
+      payload
+    };
+
+    void flushPersistQueue();
+  }
+
   function commitStoryUpdate(updater: (story: StoryDocument) => StoryDocument) {
     setDraftStory(function (currentStory) {
       return syncStoryBookArtifacts(updater(currentStory));
@@ -247,17 +303,16 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   }
 
   function handleManualSave() {
-    setSaveState("saving");
+    const normalizedStory = syncStoryBookArtifacts(draftStory);
+    const payload = JSON.stringify(normalizedStory);
 
-    void persistStudioStoryRemote(draftStory)
-      .then(function (snapshot) {
-        lastPersistedPayloadRef.current = JSON.stringify(draftStory);
-        setLastSavedAt(snapshot.savedAt);
-        setSaveState("saved");
-      })
-      .catch(function () {
-        setSaveState("error");
-      });
+    if (payload === lastPersistedPayloadRef.current && !pendingPersistRef.current) {
+      setSaveState("saved");
+      return;
+    }
+
+    setSaveState("saving");
+    enqueuePersist(normalizedStory, payload);
   }
 
   function handleCreateCodexEntry() {
@@ -322,7 +377,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
     if (nextSceneId) {
       setSelectedSceneId(nextSceneId);
-      setAuthorMode("write");
+      setAuthorMode("book");
     }
   }
 
@@ -339,7 +394,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
     if (nextSceneId) {
       setSelectedSceneId(nextSceneId);
-      setAuthorMode("write");
+      setAuthorMode("book");
     }
   }
 
@@ -356,7 +411,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
     if (nextSceneId) {
       setSelectedSceneId(nextSceneId);
-      setAuthorMode("write");
+      setAuthorMode("book");
     }
   }
 
@@ -378,7 +433,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
       if (nextSelectedSceneId) {
         setSelectedSceneId(nextSelectedSceneId);
-        setAuthorMode("write");
+        setAuthorMode("book");
       }
     } catch (error) {
       setOutlineError(error instanceof Error ? error.message : "Outline konnte nicht gelesen werden.");
@@ -409,7 +464,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
       if (nextSelectedSceneId) {
         setSelectedSceneId(nextSelectedSceneId);
-        setAuthorMode("write");
+        setAuthorMode("book");
       }
     } catch (error) {
       setImportError(error instanceof Error ? error.message : "Import fehlgeschlagen.");
@@ -439,13 +494,25 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   return (
     <div className="studio-shell">
       <aside className="rail" aria-label="Hauptnavigation">
-        <button className="rail-button" type="button" aria-label="Zurück">
+        <button
+          className="rail-button"
+          type="button"
+          aria-label="Zurück"
+          title="Noch nicht aktiv"
+          disabled
+        >
           <span className="rail-icon rail-icon--back" />
         </button>
-        <button className="rail-button" type="button" aria-label="Workspace">
+        <button
+          className="rail-button"
+          type="button"
+          aria-label="Workspace"
+          title="Noch nicht aktiv"
+          disabled
+        >
           <span className="rail-icon rail-icon--panel" />
         </button>
-        <button className="rail-button rail-button--active" type="button" aria-label="Codex">
+        <button className="rail-button rail-button--active" type="button" aria-label="Codex" disabled>
           <span className="rail-icon rail-icon--book" />
         </button>
       </aside>
@@ -453,10 +520,22 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       <aside className="sidebar">
         <header className="sidebar-header">
           <div className="sidebar-header__icons">
-            <button className="mini-icon-button" type="button" aria-label="Zurück">
+            <button
+              className="mini-icon-button"
+              type="button"
+              aria-label="Zurück"
+              title="Noch nicht aktiv"
+              disabled
+            >
               <span className="mini-icon mini-icon--back" />
             </button>
-            <button className="mini-icon-button" type="button" aria-label="Settings">
+            <button
+              className="mini-icon-button"
+              type="button"
+              aria-label="Settings"
+              title="Noch nicht aktiv"
+              disabled
+            >
               <span className="mini-icon mini-icon--gear" />
             </button>
           </div>
@@ -469,13 +548,13 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
         </header>
 
         <nav className="sidebar-tabs" aria-label="Bereiche">
-          <button className="sidebar-tab sidebar-tab--active" type="button">
+          <button className="sidebar-tab sidebar-tab--active" type="button" disabled>
             Codex
           </button>
-          <button className="sidebar-tab" type="button">
+          <button className="sidebar-tab" type="button" title="Noch nicht aktiv" disabled>
             Snippets
           </button>
-          <button className="sidebar-tab" type="button">
+          <button className="sidebar-tab" type="button" title="Noch nicht aktiv" disabled>
             Chats
           </button>
         </nav>
@@ -495,7 +574,13 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
           <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
             + New Entry
           </button>
-          <button className="square-button" type="button" aria-label="Optionen">
+          <button
+            className="square-button"
+            type="button"
+            aria-label="Optionen"
+            title="Noch nicht aktiv"
+            disabled
+          >
             <span className="mini-icon mini-icon--gear" />
           </button>
         </div>
@@ -609,13 +694,13 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
         <footer className="sidebar-footer">
           <div className="sidebar-user">
             <div className="avatar" />
-            <span className="usage-pill">1/5</span>
+            <span className="usage-pill">Local</span>
           </div>
           <div className="sidebar-footer__links">
-            <button className="footer-link" type="button">
+            <button className="footer-link" type="button" title="Noch nicht aktiv" disabled>
               Help
             </button>
-            <button className="footer-link" type="button">
+            <button className="footer-link" type="button" title="Noch nicht aktiv" disabled>
               Prompts
             </button>
             <button className="footer-link" type="button" onClick={handleExport}>
@@ -632,7 +717,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
         <header className="topbar">
           <div className="topbar-left">
             <div className="pill-group" aria-label="Mode">
-              {AUTHOR_MODES.map(function (mode) {
+              {availableAuthorModes.map(function (mode) {
                 return (
                   <button
                     key={mode}
@@ -644,44 +729,48 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
                     }}
                     type="button"
                   >
-                    {capitalize(mode)}
+                    {formatAuthorModeLabel(mode)}
                   </button>
                 );
               })}
             </div>
 
-            <div className="pill-group pill-group--view" aria-label="View">
-              {VIEW_MODES.map(function (mode) {
-                return (
-                  <button
-                    key={mode}
-                    className={
-                      "pill-button" + (viewMode === mode ? " pill-button--active" : "")
-                    }
-                    onClick={function () {
-                      setViewMode(mode);
-                    }}
-                    type="button"
-                  >
-                    {capitalize(mode)}
-                  </button>
-                );
-              })}
-            </div>
+            {authorMode !== "book" ? (
+              <div className="pill-group pill-group--view" aria-label="View">
+                {VIEW_MODES.map(function (mode) {
+                  return (
+                    <button
+                      key={mode}
+                      className={
+                        "pill-button" + (viewMode === mode ? " pill-button--active" : "")
+                      }
+                      onClick={function () {
+                        setViewMode(mode);
+                      }}
+                      type="button"
+                    >
+                      {capitalize(mode)}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
 
-            <span className="filter-label">FILTER:</span>
+            {authorMode !== "book" ? <span className="filter-label">FILTER:</span> : null}
 
-            <label className="search-field search-field--topbar">
-              <span className="search-icon" />
-              <input
-                type="search"
-                placeholder="Search scenes..."
-                value={search}
-                onChange={function (event) {
-                  setSearch(event.target.value);
-                }}
-              />
-            </label>
+            {authorMode !== "book" ? (
+              <label className="search-field search-field--topbar">
+                <span className="search-icon" />
+                <input
+                  type="search"
+                  placeholder="Search scenes..."
+                  value={search}
+                  onChange={function (event) {
+                    setSearch(event.target.value);
+                  }}
+                />
+              </label>
+            ) : null}
           </div>
 
           <div className="topbar-actions">
@@ -700,12 +789,14 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             >
               {formatSaveState(lastSavedAt, saveState)}
             </span>
-            <Link href="/story" className="flat-button topbar-link">
-              Story testen
-            </Link>
-            <button className="view-toggle" type="button">
-              {capitalize(authorMode)}
-            </button>
+            {isBranchingStory(draftStory) ? (
+              <Link href="/story" className="flat-button topbar-link">
+                Story testen
+              </Link>
+            ) : null}
+            <span className="view-toggle" aria-hidden="true">
+              {formatAuthorModeLabel(authorMode)}
+            </span>
           </div>
         </header>
 
@@ -718,211 +809,240 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             onChange={handleImportFile}
           />
 
-          <div className="workspace-panels">
-            <div className="board-panel">
-              <div className="board-meta">
-                <div className="board-meta__title-wrap">
-                  <button className="ghost-icon-button" type="button" aria-label="Reorder">
-                    <span className="mini-icon mini-icon--drag" />
-                  </button>
-                  <h2 className="board-title">
-                    {filteredActs[0]?.title ?? draftStory.acts[0]?.title}
-                  </h2>
-                </div>
-                <div className="board-meta__stats">
-                  <span>{stats.chapterCount} chapters</span>
-                  <span>-</span>
-                  <span>{stats.wordCount.toLocaleString("de-DE")} words</span>
-                  <span>-</span>
-                  <span>{stats.choiceCount} choices</span>
-                </div>
-              </div>
-
-              <div className="board-canvas">
-                {visibleScenes.length ? (
-                  <div className="story-board" data-view={viewMode}>
-                    {viewMode === "grid"
-                      ? filteredActs.map(function (act) {
-                          return (
-                            <ActGrid
-                              key={act.id}
-                              act={act}
-                              selectedSceneId={selectedSceneId}
-                              onSelectScene={setSelectedSceneId}
-                              onAddChapter={handleAddChapter}
-                              onAddScene={handleAddScene}
-                            />
-                          );
-                        })
-                      : visibleScenes.map(function (scene) {
-                          return viewMode === "matrix" ? (
-                            <button
-                              key={scene.id}
-                              className="matrix-card"
-                              onClick={function () {
-                                setSelectedSceneId(scene.id);
-                              }}
-                              type="button"
-                            >
-                              <h3>{scene.title}</h3>
-                              <p>{scene.summary}</p>
-                              <div className="matrix-card__meta">
-                                {scene.wordCount} words · {scene.label}
-                              </div>
-                            </button>
-                          ) : (
-                            <button
-                              key={scene.id}
-                              className="outline-card"
-                              onClick={function () {
-                                setSelectedSceneId(scene.id);
-                              }}
-                              type="button"
-                            >
-                              <h3>{scene.title}</h3>
-                              <p>{scene.summary}</p>
-                              <div className="outline-card__meta">
-                                {scene.wordCount} words · {scene.label}
-                              </div>
-                            </button>
-                          );
-                        })}
+          {authorMode === "book" ? (
+            <BookWriterPanel
+              story={draftStory}
+              sceneContext={selectedSceneContext}
+              selectedSceneId={selectedSceneId}
+              onSelectScene={setSelectedSceneId}
+              onAddAct={handleAddAct}
+              onAddChapter={handleAddChapter}
+              onAddScene={handleAddScene}
+              onUpdateScene={updateSelectedScene}
+              onUpdateStory={updateDraftStory}
+              onOpenBranchEditor={function () {
+                setAuthorMode("write");
+              }}
+            />
+          ) : (
+            <div className="workspace-panels">
+              <div className="board-panel">
+                <div className="board-meta">
+                  <div className="board-meta__title-wrap">
+                    <button
+                      className="ghost-icon-button"
+                      type="button"
+                      aria-label="Reorder"
+                      title="Noch nicht aktiv"
+                      disabled
+                    >
+                      <span className="mini-icon mini-icon--drag" />
+                    </button>
+                    <h2 className="board-title">
+                      {filteredActs[0]?.title ?? draftStory.acts[0]?.title}
+                    </h2>
                   </div>
-                ) : (
-                  <div className="board-empty-state">
-                    <strong>Keine Szenen im aktuellen Filter</strong>
-                    <p>
-                      Passe die Suche an, um Szenen wieder einzublenden oder eine
-                      andere Szene zu bearbeiten.
-                    </p>
+                  <div className="board-meta__stats">
+                    <span>{stats.chapterCount} chapters</span>
+                    <span>-</span>
+                    <span>{stats.wordCount.toLocaleString("de-DE")} words</span>
+                    {isBranchingStory(draftStory) ? (
+                      <>
+                        <span>-</span>
+                        <span>{stats.choiceCount} choices</span>
+                      </>
+                    ) : null}
                   </div>
-                )}
-              </div>
+                </div>
 
-              <div className="board-footer">
-                <button className="flat-button" type="button" onClick={handleAddAct}>
-                  + Add Act
-                </button>
-                <button
-                  className="flat-button"
-                  type="button"
-                  onClick={function () {
-                    setShowOutlineComposer(function (currentState) {
-                      return !currentState;
-                    });
-                    setOutlineError(null);
-                    setImportError(null);
-                  }}
-                >
-                  Create from Outline
-                </button>
-                <button className="flat-button" type="button" onClick={handleImportClick}>
-                  Import
-                </button>
-                <button className="flat-button" type="button">
-                  Actions
-                </button>
-              </div>
-
-              {showOutlineComposer ? (
-                <section className="outline-composer">
-                  <div className="outline-composer__head">
-                    <div>
-                      <strong>Outline Composer</strong>
+                <div className="board-canvas">
+                  {visibleScenes.length ? (
+                    <div className="story-board" data-view={viewMode}>
+                      {viewMode === "grid"
+                        ? filteredActs.map(function (act) {
+                            return (
+                              <ActGrid
+                                key={act.id}
+                                act={act}
+                                selectedSceneId={selectedSceneId}
+                                onSelectScene={setSelectedSceneId}
+                                onAddChapter={handleAddChapter}
+                                onAddScene={handleAddScene}
+                              />
+                            );
+                          })
+                        : visibleScenes.map(function (scene) {
+                            return viewMode === "matrix" ? (
+                              <button
+                                key={scene.id}
+                                className="matrix-card"
+                                onClick={function () {
+                                  setSelectedSceneId(scene.id);
+                                }}
+                                type="button"
+                              >
+                                <h3>{scene.title}</h3>
+                                <p>{scene.summary}</p>
+                                <div className="matrix-card__meta">
+                                  {scene.wordCount} words · {scene.label}
+                                </div>
+                              </button>
+                            ) : (
+                              <button
+                                key={scene.id}
+                                className="outline-card"
+                                onClick={function () {
+                                  setSelectedSceneId(scene.id);
+                                }}
+                                type="button"
+                              >
+                                <h3>{scene.title}</h3>
+                                <p>{scene.summary}</p>
+                                <div className="outline-card__meta">
+                                  {scene.wordCount} words · {scene.label}
+                                </div>
+                              </button>
+                            );
+                          })}
+                    </div>
+                  ) : (
+                    <div className="board-empty-state">
+                      <strong>Keine Szenen im aktuellen Filter</strong>
                       <p>
-                        Schreibe Zeilen mit `Act:`, `Chapter:` und `Scene:`. Andere
-                        Zeilen werden als Szenentitel gelesen.
+                        Passe die Suche an, um Szenen wieder einzublenden oder eine
+                        andere Szene zu bearbeiten.
                       </p>
                     </div>
-                    <div className="outline-composer__actions">
-                      <button className="flat-button" type="button" onClick={handleCreateFromOutline}>
-                        Outline anwenden
-                      </button>
-                      <button
-                        className="flat-button"
-                        type="button"
-                        onClick={function () {
-                          setOutlineDraft(DEFAULT_OUTLINE_TEMPLATE);
-                          setOutlineError(null);
-                        }}
-                      >
-                        Vorlage laden
-                      </button>
-                    </div>
-                  </div>
-
-                  <textarea
-                    className="editor-textarea outline-composer__textarea"
-                    value={outlineDraft}
-                    onChange={function (event) {
-                      setOutlineDraft(event.target.value);
-                    }}
-                  />
-
-                  {outlineError ? (
-                    <p className="outline-composer__feedback outline-composer__feedback--error">
-                      {outlineError}
-                    </p>
-                  ) : (
-                    <p className="outline-composer__feedback">
-                      Der aktuelle Draft wird durch die neue Outline-Struktur ersetzt.
-                    </p>
                   )}
-                </section>
-              ) : null}
+                </div>
 
-              {importError ? (
-                <section className="outline-composer outline-composer--compact">
-                  <p className="outline-composer__feedback outline-composer__feedback--error">
-                    {importError}
-                  </p>
-                </section>
-              ) : null}
+                <div className="board-footer">
+                  <button className="flat-button" type="button" onClick={handleAddAct}>
+                    + Add Act
+                  </button>
+                  <button
+                    className="flat-button"
+                    type="button"
+                    onClick={function () {
+                      setShowOutlineComposer(function (currentState) {
+                        return !currentState;
+                      });
+                      setOutlineError(null);
+                      setImportError(null);
+                    }}
+                  >
+                    Create from Outline
+                  </button>
+                  <button className="flat-button" type="button" onClick={handleImportClick}>
+                    Import
+                  </button>
+                  <button className="flat-button" type="button" title="Noch nicht aktiv" disabled>
+                    Actions
+                  </button>
+                </div>
 
-              {selectedScene ? (
-                <section className="studio-status-bar">
-                  <div>
-                    <strong>{selectedScene.title}</strong>
-                    <span>{selectedScene.summary}</span>
-                  </div>
-                  <div className="studio-status-bar__meta">
-                    <span>{selectedScene.label}</span>
-                    <span>{selectedScene.wordCount} words</span>
-                    <span>{selectedScene.choices.length} choices</span>
-                  </div>
-                </section>
-              ) : null}
+                {showOutlineComposer ? (
+                  <section className="outline-composer">
+                    <div className="outline-composer__head">
+                      <div>
+                        <strong>Outline Composer</strong>
+                        <p>
+                          Schreibe Zeilen mit `Act:`, `Chapter:` und `Scene:`. Andere
+                          Zeilen werden als Szenentitel gelesen.
+                        </p>
+                      </div>
+                      <div className="outline-composer__actions">
+                        <button className="flat-button" type="button" onClick={handleCreateFromOutline}>
+                          Outline anwenden
+                        </button>
+                        <button
+                          className="flat-button"
+                          type="button"
+                          onClick={function () {
+                            setOutlineDraft(DEFAULT_OUTLINE_TEMPLATE);
+                            setOutlineError(null);
+                          }}
+                        >
+                          Vorlage laden
+                        </button>
+                      </div>
+                    </div>
+
+                    <textarea
+                      className="editor-textarea outline-composer__textarea"
+                      value={outlineDraft}
+                      onChange={function (event) {
+                        setOutlineDraft(event.target.value);
+                      }}
+                    />
+
+                    {outlineError ? (
+                      <p className="outline-composer__feedback outline-composer__feedback--error">
+                        {outlineError}
+                      </p>
+                    ) : (
+                      <p className="outline-composer__feedback">
+                        Der aktuelle Draft wird durch die neue Outline-Struktur ersetzt.
+                      </p>
+                    )}
+                  </section>
+                ) : null}
+
+                {importError ? (
+                  <section className="outline-composer outline-composer--compact">
+                    <p className="outline-composer__feedback outline-composer__feedback--error">
+                      {importError}
+                    </p>
+                  </section>
+                ) : null}
+
+                {selectedScene ? (
+                  <section className="studio-status-bar">
+                    <div>
+                      <strong>{selectedScene.title}</strong>
+                      <span>{selectedScene.summary}</span>
+                    </div>
+                    <div className="studio-status-bar__meta">
+                      <span>{selectedScene.label}</span>
+                      <span>{selectedScene.wordCount} words</span>
+                      {isBranchingStory(draftStory) ? (
+                        <span>{selectedScene.choices.length} choices</span>
+                      ) : null}
+                    </div>
+                  </section>
+                ) : null}
+              </div>
+
+              {authorMode === "plan" ? (
+                <BookBlueprintPanel
+                  story={draftStory}
+                  selectedSceneId={selectedSceneId}
+                  onSelectScene={setSelectedSceneId}
+                  onUpdateStory={updateDraftStory}
+                />
+              ) : authorMode === "playtest" ? (
+                <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
+              ) : authorMode === "chat" ? (
+                <PatchPanel
+                  story={draftStory}
+                  sceneContext={selectedSceneContext}
+                  onUpdateScene={updateSelectedScene}
+                />
+              ) : authorMode === "review" ? (
+                <ReviewPanel
+                  story={draftStory}
+                  onUpdateStatus={updateStoryStatus}
+                  onSelectScene={setSelectedSceneId}
+                />
+              ) : (
+                <SceneEditor
+                  story={draftStory}
+                  sceneContext={selectedSceneContext}
+                  onUpdateScene={updateSelectedScene}
+                />
+              )}
             </div>
-
-            {authorMode === "plan" ? (
-              <BookBlueprintPanel
-                story={draftStory}
-                selectedSceneId={selectedSceneId}
-                onSelectScene={setSelectedSceneId}
-                onUpdateStory={updateDraftStory}
-              />
-            ) : authorMode === "playtest" ? (
-              <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
-            ) : authorMode === "chat" ? (
-              <PatchPanel
-                story={draftStory}
-                sceneContext={selectedSceneContext}
-                onUpdateScene={updateSelectedScene}
-              />
-            ) : authorMode === "review" ? (
-              <ReviewPanel
-                story={draftStory}
-                onUpdateStatus={updateStoryStatus}
-                onSelectScene={setSelectedSceneId}
-              />
-            ) : (
-              <SceneEditor
-                story={draftStory}
-                sceneContext={selectedSceneContext}
-                onUpdateScene={updateSelectedScene}
-              />
-            )}
-          </div>
+          )}
         </section>
       </main>
     </div>
@@ -1054,8 +1174,31 @@ function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function isAuthorMode(value: string): value is AuthorMode {
-  return AUTHOR_MODES.includes(value as AuthorMode);
+function formatAuthorModeLabel(mode: AuthorMode) {
+  switch (mode) {
+    case "plan":
+      return "Plan";
+    case "book":
+      return "Book";
+    case "write":
+      return "Branch";
+    case "playtest":
+      return "Playtest";
+    case "chat":
+      return "Patch";
+    case "review":
+      return "Review";
+    default:
+      return capitalize(mode);
+  }
+}
+
+function getAuthorModesForStory(mode: StoryMode): AuthorMode[] {
+  return mode === "branching" ? BRANCHING_AUTHOR_MODES : BOOK_AUTHOR_MODES;
+}
+
+function getDefaultAuthorMode(mode: StoryMode): AuthorMode {
+  return mode === "branching" ? "write" : "book";
 }
 
 function isViewMode(value: string): value is ViewMode {
@@ -1289,11 +1432,13 @@ function normalizeImportedStory(value: unknown, fallbackStory: StoryDocument): S
   }
 
   const normalizedBook = normalizeBookBlueprint(value.book, value.title)
+  const storyMode = normalizeStoryMode(value.mode, fallbackStory.mode)
 
   return {
     ...value,
     id: fallbackStory.id,
     workspaceId: fallbackStory.workspaceId,
+    mode: storyMode,
     worldBible: normalizeImportedWorldBible(value.worldBible),
     variables: normalizeImportedVariables(value.variables),
     acts: normalizeImportedActs(value.acts),
@@ -1321,6 +1466,7 @@ function isStoryDocument(value: unknown): value is StoryDocument {
     typeof candidate.title === "string" &&
     typeof candidate.authorName === "string" &&
     typeof candidate.status === "string" &&
+    (typeof candidate.mode === "undefined" || typeof candidate.mode === "string") &&
     Boolean(candidate.meta) &&
     Array.isArray(candidate.worldBible) &&
     Array.isArray(candidate.variables) &&
@@ -1381,7 +1527,7 @@ function normalizeImportedActs(acts: StoryDocument["acts"]) {
               id: isUuid(block.id) ? block.id : createLocalId("block")
             };
           }),
-          choices: scene.choices.map(function (choice) {
+          choices: (scene.choices ?? []).map(function (choice) {
             return {
               ...choice,
               id: isUuid(choice.id) ? choice.id : createLocalId("choice"),
@@ -1407,6 +1553,14 @@ function normalizeImportedActs(acts: StoryDocument["acts"]) {
       chapters
     };
   });
+}
+
+function normalizeStoryMode(value: unknown, fallback: StoryMode): StoryMode {
+  if (value === "book" || value === "branching") {
+    return value;
+  }
+
+  return fallback;
 }
 
 function normalizeBookBlueprint(
@@ -1450,7 +1604,11 @@ function normalizeBookBlueprint(
       thematicCore:
         typeof candidate.masterBrief?.thematicCore === "string"
           ? candidate.masterBrief.thematicCore
-          : fallback.masterBrief.thematicCore
+          : fallback.masterBrief.thematicCore,
+      storyArchitecture: normalizeBookRuleList(
+        candidate.masterBrief?.storyArchitecture,
+        fallback.masterBrief.storyArchitecture
+      )
     },
     marketBrief: {
       amazonGoal:
@@ -1472,16 +1630,16 @@ function normalizeBookBlueprint(
       coverDirection:
         typeof candidate.marketBrief?.coverDirection === "string"
           ? candidate.marketBrief.coverDirection
-          : fallback.marketBrief.coverDirection
+          : fallback.marketBrief.coverDirection,
+      publishingGuardrails: normalizeBookRuleList(
+        candidate.marketBrief?.publishingGuardrails,
+        fallback.marketBrief.publishingGuardrails
+      )
     },
-    writerConstitution:
-      Array.isArray(candidate.writerConstitution) &&
-      candidate.writerConstitution.every(function (rule) {
-        return typeof rule === "string";
-      }) &&
-      candidate.writerConstitution.length
-        ? candidate.writerConstitution
-        : fallback.writerConstitution,
+    writerConstitution: normalizeBookRuleList(
+      candidate.writerConstitution,
+      fallback.writerConstitution
+    ),
     memory: normalizeBookMemoryBackbone(candidate.memory, fallback.memory),
     draftEngine: {
       mode: "local",

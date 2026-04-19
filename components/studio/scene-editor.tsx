@@ -5,6 +5,7 @@ import {
   countSceneWords,
   countWords,
   getAllScenes,
+  isBranchingStory,
   type ChoiceCondition,
   type ChoiceEffect,
   type SceneContext,
@@ -54,6 +55,7 @@ export function SceneEditor({
   const scene = sceneContext.scene;
   const liveWordCount = countSceneWords(scene);
   const decisionHealth = getDecisionHealth(scene);
+  const branchingEnabled = isBranchingStory(story);
   const availableTargetScenes = allScenes.filter(function (candidate) {
     return candidate.id !== scene.id;
   });
@@ -71,7 +73,9 @@ export function SceneEditor({
         <div className="scene-editor__pills">
           <span className="scene-editor__pill">{scene.id}</span>
           <span className="scene-editor__pill">{liveWordCount} Wörter</span>
-          <span className="scene-editor__pill">{scene.choices.length} Choices</span>
+          {branchingEnabled ? (
+            <span className="scene-editor__pill">{scene.choices.length} Choices</span>
+          ) : null}
         </div>
       </div>
 
@@ -222,81 +226,87 @@ export function SceneEditor({
           </div>
         </section>
 
-        <section className="scene-editor__section">
-          <div className="scene-editor__section-head">
-            <div>
-              <h4>Decision Slots</h4>
-              <p>
-                Choices werden jetzt direkt auf Szenenebene bearbeitet, inklusive
-                Zielpfad, Conditions und Effects.
-              </p>
+        {branchingEnabled ? (
+          <section className="scene-editor__section">
+            <div className="scene-editor__section-head">
+              <div>
+                <h4>Decision Slots</h4>
+                <p>
+                  Choices werden jetzt direkt auf Szenenebene bearbeitet, inklusive
+                  Zielpfad, Conditions und Effects.
+                </p>
+              </div>
+              <button
+                className="flat-button"
+                type="button"
+                onClick={function () {
+                  onUpdateScene(function (currentScene) {
+                    const fallbackTarget =
+                      currentScene.choices[0]?.toSceneId ??
+                      availableTargetScenes[0]?.id ??
+                      currentScene.id;
+
+                    return {
+                      ...currentScene,
+                      choices: currentScene.choices.concat({
+                        id: createChoiceId(currentScene),
+                        label: "",
+                        toSceneId: fallbackTarget,
+                        conditions: [],
+                        effects: []
+                      })
+                    };
+                  });
+                }}
+              >
+                + Decision Slot
+              </button>
             </div>
-            <button
-              className="flat-button"
-              type="button"
-              onClick={function () {
-                onUpdateScene(function (currentScene) {
-                  const fallbackTarget =
-                    currentScene.choices[0]?.toSceneId ??
-                    availableTargetScenes[0]?.id ??
-                    currentScene.id;
 
-                  return {
-                    ...currentScene,
-                    choices: currentScene.choices.concat({
-                      id: createChoiceId(currentScene),
-                      label: "",
-                      toSceneId: fallbackTarget,
-                      conditions: [],
-                      effects: []
-                    })
-                  };
-                });
-              }}
-            >
-              + Decision Slot
-            </button>
-          </div>
+            <article className="decision-health-card">
+              <div className="decision-health-card__head">
+                <strong>{decisionHealth.title}</strong>
+                <span
+                  className={
+                    "decision-health-card__badge decision-health-card__badge--" +
+                    decisionHealth.tone
+                  }
+                >
+                  {decisionHealth.badge}
+                </span>
+              </div>
+              <p>{decisionHealth.description}</p>
+            </article>
 
-          <article className="decision-health-card">
-            <div className="decision-health-card__head">
-              <strong>{decisionHealth.title}</strong>
-              <span className={"decision-health-card__badge decision-health-card__badge--" + decisionHealth.tone}>
-                {decisionHealth.badge}
-              </span>
-            </div>
-            <p>{decisionHealth.description}</p>
-          </article>
-
-          {scene.choices.length ? (
-            <div className="scene-choice-stack">
-              {scene.choices.map(function (choice, index) {
-                return (
-                  <article key={choice.id} className="scene-choice-card scene-choice-card--editor">
-                    <div className="scene-choice-card__head">
-                      <div>
-                        <strong>Choice {index + 1}</strong>
-                        <span>
-                          Ziel: {sceneIndex.get(choice.toSceneId)?.title ?? choice.toSceneId}
-                        </span>
+            {scene.choices.length ? (
+              <div className="scene-choice-stack">
+                {scene.choices.map(function (choice, index) {
+                  return (
+                    <article key={choice.id} className="scene-choice-card scene-choice-card--editor">
+                      <div className="scene-choice-card__head">
+                        <div>
+                          <strong>Choice {index + 1}</strong>
+                          <span>
+                            Ziel: {sceneIndex.get(choice.toSceneId)?.title ?? choice.toSceneId}
+                          </span>
+                        </div>
+                        <button
+                          className="scene-block-card__remove"
+                          type="button"
+                          onClick={function () {
+                            onUpdateScene(function (currentScene) {
+                              return {
+                                ...currentScene,
+                                choices: currentScene.choices.filter(function (candidate) {
+                                  return candidate.id !== choice.id;
+                                })
+                              };
+                            });
+                          }}
+                        >
+                          Entfernen
+                        </button>
                       </div>
-                      <button
-                        className="scene-block-card__remove"
-                        type="button"
-                        onClick={function () {
-                          onUpdateScene(function (currentScene) {
-                            return {
-                              ...currentScene,
-                              choices: currentScene.choices.filter(function (candidate) {
-                                return candidate.id !== choice.id;
-                              })
-                            };
-                          });
-                        }}
-                      >
-                        Entfernen
-                      </button>
-                    </div>
 
                     <div className="editor-grid">
                       <label className="editor-field">
@@ -449,16 +459,17 @@ export function SceneEditor({
                 );
               })}
             </div>
-          ) : (
-            <div className="scene-choice-empty">
-              <strong>Noch keine Entscheidung</strong>
-              <p>
-                Diese Szene endet aktuell linear. Lege einen Decision Slot an,
-                wenn hier ein echter Leser-Entscheidungspunkt entstehen soll.
-              </p>
-            </div>
-          )}
-        </section>
+            ) : (
+              <div className="scene-choice-empty">
+                <strong>Noch keine Entscheidung</strong>
+                <p>
+                  Diese Szene endet aktuell linear. Lege einen Decision Slot an,
+                  wenn hier ein echter Leser-Entscheidungspunkt entstehen soll.
+                </p>
+              </div>
+            )}
+          </section>
+        ) : null}
       </div>
     </aside>
   );
