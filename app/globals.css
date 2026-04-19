@@ -1814,11 +1814,21 @@ textarea {
   gap: 0.45rem;
 }
 
+.book-writer-nav__scene-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
 .book-writer-nav__scene {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: 1 1 auto;
   gap: 0.6rem;
+  width: 100%;
+  min-width: 0;
   padding: 0.55rem 0.65rem;
   border-radius: 0;
   border: 1px solid transparent;
@@ -1832,12 +1842,22 @@ textarea {
   margin: 0;
 }
 
+.book-writer-nav__scene span {
+  min-width: 0;
+}
+
 .book-writer-nav__scene small {
+  flex: 0 0 auto;
   color: var(--text-faint);
   font-size: 0.69rem;
 }
 
-.book-writer-nav__scene--active {
+.book-writer-nav__scene-row > .sidebar-row-delete {
+  flex: 0 0 1.2rem;
+  align-self: center;
+}
+
+.book-writer-nav__scene-row--active .book-writer-nav__scene {
   border-color: rgba(148, 176, 212, 0.34);
   background: rgba(148, 176, 212, 0.1);
 }
