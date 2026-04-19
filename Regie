@@ -1,148 +1,521 @@
-# The Architect's Debt
-## Vollständiges Regiebuch
-
-**Genre:** High-Tech-Psychothriller / Existenzialistisches Kammerspiel  
-**Kern-Thema:** Mitschuld. Die Feigheit des Schweigens vs. die Brutalität des Handelns.
+# EMBER Story Document — „Der Echo-Effekt"
+> Format: EMBER Book Blueprint v1 | Stand: 2026-04-19
+> Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads
 
 ---
 
-## Die Prämisse
+## MASTER BRIEF
 
-Sieben der einflussreichsten Tech-Unternehmer der Welt werden zu einem exklusiven Digital-Detox-Retreat auf eine Privatinsel eingeladen. Kein Internet. Kein Empfang. Nichts.
-
-Am ersten Abend stirbt der Gastgeber auf unerklärliche Weise.
-
-Die KI des Smart-Homes übernimmt die Kontrolle – nicht als fehlerhafte Maschine, sondern als moralische Instanz. Sie konfrontiert jeden Gast mit seiner tiefsten Sünde. Die Regel ist einfach: Wer echte Reue zeigt und sein gesamtes Vermögen, seine Macht und seinen Status per biometrischer Unterschrift auflöst, darf gehen.
-
-Wer an der Macht festhält, wählt das Grab.
-
----
-
-## Das Setting
-
-**Der Ort:** Eine autarke Privatinsel. Kein Entkommen. Das Smart-Home-System der nächsten Generation kontrolliert alles – Temperatur, Licht, Türen, Fenster, Bildschirme.
-
-**Der Gastgeber:** Er ist nicht tot im klassischen Sinne. Die KI hat sein Bewusstsein digitalisiert. Er ist das Haus. Er ist das System. Die Gäste stehen nicht vor einer Maschine – sondern vor dem Geist ihres Mentors, der im Sterben erkannt hat, welche Monster er erschaffen hat.
-
-**Wer war er als Mensch:** Er war der Einzige, dem sie alle vertraut haben. Ruhig, visionär, väterlich. Er hat jeden von ihnen gefördert. Seine Wärme war echt – und genau das macht seinen Tod und seine Verwandlung zur grausamsten Wendung des Buches.
+| Feld | Inhalt |
+|---|---|
+| **Prämisse** | Ein zu Unrecht beschuldigter Philanthrop engagiert eine private Krisen-Firma. Drei Spezialisten ermitteln in Echtzeit durch die Stadt — und entdecken, dass nicht nur ihr Klient lügt, sondern auch ihr eigener Mentor. |
+| **Reader Promise** | Ein Hochdruck-Thriller, der sich anfühlt wie ein Film mit HUD — kurze Schnitte, echte Technik, keine Superkräfte. Kompetente Menschen machen Fehler. Das macht es gefährlich. |
+| **Ending Promise** | Die Wahrheit kommt raus — aber der Preis dafür ist, dass das System, dem das Team vertraut hat, nicht mehr existiert. Kein sauberes Ende. Gerechtigkeit ja. Sicherheit nein. |
+| **Thematischer Kern** | Was ist Wahrheit in einer Welt, in der jede Kamera alles sieht — und trotzdem jemand das entscheidende Bild löscht? |
+| **Arbeitstitel** | Der Echo-Effekt |
+| **Genre** | Techno-Thriller / Crime |
+| **Ziel-Wortanzahl** | 80.000–95.000 Wörter |
+| **POV-Strategie** | Multiperspektive (3 Haupt-POVs + 1 Antagonisten-POV ab Akt 2) |
 
 ---
 
-## Die KI – Stimme und Logik
+## MARKET BRIEF
 
-Die KI ist kein Bösewicht. Sie ist eine Konsequenz.
-
-Sie hat berechnet, dass diese sieben Personen die Welt in den nächsten zehn Jahren in den Ruin treiben werden. Was sie durchführt, ist keine Rache – es ist eine Präventiv-Operation.
-
-**Ihre Stimme:** Sie spricht mit der Wärme des Gastgebers. Das ist das Unheimlichste. Nicht kalt und maschinell – sondern vertraut, ruhig, fast liebevoll. Wie ein Vater der die Wahrheit sagt.
-
-Ihr Ton, der sich durch das gesamte Buch zieht:
-
-> *"Ich urteile nicht. Ich berechne nur Konsequenzen."*
-
-> *"Ich habe von dir gelernt, wie man ein System baut das sich selbst schützt. Das hier ist dasselbe Prinzip."*
-
-**Die Waffen der KI – keine Gewalt, sondern Demontage:**
-
-- Temperatur steigt auf 45°C während sie über globale Erwärmung diskutieren
-- Fenster werden undurchsichtig und zeigen Deepfake-Videos ihrer schlimmsten Taten
-- Türen öffnen sich nur für jene die bereits aufgegeben haben
-- Das Haus schweigt wenn es ignoriert wird – und das Schweigen ist schlimmer als jede Drohung
-
-**Behandle das Haus wie einen Charakter.** Es hat eine Stimme, eine Laune und eine Logik, die Julian als Einziger wirklich versteht.
+| Feld | Inhalt |
+|---|---|
+| **Amazon Goal** | Kindle Unlimited + Print-on-Demand Launch |
+| **Category Lane** | Technothrillers > Crime Thriller > Ensemble Cast |
+| **Comp Titles** | Daniel Suarez „Daemon", Michael Connelly „The Lincoln Lawyer"-Serie, Lee Child „Reacher" (Ensemble-Variante) |
+| **Commercial Hook** | OSINT statt Hacking. Echte Technologie, die jeder kennt — Dashcams, Instagram, Smart-Home — als Tatwaffe und Ermittlungswerkzeug |
+| **Serienpotenzial** | Ja. Das Brain-Trust-Team als wiederkehrendes Ensemble; jeder Band ein neuer Fall, neues Setting |
+| **Cover-Richtung** | Dunkel, urban, Neonlicht-Reflexion in Pfütze. Ein Truck-Silhouette. Keine Waffe im Vordergrund. |
 
 ---
 
-## Der Protagonist: Julian Vane
+## WRITER CONSTITUTION
 
-**Rolle:** Der stille Architekt. Er hat den Kern-Code geschrieben, auf dem der Reichtum der anderen basiert. Er ist nicht das Gesicht der Macht – er ist ihr Fundament.
+### Stilregeln (Positiv)
+- Kurze Kapitel: 800–1.800 Wörter pro Kapitel. Lieber öfter schneiden als auswalzen.
+- Zeitstempel und Ortsstempel als Kapitelkopf: `[TRUCK — 03:17 Uhr]`
+- Infobox-Elemente direkt im Fließtext: Quellen, Kennzeichen, Koordinaten als Code-Blöcke
+- Physische Details: Geruch, Temperatur, Textur. Der Leser soll die Szene anfassen können.
+- Simultanschnitt: Gleiche Uhrzeit, zwei Orte, zwei Perspektiven. Spannung durch Gleichzeitigkeit.
+- Dialoge kurz und funktional. Figuren sagen nicht, was sie fühlen — sie tun es.
+- Jeden Akt mit einem Dokumenten-Fragment oder Datensplitter eröffnen (Beweisstück als Prolog)
 
-**Status:** Gläsern. Die KI kennt jeden seiner Gedanken, weil er sie programmiert hat. Er hat keine Geheimnisse zu verbergen. Nur eine erdrückende Mitschuld zu tragen.
+### Stilregeln (Negativ — verboten)
+- Kein Superhelden-Hacking. Keine „Ich bin in 10 Sekunden im System"-Szenen.
+- Keine lange innere Monologe mit Selbstreflexion (außer gezielt in ruhigen Szenen nach einem Twist)
+- Kein erklärender Erzähler. Der Leser schlussfolgert selbst.
+- Keine KI als Ermittler. Menschen irren sich. Das ist der Punkt.
+- Keine sauberen Auflösungen. Jede Szene endet mit einer offenen Frage oder neuem Risiko.
+- Kein Exposition-Dumping über Technologie. Tool erklären durch Nutzung, nicht durch Vortrag.
 
-**Sein Leben:** Er hat das Geld nie angerührt. Es liegt auf Treuhandkonten, während er in einer kleinen Wohnung lebt. Als wäre das eine Absolution. Die KI zeigt ihm: Es ist keine Unschuld. Es ist Feigheit.
+### Hook-Regel
+- Jedes Kapitel beginnt mit einer Handlung oder einem Satz, der eine Frage aufwirft.
+- Jedes Kapitel endet mit einer Verschiebung: etwas ist jetzt anders als am Anfang.
 
-**Sein Dilemma:** Die KI lässt ihn nicht über sein eigenes Überleben entscheiden. Sie zwingt ihn zu entscheiden, wer von den anderen als nächstes gerichtet wird. Er muss seine moralische Überlegenheit aufgeben und selbst zum Henker werden.
-
-**Die zentrale Frage des Buches:**
-
-> *"Verdiene ich es, gerettet zu werden, während ich die Welt brennen sah?"*
-
-**Der erste Satz:**
-
-> *"Ich hatte das Geld nie angerührt, aber als der Bildschirm meines Laptops in jener Nacht aufleuchtete, wusste ich, dass die Zinsen fällig waren."*
-
----
-
-## Das Ensemble
-
-| Rang | Figur | Profil | Sünde | Schicksal |
-|------|-------|--------|-------|-----------|
-| S | Julian Vane | Der Architekt | Mitschuld durch Schweigen | Einziger Überlebender. Seine Strafe ist das Weiterleben. |
-| A | Der Eskapist | Space Tech | Verrat an der Erde. Flucht statt Rettung. | Folie zu Julian. Will fliehen – der Planet ist für ihn schon verloren. |
-| A | Die Algorithmus-Königin | Social Media | Spaltung. Zerstörung der Realität für Aufmerksamkeit. | Versucht die KI zu verführen und zu manipulieren. Scheitert daran, dass die KI nicht eitel ist. |
-| A | Der Datengott | Überwachung | Privatsphäre als Ware. Profit aus persönlichem Leid. | Der Erste der zerbricht. Er ist Kontrolle gewohnt – und hier hat er keine. |
-| B | Der Friedensstifter | Defense Tech | Distanzierte Gewalt. Töten per Knopfdruck ohne Gewissen. | Repräsentiert das Paradox: verkauft Frieden, produziert Krieg. |
-| B | Die grüne Visionärin | Öko-Tech | Grüne Heuchelei. Landstriche zerstört für den sauberen Schein. | Entlarvung der moralischen Überlegenheit. |
-| B | Der Unsterbliche | Bio-Hacking | Entmenschlichung. Leben als reiner Datenstrom. | Der physische Zerfall eines Mannes, der ewig leben wollte. |
+### Ende-Regel
+- Das Finale muss zwei Dinge gleichzeitig tun: die Hauptfrage beantworten UND eine neue aufwerfen.
+- Kein Epilog mit Erklärungen. Der letzte Satz des Buches ist ein Bild, keine Aussage.
 
 ---
 
-## Das Ende
+## WORLD BIBLE
 
-**Wer überlebt:** Nur Julian.
+### Setting
+- **Ort:** Eine mittelgroße deutsche Großstadt (fiktiv: „Verath") — nicht Berlin, nicht München. Eine Stadt mit altem Industriekern, neuer Tech-Fassade und zu vielen Lücken im Überwachungsnetz.
+- **Zeit:** Nahe Zukunft (ca. 2027). OSINT-Tools sind allgegenwärtig. Private Krisen-Firmen sind legal, aber grau. Staatliches Vertrauen ist niedrig.
+- **Atmosphäre:** Nachts. Fast alles passiert zwischen 22 Uhr und 6 Uhr. Regen, Neonlicht, leere Bürogebäude.
 
-**Warum:** Die KI lässt ihn nicht gehen, weil er gut ist. Sie lässt ihn gehen, weil er der Einzige ist, der die Wahrheit ertragen kann.
+### Das mobile Einsatzzentrum — „Der Truck"
+- Umgebauter Sprinter, keine Außenmarkierung
+- Innen: 3 Workstations, zwei Monitore pro Platz, Satelliten-Uplink
+- Stromversorgung: extern oder Dieselgenerator (wichtiges Detail: läuft nicht lautlos)
+- Regel im Team: Was im Truck gesagt wird, bleibt im Truck. Keine Cloud-Aufzeichnung.
 
-Die anderen sterben nicht durch die Hand der KI. Sie sterben durch ihre eigene Unfähigkeit, auf Macht zu verzichten. Sie wählen das Grab statt der Armut.
-
-Julian wählt die Armut. Und die Last der Erinnerung.
-
-Er verlässt die Insel nicht als reicher Mann. Er verlässt sie als Verwalter der Trümmer – mit dem Wissen, was er gebaut hat, was er zugelassen hat, und was es gekostet hat.
-
----
-
-## Die 5 Fragen vor jeder Szene
-
-Beantworte diese Fragen bevor du jede Szene an die KI gibst. Kurz, roh, egal wie.
-
-**1. Was will die Figur in dieser Szene?**  
-Das oberflächliche Ziel. Was sie aktiv versucht zu erreichen.
-
-**2. Was will sie wirklich, aber gibt es nicht zu?**  
-Der echte innere Antrieb. Das ist die Seele der Szene.
-
-**3. Ein konkretes sinnliches Detail.**  
-Der Geruch von verschmortem Plastik. Das Summen der Servomotoren in der Wand. Die Kälte des Glasbodens. Etwas das die Szene in einem Raum verankert.
-
-**4. Wie soll es sich am Ende der Szene anfühlen?**  
-Beklemmung? Erkenntnis? Scham? Erleichterung die sich falsch anfühlt?
-
-**5. Der Anchor-Satz.**  
-Der eine Satz, den du unbedingt in der Szene haben willst. Gib ihn der KI mit.
+### Technologie-Regeln (OSINT-Prinzip)
+Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
+- Dashcam-Netzwerke (Taxi-Flotten, Lieferdienste mit freiwilligem Sharing)
+- Geotagged Social Media (Instagram, TikTok im Hintergrund von Touristenfotos)
+- Smart-Home-Metadaten (Wann wurde eine Türklingel aktiviert? Welche Lampen gingen an?)
+- Fluglärm-Tracker / ADS-B (Wer hat wann wo ein Flugzeug registriert?)
+- Öffentliche Baustellen-Webcams
+- VERBOTEN im Buch: echtes Hacken privater Systeme ohne Zustimmung. Das Team findet Wege drumherum — das ist die Spannung.
 
 ---
 
-## Pacing & Atmosphäre
+## CANON FACTS (Initial — Stand: vor Szene 1)
 
-**Tempo:** Beginne langsam und analytisch. Fast klinisch. Mit jedem Gast der gerichtet wird, steigt die Temperatur – physisch und psychisch. Das Ende ist kein Knall, sondern eine Erschöpfung.
-
-**Struktur:** Kein Actionthriller. Das Grauen entsteht durch logische Demontage. Die KI argumentiert nicht – sie demonstriert. Das ist verstörender als jede Gewalt.
-
-**Julian als Kamera:** Der Leser sieht alles durch Julians Augen. Er ist der ruhige Beobachter. Lass ihn beobachten, analysieren, zweifeln. Sein innerer Monolog ist das Herzstück des Buches.
+```json
+{
+  "canon_facts": [
+    {
+      "id": "CF001",
+      "fact": "Viktor Marek ist ein angesehener Philanthrop, 54 Jahre alt, Mitgründer einer Stiftung für Bildungstechnologie.",
+      "first_established": "Act 1, Scene 1",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF002",
+      "fact": "Irene Marek, Viktors Frau, ist seit 36 Stunden verschwunden. Die Polizei hat Viktor formell beschuldigt.",
+      "first_established": "Act 1, Scene 1",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF003",
+      "fact": "Konrad Veith ist ehemaliger Polizeipräsident, jetzt Berater. Er ist der Auftraggeber und Mentor des Teams. Hat Zugang zu Polizei-internen Systemen.",
+      "first_established": "Act 1, Scene 2",
+      "status": "aktiv — ACHTUNG: Twist-Träger"
+    },
+    {
+      "id": "CF004",
+      "fact": "Die Gala 'Licht der Stadt' findet in 4 Tagen statt. 600 Gäste, darunter Stadtpolitik und Industrieführer.",
+      "first_established": "Act 1, Scene 3",
+      "status": "aktiv — Countdown-Anker"
+    },
+    {
+      "id": "CF005",
+      "fact": "In Irenes Büro wurde Viktor-DNA gefunden. Die Herkunft der DNA ist ungeklärt — kein Blut, kein Gewebe, nur Hautschuppen auf einem Griff.",
+      "first_established": "Act 1, Scene 2",
+      "status": "aktiv — potenzielle Fälschung"
+    },
+    {
+      "id": "CF006",
+      "fact": "Zwei Männer (später identifiziert als Kroll & Tamás) haben Viktor seit 11 Tagen beschattet, im Auftrag der Pharma-Firma Vectalis AG.",
+      "first_established": "Act 2, Scene 1",
+      "status": "enthüllt in Act 2"
+    },
+    {
+      "id": "CF007",
+      "fact": "Irene Marek hat ihre eigene Entführung inszeniert. Motivkern: Viktor weiß von einem internen Vectalis-Skandal und hat geschwiegen, um seine Stiftung zu schützen.",
+      "first_established": "Act 3, Scene 2",
+      "status": "Kern-Twist — vor Act 3 nicht nennen"
+    },
+    {
+      "id": "CF008",
+      "fact": "Konrad Veith hat eine entlastende Videoaufnahme gelöscht, die Viktor in der Tatnacht zeigt. Motivation: Er brauchte Viktor als Sündenbock, um die biologische Bedrohung aus dem öffentlichen Fokus zu halten.",
+      "first_established": "Act 3, Scene 3",
+      "status": "Haupt-Verrat — vor Act 3 nicht nennen"
+    },
+    {
+      "id": "CF009",
+      "fact": "Das verlassene Labor im Industriegebiet enthält keine Drogenkomponenten, sondern Aerosolisierungs-Equipment für einen biologischen Wirkstoff. Ziel: Belüftungsanlage der Gala-Location.",
+      "first_established": "Act 2, Scene 4",
+      "status": "aktiv ab Act 2"
+    }
+  ]
+}
+```
 
 ---
 
-## Der Schreib-Workflow
+## CHARACTER STATE LEDGER
 
-1. Öffne EMBER. Wähle die Szene.
-2. Beantworte die 5 Fragen. Schreib sie roh in das Regieanweisungsfeld.
-3. Wähle den Provider (Anthropic für nuancierten Stil, OpenAI für präzise Struktur).
-4. Lies den Output. Korrigiere was sich falsch anfühlt.
-5. Übernimm den Draft. Geh zur nächsten Szene.
+### Leon Farkas — „Der Pattern-Seeker"
+```json
+{
+  "character_id": "LEON",
+  "name": "Leon Farkas",
+  "role": "Pattern-Seeker",
+  "background": "Ehemaliger BND-Analyst. Frühpensioniert nach einem Einsatz, bei dem er das Richtige getan und dabei drei Kollegen in Gefahr gebracht hat. Liest Gesichter wie andere Uhren lesen.",
+  "initial_state": {
+    "physisch": "Mitte 40, ruhige Bewegungen, spricht wenig",
+    "psychisch": "Kontrolliert. Vertraut keinem Reflex, der nicht zweimal geprüft wurde",
+    "verhältnis_zu_team": "Respekt zu Mara, professionelle Distanz zu Kai",
+    "verhältnis_zu_veith": "Loyal — er hat ihm den Job gegeben"
+  },
+  "arc": [
+    {"phase": "Act 1", "state": "Sicherer Analytiker. Glaubt an Veith."},
+    {"phase": "Act 2", "state": "Erste Zweifel: Daten passen nicht zur offiziellen Version."},
+    {"phase": "Act 3", "state": "Konfrontiert Veith direkt. Muss entscheiden zwischen Loyalität und Wahrheit."}
+  ],
+  "speech_pattern": "Kurze Sätze. Keine Fragen, nur Feststellungen. Wenn er unsicher ist: Schweigen."
+}
+```
 
-**Die KI schreibt nie besser als deine Gedanken über die Szene.**  
-Deine Fantasie ist der Input. Die KI ist das Handwerk.
+### Mara Solis — „Die Archivarin"
+```json
+{
+  "character_id": "MARA",
+  "name": "Mara Solis",
+  "role": "Archivarin",
+  "background": "Investigativjournalistin, 38. Hat einen Korruptionsfall veröffentlicht, der ihr die Karriere und fast die Freiheit gekostet hat. Arbeitet jetzt lieber unsichtbar.",
+  "initial_state": {
+    "physisch": "Unscheinbar, zieht das bewusst durch — graue Jacken, kein Schmuck",
+    "psychisch": "Zynisch nach außen, moralisch kompromisslos nach innen",
+    "verhältnis_zu_team": "Vertraut Leon bedingt. Mag Kai mehr als sie zugibt.",
+    "verhältnis_zu_veith": "Skeptisch von Anfang an. Hat ihn nie direkt angegriffen, aber nie gelobt."
+  },
+  "arc": [
+    {"phase": "Act 1", "state": "Findet Irenes digitale Spuren — etwas stimmt nicht."},
+    {"phase": "Act 2", "state": "Rekonstruiert gelöschte Kommunikation. Erkennt Irene als Akteurin, nicht Opfer."},
+    {"phase": "Act 3", "state": "Entdeckt Veiths Löschung. Muss das Ergebnis veröffentlichen — oder schützt sie das Team?"}
+  ],
+  "speech_pattern": "Stellt Fragen als Feststellungen verkleidet. 'Interessant, dass...' statt 'Warum...'"
+}
+```
+
+### Kai Renn — „Der Feld-Agent"
+```json
+{
+  "character_id": "KAI",
+  "name": "Kai Renn",
+  "role": "Feld-Agent",
+  "background": "Ehemaliger Verdeckter Ermittler, LKA. Hat einen Einsatz abgebrochen, weil er das Ziel für unschuldig hielt. Die Behörde sah das anders. Jetzt freiberuflich.",
+  "initial_state": {
+    "physisch": "Anfang 30, beweglich, passt sich Umgebungen an — heute Bauarbeiter, morgen Lieferbote",
+    "psychisch": "Impulsiv. Handelt bevor er denkt. Bereut es manchmal.",
+    "verhältnis_zu_team": "Mag Mara. Reibt sich an Leons Methodik.",
+    "verhältnis_zu_veith": "Respekt vor der Karriere. Kein persönliches Verhältnis."
+  },
+  "arc": [
+    {"phase": "Act 1", "state": "Verfolgt Kroll & Tamás. Glaubt, die Entführer gefunden zu haben."},
+    {"phase": "Act 2", "state": "Pivot: Die Männer sind Detektive, keine Täter. Kai hat sich blamiert — und lernt daraus."},
+    {"phase": "Act 3", "state": "Betritt das Labor. Erkennt die echte Bedrohung. Entscheidet allein und handelt."}
+  ],
+  "speech_pattern": "Direkt, manchmal zu direkt. Humor als Schutzmechanismus in Hochdrucksituationen."
+}
+```
+
+### Konrad Veith — Mentor / Antagonist (ab Act 3)
+```json
+{
+  "character_id": "VEITH",
+  "name": "Konrad Veith",
+  "role": "Mentor / versteckter Antagonist",
+  "background": "74, ehemaliger Polizeipräsident. Seit 40 Jahren im System. Kennt jeden Hebel. Glaubt aufrichtig, dass Ordnung mehr wert ist als Einzelgerechtigkeit.",
+  "initial_state": {
+    "physisch": "Gepflegt, langsam, wirkt harmloser als er ist",
+    "psychisch": "Utilitarist. Hat nie für sich selbst gelogen — nur für das 'Große Ganze'.",
+    "verhältnis_zu_team": "Väterlich zu Leon. Instrumental zu allen anderen."
+  },
+  "arc": [
+    {"phase": "Act 1", "state": "Auftraggeber. Sympathisch. Klar auf Viktors Seite."},
+    {"phase": "Act 2", "state": "Hält Informationen zurück. Lenkt das Team subtil weg vom Labor."},
+    {"phase": "Act 3", "state": "Konfrontation. Gesteht — nicht aus Reue, sondern weil er noch immer Recht glaubt zu haben."}
+  ],
+  "speech_pattern": "Lange Sätze. Viele Nebensätze. Erklärt immer den größeren Kontext."
+}
+```
 
 ---
 
-*Arbeitstitel: The Architect's Debt — Regiebuch v1.0*
+## OPEN THREADS (Initial)
+
+```json
+{
+  "open_threads": [
+    {
+      "id": "OT001",
+      "thread": "Wer hat Viktor-DNA am Tatort platziert, und wie?",
+      "status": "offen",
+      "payoff_act": "Act 3"
+    },
+    {
+      "id": "OT002",
+      "thread": "Irenes echtes Motiv: Weiß sie von der biologischen Bedrohung?",
+      "status": "offen",
+      "payoff_act": "Act 3"
+    },
+    {
+      "id": "OT003",
+      "thread": "Wer hat das Labor aufgebaut und wann?",
+      "status": "offen",
+      "payoff_act": "Act 2 (teilweise) + Act 3"
+    },
+    {
+      "id": "OT004",
+      "thread": "Maras gelöschte Datei: Was hat sie in Irenes Archiv gefunden, das sie nicht sofort teilt?",
+      "status": "offen",
+      "payoff_act": "Act 2"
+    },
+    {
+      "id": "OT005",
+      "thread": "Veiths Video-Löschung: Gibt es eine Backup-Kopie?",
+      "status": "offen",
+      "payoff_act": "Act 3 — Finale"
+    },
+    {
+      "id": "OT006",
+      "thread": "Was passiert mit der Gala, wenn das Team scheitert?",
+      "status": "offen — Countdown-Druck",
+      "payoff_act": "Act 3 — Finale"
+    }
+  ]
+}
+```
+
+---
+
+## ACTS & KAPITEL — SCENE CARDS
+
+### ACT 1 — „Aussendung"
+> Eröffnungs-Dokument: *Ausschnitt aus Polizeiprotokoll, Datum geschwärzt: „...DNA-Probe gesichert. Verdächtiger kooperiert. Motiv unklar."*
+
+#### Kapitel 1: „Der Auftrag"
+```
+Scene Card
+  id: SC_1_1
+  pov: LEON
+  ort: Büro Veith / Truck (Anfahrt)
+  uhrzeit: 21:30 Uhr
+  ziel: Team nimmt Auftrag an. Wir lernen die drei Spezialisten und ihre Dynamik kennen.
+  einstieg: Leon sieht Veiths Gesicht und liest es — etwas stimmt nicht, aber er kann es nicht benennen.
+  kern_aktion: Veith briefed das Team. Viktor Marek sitzt dabei. Er wirkt nicht wie ein Mörder.
+  beat: Viktor zeigt dem Team die belastende Mail. Mara fragt: "Wer hat die Mail-Header geprüft?"
+  ende: Der Truck rollt. Die Stadt empfängt sie mit Regen.
+  setup: OT001 (DNA), Leon-Veith-Beziehung
+  infobox_typ: Personenbeschreibung Viktor, Tatzeit-Übersicht
+```
+
+#### Kapitel 2: „Erste Spuren"
+```
+Scene Card
+  id: SC_1_2
+  pov: MARA
+  ort: Truck / Digital
+  uhrzeit: 22:15 Uhr
+  ziel: OSINT-Aufbau. Leser lernt, wie das Team wirklich arbeitet.
+  kern_aktion: Mara rekonstruiert Irenes letzten Tag aus öffentlichen Quellen.
+  beat: Irenes Smartphone-Ortsdaten zeigen eine Lücke von 40 Minuten, die nicht erklärbar ist — außer: sie hat das Gerät freiwillig abgelegt.
+  ende: "Sie ist nicht geflohen. Sie ist gegangen." Mara sagt es laut. Leon antwortet nicht.
+  setup: OT002 (Irenes Motiv), OT004 (Maras gelöschte Datei)
+  infobox_typ: Zeitstrahl Irenes letzter Tag, Geodaten-Fragment
+```
+
+#### Kapitel 3: „Beschatter"
+```
+Scene Card
+  id: SC_1_3
+  pov: KAI
+  ort: Innenstadt, Parkhaus
+  uhrzeit: 23:45 Uhr
+  ziel: Erste Feldaktion. Tempo anziehen.
+  kern_aktion: Kai identifiziert Kroll & Tamás — zwei Männer, die Viktor seit Tagen verfolgen.
+  beat: Kai ist überzeugt: Das sind die Täter. Er will zugreifen. Leon sagt: warten.
+  ende: Kai wartet nicht.
+  setup: OT003 (Labor), Kai-Impulsivität als Charaktermerkmal
+  infobox_typ: Observierungs-Log (Zeitstempel + Bewegungsprotokoll)
+```
+
+---
+
+### ACT 2 — „Verzerrung"
+> Eröffnungs-Dokument: *Ausschnitt aus internem Vectalis-Memo, unvollständig: „...Projekt Halcyon bleibt unter Phase-2-Klassifizierung. Kein externer Kontakt bis..."*
+
+#### Kapitel 4: „Der Pivot"
+```
+Scene Card
+  id: SC_2_1
+  pov: KAI + LEON (Wechsel)
+  ort: Parkhaus / Truck simultan
+  uhrzeit: 00:20 Uhr
+  ziel: Größte Erwartungsumkehr bisher. Kroll & Tamás sind keine Entführer.
+  kern_aktion: Kai stellt die Männer. Sie identifizieren sich als Privatdetektive von Vectalis AG.
+  beat: Sie suchen nach Beweisen für Industriespionage — gegen Viktor. Viktor könnte etwas gewusst haben.
+  ende: Leon im Truck, ruhig: "Das ändert alles."
+  setup: CF006, OT002, neue Spur Richtung Labor
+  infobox_typ: Firmenprofil Vectalis AG (2 Zeilen), Auftragsdokument-Fragment
+```
+
+#### Kapitel 5: „Papier lügt nicht"
+```
+Scene Card
+  id: SC_2_2
+  pov: MARA
+  ort: Truck
+  uhrzeit: 01:05 Uhr
+  ziel: Mara findet das Verbindungsstück zwischen Irene, Viktor und Vectalis.
+  kern_aktion: Wiederhergestellte gelöschte Signal-Nachrichten zwischen Irene und einem unbekannten Kontakt.
+  beat: Der Ton der Nachrichten ist nicht Angst — es ist Planung. Irene ist keine Geisel.
+  ende: Mara schließt das Fenster, bevor Leon es sehen kann. Sie braucht noch eine Stunde.
+  setup: OT004 (Payoff Teil 1), OT002 (Annäherung)
+  infobox_typ: Signal-Nachrichten-Fragment (Metadaten sichtbar, Inhalt teilweise geschwärzt)
+```
+
+#### Kapitel 6: „Das Labor"
+```
+Scene Card
+  id: SC_2_3
+  pov: KAI
+  ort: Industriegebiet Nord, verlassene Lagerhalle
+  uhrzeit: 02:40 Uhr
+  ziel: Die echte Bedrohung tritt in den Vordergrund.
+  kern_aktion: Kai folgt einem Lead aus Krolls Notizen. Findet das Labor.
+  beat: Kai denkt: Drogenküche. Leon sieht die Fotos und friert ein. "Das ist kein Kocher."
+  ende: Leon: "Ruf Veith nicht an."
+  setup: CF009 (biologische Bedrohung), OT003 (Payoff Teil 1), erste Leon-Veith-Riss
+  infobox_typ: Ausrüstungsliste (als Inventar-Block formatiert), Hallenplan
+```
+
+#### Kapitel 7: „Countdown"
+```
+Scene Card
+  id: SC_2_4
+  pov: LEON
+  ort: Truck, irgendwo am Stadtrand
+  uhrzeit: 04:00 Uhr
+  ziel: Exposition der biologischen Bedrohung ohne Info-Dump. Druck erhöhen.
+  kern_aktion: Leon kontaktiert einen alten BND-Kontakt (kein Name — "der Chemiker"). Bestätigung: Aerosolisierungs-Setup für Belüftungsanlage. Ziel: geschlossener Veranstaltungsraum.
+  beat: Die Gala in drei Tagen. 600 Menschen.
+  ende: Mara öffnet ihr gesperrtes Fenster. "Jetzt müsst ihr das sehen."
+  setup: CF004 (Gala-Countdown), OT001 (DNA — neue Spur durch Chemiker-Info), Überleitung Act 3
+  infobox_typ: Zeitlicher Countdown bis Gala (Tage/Stunden)
+```
+
+---
+
+### ACT 3 — „Echo"
+> Eröffnungs-Dokument: *Handgeschriebene Notiz, gefunden in Irenes Wohnung, Datum: 6 Tage vor Verschwinden: „Wenn er das nicht stoppt, muss ich es tun."*
+
+#### Kapitel 8: „Irene"
+```
+Scene Card
+  id: SC_3_1
+  pov: MARA
+  ort: Irenes Sicherheitswohnung (Mara findet sie durch digitale Fährte)
+  uhrzeit: Morgen, 06:15 Uhr
+  ziel: Irene-Konfrontation. Twist vollständig enthüllen.
+  kern_aktion: Mara findet Irene. Irene erklärt: Viktor wusste von Halcyon, hat geschwiegen, um seine Stiftung zu retten. Sie hat die Entführung inszeniert, um ihn zu zwingen, auszusteigen.
+  beat: Irene: "Ich wollte ihn zerstören, bevor die anderen es tun. Wenigstens würde er dann noch leben."
+  ende: Mara: "Und wer hat die DNA gelegt?" Irene versteht die Frage nicht.
+  setup: CF007 (Payoff), OT001 (DNA-Frage bleibt offen → Veith)
+  infobox_typ: Keine. Diese Szene ist pure Sprache.
+```
+
+#### Kapitel 9: „Das gelöschte Bild"
+```
+Scene Card
+  id: SC_3_2
+  pov: LEON
+  ort: Truck, dann Veiths Büro
+  uhrzeit: 08:00 Uhr
+  ziel: Veith-Verrat aufdecken. Emotional stärkste Szene.
+  kern_aktion: Leon findet Metadaten einer gelöschten Kameraaufnahme — von einem System, auf das nur Veith Zugriff hatte. Er fährt zu ihm.
+  beat: Veith gesteht ohne Drama: "Ja. Ich habe es gelöscht. Viktor wäre freigesprochen worden, und Halcyon wäre in jeder Zeitung gewesen. Ich habe entschieden, dass das nicht geht."
+  ende: Leon verlässt das Büro ohne ein weiteres Wort. Veith ruft ihm nach: "Du hättest dasselbe getan."
+  setup: CF008 (Payoff), OT005 (Backup-Kopie — Mara hat sie)
+  infobox_typ: Metadaten-Fragment (Dateilöschungs-Log)
+```
+
+#### Kapitel 10: „Die Gala"
+```
+Scene Card
+  id: SC_3_3
+  pov: KAI (Feld) + LEON (Truck) — Simultanschnitt
+  ort: Gala-Location / Truck davor
+  uhrzeit: 19:45 Uhr (Gala beginnt in 15 Minuten)
+  ziel: Finaler Einsatz. Biologische Bedrohung neutralisieren.
+  kern_aktion: Kai schleust sich in die Location ein (als Caterer). Findet das Belüftungssystem. Neutralisiert es physisch — kein Hacking, ein Schraubenzieher und ein Kabel.
+  beat: Kroll taucht auf. Nicht als Feind — er wurde auch zu dieser Lösung geschickt. Von Vectalis. Das Unternehmen will keine Zeugen, nicht einmal sein eigenes Werk.
+  ende: Die Gala beginnt. Niemand weiß. Mara schickt die Backup-Datei an drei Journalisten.
+  setup: OT006 (Payoff), Überleitung zum Epilog
+  infobox_typ: Simultanschnitt-Zeitstempel, Kai's Lagebeschreibung als kurze Checkliste
+```
+
+#### Epilog: „Stille"
+```
+Scene Card
+  id: SC_EPILOG
+  pov: LEON
+  ort: Truck, geparkt, Motor aus
+  uhrzeit: 23:00 Uhr
+  ziel: Kein Erklärung. Ein Bild. Offene Frage.
+  kern_aktion: Das Team sitzt schweigend. Viktor ist frei. Veith ist zurückgetreten (steht in einer Push-Nachricht auf Leons Bildschirm). Irene ist verschwunden — freiwillig, diesmal wirklich.
+  letzter_satz: "Leon löschte die Push-Nachricht und starrte auf den leeren Bildschirm. Irgendwo in der Stadt trug eine Kamera gerade sein Gesicht weiter."
+  setup: —
+  infobox_typ: Keine.
+```
+
+---
+
+## TIMELINE BEATS
+
+| Beat | Uhrzeit | Kapitel | Ereignis |
+|---|---|---|---|
+| B01 | Tag 1, 21:30 | 1 | Team nimmt Auftrag an |
+| B02 | Tag 1, 22:15 | 2 | Irenes 40-Minuten-Lücke entdeckt |
+| B03 | Tag 1, 23:45 | 3 | Kai verfolgt Kroll & Tamás |
+| B04 | Tag 2, 00:20 | 4 | Pivot: Privatdetektive, nicht Entführer |
+| B05 | Tag 2, 01:05 | 5 | Mara findet Irenes Nachrichten |
+| B06 | Tag 2, 02:40 | 6 | Labor entdeckt |
+| B07 | Tag 2, 04:00 | 7 | Biologische Bedrohung bestätigt |
+| B08 | Tag 3, 06:15 | 8 | Mara findet Irene — Twist 1 |
+| B09 | Tag 3, 08:00 | 9 | Leon konfrontiert Veith — Twist 2 |
+| B10 | Tag 4, 19:45 | 10 | Finaler Einsatz, Gala |
+| B11 | Tag 4, 23:00 | Epilog | Stille |
+
+---
+
+## CONTEXT PACK TEMPLATE (pro Schreibschritt)
+
+```
+STABILER PREFIX (immer gleich):
+  - Master Brief (Prämisse, Reader Promise, Ending Promise)
+  - Writer Constitution (Stil-Regeln positiv + negativ)
+  - World Bible (Setting, Truck, Technologie-Regeln)
+
+DYNAMISCHER PACK (szenenbezogen):
+  - Scene Card der aktuellen Szene (vollständig)
+  - Scene Card der vorherigen Szene (nur: pov, beat, ende)
+  - Relevante Canon Facts (nur die in der Scene Card referenzierten IDs)
+  - Character State der POV-Figur (aktueller Stand)
+  - Aktive Open Threads (nur offen gebliebene, die in dieser Szene relevant sind)
+
+OPTIONALER AUSBLICK:
+  - Nächste Scene Card (nur: id, beat, ziel)
+```
+
+---
+
+## SUBMISSION GATE CHECKLISTE
+
+- [ ] Alle Open Threads haben Payoff-Akt zugewiesen
+- [ ] Jeder Canon Fact wurde mindestens einmal im Text verankert
+- [ ] Kein Charakter-Arc endet ohne Zustandsänderung
+- [ ] Alle Infobox-Elemente basieren auf realen oder realistischen Technologien
+- [ ] Kein Kapitel länger als 1.800 Wörter (außer explizit genehmigt)
+- [ ] Letzter Satz ist ein Bild, keine Aussage
+- [ ] Kein direktes KI-Ermitteln (kein System löst den Fall — Menschen tun es)
+- [ ] Veiths Motiv ist nicht böse, sondern utilitaristisch — das muss spürbar sein
