@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { StudioWorkspace } from "@/components/studio/studio-workspace"
-import { loadStudioStory } from "@/lib/server/studio-story-service"
+import { listStudioStories, loadStudioStory } from "@/lib/server/studio-story-service"
 
 type StudioPageProps = {
   searchParams?: Promise<{
@@ -11,6 +11,7 @@ type StudioPageProps = {
 export default async function StudioPage({ searchParams }: StudioPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined
   const story = await loadStudioStory(resolvedSearchParams?.storyId ?? null)
+  const stories = await listStudioStories()
 
   if (!story) {
     return (
@@ -18,10 +19,10 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         <section className="reader-topbar">
           <div>
             <p className="reader-eyebrow">EMBER Studio</p>
-            <h1>Keine Buch-Story in Supabase gefunden</h1>
+            <h1>Keine Story in Supabase gefunden</h1>
             <p>
               Lege zuerst einen Workspace und eine Story in der Datenbank an oder übergib
-              `?storyId=...`, damit das Studio ein echtes Buchprojekt laden kann.
+              `?storyId=...`, damit das Studio ein echtes Projekt laden kann.
             </p>
           </div>
           <div className="reader-actions">
@@ -34,5 +35,5 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
     )
   }
 
-  return <StudioWorkspace story={story} />
+  return <StudioWorkspace story={story} stories={stories} />
 }

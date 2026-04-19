@@ -302,7 +302,7 @@ export function BookBlueprintPanel({
             </label>
           </div>
 
-          <label className="editor-field">
+          <label className="editor-field" title="Der Kern der Geschichte in 1-2 Sätzen. Wer ist der Held, was ist das Problem und was steht auf dem Spiel?">
             <span>Praemisse</span>
             <textarea
               className="editor-textarea"
@@ -313,7 +313,7 @@ export function BookBlueprintPanel({
             />
           </label>
 
-          <label className="editor-field">
+          <label className="editor-field" title="Das emotionale Versprechen an den Leser. Welches Genre-Gefühl (z.B. Hochdruck-Thriller) wird garantiert?">
             <span>Reader Promise</span>
             <textarea
               className="editor-textarea"
@@ -325,7 +325,7 @@ export function BookBlueprintPanel({
           </label>
 
           <div className="editor-grid">
-            <label className="editor-field">
+            <label className="editor-field" title="Wie wird der Leser entlassen? (Z.B. 'Gerechtigkeit siegt, aber mit einem bitteren Beigeschmack').">
               <span>Ending Promise</span>
               <textarea
                 className="editor-textarea"
@@ -336,7 +336,7 @@ export function BookBlueprintPanel({
               />
             </label>
 
-            <label className="editor-field">
+            <label className="editor-field" title="Worauf will die Story wirklich hinaus? (Z.B. 'Die Kosten von blinder Loyalität').">
               <span>Thematic Core</span>
               <textarea
                 className="editor-textarea"

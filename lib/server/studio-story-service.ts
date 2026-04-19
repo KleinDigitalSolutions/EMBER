@@ -1,11 +1,13 @@
 import { createFallbackDraftStageRuns, syncStoryBookArtifacts } from "@/lib/book-engine"
 import {
   createDefaultBookBlueprint,
+  createEmptyStoryDocument,
   normalizeBookRuleList,
   type BookDraftJob,
   type BookDraftStageRun,
   type BookDraftStageRuns,
   type StoryDocument,
+  type StoryLibraryEntry,
   type StoryVariable,
   type WorldBibleEntry
 } from "@/lib/story-schema"
@@ -13,6 +15,40 @@ import { supabaseAdmin } from "@/lib/supabase/server"
 import { createUuid } from "@/lib/id"
 
 type Row = Record<string, any>
+
+export async function listStudioStories() {
+  const result = await supabaseAdmin
+    .from("stories")
+    .select("id, workspace_id, title, author_name, status, mode, created_at, updated_at")
+    .order("updated_at", { ascending: false })
+
+  assertNoError("stories list", result.error)
+
+  return (result.data ?? []).map(mapStoryLibraryEntry)
+}
+
+export async function createStudioStory(workspaceId?: string | null) {
+  const nextWorkspaceId = workspaceId ?? (await ensureBootstrapWorkspace()).id
+  const nextStory = createEmptyStoryDocument(createUuid(), nextWorkspaceId, "Neues Projekt")
+
+  await saveStudioStory(nextStory)
+
+  const storyRow = await loadStoryRow(nextStory.id)
+
+  if (!storyRow) {
+    throw new Error(`Story ${nextStory.id} could not be reloaded after creation.`)
+  }
+
+  return {
+    storyId: nextStory.id,
+    summary: mapStoryLibraryEntry(storyRow)
+  }
+}
+
+export async function deleteStudioStory(storyId: string) {
+  const result = await supabaseAdmin.from("stories").delete().eq("id", storyId)
+  assertNoError("stories delete", result.error)
+}
 
 export async function loadStudioStory(preferredStoryId?: string | null) {
   const storyRow = await loadStoryRow(preferredStoryId)
@@ -424,34 +460,40 @@ export async function saveStudioStory(story: StoryDocument) {
     }
   }
 
+  const storyStatus = denormalizeStoryStatus(nextStory.status)
+
   const storyUpsert = await supabaseAdmin.from("stories").upsert({
     id: nextStory.id,
     workspace_id: nextStory.workspaceId,
-    title: nextStory.title,
-    author_name: nextStory.authorName,
-    status: denormalizeStoryStatus(nextStory.status),
-    mode: nextStory.mode,
+    title: nextStory.title || "Untitled Book",
+    author_name: nextStory.authorName || "",
+    status: storyStatus,
+    mode: nextStory.mode || "book",
     meta,
     created_by: ownerProfileId,
     current_version_id: null
   })
 
-  assertNoError("stories upsert", storyUpsert.error)
+  if (storyUpsert.error) {
+    throw new Error(`Story Upsert: ${storyUpsert.error.message}`)
+  }
 
   const bookProjectUpsert = await supabaseAdmin.from("book_projects").upsert({
     story_id: nextStory.id,
     workspace_id: nextStory.workspaceId,
-    priority: nextStory.book.priority,
-    active_phase: nextStory.book.activePhase,
-    target_format: nextStory.book.targetFormat,
-    target_length_words: nextStory.book.targetLengthWords,
+    priority: nextStory.book.priority || "primary",
+    active_phase: nextStory.book.activePhase || "phase_1_foundation",
+    target_format: nextStory.book.targetFormat || "novel",
+    target_length_words: nextStory.book.targetLengthWords || 70000,
     master_brief: nextStory.book.masterBrief,
     market_brief: nextStory.book.marketBrief,
     amazon_ops: nextStory.book.amazonOps,
     memory_last_synced_at: nextStory.book.memory.lastSyncedAt
   })
 
-  assertNoError("book_projects upsert", bookProjectUpsert.error)
+  if (bookProjectUpsert.error) {
+    throw new Error(`Book Project Upsert: ${bookProjectUpsert.error.message}`)
+  }
 
   await deleteStoryGraph(nextStory.id)
 
@@ -761,7 +803,6 @@ async function loadStoryRow(preferredStoryId?: string | null) {
   const query = supabaseAdmin
     .from("stories")
     .select("id, workspace_id, title, author_name, status, mode, meta")
-    .eq("mode", "book")
 
   const result = preferredStoryId
     ? await query.eq("id", preferredStoryId).maybeSingle()
@@ -1190,6 +1231,19 @@ function groupRows(rows: Row[], key: string) {
   })
 
   return grouped
+}
+
+function mapStoryLibraryEntry(row: Row): StoryLibraryEntry {
+  return {
+    id: row.id as string,
+    workspaceId: row.workspace_id as string,
+    title: (row.title as string) ?? "",
+    authorName: (row.author_name as string) ?? "",
+    status: normalizeStoryStatus(row.status),
+    mode: normalizeStoryMode(row.mode),
+    createdAt: (row.created_at as string) ?? "",
+    updatedAt: (row.updated_at as string) ?? ""
+  }
 }
 
 function normalizeStoryStatus(value: unknown): StoryDocument["status"] {

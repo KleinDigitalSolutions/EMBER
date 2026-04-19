@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { saveStudioStory } from "@/lib/server/studio-story-service"
+import { deleteStudioStory, saveStudioStory } from "@/lib/server/studio-story-service"
 import type { StoryDocument } from "@/lib/story-schema"
 
 export const runtime = "nodejs"
@@ -32,6 +32,37 @@ export async function PUT(
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Story save failed."
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  context: { params: Promise<{ storyId: string }> }
+) {
+  try {
+    const { storyId } = await context.params
+
+    if (!storyId) {
+      return NextResponse.json(
+        {
+          error: "Story id is required."
+        },
+        { status: 400 }
+      )
+    }
+
+    await deleteStudioStory(storyId)
+
+    return NextResponse.json({
+      deleted: true
+    })
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : "Story delete failed."
       },
       { status: 500 }
     )

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookBlueprintPanel } from "@/components/studio/book-blueprint-panel";
 import { BookWriterPanel } from "@/components/studio/book-writer-panel";
 import { PatchPanel } from "@/components/studio/patch-panel";
@@ -23,6 +24,7 @@ import {
   type StoryAct,
   type StoryChapter,
   type StoryDocument,
+  type StoryLibraryEntry,
   type StoryMode,
   type StoryStatus,
   type StoryScene,
@@ -31,19 +33,33 @@ import {
 
 type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "book" | "write" | "playtest" | "chat" | "review";
+type SidebarMode = "library" | "codex";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
 const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "chat", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
 
-export function StudioWorkspace({ story }: { story: StoryDocument }) {
+export function StudioWorkspace({
+  story,
+  stories
+}: {
+  story: StoryDocument;
+  stories: StoryLibraryEntry[];
+}) {
+  const router = useRouter();
   const [draftStory, setDraftStory] = useState(function () {
     return syncStoryBookArtifacts(story);
   });
   const [authorMode, setAuthorMode] = useState<AuthorMode>(getDefaultAuthorMode(story.mode));
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>("library");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
+  const [librarySearch, setLibrarySearch] = useState("");
+  const [libraryStories, setLibraryStories] = useState(stories);
+  const [libraryActionId, setLibraryActionId] = useState<string | null>(null);
+  const [libraryError, setLibraryError] = useState<string | null>(null);
   const [codexSearch, setCodexSearch] = useState("");
   const [showOutlineComposer, setShowOutlineComposer] = useState(false);
   const [outlineDraft, setOutlineDraft] = useState(DEFAULT_OUTLINE_TEMPLATE);
@@ -71,6 +87,21 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   const availableAuthorModes = useMemo(function () {
     return getAuthorModesForStory(draftStory.mode);
   }, [draftStory.mode]);
+  const filteredLibraryStories = useMemo(function () {
+    const query = librarySearch.trim().toLowerCase();
+
+    return libraryStories.filter(function (entry) {
+      if (!query) {
+        return true;
+      }
+
+      return (
+        entry.title.toLowerCase().includes(query) ||
+        entry.authorName.toLowerCase().includes(query) ||
+        formatStoryModeLabel(entry.mode).toLowerCase().includes(query)
+      );
+    });
+  }, [librarySearch, libraryStories]);
 
   const filteredCodexEntries = useMemo(function () {
     const query = codexSearch.trim().toLowerCase();
@@ -95,6 +126,13 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
 
   useEffect(
     function () {
+      setLibraryStories(stories);
+    },
+    [stories]
+  );
+
+  useEffect(
+    function () {
       const nextStory = syncStoryBookArtifacts(story);
 
       setDraftStory(nextStory);
@@ -103,6 +141,8 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       setSelectedSceneId(nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "");
       setLastSavedAt(null);
       setSaveState("idle");
+      setLibraryError(null);
+      setLibraryActionId(null);
       pendingPersistRef.current = null;
       lastPersistedPayloadRef.current = JSON.stringify(nextStory);
     },
@@ -302,6 +342,126 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
     });
   }
 
+  function toggleStoryMode() {
+    commitStoryUpdate(function (currentStory) {
+      const nextMode: StoryMode = currentStory.mode === "book" ? "branching" : "book";
+      return {
+        ...currentStory,
+        mode: nextMode
+      };
+    });
+  }
+
+  async function persistDraftIfDirty() {
+    const normalizedStory = syncStoryBookArtifacts(draftStory);
+    const payload = JSON.stringify(normalizedStory);
+
+    if (payload === lastPersistedPayloadRef.current && !pendingPersistRef.current) {
+      return true;
+    }
+
+    setSaveState("saving");
+    pendingPersistRef.current = null;
+
+    try {
+      const snapshot = await persistStudioStoryRemote(normalizedStory);
+      lastPersistedPayloadRef.current = payload;
+      setLastSavedAt(snapshot.savedAt);
+      setSaveState("saved");
+      return true;
+    } catch (error) {
+      setSaveState("error");
+      setLibraryError(
+        error instanceof Error ? error.message : "Projekt konnte nicht nach Supabase gespeichert werden."
+      );
+      return false;
+    }
+  }
+
+  async function handleNewProject() {
+    setLibraryError(null);
+    setLibraryActionId("create");
+
+    try {
+      const canContinue = await persistDraftIfDirty();
+
+      if (!canContinue) {
+        return;
+      }
+
+      const created = await createStudioStoryRemote(draftStory.workspaceId);
+
+      setLibraryStories(function (currentStories) {
+        return [created.summary].concat(
+          currentStories.filter(function (entry) {
+            return entry.id !== created.summary.id;
+          })
+        );
+      });
+      setSidebarMode("library");
+      setIsSidebarCollapsed(false);
+      router.push(`/studio?storyId=${created.storyId}`);
+    } catch (error) {
+      setLibraryError(error instanceof Error ? error.message : "Neues Projekt konnte nicht angelegt werden.");
+    } finally {
+      setLibraryActionId(null);
+    }
+  }
+
+  async function handleSelectLibraryStory(nextStoryId: string) {
+    if (nextStoryId === draftStory.id) {
+      return;
+    }
+
+    setLibraryError(null);
+    setLibraryActionId(nextStoryId);
+
+    try {
+      const canContinue = await persistDraftIfDirty();
+
+      if (!canContinue) {
+        return;
+      }
+
+      router.push(`/studio?storyId=${nextStoryId}`);
+    } finally {
+      setLibraryActionId(null);
+    }
+  }
+
+  async function handleDeleteProject(targetStoryId: string) {
+    const targetStory = libraryStories.find(function (entry) {
+      return entry.id === targetStoryId;
+    });
+    const targetLabel = targetStory?.title || "dieses Projekt";
+
+    if (!window.confirm(`"${targetLabel}" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) {
+      return;
+    }
+
+    setLibraryError(null);
+    setLibraryActionId(`delete:${targetStoryId}`);
+
+    try {
+      await deleteStudioStoryRemote(targetStoryId);
+
+      const remainingStories = libraryStories.filter(function (entry) {
+        return entry.id !== targetStoryId;
+      });
+
+      setLibraryStories(remainingStories);
+
+      if (targetStoryId === draftStory.id) {
+        const nextStoryId = remainingStories[0]?.id ?? null;
+        router.push(nextStoryId ? `/studio?storyId=${nextStoryId}` : "/studio");
+      }
+    } catch (error) {
+      setLibraryError(error instanceof Error ? error.message : "Projekt konnte nicht gelöscht werden.");
+    } finally {
+      setLibraryActionId(null);
+    }
+  }
+
   function handleManualSave() {
     const normalizedStory = syncStoryBookArtifacts(draftStory);
     const payload = JSON.stringify(normalizedStory);
@@ -492,70 +652,98 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
   }
 
   return (
-    <div className="studio-shell">
+    <div className={"studio-shell" + (isSidebarCollapsed ? " studio-shell--collapsed" : "")}>
       <aside className="rail" aria-label="Hauptnavigation">
         <button
-          className="rail-button"
+          className="rail-button rail-button--toggle"
           type="button"
-          aria-label="Zurück"
-          title="Noch nicht aktiv"
-          disabled
+          aria-label="Sidebar umschalten"
+          title={isSidebarCollapsed ? "Sidebar öffnen" : "Sidebar einklappen"}
+          onClick={function () {
+            setIsSidebarCollapsed(function (current) {
+              return !current;
+            });
+          }}
         >
-          <span className="rail-icon rail-icon--back" />
+          <span className={"rail-icon" + (isSidebarCollapsed ? " rail-icon--forward" : " rail-icon--back")} />
         </button>
+
+        <div className="rail-spacer" />
+
         <button
-          className="rail-button"
+          className={"rail-button" + (sidebarMode === "library" ? " rail-button--active" : "")}
           type="button"
-          aria-label="Workspace"
-          title="Noch nicht aktiv"
-          disabled
+          aria-label="Bibliothek"
+          title="Projektbibliothek"
+          onClick={function () {
+            setSidebarMode("library");
+            setIsSidebarCollapsed(false);
+          }}
         >
           <span className="rail-icon rail-icon--panel" />
         </button>
-        <button className="rail-button rail-button--active" type="button" aria-label="Codex" disabled>
+
+        <button
+          className="rail-button rail-button--plus"
+          type="button"
+          aria-label="Neues Projekt"
+          title="Ein neues Buch oder eine Story starten"
+          onClick={function () {
+            void handleNewProject();
+          }}
+        >
+          <span className="rail-icon rail-icon--plus" />
+        </button>
+
+        <div className="rail-divider" />
+
+        <button
+          className={"rail-button" + (sidebarMode === "codex" ? " rail-button--active" : "")}
+          type="button"
+          aria-label="Codex"
+          title="Worldbuilding und Codex"
+          onClick={function () {
+            setSidebarMode("codex");
+            setIsSidebarCollapsed(false);
+          }}
+        >
           <span className="rail-icon rail-icon--book" />
         </button>
       </aside>
 
       <aside className="sidebar">
         <header className="sidebar-header">
-          <div className="sidebar-header__icons">
-            <button
-              className="mini-icon-button"
-              type="button"
-              aria-label="Zurück"
-              title="Noch nicht aktiv"
-              disabled
-            >
-              <span className="mini-icon mini-icon--back" />
-            </button>
-            <button
-              className="mini-icon-button"
-              type="button"
-              aria-label="Settings"
-              title="Noch nicht aktiv"
-              disabled
-            >
-              <span className="mini-icon mini-icon--gear" />
-            </button>
-          </div>
           <div className="sidebar-project">
-            <h1>{draftStory.title}</h1>
+            <span className="landing-kicker">
+              {sidebarMode === "library" ? "Projektbibliothek" : "Story Codex"}
+            </span>
+            <h1>{sidebarMode === "library" ? "Stories" : draftStory.title}</h1>
             <p>
-              {draftStory.authorName} · {formatStoryStatus(draftStory.status)}
+              {sidebarMode === "library"
+                ? `${libraryStories.length} Projekte in Supabase`
+                : `${draftStory.authorName || "Ohne Autor"} · ${formatStoryStatus(draftStory.status)}`}
             </p>
           </div>
         </header>
 
         <nav className="sidebar-tabs" aria-label="Bereiche">
-          <button className="sidebar-tab sidebar-tab--active" type="button" disabled>
+          <button
+            className={"sidebar-tab" + (sidebarMode === "library" ? " sidebar-tab--active" : "")}
+            type="button"
+            onClick={function () {
+              setSidebarMode("library");
+            }}
+          >
+            Bibliothek
+          </button>
+          <button
+            className={"sidebar-tab" + (sidebarMode === "codex" ? " sidebar-tab--active" : "")}
+            type="button"
+            onClick={function () {
+              setSidebarMode("codex");
+            }}
+          >
             Codex
-          </button>
-          <button className="sidebar-tab" type="button" title="Noch nicht aktiv" disabled>
-            Snippets
-          </button>
-          <button className="sidebar-tab" type="button" title="Noch nicht aktiv" disabled>
-            Chats
           </button>
         </nav>
 
@@ -564,132 +752,217 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
             <span className="search-icon" />
             <input
               type="search"
-              placeholder="Search all entries..."
-              value={codexSearch}
+              placeholder={sidebarMode === "library" ? "Projekte suchen..." : "Codex durchsuchen..."}
+              value={sidebarMode === "library" ? librarySearch : codexSearch}
               onChange={function (event) {
+                if (sidebarMode === "library") {
+                  setLibrarySearch(event.target.value);
+                  return;
+                }
+
                 setCodexSearch(event.target.value);
               }}
             />
           </label>
-          <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
-            + New Entry
-          </button>
-          <button
-            className="square-button"
-            type="button"
-            aria-label="Optionen"
-            title="Noch nicht aktiv"
-            disabled
-          >
-            <span className="mini-icon mini-icon--gear" />
-          </button>
+          {sidebarMode === "library" ? (
+            <button
+              className="flat-button"
+              type="button"
+              onClick={function () {
+                void handleNewProject();
+              }}
+              disabled={libraryActionId === "create"}
+            >
+              {libraryActionId === "create" ? "Lädt..." : "+ Projekt"}
+            </button>
+          ) : (
+            <button className="flat-button" type="button" onClick={handleCreateCodexEntry}>
+              + New Entry
+            </button>
+          )}
+          {sidebarMode === "library" ? (
+            <span className="square-button square-button--info" aria-hidden="true">
+              {libraryStories.length}
+            </span>
+          ) : (
+            <button
+              className="square-button"
+              type="button"
+              aria-label="Optionen"
+              title="Noch nicht aktiv"
+              disabled
+            >
+              <span className="mini-icon mini-icon--gear" />
+            </button>
+          )}
         </div>
 
-        {selectedCodexEntry ? (
-          <section className="codex-editor">
-            <div className="codex-editor__head">
-              <div>
-                <h2>Codex Editor</h2>
-                <p>{selectedCodexEntry.id}</p>
+        {sidebarMode === "library" ? (
+          <>
+            <section className="sidebar-library-summary">
+              <div className="sidebar-library-summary__card">
+                <strong>{draftStory.title || "Unbenanntes Projekt"}</strong>
+                <span>
+                  {formatStoryModeLabel(draftStory.mode)} · {formatStoryStatus(draftStory.status)}
+                </span>
               </div>
-              <button className="scene-block-card__remove" type="button" onClick={handleDeleteCodexEntry}>
-                Entfernen
-              </button>
+              {libraryError ? <p className="sidebar-inline-error">{libraryError}</p> : null}
+            </section>
+
+            <div className="sidebar-library-list">
+              {filteredLibraryStories.map(function (entry) {
+                const isActive = entry.id === draftStory.id;
+                const isDeleting = libraryActionId === `delete:${entry.id}`;
+                const isOpening = libraryActionId === entry.id;
+
+                return (
+                  <article
+                    key={entry.id}
+                    className={"project-row" + (isActive ? " project-row--active" : "")}
+                  >
+                    <button
+                      className="project-row__open"
+                      type="button"
+                      onClick={function () {
+                        void handleSelectLibraryStory(entry.id);
+                      }}
+                      disabled={isOpening || isDeleting}
+                    >
+                      <div className="project-row__head">
+                        <h3>{entry.title || "Unbenanntes Projekt"}</h3>
+                        {isActive ? <span className="project-row__active-pill">Aktiv</span> : null}
+                      </div>
+                      <p>{entry.authorName || "Ohne Autor"}</p>
+                      <div className="project-row__meta">
+                        <span>{formatStoryModeLabel(entry.mode)}</span>
+                        <span>{formatStoryStatus(entry.status)}</span>
+                        <span>{formatLibraryTimestamp(entry.updatedAt)}</span>
+                      </div>
+                    </button>
+                    <button
+                      className="project-row__delete"
+                      type="button"
+                      onClick={function () {
+                        void handleDeleteProject(entry.id);
+                      }}
+                      disabled={isDeleting || libraryActionId === "create"}
+                    >
+                      {isDeleting ? "..." : "Löschen"}
+                    </button>
+                  </article>
+                );
+              })}
+
+              {!filteredLibraryStories.length ? (
+                <article className="project-row project-row--empty">
+                  <h3>Keine Treffer</h3>
+                  <p>Die Suche findet aktuell kein Projekt.</p>
+                </article>
+              ) : null}
             </div>
+          </>
+        ) : selectedCodexEntry ? (
+          <>
+            <section className="codex-editor">
+              <div className="codex-editor__head">
+                <div>
+                  <h2>Codex Editor</h2>
+                  <p>{selectedCodexEntry.id}</p>
+                </div>
+                <button className="scene-block-card__remove" type="button" onClick={handleDeleteCodexEntry}>
+                  Entfernen
+                </button>
+              </div>
 
-            <label className="editor-field">
-              <span>Titel</span>
-              <input
-                className="editor-input"
-                type="text"
-                value={selectedCodexEntry.title}
-                onChange={function (event) {
-                  updateSelectedCodexEntry(function (entry) {
-                    return {
-                      ...entry,
-                      title: event.target.value
-                    };
-                  });
-                }}
-              />
-            </label>
+              <label className="editor-field">
+                <span>Titel</span>
+                <input
+                  className="editor-input"
+                  type="text"
+                  value={selectedCodexEntry.title}
+                  onChange={function (event) {
+                    updateSelectedCodexEntry(function (entry) {
+                      return {
+                        ...entry,
+                        title: event.target.value
+                      };
+                    });
+                  }}
+                />
+              </label>
 
-            <label className="editor-field">
-              <span>Typ</span>
-              <select
-                className="editor-input editor-select"
-                value={selectedCodexEntry.kind}
-                onChange={function (event) {
-                  updateSelectedCodexEntry(function (entry) {
-                    return {
-                      ...entry,
-                      kind: event.target.value as WorldBibleEntry["kind"]
-                    };
-                  });
-                }}
-              >
-                <option value="character">Character</option>
-                <option value="location">Location</option>
-                <option value="object">Object</option>
-                <option value="theme">Theme</option>
-              </select>
-            </label>
+              <label className="editor-field">
+                <span>Typ</span>
+                <select
+                  className="editor-input editor-select"
+                  value={selectedCodexEntry.kind}
+                  onChange={function (event) {
+                    updateSelectedCodexEntry(function (entry) {
+                      return {
+                        ...entry,
+                        kind: event.target.value as WorldBibleEntry["kind"]
+                      };
+                    });
+                  }}
+                >
+                  <option value="character">Character</option>
+                  <option value="location">Location</option>
+                  <option value="object">Object</option>
+                  <option value="theme">Theme</option>
+                </select>
+              </label>
 
-            <label className="editor-field">
-              <span>Summary</span>
-              <textarea
-                className="editor-textarea codex-editor__textarea"
-                value={selectedCodexEntry.summary}
-                onChange={function (event) {
-                  updateSelectedCodexEntry(function (entry) {
-                    return {
-                      ...entry,
-                      summary: event.target.value
-                    };
-                  });
-                }}
-              />
-            </label>
-          </section>
+              <label className="editor-field">
+                <span>Summary</span>
+                <textarea
+                  className="editor-textarea codex-editor__textarea"
+                  value={selectedCodexEntry.summary}
+                  onChange={function (event) {
+                    updateSelectedCodexEntry(function (entry) {
+                      return {
+                        ...entry,
+                        summary: event.target.value
+                      };
+                    });
+                  }}
+                />
+              </label>
+            </section>
+
+            <div className="sidebar-codex-list">
+              {filteredCodexEntries.map(function (entry) {
+                return (
+                  <button
+                    key={entry.id}
+                    className={
+                      "codex-row" + (entry.id === selectedCodexEntryId ? " codex-row--active" : "")
+                    }
+                    type="button"
+                    onClick={function () {
+                      setSelectedCodexEntryId(entry.id);
+                    }}
+                  >
+                    <h3>{entry.title}</h3>
+                    <p>{entry.summary}</p>
+                  </button>
+                );
+              })}
+
+              {!filteredCodexEntries.length ? (
+                <article className="codex-row codex-row--empty">
+                  <h3>Keine Treffer</h3>
+                  <p>Die aktuelle Suche findet keine Codex-Einträge.</p>
+                </article>
+              ) : null}
+            </div>
+          </>
         ) : (
           <section className="sidebar-empty">
-            <h2>YOUR CODEX IS EMPTY</h2>
-            <p>
-              The Codex stores information about the world your story takes place
-              in, its inhabitants and more.
-            </p>
-            <p className="sidebar-empty__hint">
-              Create a new entry by clicking the button above.
-            </p>
+            <h2>Dein Codex ist leer</h2>
+            <p>Hier sammelst du Figuren, Orte, Objekte und Themen deiner Story.</p>
+            <p className="sidebar-empty__hint">Lege oben den ersten Eintrag an.</p>
           </section>
         )}
-
-        <div className="sidebar-codex-list">
-          {filteredCodexEntries.map(function (entry) {
-            return (
-              <button
-                key={entry.id}
-                className={
-                  "codex-row" + (entry.id === selectedCodexEntryId ? " codex-row--active" : "")
-                }
-                type="button"
-                onClick={function () {
-                  setSelectedCodexEntryId(entry.id);
-                }}
-              >
-                <h3>{entry.title}</h3>
-                <p>{entry.summary}</p>
-              </button>
-            );
-          })}
-
-          {!filteredCodexEntries.length ? (
-            <article className="codex-row codex-row--empty">
-              <h3>Keine Treffer</h3>
-              <p>Die aktuelle Suche findet keine Codex-Einträge.</p>
-            </article>
-          ) : null}
-        </div>
 
         <footer className="sidebar-footer">
           <div className="sidebar-user">
@@ -716,6 +989,29 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
       <main className="main">
         <header className="topbar">
           <div className="topbar-left">
+            <div className="pill-group pill-group--mode-switch" aria-label="Engine Mode">
+              <button
+                className={
+                  "pill-button pill-button--mode" + (draftStory.mode === "book" ? " pill-button--active" : "")
+                }
+                onClick={toggleStoryMode}
+                type="button"
+                title="Lineare Book Engine (Amazon Fokus)"
+              >
+                Books
+              </button>
+              <button
+                className={
+                  "pill-button pill-button--mode" + (draftStory.mode === "branching" ? " pill-button--active" : "")
+                }
+                onClick={toggleStoryMode}
+                type="button"
+                title="Interaktive Ember Engine (Choice Fokus)"
+              >
+                Ember
+              </button>
+            </div>
+
             <div className="pill-group" aria-label="Mode">
               {availableAuthorModes.map(function (mode) {
                 return (
@@ -728,6 +1024,7 @@ export function StudioWorkspace({ story }: { story: StoryDocument }) {
                       setAuthorMode(mode);
                     }}
                     type="button"
+                    title={getAuthorModeTooltip(mode)}
                   >
                     {formatAuthorModeLabel(mode)}
                   </button>
@@ -1193,6 +1490,25 @@ function formatAuthorModeLabel(mode: AuthorMode) {
   }
 }
 
+function getAuthorModeTooltip(mode: AuthorMode) {
+  switch (mode) {
+    case "plan":
+      return "Strategische Planung: Prämisse, Stilregeln und Markt-Ausrichtung festlegen.";
+    case "book":
+      return "Schreib-Studio: Szenen entwerfen, Entwürfe generieren und den Text verfeinern.";
+    case "write":
+      return "Interaktiver Editor: Verzweigungen (Choices) und Story-Logik bearbeiten.";
+    case "playtest":
+      return "Vorschau: Die Story aus der Sicht eines Lesers testen.";
+    case "chat":
+      return "KI-Patching: Gezielte Änderungen am Text über KI-Vorschläge vornehmen.";
+    case "review":
+      return "Qualitätskontrolle: Kontinuität prüfen und Veröffentlichungs-Check durchführen.";
+    default:
+      return "";
+  }
+}
+
 function getAuthorModesForStory(mode: StoryMode): AuthorMode[] {
   return mode === "branching" ? BRANCHING_AUTHOR_MODES : BOOK_AUTHOR_MODES;
 }
@@ -1225,6 +1541,43 @@ async function persistStudioStoryRemote(draftStory: StoryDocument) {
     savedAt:
       typeof payload.savedAt === "string" ? payload.savedAt : new Date().toISOString()
   };
+}
+
+async function createStudioStoryRemote(workspaceId: string) {
+  const response = await fetch("/api/stories", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      workspaceId
+    })
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      typeof payload.error === "string" ? payload.error : "Story creation failed."
+    );
+  }
+
+  return payload as {
+    storyId: string;
+    summary: StoryLibraryEntry;
+  };
+}
+
+async function deleteStudioStoryRemote(storyId: string) {
+  const response = await fetch(`/api/stories/${storyId}`, {
+    method: "DELETE"
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      typeof payload.error === "string" ? payload.error : "Story delete failed."
+    );
+  }
 }
 
 function formatSaveState(lastSavedAt: string | null, saveState: SaveState) {
@@ -1266,6 +1619,29 @@ function formatStoryStatus(status: StoryStatus) {
   }
 
   return "Draft";
+}
+
+function formatStoryModeLabel(mode: StoryMode) {
+  return mode === "branching" ? "Ember" : "Book";
+}
+
+function formatLibraryTimestamp(value: string) {
+  if (!value) {
+    return "ohne Datum";
+  }
+
+  const timestamp = new Date(value);
+
+  if (Number.isNaN(timestamp.getTime())) {
+    return "ohne Datum";
+  }
+
+  return new Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(timestamp);
 }
 
 const DEFAULT_OUTLINE_TEMPLATE = [

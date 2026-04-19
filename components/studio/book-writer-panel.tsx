@@ -144,13 +144,41 @@ export function BookWriterPanel({
     return getDraftJobsForScene(story, sceneContext.scene.id);
   }, [sceneContext, story]);
 
+  const firstSceneId = useMemo(function () {
+    return story.acts[0]?.chapters[0]?.scenes[0]?.id ?? "";
+  }, [story.acts]);
+
   if (!sceneContext) {
     return (
       <section className="book-writer-shell">
         <div className="book-writer-empty">
           <span className="scene-editor__eyebrow">Book Writer</span>
           <h3>Keine Szene ausgewählt</h3>
-          <p>Wähle links eine Szene aus, um in der Mitte im Manuskriptmodus zu schreiben.</p>
+          <p>
+            {firstSceneId
+              ? "Öffne die erste Szene, um weiterzuschreiben."
+              : "Es gibt noch keine Szene. Lege zuerst Akt 1, Kapitel 1 und Szene 1 an."}
+          </p>
+          <div className="book-writer-empty__actions">
+            {firstSceneId ? (
+              <button
+                className="flat-button flat-button--active"
+                type="button"
+                onClick={function () {
+                  onSelectScene(firstSceneId);
+                }}
+              >
+                Erste Szene öffnen
+              </button>
+            ) : (
+              <button className="flat-button flat-button--active" type="button" onClick={onAddAct}>
+                Erste Szene anlegen
+              </button>
+            )}
+          </div>
+          <p className="book-writer-empty__hint">
+            Eine neue Codex-Karte ist nur Worldbuilding. Szenen legst du hier im Writer an.
+          </p>
         </div>
       </section>
     );
@@ -303,7 +331,7 @@ export function BookWriterPanel({
           </header>
 
           <section className="book-writer-document__inspector">
-            <label className="editor-field">
+            <label className="editor-field" title="Der interne Name der Szene (z.B. 'Jonas findet das Notizbuch').">
               <span>Szenentitel</span>
               <input
                 className="editor-input"
@@ -320,7 +348,7 @@ export function BookWriterPanel({
               />
             </label>
 
-            <label className="editor-field">
+            <label className="editor-field" title="Ein kurzes Schlagwort zur Einordnung (z.B. 'POV: LEON', 'Action', 'Twist').">
               <span>Label</span>
               <input
                 className="editor-input"
@@ -337,7 +365,7 @@ export function BookWriterPanel({
               />
             </label>
 
-            <label className="editor-field book-writer-document__summary">
+            <label className="editor-field book-writer-document__summary" title="Die wichtigste Grundlage für die KI. Beschreibe hier kurz, was in der Szene passiert (Beats, Konflikt, Ergebnis).">
               <span>Summary</span>
               <textarea
                 className="editor-textarea editor-textarea--summary"
@@ -478,6 +506,7 @@ export function BookWriterPanel({
                     (jobProvider === option.id ? " book-writer-provider--active" : "")
                   }
                   type="button"
+                  title={getProviderTooltip(option.id)}
                   onClick={function () {
                     setJobProvider(option.id);
                   }}
@@ -501,7 +530,7 @@ export function BookWriterPanel({
           />
 
           <div className="editor-grid">
-            <label className="editor-field">
+            <label className="editor-field" title="Minimale Ziel-Wortzahl für diese Szene.">
               <span>Ziel min</span>
               <input
                 className="editor-input"
@@ -528,7 +557,7 @@ export function BookWriterPanel({
               />
             </label>
 
-            <label className="editor-field">
+            <label className="editor-field" title="Maximale Ziel-Wortzahl für diese Szene.">
               <span>Ziel max</span>
               <input
                 className="editor-input"
@@ -556,7 +585,7 @@ export function BookWriterPanel({
             </label>
           </div>
 
-          <label className="editor-field">
+          <label className="editor-field" title="Deine direkten Befehle an die KI für diesen spezifischen Durchlauf (z.B. 'Mehr Nebel', 'Klaus soll nervöser wirken').">
             <span>Regieanweisung</span>
             <textarea
               className="editor-textarea book-writer-director-note"
@@ -883,6 +912,23 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
   }
 
   return "Auto";
+}
+
+function getProviderTooltip(provider: BookJobProviderOption) {
+  switch (provider) {
+    case "auto":
+      return "Wählt automatisch das beste verfügbare Modell für die aktuelle Aufgabe.";
+    case "openai":
+      return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
+    case "anthropic":
+      return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
+    case "gemini":
+      return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
+    case "local":
+      return "Führt den Job lokal aus (nur für Tests oder bei fehlenden API-Keys).";
+    default:
+      return "";
+  }
 }
 
 function formatExecutionModeLabel(mode: BookDraftJob["mode"]) {

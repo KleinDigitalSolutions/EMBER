@@ -85,6 +85,17 @@ export type StoryDocument = {
   acts: StoryAct[];
 };
 
+export type StoryLibraryEntry = {
+  id: string;
+  workspaceId: string;
+  title: string;
+  authorName: string;
+  status: StoryStatus;
+  mode: StoryMode;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type BookBlueprint = {
   priority: "primary" | "secondary";
   activePhase:
@@ -397,14 +408,14 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
     targetFormat: "novel",
     targetLengthWords: 70000,
     masterBrief: {
-      premise: `${title} braucht noch eine klare Marktprämisse.`,
+      premise: "",
       readerPromise: "",
       endingPromise: "",
       thematicCore: "",
       storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
     },
     marketBrief: {
-      amazonGoal: "Schnell validierbarer Genretitel mit sauberem Serienpotenzial.",
+      amazonGoal: "",
       categoryLane: "",
       hook: "",
       seriesPotential: "",
@@ -719,6 +730,31 @@ export function appendSceneToChapter(
       acts
     },
     sceneId: insertedSceneId
+  };
+}
+
+export function createEmptyStoryDocument(
+  storyId: string,
+  workspaceId: string,
+  title = "New Novel"
+): StoryDocument {
+
+  return {
+    id: storyId,
+    workspaceId,
+    title,
+    authorName: "",
+    status: "draft",
+    mode: "book",
+    meta: {
+      genre: "",
+      language: "de",
+      audience: "Adult"
+    },
+    book: createDefaultBookBlueprint(title),
+    worldBible: [],
+    variables: [],
+    acts: []
   };
 }
 
