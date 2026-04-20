@@ -41,6 +41,12 @@ const continuityAuditSchema = z.object({
   styleDriftNotes: z.array(z.string()).max(6)
 });
 
+const ANTHROPIC_DRAFT_MIN_OUTPUT_TOKENS = 5000;
+const ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS = 12000;
+const ANTHROPIC_DRAFT_RETRY_STEP_TOKENS = 2000;
+const ANTHROPIC_DRAFT_RETRY_LIMIT = 2;
+const ANTHROPIC_CONTINUITY_MAX_TOKENS = 1200;
+
 type DraftJobPayload = z.infer<typeof draftJobSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 type DraftGenerationOptions = {
@@ -238,29 +244,17 @@ async function generateWithAnthropic(
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
-
-  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
-  const message = await client.messages.parse({
-    model: modelName,
-    max_tokens: 2200,
-    system: systemPromptBlocks,
-    messages: [
-      {
-        role: "user",
-        content: buildDynamicUserPrompt(packet, options)
-      }
-    ],
-    output_config: {
-      format: zodOutputFormat(draftJobSchema)
-    }
-  });
-
-  if (!message.parsed_output) {
-    throw new Error("Anthropic returned no parsed output.");
-  }
+  const draftResult = await requestAnthropicDraftPayload(client, modelName, packet, options);
+  const repairedDraftResult = await maybeRepairAnthropicPayload(
+    client,
+    modelName,
+    packet,
+    options,
+    draftResult.payload
+  );
 
   const continuityAudit = await runAnthropicContinuityAudit(client, packet, options, {
-    payload: message.parsed_output
+    payload: repairedDraftResult.payload
   });
 
   return {
@@ -274,8 +268,9 @@ async function generateWithAnthropic(
           )
         : modelName,
     payload: continuityAudit
-      ? mergeContinuityAudit(message.parsed_output, continuityAudit)
-      : message.parsed_output
+      ? mergeContinuityAudit(repairedDraftResult.payload, continuityAudit)
+      : repairedDraftResult.payload,
+    warning: combineWarnings(draftResult.warning, repairedDraftResult.warning)
   };
 }
 
@@ -420,11 +415,14 @@ function buildDynamicUserPrompt(
     `Target rewrite length: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Hard requirements:",
     "- All fields must be written in German, including rewriteNotes, canon facts, state updates, continuity risks, and style notes.",
+    "- Return exactly one JSON object and nothing else. No markdown fences, no preface, no trailing commentary.",
     "- rewriteText must land inside the target range and must not stop early.",
+    "- draftText is a compact first pass and should stay materially shorter than rewriteText, roughly 55-70% of the rewrite length.",
     "- Write for a commercially sharp German psychothriller audience: immediate unease, clean readability, scene pressure, social friction, concrete observation, and a strong closing hook.",
     "- No imitation or mention of real authors. Use market traits, not author mimicry.",
     "- Avoid generic TV-crime filler, soft exposition, decorative literary padding, and melodramatic over-explaining.",
     "- rewriteNotes must describe real visible revisions in the rewriteText, not invented process commentary.",
+    "- Keep outline beats, rewriteNotes, and extractedState entries compact and concrete; one short sentence per item is enough.",
     "- extractedState must stay conservative: only explicit facts from packet or generated scene text become facts. Uncertainty belongs in continuityRisks.",
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
@@ -460,8 +458,63 @@ function buildDynamicUserPrompt(
     "- draftText as a scene draft",
     "- rewriteText as the cleaner revised version",
     "- rewriteNotes",
-    "- extractedState with canon facts, character updates, open threads, foreshadowing, continuity risks, and style drift notes"
+    "- extractedState with canon facts, character updates, open threads, foreshadowing, continuity risks, and style drift notes",
+    "Use exactly this JSON shape and key casing:",
+    buildDraftJobJsonShapePrompt()
   ].join("\n");
+}
+
+async function requestAnthropicDraftPayload(
+  client: Anthropic,
+  modelName: string,
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions
+) {
+  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
+  const baseMaxTokens = resolveAnthropicDraftMaxTokens(options);
+  const attemptWarnings: string[] = [];
+  let lastFailure = "Anthropic returned no structured draft output.";
+
+  for (let attempt = 0; attempt < ANTHROPIC_DRAFT_RETRY_LIMIT; attempt += 1) {
+    const maxTokens = Math.min(
+      ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS,
+      baseMaxTokens + attempt * ANTHROPIC_DRAFT_RETRY_STEP_TOKENS
+    );
+    const message = await client.messages.create({
+      model: modelName,
+      max_tokens: maxTokens,
+      system: systemPromptBlocks,
+      messages: [
+        {
+          role: "user",
+          content: buildAnthropicDraftUserPrompt(packet, options, attempt > 0)
+        }
+      ]
+    });
+    const parsed = parseAnthropicDraftResponse(message);
+
+    if (parsed.payload) {
+      if (attempt > 0) {
+        attemptWarnings.push(
+          `Anthropic Draft wurde nach unvollstaendigem JSON mit hoeherem Output-Budget erfolgreich wiederholt (${maxTokens} max_tokens).`
+        );
+      }
+
+      return {
+        payload: parsed.payload,
+        warning: combineWarnings(attemptWarnings, parsed.warning)
+      };
+    }
+
+    lastFailure = `Anthropic draft parse failed (stop_reason=${message.stop_reason || "unknown"}, max_tokens=${maxTokens}). ${parsed.error}`;
+
+    if (attempt < ANTHROPIC_DRAFT_RETRY_LIMIT - 1) {
+      attemptWarnings.push(lastFailure);
+      continue;
+    }
+  }
+
+  throw new Error(lastFailure);
 }
 
 function formatPromptList(label: string, items: string[]) {
@@ -522,6 +575,51 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
   ];
 }
 
+function buildAnthropicDraftUserPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  isRetry: boolean
+) {
+  const basePrompt = buildDynamicUserPrompt(packet, options);
+
+  if (!isRetry) {
+    return basePrompt;
+  }
+
+  return [
+    basePrompt,
+    "Retry mode:",
+    "- The previous response was incomplete or invalid JSON.",
+    "- Start with { and end with }.",
+    "- Use exactly these keys: outline, draftText, rewriteText, rewriteNotes, extractedState, newCanonFacts, characterStateUpdates, openThreadsCreated, openThreadsResolved, foreshadowingAdded, continuityRisks, styleDriftNotes.",
+    "- Keep outline to 3-4 beats if needed.",
+    "- Keep rewriteNotes and extractedState entries very short.",
+    "- Spend the token budget on a complete rewriteText, not on verbose metadata."
+  ].join("\n");
+}
+
+function buildDraftJobJsonShapePrompt() {
+  return JSON.stringify(
+    {
+      outline: ["string"],
+      draftText: "string",
+      rewriteText: "string",
+      rewriteNotes: ["string"],
+      extractedState: {
+        newCanonFacts: ["string"],
+        characterStateUpdates: ["string"],
+        openThreadsCreated: ["string"],
+        openThreadsResolved: ["string"],
+        foreshadowingAdded: ["string"],
+        continuityRisks: ["string"],
+        styleDriftNotes: ["string"]
+      }
+    },
+    null,
+    2
+  );
+}
+
 async function maybeRepairGeminiPayload(
   client: GoogleGenAI,
   modelName: string,
@@ -577,6 +675,70 @@ async function maybeRepairGeminiPayload(
   }
 }
 
+async function maybeRepairAnthropicPayload(
+  client: Anthropic,
+  modelName: string,
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  payload: DraftJobPayload
+) {
+  const issues = assessDraftPayloadQuality(payload, options);
+
+  if (!issues.length) {
+    return {
+      payload
+    };
+  }
+
+  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
+
+  try {
+    const message = await client.messages.create({
+      model: modelName,
+      max_tokens: Math.min(
+        ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS,
+        resolveAnthropicDraftMaxTokens(options) + 1200
+      ),
+      system: systemPromptBlocks,
+      messages: [
+        {
+          role: "user",
+          content: [
+            buildRepairUserPrompt(packet, options, payload, issues),
+            "Return exactly one JSON object with this shape:",
+            buildDraftJobJsonShapePrompt()
+          ].join("\n")
+        }
+      ]
+    });
+    const parsed = parseAnthropicDraftResponse(message);
+
+    if (!parsed.payload) {
+      return {
+        payload,
+        warning: `Anthropic repair failed. Issues remained: ${formatQualityIssues(issues)} | ${parsed.error}`
+      };
+    }
+
+    const originalPenalty = computeDraftQualityPenalty(payload, options);
+    const repairedPenalty = computeDraftQualityPenalty(parsed.payload, options);
+    const finalPayload = repairedPenalty <= originalPenalty ? parsed.payload : payload;
+    const finalIssues = assessDraftPayloadQuality(finalPayload, options);
+
+    return {
+      payload: finalPayload,
+      warning: finalIssues.length
+        ? `Anthropic output repaired but not fully clean: ${formatQualityIssues(finalIssues)}`
+        : `Anthropic output repaired: ${formatQualityIssues(issues)}`
+    };
+  } catch (error) {
+    return {
+      payload,
+      warning: `Anthropic repair failed. Issues remained: ${formatQualityIssues(issues)}${error instanceof Error ? ` | ${error.message}` : ""}`
+    };
+  }
+}
+
 async function runAnthropicContinuityAudit(
   client: Anthropic,
   packet: SceneContextPacket,
@@ -595,7 +757,7 @@ async function runAnthropicContinuityAudit(
   try {
     const message = await client.messages.parse({
       model: continuityModelName,
-      max_tokens: 800,
+      max_tokens: ANTHROPIC_CONTINUITY_MAX_TOKENS,
       system: buildAnthropicSystemPromptBlocks(packet),
       messages: [
         {
@@ -612,6 +774,122 @@ async function runAnthropicContinuityAudit(
   } catch {
     return null;
   }
+}
+
+function resolveAnthropicDraftMaxTokens(options: DraftGenerationOptions) {
+  const rewriteBudget = Math.round(options.targetSceneWordsMax * 3.2);
+  const draftBudget = Math.round(options.targetSceneWordsMax * 2.1);
+  const metadataBudget = 900;
+
+  return clampNumber(
+    rewriteBudget + draftBudget + metadataBudget,
+    ANTHROPIC_DRAFT_MIN_OUTPUT_TOKENS,
+    ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS
+  );
+}
+
+function parseAnthropicDraftResponse(message: Anthropic.Message) {
+  const rawText = collectAnthropicText(message).trim();
+
+  if (!rawText) {
+    return {
+      payload: null,
+      error: "Anthropic returned no text content."
+    };
+  }
+
+  const candidates = [rawText, extractFirstJsonObject(rawText)].filter(function (
+    value
+  ): value is string {
+    return Boolean(value && value.trim());
+  });
+
+  for (const candidate of candidates) {
+    try {
+      const parsedJson = normalizeDraftJobJsonCandidate(JSON.parse(candidate));
+      const parsedPayload = draftJobSchema.safeParse(parsedJson);
+
+      if (parsedPayload.success) {
+        return {
+          payload: parsedPayload.data,
+          warning:
+            candidate !== rawText
+              ? "Anthropic JSON wurde aus einer umgebenden Textantwort extrahiert."
+              : undefined
+        };
+      }
+
+      return {
+        payload: null,
+        error: parsedPayload.error.issues
+          .map(function (issue) {
+            return `${issue.path.join(".") || "root"}: ${issue.message}`;
+          })
+          .join("; ")
+      };
+    } catch (error) {
+      if (candidate === candidates[candidates.length - 1]) {
+        return {
+          payload: null,
+          error: error instanceof Error ? error.message : "Invalid JSON."
+        };
+      }
+    }
+  }
+
+  return {
+    payload: null,
+    error: "Anthropic returned no parseable JSON object."
+  };
+}
+
+function normalizeDraftJobJsonCandidate(value: unknown) {
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  const candidate = value as {
+    outline?: unknown;
+    draftText?: unknown;
+    rewriteText?: unknown;
+    rewriteNotes?: unknown;
+    extractedState?: Record<string, unknown>;
+  };
+
+  return {
+    ...candidate,
+    outline: Array.isArray(candidate.outline) ? candidate.outline.slice(0, 6) : candidate.outline,
+    rewriteNotes: Array.isArray(candidate.rewriteNotes)
+      ? candidate.rewriteNotes.slice(0, 6)
+      : candidate.rewriteNotes,
+    extractedState:
+      candidate.extractedState && typeof candidate.extractedState === "object"
+        ? {
+            ...candidate.extractedState,
+            newCanonFacts: Array.isArray(candidate.extractedState.newCanonFacts)
+              ? candidate.extractedState.newCanonFacts.slice(0, 6)
+              : candidate.extractedState.newCanonFacts,
+            characterStateUpdates: Array.isArray(candidate.extractedState.characterStateUpdates)
+              ? candidate.extractedState.characterStateUpdates.slice(0, 6)
+              : candidate.extractedState.characterStateUpdates,
+            openThreadsCreated: Array.isArray(candidate.extractedState.openThreadsCreated)
+              ? candidate.extractedState.openThreadsCreated.slice(0, 6)
+              : candidate.extractedState.openThreadsCreated,
+            openThreadsResolved: Array.isArray(candidate.extractedState.openThreadsResolved)
+              ? candidate.extractedState.openThreadsResolved.slice(0, 6)
+              : candidate.extractedState.openThreadsResolved,
+            foreshadowingAdded: Array.isArray(candidate.extractedState.foreshadowingAdded)
+              ? candidate.extractedState.foreshadowingAdded.slice(0, 6)
+              : candidate.extractedState.foreshadowingAdded,
+            continuityRisks: Array.isArray(candidate.extractedState.continuityRisks)
+              ? candidate.extractedState.continuityRisks.slice(0, 6)
+              : candidate.extractedState.continuityRisks,
+            styleDriftNotes: Array.isArray(candidate.extractedState.styleDriftNotes)
+              ? candidate.extractedState.styleDriftNotes.slice(0, 6)
+              : candidate.extractedState.styleDriftNotes
+          }
+        : candidate.extractedState
+  };
 }
 
 function buildContinuityAuditPrompt(
@@ -1032,6 +1310,75 @@ function combineWarnings(...values: Array<string | string[] | undefined>) {
 function countWords(value: string) {
   const words = value.trim().match(/\S+/g);
   return words ? words.length : 0;
+}
+
+function clampNumber(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function collectAnthropicText(message: Anthropic.Message) {
+  return message.content
+    .map(function (block) {
+      return block.type === "text" ? block.text : "";
+    })
+    .join("\n");
+}
+
+function extractFirstJsonObject(value: string) {
+  let depth = 0;
+  let startIndex = -1;
+  let inString = false;
+  let isEscaped = false;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index];
+
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+        continue;
+      }
+
+      if (char === "\\") {
+        isEscaped = true;
+        continue;
+      }
+
+      if (char === "\"") {
+        inString = false;
+      }
+
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{") {
+      if (depth === 0) {
+        startIndex = index;
+      }
+
+      depth += 1;
+      continue;
+    }
+
+    if (char === "}") {
+      if (depth === 0) {
+        continue;
+      }
+
+      depth -= 1;
+
+      if (depth === 0 && startIndex !== -1) {
+        return value.slice(startIndex, index + 1);
+      }
+    }
+  }
+
+  return null;
 }
 
 function dedupeStrings(values: string[]) {
