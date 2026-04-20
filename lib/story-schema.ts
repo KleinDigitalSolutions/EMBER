@@ -255,6 +255,20 @@ export type BookCharacterState = {
   agenda: string;
   updatedFromSceneId: string;
   updatedAt: string;
+  snapshots: BookCharacterStateSnapshot[];
+};
+
+export type BookCharacterStateSnapshot = {
+  id: string;
+  scope: "baseline" | "scene" | "chapter";
+  sortOrder: number;
+  sourceSceneId: string | null;
+  sourceChapterId: string | null;
+  sourceLabel: string;
+  currentState: string;
+  innerShift: string;
+  agenda: string;
+  capturedAt: string;
 };
 
 export type BookOpenThread = {

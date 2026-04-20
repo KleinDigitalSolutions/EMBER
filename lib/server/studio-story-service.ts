@@ -80,6 +80,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
     writerRulesResult,
     canonFactsResult,
     characterStatesResult,
+    characterStateSnapshotsResult,
     openThreadsResult,
     sceneCardsResult,
     contextPacksResult,
@@ -102,6 +103,11 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
       .select("*")
       .eq("story_id", storyId)
       .order("created_at"),
+    supabaseAdmin
+      .from("book_character_state_snapshots")
+      .select("*")
+      .eq("story_id", storyId)
+      .order("sort_order"),
     supabaseAdmin.from("book_open_threads").select("*").eq("story_id", storyId).order("created_at"),
     supabaseAdmin.from("book_scene_cards").select("*").eq("story_id", storyId).order("created_at"),
     supabaseAdmin.from("book_context_packs").select("*").eq("story_id", storyId).order("created_at"),
@@ -123,6 +129,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
   assertNoError("book_writer_rules", writerRulesResult.error)
   assertNoError("book_canon_facts", canonFactsResult.error)
   assertNoError("book_character_states", characterStatesResult.error)
+  assertNoError("book_character_state_snapshots", characterStateSnapshotsResult.error)
   assertNoError("book_open_threads", openThreadsResult.error)
   assertNoError("book_scene_cards", sceneCardsResult.error)
   assertNoError("book_context_packs", contextPacksResult.error)
@@ -209,6 +216,10 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
     "context_pack_id"
   )
   const contextPackThreadsByPackId = groupRows(contextPackThreadRows, "context_pack_id")
+  const characterStateSnapshotsByStateId = groupRows(
+    characterStateSnapshotsResult.data ?? [],
+    "character_state_id"
+  )
 
   const acts = (actsResult.data ?? []).map(function (actRow) {
     const chapters = (chaptersByActId.get(actRow.id as string) ?? []).map(function (chapterRow) {
@@ -325,7 +336,27 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               innerShift: (row.inner_shift as string) ?? "",
               agenda: (row.agenda as string) ?? "",
               updatedFromSceneId: (row.updated_from_scene_id as string) ?? "",
-              updatedAt: (row.state_updated_at as string) ?? row.updated_at ?? memoryLastSyncedAt ?? ""
+              updatedAt: (row.state_updated_at as string) ?? row.updated_at ?? memoryLastSyncedAt ?? "",
+              snapshots: (characterStateSnapshotsByStateId.get(row.id as string) ?? []).map(function (
+                snapshotRow
+              ) {
+                return {
+                  id: snapshotRow.id as string,
+                  scope: normalizeCharacterStateSnapshotScope(snapshotRow.scope),
+                  sortOrder: toNumber(snapshotRow.sort_order, 1),
+                  sourceSceneId: (snapshotRow.source_scene_id as string) ?? null,
+                  sourceChapterId: (snapshotRow.source_chapter_id as string) ?? null,
+                  sourceLabel: (snapshotRow.source_label as string) ?? "",
+                  currentState: (snapshotRow.current_state as string) ?? "",
+                  innerShift: (snapshotRow.inner_shift as string) ?? "",
+                  agenda: (snapshotRow.agenda as string) ?? "",
+                  capturedAt:
+                    (snapshotRow.captured_at as string) ??
+                    (snapshotRow.updated_at as string) ??
+                    memoryLastSyncedAt ??
+                    ""
+                }
+              })
             }
           }),
           openThreads: (openThreadsResult.data ?? []).map(function (row) {
@@ -691,6 +722,26 @@ export async function saveStudioStory(story: StoryDocument) {
     }
   })
 
+  const bookCharacterStateSnapshots = nextStory.book.memory.characterLedger.flatMap(function (state) {
+    return state.snapshots.map(function (snapshot) {
+      return {
+        id: snapshot.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        character_state_id: state.id,
+        scope: snapshot.scope,
+        sort_order: snapshot.sortOrder,
+        source_scene_id: snapshot.sourceSceneId,
+        source_chapter_id: snapshot.sourceChapterId,
+        source_label: snapshot.sourceLabel,
+        current_state: snapshot.currentState,
+        inner_shift: snapshot.innerShift,
+        agenda: snapshot.agenda,
+        captured_at: snapshot.capturedAt
+      }
+    })
+  })
+
   const bookOpenThreads = nextStory.book.memory.openThreads.map(function (thread) {
     return {
       id: thread.id,
@@ -798,6 +849,7 @@ export async function saveStudioStory(story: StoryDocument) {
   await insertRows("book_canon_facts", bookCanonFacts)
   await insertRows("book_canon_fact_scene_refs", bookCanonFactSceneRefs)
   await insertRows("book_character_states", bookCharacterStates)
+  await insertRows("book_character_state_snapshots", bookCharacterStateSnapshots)
   await insertRows("book_open_threads", bookOpenThreads)
   await insertRows("book_scene_cards", bookSceneCards)
   await insertRows("book_context_packs", bookContextPacks)
@@ -1110,6 +1162,7 @@ async function deleteStoryGraph(storyId: string) {
   await deleteRows("book_context_packs", storyId)
   await deleteRows("book_scene_cards", storyId)
   await deleteRows("book_open_threads", storyId)
+  await deleteRows("book_character_state_snapshots", storyId)
   await deleteRows("book_character_states", storyId)
   await deleteRows("book_canon_facts", storyId)
   await deleteRows("book_writer_rules", storyId)
@@ -1449,6 +1502,16 @@ function normalizeThreadStatus(value: unknown): StoryDocument["book"]["memory"][
   }
 
   return "watch"
+}
+
+function normalizeCharacterStateSnapshotScope(
+  value: unknown
+): StoryDocument["book"]["memory"]["characterLedger"][number]["snapshots"][number]["scope"] {
+  if (value === "baseline" || value === "scene" || value === "chapter") {
+    return value
+  }
+
+  return "scene"
 }
 
 function normalizeProvider(value: unknown): BookDraftJob["provider"] {

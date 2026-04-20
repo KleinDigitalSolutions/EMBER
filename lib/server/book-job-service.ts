@@ -445,7 +445,7 @@ function buildDynamicUserPrompt(
       .join(" || ")}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
       .map(function (entry) {
-        return `${entry.characterName}: ${entry.currentState}`;
+        return formatCharacterStatePrompt(entry);
       })
       .join(" || ")}`,
     `Active threads: ${packet.dynamicContext.activeThreads
@@ -641,7 +641,7 @@ function buildContinuityAuditPrompt(
       .join(" || ")}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
       .map(function (entry) {
-        return `${entry.characterName}: ${entry.currentState}`;
+        return formatCharacterStatePrompt(entry);
       })
       .join(" || ")}`,
     `Active threads: ${packet.dynamicContext.activeThreads
@@ -674,6 +674,23 @@ function mergeContinuityAudit(payload: DraftJobPayload, audit: ContinuityAuditPa
       ).slice(0, 6)
     }
   };
+}
+
+function formatCharacterStatePrompt(
+  entry: SceneContextPacket["dynamicContext"]["relevantCharacterStates"][number]
+) {
+  const recentSnapshots = entry.snapshots.slice(-3).map(function (snapshot) {
+    return `${snapshot.scope}:${snapshot.sourceLabel || snapshot.currentState} => ${snapshot.currentState}`;
+  });
+
+  return [
+    `${entry.characterName}: ${entry.currentState}`,
+    entry.innerShift ? `inner_shift=${entry.innerShift}` : "",
+    entry.agenda ? `agenda=${entry.agenda}` : "",
+    recentSnapshots.length ? `snapshot_trail=${recentSnapshots.join(" | ")}` : ""
+  ]
+    .filter(Boolean)
+    .join(" || ");
 }
 
 function buildRepairUserPrompt(

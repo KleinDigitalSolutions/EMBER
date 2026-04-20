@@ -17,6 +17,8 @@ import { createUuid, isUuid } from "@/lib/id";
 
 export type CanonLedgerEntry = StoryDocument["book"]["memory"]["canonLedger"][number];
 export type CharacterStateEntry = StoryDocument["book"]["memory"]["characterLedger"][number];
+export type CharacterStateSnapshotEntry =
+  StoryDocument["book"]["memory"]["characterLedger"][number]["snapshots"][number];
 export type TimelineBeat = StoryDocument["book"]["memory"]["sceneCards"][number];
 export type OpenThread = StoryDocument["book"]["memory"]["openThreads"][number];
 type ContextPack = StoryDocument["book"]["memory"]["contextPacks"][number];
@@ -112,7 +114,7 @@ export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
 
 export function buildCharacterLedger(story: StoryDocument): CharacterStateEntry[] {
   if (story.book.memory.characterLedger.length) {
-    return story.book.memory.characterLedger;
+    return story.book.memory.characterLedger.map(ensureCharacterStateSnapshots);
   }
 
   return deriveCharacterLedger(
@@ -121,6 +123,30 @@ export function buildCharacterLedger(story: StoryDocument): CharacterStateEntry[
     deriveOpenThreads(story),
     story.book.memory.lastSyncedAt || new Date().toISOString()
   );
+}
+
+function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterStateEntry {
+  if (entry.snapshots.length) {
+    return entry;
+  }
+
+  return {
+    ...entry,
+    snapshots: [
+      {
+        id: createLocalId("character_snapshot"),
+        scope: "baseline",
+        sortOrder: 0,
+        sourceSceneId: entry.updatedFromSceneId || null,
+        sourceChapterId: null,
+        sourceLabel: entry.updatedFromSceneId ? "Legacy Snapshot" : "Baseline",
+        currentState: entry.currentState || "Kein expliziter Status gespeichert.",
+        innerShift: entry.innerShift || "Noch keine extrahierte innere Verschiebung.",
+        agenda: entry.agenda || "Noch keine explizite Agenda abgeleitet.",
+        capturedAt: entry.updatedAt
+      }
+    ]
+  };
 }
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
@@ -496,40 +522,214 @@ function deriveCharacterLedger(
   openThreads: OpenThread[],
   syncedAt: string
 ): CharacterStateEntry[] {
+  const orderedScenes = story.acts.flatMap(function (act, actIndex) {
+    return act.chapters.flatMap(function (chapter, chapterIndex) {
+      return chapter.scenes.map(function (scene, sceneIndex) {
+        return {
+          actTitle: act.title,
+          chapterId: chapter.id,
+          chapterTitle: chapter.title,
+          sceneId: scene.id,
+          sceneTitle: scene.title,
+          sceneOrder: actIndex * 10000 + chapterIndex * 100 + sceneIndex
+        };
+      });
+    });
+  });
+  const sceneOrderMap = new Map<
+    string,
+    {
+      actTitle: string;
+      chapterId: string;
+      chapterTitle: string;
+      sceneId: string;
+      sceneTitle: string;
+      sceneOrder: number;
+    }
+  >(
+    orderedScenes.map(function (entry) {
+      return [entry.sceneId, entry];
+    })
+  );
+
   return canonLedger
     .filter(function (entry) {
       return entry.kind === "character";
     })
     .map(function (entry) {
-      const latestJob = story.book.draftEngine.jobs
-        .filter(function (job) {
-          return job.extractedState.characterStateUpdates.some(function (update) {
-            return normalizeText(update).includes(normalizeText(entry.title));
-          });
-        })
-        .sort(function (left, right) {
-          return right.updatedAt.localeCompare(left.updatedAt);
-        })[0];
-      const latestUpdate = latestJob?.extractedState.characterStateUpdates.find(function (update) {
-        return normalizeText(update).includes(normalizeText(entry.title));
+      const snapshots = buildCharacterStateSnapshots({
+        story,
+        characterEntry: entry,
+        openThreads,
+        syncedAt,
+        sceneOrderMap
       });
+      const latestSnapshot = snapshots[snapshots.length - 1] ?? null;
+      const latestSceneSnapshot = findLatestCharacterSnapshotByScope(snapshots, "scene");
+      const baselineState = entry.summary || "Kein expliziter Status gespeichert.";
+      const defaultAgenda =
+        openThreads.find(function (thread) {
+          return normalizeText(thread.label).includes(normalizeText(entry.title));
+        })?.label || "Noch keine explizite Agenda abgeleitet.";
 
       return {
         id: isUuid(entry.entryId) ? entry.entryId : createLocalId("character_state"),
         characterEntryId: entry.entryId,
         characterName: entry.title,
-        currentState: latestUpdate || entry.summary || "Kein expliziter Status gespeichert.",
-        innerShift: latestUpdate
-          ? `Letzte beobachtete Verschiebung: ${latestUpdate}`
-          : "Noch keine extrahierte innere Verschiebung.",
-        agenda:
-          openThreads.find(function (thread) {
-            return normalizeText(thread.label).includes(normalizeText(entry.title));
-          })?.label || "Noch keine explizite Agenda abgeleitet.",
-        updatedFromSceneId: latestJob?.sceneId || entry.sceneIds[0] || "",
-        updatedAt: latestJob?.updatedAt || syncedAt
+        currentState: latestSnapshot?.currentState || baselineState,
+        innerShift: latestSnapshot?.innerShift || "Noch keine extrahierte innere Verschiebung.",
+        agenda: latestSnapshot?.agenda || defaultAgenda,
+        updatedFromSceneId: latestSceneSnapshot?.sourceSceneId || entry.sceneIds[0] || "",
+        updatedAt: latestSnapshot?.capturedAt || syncedAt,
+        snapshots
       };
     });
+}
+
+function buildCharacterStateSnapshots(params: {
+  story: StoryDocument;
+  characterEntry: CanonLedgerEntry;
+  openThreads: OpenThread[];
+  syncedAt: string;
+  sceneOrderMap: Map<
+    string,
+    {
+      actTitle: string;
+      chapterId: string;
+      chapterTitle: string;
+      sceneId: string;
+      sceneTitle: string;
+      sceneOrder: number;
+    }
+  >;
+}): CharacterStateSnapshotEntry[] {
+  const defaultAgenda =
+    params.openThreads.find(function (thread) {
+      return normalizeText(thread.label).includes(normalizeText(params.characterEntry.title));
+    })?.label || "Noch keine explizite Agenda abgeleitet.";
+  const baselineState = params.characterEntry.summary || "Kein expliziter Status gespeichert.";
+  const narrativeSnapshots = params.story.book.draftEngine.jobs
+    .flatMap(function (job) {
+      const sceneMeta = params.sceneOrderMap.get(job.sceneId);
+
+      if (!sceneMeta) {
+        return [];
+      }
+
+      const updates = job.extractedState.characterStateUpdates.filter(function (update) {
+        return normalizeText(update).includes(normalizeText(params.characterEntry.title));
+      });
+
+      return updates.map(function (update, updateIndex) {
+        return {
+          id: createLocalId("character_snapshot"),
+          scope: "scene" as const,
+          sortOrder: sceneMeta.sceneOrder * 10 + updateIndex + 1,
+          sourceSceneId: job.sceneId,
+          sourceChapterId: sceneMeta.chapterId,
+          sourceLabel: `Szene · ${sceneMeta.sceneTitle}`,
+          currentState: update,
+          innerShift: `Aus ${sceneMeta.sceneTitle} extrahiert: ${update}`,
+          agenda: resolveCharacterAgendaForSnapshot(
+            params.characterEntry.title,
+            defaultAgenda,
+            params.openThreads,
+            job.sceneId
+          ),
+          capturedAt: job.updatedAt || params.syncedAt
+        };
+      });
+    })
+    .sort(function (left, right) {
+      return left.sortOrder - right.sortOrder || left.capturedAt.localeCompare(right.capturedAt);
+    });
+
+  const snapshots: CharacterStateSnapshotEntry[] = [
+    {
+      id: createLocalId("character_snapshot"),
+      scope: "baseline",
+      sortOrder: 0,
+      sourceSceneId: null,
+      sourceChapterId: null,
+      sourceLabel: "Baseline",
+      currentState: baselineState,
+      innerShift: "Noch keine extrahierte innere Verschiebung.",
+      agenda: defaultAgenda,
+      capturedAt: params.syncedAt
+    }
+  ];
+
+  narrativeSnapshots.forEach(function (snapshot) {
+    snapshots.push(snapshot);
+  });
+
+  buildChapterCharacterSnapshots(narrativeSnapshots).forEach(function (snapshot) {
+    snapshots.push(snapshot);
+  });
+
+  return snapshots.sort(function (left, right) {
+    return left.sortOrder - right.sortOrder || left.capturedAt.localeCompare(right.capturedAt);
+  });
+}
+
+function buildChapterCharacterSnapshots(
+  sceneSnapshots: CharacterStateSnapshotEntry[]
+): CharacterStateSnapshotEntry[] {
+  const latestSnapshotByChapter = new Map<string, CharacterStateSnapshotEntry>();
+
+  sceneSnapshots.forEach(function (snapshot) {
+    if (!snapshot.sourceChapterId) {
+      return;
+    }
+
+    latestSnapshotByChapter.set(snapshot.sourceChapterId, snapshot);
+  });
+
+  return Array.from(latestSnapshotByChapter.values()).map(function (snapshot) {
+    return {
+      id: createLocalId("character_snapshot"),
+      scope: "chapter" as const,
+      sortOrder: snapshot.sortOrder + 5,
+      sourceSceneId: snapshot.sourceSceneId,
+      sourceChapterId: snapshot.sourceChapterId,
+      sourceLabel: `Kapitelstatus nach ${snapshot.sourceLabel.replace(/^Szene · /, "")}`,
+      currentState: snapshot.currentState,
+      innerShift: `Kapitelstatus gesichert nach ${snapshot.sourceLabel.replace(/^Szene · /, "")}.`,
+      agenda: snapshot.agenda,
+      capturedAt: snapshot.capturedAt
+    };
+  });
+}
+
+function resolveCharacterAgendaForSnapshot(
+  characterName: string,
+  fallbackAgenda: string,
+  openThreads: OpenThread[],
+  sceneId: string
+) {
+  return (
+    openThreads.find(function (thread) {
+      return (
+        thread.sourceSceneId === sceneId &&
+        normalizeText(thread.label).includes(normalizeText(characterName))
+      );
+    })?.label ||
+    openThreads.find(function (thread) {
+      return normalizeText(thread.label).includes(normalizeText(characterName));
+    })?.label ||
+    fallbackAgenda
+  );
+}
+
+function findLatestCharacterSnapshotByScope(
+  snapshots: CharacterStateSnapshotEntry[],
+  scope: CharacterStateSnapshotEntry["scope"]
+) {
+  const matchingSnapshots = snapshots.filter(function (snapshot) {
+    return snapshot.scope === scope;
+  });
+
+  return matchingSnapshots[matchingSnapshots.length - 1] ?? null;
 }
 
 function deriveTimelineBeats(story: StoryDocument): TimelineBeat[] {
@@ -1104,7 +1304,13 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
         ? `${lead.title} liegt als relevanter Kanon offen im Raum: ${lead.summary}`
         : "Die Szene muss den Konflikt aus der Praemisse unmittelbar spueren lassen.",
       characterState
-        ? `${characterState.characterName} traegt aktuell diesen Druck: ${characterState.currentState}`
+        ? `${characterState.characterName} traegt aktuell diesen Druck: ${characterState.currentState}${
+            characterState.snapshots.length
+              ? ` Letzte Marker: ${characterState.snapshots.slice(-2).map(function (snapshot) {
+                  return snapshot.sourceLabel || snapshot.currentState;
+                }).join(" | ")}`
+              : ""
+          }`
         : "Der Figurenzustand muss aus dem vorhandenen Kanon und der Szene selbst lesbar werden."
     ].join(" "),
     [

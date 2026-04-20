@@ -2793,7 +2793,88 @@ function normalizeBookMemoryBackbone(
       typeof candidate.lastSyncedAt === "string" ? candidate.lastSyncedAt : fallback.lastSyncedAt,
     canonLedger: Array.isArray(candidate.canonLedger) ? candidate.canonLedger : fallback.canonLedger,
     characterLedger:
-      Array.isArray(candidate.characterLedger) ? candidate.characterLedger : fallback.characterLedger,
+      Array.isArray(candidate.characterLedger)
+        ? candidate.characterLedger.map(function (entry) {
+            if (!entry || typeof entry !== "object") {
+              return entry;
+            }
+
+            const record = entry as {
+              snapshots?: unknown;
+            };
+
+            return {
+              ...entry,
+              snapshots: Array.isArray(record.snapshots) && record.snapshots.length
+                ? record.snapshots
+                    .filter(function (snapshot): snapshot is Record<string, unknown> {
+                      return Boolean(snapshot) && typeof snapshot === "object";
+                    })
+                    .map(function (snapshot, index) {
+                      return {
+                        id: typeof snapshot.id === "string" ? snapshot.id : `snapshot_${index + 1}`,
+                        scope:
+                          snapshot.scope === "baseline" ||
+                          snapshot.scope === "scene" ||
+                          snapshot.scope === "chapter"
+                            ? snapshot.scope
+                            : "scene",
+                        sortOrder:
+                          typeof snapshot.sortOrder === "number" ? snapshot.sortOrder : index + 1,
+                        sourceSceneId:
+                          typeof snapshot.sourceSceneId === "string"
+                            ? snapshot.sourceSceneId
+                            : null,
+                        sourceChapterId:
+                          typeof snapshot.sourceChapterId === "string"
+                            ? snapshot.sourceChapterId
+                            : null,
+                        sourceLabel:
+                          typeof snapshot.sourceLabel === "string" ? snapshot.sourceLabel : "",
+                        currentState:
+                          typeof snapshot.currentState === "string" ? snapshot.currentState : "",
+                        innerShift:
+                          typeof snapshot.innerShift === "string" ? snapshot.innerShift : "",
+                        agenda: typeof snapshot.agenda === "string" ? snapshot.agenda : "",
+                        capturedAt:
+                          typeof snapshot.capturedAt === "string" ? snapshot.capturedAt : ""
+                      };
+                    })
+                : [
+                    {
+                      id:
+                        typeof (entry as { id?: unknown }).id === "string"
+                          ? `${(entry as { id: string }).id}_baseline`
+                          : "snapshot_1",
+                      scope: "baseline" as const,
+                      sortOrder: 0,
+                      sourceSceneId:
+                        typeof (entry as { updatedFromSceneId?: unknown }).updatedFromSceneId === "string"
+                          ? ((entry as { updatedFromSceneId: string }).updatedFromSceneId || null)
+                          : null,
+                      sourceChapterId: null,
+                      sourceLabel: "Legacy Snapshot",
+                      currentState:
+                        typeof (entry as { currentState?: unknown }).currentState === "string"
+                          ? (entry as { currentState: string }).currentState
+                          : "",
+                      innerShift:
+                        typeof (entry as { innerShift?: unknown }).innerShift === "string"
+                          ? (entry as { innerShift: string }).innerShift
+                          : "",
+                      agenda:
+                        typeof (entry as { agenda?: unknown }).agenda === "string"
+                          ? (entry as { agenda: string }).agenda
+                          : "",
+                      capturedAt:
+                        typeof (entry as { updatedAt?: unknown }).updatedAt === "string"
+                          ? (entry as { updatedAt: string }).updatedAt
+                          : ""
+                    }
+                  ]
+            };
+          })
+        : fallback.characterLedger,
     openThreads: Array.isArray(candidate.openThreads) ? candidate.openThreads : fallback.openThreads,
     sceneCards: Array.isArray(candidate.sceneCards)
       ? candidate.sceneCards.map(function (sceneCard) {

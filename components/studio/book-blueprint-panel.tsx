@@ -543,6 +543,8 @@ export function BookBlueprintPanel({
               <div className="book-thread-list">
                 {characterLedger.length ? (
                   characterLedger.map(function (entry) {
+                    const latestSnapshot = entry.snapshots[entry.snapshots.length - 1] ?? null;
+
                     return (
                       <article key={entry.id} className="book-thread-card">
                         <div className="book-thread-card__head">
@@ -550,7 +552,12 @@ export function BookBlueprintPanel({
                           <span>{entry.updatedFromSceneId || "global"}</span>
                         </div>
                         <p>{entry.currentState}</p>
-                        <span className="book-thread-card__meta">{entry.innerShift}</span>
+                        <span className="book-thread-card__meta">
+                          {entry.innerShift}
+                          {latestSnapshot
+                            ? ` · ${formatCharacterSnapshotLabel(latestSnapshot)} · ${entry.snapshots.length} Snapshots`
+                            : ""}
+                        </span>
                       </article>
                     );
                   })
@@ -707,10 +714,17 @@ export function BookBlueprintPanel({
                 <div className="book-mini-list">
                   {contextPacket.dynamicContext.relevantCharacterStates.length ? (
                     contextPacket.dynamicContext.relevantCharacterStates.map(function (entry) {
+                      const recentSnapshots = entry.snapshots.slice(-2);
+
                       return (
                         <article key={entry.id} className="book-mini-card">
                           <strong>{entry.characterName}</strong>
                           <p>{entry.currentState}</p>
+                          <span className="book-thread-card__meta">
+                            {recentSnapshots.map(function (snapshot) {
+                              return formatCharacterSnapshotLabel(snapshot);
+                            }).join(" | ") || "Kein Snapshot-Verlauf"}
+                          </span>
                         </article>
                       );
                     })
@@ -1731,6 +1745,19 @@ function formatChecklistLabel(value: string) {
     .replace(/^./, function (match) {
       return match.toUpperCase();
     });
+}
+
+function formatCharacterSnapshotLabel(
+  snapshot: StoryDocument["book"]["memory"]["characterLedger"][number]["snapshots"][number]
+) {
+  const scopeLabel =
+    snapshot.scope === "chapter"
+      ? "Kapitel"
+      : snapshot.scope === "scene"
+        ? "Szene"
+        : "Baseline";
+
+  return `${scopeLabel}: ${snapshot.sourceLabel || snapshot.currentState}`;
 }
 
 function exportLaunchPackage(story: StoryDocument, launchPackage: ReturnType<typeof buildAmazonLaunchPackage>) {

@@ -595,7 +595,9 @@ function buildScopedContextPrompt(story: StoryDocument, contextSelection: Assist
       return entry.title;
     }).join(" | ") || "keiner"}`,
     `Relevante Character States: ${packet.dynamicContext.relevantCharacterStates.map(function (entry) {
-      return `${entry.characterName} ← ${entry.updatedFromSceneId || "ohne Szenenbezug"}`;
+      return `${entry.characterName} ← ${entry.snapshots.slice(-1).map(function (snapshot) {
+        return snapshot.sourceLabel || snapshot.currentState;
+      }).join("") || entry.updatedFromSceneId || "ohne Snapshot"}`;
     }).join(" | ") || "keine"}`,
     packet.dynamicContext.activeThreads.length
       ? `Offene Threads: ${packet.dynamicContext.activeThreads.map(function (thread) {
@@ -726,7 +728,7 @@ function buildStructureAlignmentNotes(
   return [
     `- Writer Constitution liegt heute bereits als versionierbare Regelliste im Blueprint und im Stable Prefix, nicht als einzelner Prosa-Block.${writerRules.negative.length ? " Negative Regeln sind vorhanden und werden hier separat als Constraints geführt." : " Explizite Negativregeln fehlen aktuell oder sind nicht sauber markiert."}`,
     `- Scene Cards tragen aktuell Summary, Excerpt und Chapter Goal, aber kein persistiertes Outline-Feld. Der Outline-Schritt wird im Draft-Job aus Szenen-Context, offenen Threads, relevantem Codex und Next Beat abgeleitet.${packet ? " Für den aktuellen Scope ist dieser Ableitungspfad unten konkretisiert." : ""}`,
-    "- Character States haben bereits einen Szenenbezug über `updatedFromSceneId`, bilden aber noch keinen vollständigen Verlauf mit mehreren Snapshots pro Figur ab.",
+    "- Character States tragen jetzt Szenen- und Kapitel-Snapshots pro Figur; `currentState` ist nur die verdichtete Spitze dieses Verlaufs.",
     "- Wenn ein Constraint hart im Prompt landen soll, gehört er als eigener Writer-Constitution-Eintrag in die Regelbasis und nicht nur in Freitext oder Chat-Prosa."
   ];
 }
@@ -757,7 +759,9 @@ function buildDynamicContextLines(
       return `${entry.title}: ${entry.summary}`;
     }).join(" | ") || "keiner"}.`,
     `- Character States: ${packet.dynamicContext.relevantCharacterStates.map(function (entry) {
-      return `${entry.characterName} — ${entry.currentState} [Quelle: ${entry.updatedFromSceneId || "ohne Szenenbezug"}]`;
+      return `${entry.characterName} — ${entry.currentState} [Snapshots: ${entry.snapshots.slice(-2).map(function (snapshot) {
+        return snapshot.sourceLabel || snapshot.currentState;
+      }).join(" | ") || "keine"}]`;
     }).join(" | ") || "keine"}.`,
     `- Offene Threads: ${packet.dynamicContext.activeThreads.map(function (thread) {
       return `${thread.label} (${thread.status})`;
@@ -780,7 +784,7 @@ function buildPipelineFitLines(
     `- Outline-Input wird nicht aus einem separaten Scene-Card-Feld gelesen, sondern aus Summary, aktivem Thread, relevantem Codex und Next Beat der Szene "${packet.dynamicContext.sceneTitle}" abgeleitet.`,
     `- Draft-Anker: ${packet.dynamicContext.sceneSummary || story.book.masterBrief.premise || "Summary/Premise fehlt."}`,
     `- Extractor-Ziele: new_canon_facts, character_state_updates, open_threads_created, open_threads_resolved, foreshadowing_added, continuity_risks, style_drift_notes.`,
-    `- Ledger-Risiko: Character States kennen aktuell die letzte Quellszene, aber noch keine echte Snapshot-Historie über mehrere Zustandswechsel hinweg.`,
+    `- Ledger-Status: Character States referenzieren jetzt Snapshot-Historie; Continuity sollte auf widersprüchliche Zustandswechsel zwischen benachbarten Snapshots prüfen.`,
     `- Operativer Fokus: Hook "${story.book.marketBrief.hook || "nicht gesetzt"}" und thematischer Kern "${story.book.masterBrief.thematicCore || "nicht gesetzt"}" müssen im selben Konflikt sichtbar werden.`
   ];
 }
@@ -792,7 +796,7 @@ function buildRegieNextSteps(
   const nextSteps = [
     "- Writer-Constitution-Regeln, die als harte Verbote gelten sollen, als eigene knappe Regelzeilen formulieren statt in Fließtext verstecken.",
     "- Scene Summary so schärfen, dass daraus ohne Interpretationssprung die Outline-Beats abgeleitet werden können.",
-    "- Extractor-Updates nach akzeptierten Drafts prüfen, damit `updatedFromSceneId` und offene Threads sauber mitlaufen."
+    "- Extractor-Updates nach akzeptierten Drafts prüfen, damit Snapshot-Verlauf, `updatedFromSceneId` und offene Threads sauber mitlaufen."
   ];
 
   if (packet) {
