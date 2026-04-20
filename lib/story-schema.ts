@@ -277,6 +277,7 @@ export type BookSceneCard = {
   excerpt: string;
   orderLabel: string;
   chapterGoal: string;
+  outline: string[];
 };
 
 export type BookContextPack = {
@@ -410,6 +411,11 @@ export type InsertChapterResult = {
 export type InsertSceneResult = {
   story: StoryDocument;
   sceneId: string;
+};
+
+export type BookDraftPreparationIssue = {
+  level: "blocking" | "warning";
+  message: string;
 };
 
 export function defineStory<T extends StoryDocument>(story: T): T {
@@ -734,6 +740,101 @@ export function countStoryStats(story: StoryDocument) {
       return sum + countSceneWords(scene);
     }, 0)
   };
+}
+
+export function normalizeBookDraftTargets(
+  targetSceneWordsMin: number,
+  targetSceneWordsMax: number
+) {
+  const safeMin = Number.isFinite(targetSceneWordsMin)
+    ? Math.max(250, Math.round(targetSceneWordsMin))
+    : 900;
+  const safeMax = Number.isFinite(targetSceneWordsMax)
+    ? Math.max(350, Math.round(targetSceneWordsMax))
+    : 1400;
+
+  if (safeMax <= safeMin) {
+    return {
+      targetSceneWordsMin: safeMin,
+      targetSceneWordsMax: safeMin + 250
+    };
+  }
+
+  return {
+    targetSceneWordsMin: safeMin,
+    targetSceneWordsMax: safeMax
+  };
+}
+
+export function analyzeBookDraftPreparation(
+  story: StoryDocument,
+  sceneId: string,
+  targetSceneWordsMin: number,
+  targetSceneWordsMax: number
+): BookDraftPreparationIssue[] {
+  const sceneContext = findSceneContext(story, sceneId);
+  const issues: BookDraftPreparationIssue[] = [];
+  const normalizedTargets = normalizeBookDraftTargets(targetSceneWordsMin, targetSceneWordsMax);
+
+  if (!sceneContext) {
+    return [
+      {
+        level: "blocking",
+        message: "Für den Book-Job ist aktuell keine gültige Szene ausgewählt."
+      }
+    ];
+  }
+
+  if (targetSceneWordsMin !== normalizedTargets.targetSceneWordsMin || targetSceneWordsMax !== normalizedTargets.targetSceneWordsMax) {
+    issues.push({
+      level: "warning",
+      message: `Der Zielbereich wurde technisch bereinigt auf ${normalizedTargets.targetSceneWordsMin}-${normalizedTargets.targetSceneWordsMax} Wörter.`
+    });
+  }
+
+  if (countWords(sceneContext.scene.summary) < 12) {
+    issues.push({
+      level: "blocking",
+      message: "Die Szenen-Summary ist zu dünn. Für belastbare Draft-Jobs braucht die Szene erst einen klaren Beat-, Konflikt- und Ergebnis-Satz."
+    });
+  }
+
+  if (!story.book.masterBrief.premise.trim()) {
+    issues.push({
+      level: "blocking",
+      message: "Die Prämisse fehlt. Ohne klaren Stoffkern driftet der Buch-Job zu schnell in generische Prosa."
+    });
+  }
+
+  if (!story.book.masterBrief.readerPromise.trim()) {
+    issues.push({
+      level: "warning",
+      message: "Reader Promise fehlt. Dadurch bleibt die Ton- und Marktsteuerung unnötig weich."
+    });
+  }
+
+  if (!story.book.marketBrief.hook.trim()) {
+    issues.push({
+      level: "warning",
+      message: "Commercial Hook fehlt. Der Draft hat dann weniger Zug und endet oft schwächer."
+    });
+  }
+
+  if (story.book.writerConstitution.length < 3) {
+    issues.push({
+      level: "warning",
+      message: "Die Writer Constitution ist sehr kurz. Für stabile Premium-Drafts sollte sie mehr als nur Basisregeln tragen."
+    });
+  }
+
+  if (story.worldBible.length === 0) {
+    issues.push({
+      level: "warning",
+      message: "Es gibt noch keine World-Bible-Einträge. Der Draft kann laufen, aber Kanon und Figurenanker bleiben fragiler."
+    });
+  }
+
+  return issues;
 }
 
 export function appendActToStory(story: StoryDocument): InsertActResult {

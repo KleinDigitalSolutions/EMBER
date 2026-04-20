@@ -351,7 +351,8 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               summary: (row.summary as string) ?? "",
               excerpt: (row.excerpt as string) ?? "",
               orderLabel: (row.order_label as string) ?? "",
-              chapterGoal: (row.chapter_goal as string) ?? ""
+              chapterGoal: (row.chapter_goal as string) ?? "",
+              outline: normalizeStringArray(row.outline)
             }
           }),
           contextPacks: contextPacks.map(function (row) {
@@ -715,7 +716,8 @@ export async function saveStudioStory(story: StoryDocument) {
       summary: sceneCard.summary,
       excerpt: sceneCard.excerpt,
       order_label: sceneCard.orderLabel,
-      chapter_goal: sceneCard.chapterGoal
+      chapter_goal: sceneCard.chapterGoal,
+      outline: sceneCard.outline
     }
   })
 

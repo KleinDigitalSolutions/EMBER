@@ -42,6 +42,7 @@ export type SceneContextPacket = {
     sceneTitle: string;
     sceneSummary: string;
     sceneExcerpt: string;
+    sceneCardOutline: string[];
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -217,6 +218,7 @@ export function buildSceneContextPacket(
       sceneTitle: sceneContext.scene.title,
       sceneSummary: sceneContext.scene.summary,
       sceneExcerpt: buildSceneExcerpt(sceneContext.scene),
+      sceneCardOutline: timeline[sceneIndex]?.outline ?? [],
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -547,7 +549,8 @@ function deriveTimelineBeats(story: StoryDocument): TimelineBeat[] {
           summary: scene.summary,
           excerpt: buildSceneExcerpt(scene),
           orderLabel: `A${actIndex + 1} · C${chapterIndex + 1} · S${sceneIndex + 1}`,
-          chapterGoal
+          chapterGoal,
+          outline: buildSceneCardOutline(scene, chapterGoal, chapter.scenes[sceneIndex + 1]?.title ?? null)
         };
       });
     });
@@ -1063,7 +1066,12 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
 }
 
 function buildOutlineSteps(packet: SceneContextPacket) {
-  const steps = [
+  const sceneCardOutline = packet.dynamicContext.sceneCardOutline.map(function (step) {
+    return step.trim();
+  }).filter(Boolean);
+  const steps = sceneCardOutline.length
+    ? sceneCardOutline
+    : [
     `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "den unmittelbaren Konflikt"}.`,
     packet.stablePrefix.storyArchitecture[0]
       ? `Strukturanker: ${packet.stablePrefix.storyArchitecture[0]}`
@@ -1255,6 +1263,30 @@ function buildSceneExcerpt(scene: StoryScene) {
     .join(" ");
 
   return clampText(text || scene.summary, 220);
+}
+
+function buildSceneCardOutline(scene: StoryScene, chapterGoal: string, nextSceneTitle: string | null) {
+  const summary = clampText(scene.summary || scene.title || "Die Szene braucht einen klaren Konflikt.", 140);
+  const excerpt = buildSceneExcerpt(scene);
+  const scenePressure = excerpt && excerpt !== summary
+    ? clampText(excerpt, 140)
+    : clampText(
+        scene.blocks
+          .map(function (block) {
+            return block.text.trim();
+          })
+          .filter(Boolean)[0] || "Der Druck der Szene muss konkret und beobachtbar werden.",
+        140
+      );
+
+  return [
+    `Oeffnung: ${summary}`,
+    `Druck: ${scenePressure}`,
+    `Ziel: ${clampText(chapterGoal || scene.summary || scene.title || "Die Szene braucht ein klares Ziel.", 140)}`,
+    nextSceneTitle
+      ? `Ausgang: Die Szene kippt in ${nextSceneTitle}.`
+      : "Ausgang: Die Szene endet mit Nachhall oder offener Drohung."
+  ].filter(Boolean);
 }
 
 function deriveSceneSummary(job: BookDraftJob) {

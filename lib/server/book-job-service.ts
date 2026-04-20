@@ -17,7 +17,7 @@ import {
   createDraftJobFromPacket,
   type SceneContextPacket
 } from "@/lib/book-engine";
-import type { BookDraftJob, StoryDocument } from "@/lib/story-schema";
+import { normalizeBookDraftTargets, type BookDraftJob, type StoryDocument } from "@/lib/story-schema";
 import { createUuid } from "@/lib/id";
 
 const draftJobSchema = z.object({
@@ -82,8 +82,12 @@ export async function generateBookDraftJob(params: {
   const provider = params.provider ?? "auto";
   const packet =
     params.packet ?? (params.story ? buildSceneContextPacket(params.story, params.sceneId) : null);
-  const targetSceneWordsMin = params.targetSceneWordsMin ?? 1200;
-  const targetSceneWordsMax = params.targetSceneWordsMax ?? 1600;
+  const normalizedTargets = normalizeBookDraftTargets(
+    params.targetSceneWordsMin ?? 1200,
+    params.targetSceneWordsMax ?? 1600
+  );
+  const targetSceneWordsMin = normalizedTargets.targetSceneWordsMin;
+  const targetSceneWordsMax = normalizedTargets.targetSceneWordsMax;
   const directorNote = params.directorNote?.trim() || "";
 
   if (!packet) {
@@ -426,6 +430,7 @@ function buildDynamicUserPrompt(
     `Scene: ${packet.dynamicContext.sceneTitle}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
+    `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
@@ -622,6 +627,7 @@ function buildContinuityAuditPrompt(
     `Scene: ${packet.dynamicContext.sceneTitle}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
+    `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;

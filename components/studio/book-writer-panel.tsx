@@ -21,9 +21,11 @@ import {
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
+  analyzeBookDraftPreparation,
   countSceneWords,
   countStoryStats,
   countWords,
+  normalizeBookDraftTargets,
   type BookDraftJob,
   type SceneContext,
   type StoryAct,
@@ -146,6 +148,35 @@ export function BookWriterPanel({
 
     return buildSceneContextPacket(story, sceneContext.scene.id);
   }, [sceneContext, story]);
+  const normalizedDraftTargets = useMemo(function () {
+    return normalizeBookDraftTargets(
+      story.book.draftEngine.targetSceneWordsMin,
+      story.book.draftEngine.targetSceneWordsMax
+    );
+  }, [story.book.draftEngine.targetSceneWordsMax, story.book.draftEngine.targetSceneWordsMin]);
+  const draftPreparationIssues = useMemo(function () {
+    if (!sceneContext) {
+      return [];
+    }
+
+    return analyzeBookDraftPreparation(
+      story,
+      sceneContext.scene.id,
+      story.book.draftEngine.targetSceneWordsMin,
+      story.book.draftEngine.targetSceneWordsMax
+    );
+  }, [
+    sceneContext,
+    story,
+    story.book.draftEngine.targetSceneWordsMax,
+    story.book.draftEngine.targetSceneWordsMin
+  ]);
+  const blockingDraftPreparationIssues = draftPreparationIssues.filter(function (issue) {
+    return issue.level === "blocking";
+  });
+  const warningDraftPreparationIssues = draftPreparationIssues.filter(function (issue) {
+    return issue.level === "warning";
+  });
 
   const draftJobs = useMemo(function () {
     if (!sceneContext) {
@@ -212,7 +243,10 @@ export function BookWriterPanel({
       : null;
 
   async function handleGenerateJob() {
-    if (!contextPacket) {
+    if (!contextPacket || blockingDraftPreparationIssues.length) {
+      if (blockingDraftPreparationIssues.length) {
+        setJobStatus(blockingDraftPreparationIssues[0].message);
+      }
       return;
     }
 
@@ -230,8 +264,8 @@ export function BookWriterPanel({
           packet: contextPacket,
           provider: jobProvider,
           modelOverrides: buildBookJobModelOverrides(jobModels),
-          targetSceneWordsMin: story.book.draftEngine.targetSceneWordsMin,
-          targetSceneWordsMax: story.book.draftEngine.targetSceneWordsMax,
+          targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
+          targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
           directorNote
         })
       });
@@ -595,13 +629,19 @@ export function BookWriterPanel({
                   const nextValue = Number(event.target.value) || 0;
 
                   onUpdateStory(function (currentStory) {
+                    const normalizedTargets = normalizeBookDraftTargets(
+                      nextValue,
+                      currentStory.book.draftEngine.targetSceneWordsMax
+                    );
+
                     return {
                       ...currentStory,
                       book: {
                         ...currentStory.book,
                         draftEngine: {
                           ...currentStory.book.draftEngine,
-                          targetSceneWordsMin: nextValue
+                          targetSceneWordsMin: normalizedTargets.targetSceneWordsMin,
+                          targetSceneWordsMax: normalizedTargets.targetSceneWordsMax
                         }
                       }
                     };
@@ -622,13 +662,19 @@ export function BookWriterPanel({
                   const nextValue = Number(event.target.value) || 0;
 
                   onUpdateStory(function (currentStory) {
+                    const normalizedTargets = normalizeBookDraftTargets(
+                      currentStory.book.draftEngine.targetSceneWordsMin,
+                      nextValue
+                    );
+
                     return {
                       ...currentStory,
                       book: {
                         ...currentStory.book,
                         draftEngine: {
                           ...currentStory.book.draftEngine,
-                          targetSceneWordsMax: nextValue
+                          targetSceneWordsMin: normalizedTargets.targetSceneWordsMin,
+                          targetSceneWordsMax: normalizedTargets.targetSceneWordsMax
                         }
                       }
                     };
@@ -671,12 +717,38 @@ export function BookWriterPanel({
             <button
               className="flat-button flat-button--active"
               type="button"
-              disabled={!contextPacket || isGeneratingJob}
+              disabled={!contextPacket || isGeneratingJob || blockingDraftPreparationIssues.length > 0}
               onClick={handleGenerateJob}
             >
               {isGeneratingJob ? "Generiert..." : "Szene entwerfen"}
             </button>
           </div>
+
+          {blockingDraftPreparationIssues.length ? (
+            <div className="book-mini-list">
+              {blockingDraftPreparationIssues.map(function (issue) {
+                return (
+                  <article key={issue.message} className="book-mini-card">
+                    <strong>Blocker</strong>
+                    <p>{issue.message}</p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {!blockingDraftPreparationIssues.length && warningDraftPreparationIssues.length ? (
+            <div className="book-mini-list">
+              {warningDraftPreparationIssues.map(function (issue) {
+                return (
+                  <article key={issue.message} className="book-mini-card">
+                    <strong>Hinweis</strong>
+                    <p>{issue.message}</p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : null}
 
           {jobStatus ? <p className="book-writer-status">{jobStatus}</p> : null}
         </section>

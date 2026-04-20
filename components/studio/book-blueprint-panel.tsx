@@ -26,8 +26,10 @@ import {
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
+  analyzeBookDraftPreparation,
   countStoryStats,
   isBranchingStory,
+  normalizeBookDraftTargets,
   type BookDraftJob,
   type StoryChapter,
   type StoryDocument
@@ -62,6 +64,35 @@ export function BookBlueprintPanel({
   const contextPacket = useMemo(function () {
     return buildSceneContextPacket(story, selectedSceneId);
   }, [selectedSceneId, story]);
+  const normalizedDraftTargets = useMemo(function () {
+    return normalizeBookDraftTargets(
+      story.book.draftEngine.targetSceneWordsMin,
+      story.book.draftEngine.targetSceneWordsMax
+    );
+  }, [story.book.draftEngine.targetSceneWordsMax, story.book.draftEngine.targetSceneWordsMin]);
+  const draftPreparationIssues = useMemo(function () {
+    if (!selectedSceneId) {
+      return [];
+    }
+
+    return analyzeBookDraftPreparation(
+      story,
+      selectedSceneId,
+      story.book.draftEngine.targetSceneWordsMin,
+      story.book.draftEngine.targetSceneWordsMax
+    );
+  }, [
+    selectedSceneId,
+    story,
+    story.book.draftEngine.targetSceneWordsMax,
+    story.book.draftEngine.targetSceneWordsMin
+  ]);
+  const blockingDraftPreparationIssues = draftPreparationIssues.filter(function (issue) {
+    return issue.level === "blocking";
+  });
+  const warningDraftPreparationIssues = draftPreparationIssues.filter(function (issue) {
+    return issue.level === "warning";
+  });
   const draftJobs = useMemo(function () {
     return selectedSceneId ? getDraftJobsForScene(story, selectedSceneId) : [];
   }, [selectedSceneId, story]);
@@ -605,6 +636,25 @@ export function BookBlueprintPanel({
                   </span>
                 </div>
 
+                <strong>Persistierte Outline-Beats</strong>
+                <div className="book-mini-list">
+                  {contextPacket.dynamicContext.sceneCardOutline.length ? (
+                    contextPacket.dynamicContext.sceneCardOutline.map(function (step, index) {
+                      return (
+                        <article key={`${contextPacket.sceneId}_outline_${index}`} className="book-mini-card">
+                          <strong>Beat {index + 1}</strong>
+                          <p>{step}</p>
+                        </article>
+                      );
+                    })
+                  ) : (
+                    <article className="book-mini-card">
+                      <strong>Keine Outline-Beats vorhanden</strong>
+                      <p>Die Scene Card wird aktuell aus Summary, Excerpt und Kapitelziel abgeleitet.</p>
+                    </article>
+                  )}
+                </div>
+
                 <strong>Vorher</strong>
                 <div className="book-mini-list">
                   {contextPacket.dynamicContext.previousBeats.length ? (
@@ -916,9 +966,12 @@ export function BookBlueprintPanel({
               <button
                 className="flat-button"
                 type="button"
-                disabled={!selectedSceneId || !contextPacket || isGeneratingJob}
+                disabled={!selectedSceneId || !contextPacket || isGeneratingJob || blockingDraftPreparationIssues.length > 0}
                 onClick={async function () {
-                  if (!selectedSceneId || !contextPacket) {
+                  if (!selectedSceneId || !contextPacket || blockingDraftPreparationIssues.length) {
+                    if (blockingDraftPreparationIssues.length) {
+                      setJobStatus(blockingDraftPreparationIssues[0].message);
+                    }
                     return;
                   }
 
@@ -936,8 +989,8 @@ export function BookBlueprintPanel({
                         packet: contextPacket,
                         provider: jobProvider,
                         modelOverrides: buildBookJobModelOverrides(jobModels),
-                        targetSceneWordsMin: story.book.draftEngine.targetSceneWordsMin,
-                        targetSceneWordsMax: story.book.draftEngine.targetSceneWordsMax
+                        targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
+                        targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax
                       })
                     });
                     const payload = await response.json();
@@ -993,13 +1046,19 @@ export function BookBlueprintPanel({
                   const nextValue = Number(event.target.value) || 0;
 
                   onUpdateStory(function (currentStory) {
+                    const normalizedTargets = normalizeBookDraftTargets(
+                      nextValue,
+                      currentStory.book.draftEngine.targetSceneWordsMax
+                    );
+
                     return {
                       ...currentStory,
                       book: {
                         ...currentStory.book,
                         draftEngine: {
                           ...currentStory.book.draftEngine,
-                          targetSceneWordsMin: nextValue
+                          targetSceneWordsMin: normalizedTargets.targetSceneWordsMin,
+                          targetSceneWordsMax: normalizedTargets.targetSceneWordsMax
                         }
                       }
                     };
@@ -1020,13 +1079,19 @@ export function BookBlueprintPanel({
                   const nextValue = Number(event.target.value) || 0;
 
                   onUpdateStory(function (currentStory) {
+                    const normalizedTargets = normalizeBookDraftTargets(
+                      currentStory.book.draftEngine.targetSceneWordsMin,
+                      nextValue
+                    );
+
                     return {
                       ...currentStory,
                       book: {
                         ...currentStory.book,
                         draftEngine: {
                           ...currentStory.book.draftEngine,
-                          targetSceneWordsMax: nextValue
+                          targetSceneWordsMin: normalizedTargets.targetSceneWordsMin,
+                          targetSceneWordsMax: normalizedTargets.targetSceneWordsMax
                         }
                       }
                     };
@@ -1035,6 +1100,32 @@ export function BookBlueprintPanel({
               />
             </label>
           </div>
+
+          {blockingDraftPreparationIssues.length ? (
+            <div className="book-mini-list">
+              {blockingDraftPreparationIssues.map(function (issue) {
+                return (
+                  <article key={issue.message} className="book-mini-card">
+                    <strong>Blocker</strong>
+                    <p>{issue.message}</p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {!blockingDraftPreparationIssues.length && warningDraftPreparationIssues.length ? (
+            <div className="book-mini-list">
+              {warningDraftPreparationIssues.map(function (issue) {
+                return (
+                  <article key={issue.message} className="book-mini-card">
+                    <strong>Hinweis</strong>
+                    <p>{issue.message}</p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : null}
 
           {jobStatus ? <p className="book-inline-status">{jobStatus}</p> : null}
 

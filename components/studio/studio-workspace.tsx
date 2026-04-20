@@ -36,6 +36,7 @@ import {
   createDefaultBookBlueprint,
   findSceneContext,
   isBranchingStory,
+  normalizeBookDraftTargets,
   normalizeBookRuleList,
   updateSceneInStory,
   type StoryAct,
@@ -2612,6 +2613,14 @@ function normalizeBookBlueprint(
   }
 
   const candidate = value as Partial<StoryDocument["book"]>;
+  const normalizedDraftTargets = normalizeBookDraftTargets(
+    typeof candidate.draftEngine?.targetSceneWordsMin === "number"
+      ? candidate.draftEngine.targetSceneWordsMin
+      : fallback.draftEngine.targetSceneWordsMin,
+    typeof candidate.draftEngine?.targetSceneWordsMax === "number"
+      ? candidate.draftEngine.targetSceneWordsMax
+      : fallback.draftEngine.targetSceneWordsMax
+  );
 
   return {
     priority: candidate.priority === "secondary" ? "secondary" : fallback.priority,
@@ -2681,14 +2690,8 @@ function normalizeBookBlueprint(
     memory: normalizeBookMemoryBackbone(candidate.memory, fallback.memory),
     draftEngine: {
       mode: "local",
-      targetSceneWordsMin:
-        typeof candidate.draftEngine?.targetSceneWordsMin === "number"
-          ? candidate.draftEngine.targetSceneWordsMin
-          : fallback.draftEngine.targetSceneWordsMin,
-      targetSceneWordsMax:
-        typeof candidate.draftEngine?.targetSceneWordsMax === "number"
-          ? candidate.draftEngine.targetSceneWordsMax
-          : fallback.draftEngine.targetSceneWordsMax,
+      targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
+      targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
       jobs:
         Array.isArray(candidate.draftEngine?.jobs) &&
         candidate.draftEngine.jobs.every(function (job) {
@@ -2792,7 +2795,27 @@ function normalizeBookMemoryBackbone(
     characterLedger:
       Array.isArray(candidate.characterLedger) ? candidate.characterLedger : fallback.characterLedger,
     openThreads: Array.isArray(candidate.openThreads) ? candidate.openThreads : fallback.openThreads,
-    sceneCards: Array.isArray(candidate.sceneCards) ? candidate.sceneCards : fallback.sceneCards,
+    sceneCards: Array.isArray(candidate.sceneCards)
+      ? candidate.sceneCards.map(function (sceneCard) {
+          if (!sceneCard || typeof sceneCard !== "object") {
+            return sceneCard;
+          }
+
+          const record = sceneCard as {
+            outline?: unknown;
+          };
+
+          return {
+            ...sceneCard,
+            outline:
+              Array.isArray(record.outline) && record.outline.every(function (entry) {
+                return typeof entry === "string";
+              })
+                ? record.outline
+                : []
+          };
+        })
+      : fallback.sceneCards,
     contextPacks:
       Array.isArray(candidate.contextPacks) ? candidate.contextPacks : fallback.contextPacks,
     continuityNotes:
