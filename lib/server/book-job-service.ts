@@ -128,12 +128,13 @@ export async function generateBookDraftJob(params: {
         : remoteProvider === "anthropic"
           ? await generateWithAnthropic(packet, providerOptions)
           : await generateWithGemini(packet, providerOptions);
+    const sanitizedResult = sanitizeDraftJobPayload(packet, result.payload);
 
     return {
       provider: remoteProvider,
       mode: "remote",
-      warning: result.warning,
-      job: hydrateDraftJob(params.sceneId, packet, result.payload, {
+      warning: combineWarnings(result.warning, sanitizedResult.notes),
+      job: hydrateDraftJob(params.sceneId, packet, sanitizedResult.payload, {
         provider: remoteProvider,
         mode: "remote",
         modelName: result.modelName,
@@ -818,6 +819,216 @@ function formatQualityIssues(issues: DraftQualityIssue[]) {
   }).join(", ");
 }
 
+function sanitizeDraftJobPayload(
+  packet: SceneContextPacket,
+  payload: DraftJobPayload
+) {
+  const evidenceTerms = buildPacketEvidenceTerms(packet);
+  const knownEntities = buildKnownEntityTerms(packet);
+  const reviewNotes: string[] = [];
+  const movedRisks: string[] = [];
+  const filteredCanonFacts = payload.extractedState.newCanonFacts.filter(function (value) {
+    const keep = isConservativeExtractorEntry(value, evidenceTerms, knownEntities, {
+      requireEntity: false,
+      minimumOverlap: 2
+    });
+
+    if (!keep) {
+      movedRisks.push(`Extractor-Review: Unsicherer Canon-Fact verworfen -> ${value}`);
+    }
+
+    return keep;
+  });
+  const filteredCharacterUpdates = payload.extractedState.characterStateUpdates.filter(function (value) {
+    const keep = isConservativeExtractorEntry(value, evidenceTerms, knownEntities, {
+      requireEntity: true,
+      minimumOverlap: 2
+    });
+
+    if (!keep) {
+      movedRisks.push(`Extractor-Review: Unsicheres Character-Update verworfen -> ${value}`);
+    }
+
+    return keep;
+  });
+  const filteredForeshadowing = payload.extractedState.foreshadowingAdded.filter(function (value) {
+    const keep = isConservativeExtractorEntry(value, evidenceTerms, knownEntities, {
+      requireEntity: false,
+      minimumOverlap: 1
+    });
+
+    if (!keep) {
+      movedRisks.push(`Extractor-Review: Unsicheres Foreshadowing verworfen -> ${value}`);
+    }
+
+    return keep;
+  });
+  const filteredOpenThreadsCreated = payload.extractedState.openThreadsCreated.filter(function (value) {
+    return isConservativeExtractorEntry(value, evidenceTerms, knownEntities, {
+      requireEntity: false,
+      minimumOverlap: 1
+    });
+  });
+
+  if (
+    filteredCanonFacts.length !== payload.extractedState.newCanonFacts.length ||
+    filteredCharacterUpdates.length !== payload.extractedState.characterStateUpdates.length ||
+    filteredForeshadowing.length !== payload.extractedState.foreshadowingAdded.length ||
+    filteredOpenThreadsCreated.length !== payload.extractedState.openThreadsCreated.length
+  ) {
+    reviewNotes.push("Extractor-State wurde gegen den Packet-Kontext konservativ bereinigt.");
+  }
+
+  return {
+    payload: {
+      ...payload,
+      extractedState: {
+        ...payload.extractedState,
+        newCanonFacts: dedupeStrings(filteredCanonFacts).slice(0, 6),
+        characterStateUpdates: dedupeStrings(filteredCharacterUpdates).slice(0, 6),
+        openThreadsCreated: dedupeStrings(filteredOpenThreadsCreated).slice(0, 6),
+        foreshadowingAdded: dedupeStrings(filteredForeshadowing).slice(0, 6),
+        continuityRisks: dedupeStrings(
+          payload.extractedState.continuityRisks.concat(movedRisks.slice(0, 3))
+        ).slice(0, 6)
+      }
+    },
+    notes: reviewNotes
+  };
+}
+
+function buildPacketEvidenceTerms(packet: SceneContextPacket) {
+  return new Set(
+    extractEvidenceTerms(
+      [
+        packet.dynamicContext.sceneTitle,
+        packet.dynamicContext.sceneSummary,
+        packet.dynamicContext.sceneExcerpt
+      ]
+        .concat(packet.dynamicContext.sceneCardOutline)
+        .concat(
+          packet.dynamicContext.previousBeats.map(function (beat) {
+            return `${beat.sceneTitle} ${beat.summary} ${beat.excerpt}`;
+          })
+        )
+        .concat(
+          packet.dynamicContext.relevantCodex.map(function (entry) {
+            return `${entry.title} ${entry.summary}`;
+          })
+        )
+        .concat(
+          packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+            return `${entry.characterName} ${entry.currentState} ${entry.innerShift} ${entry.agenda}`;
+          })
+        )
+        .concat(
+          packet.dynamicContext.activeThreads.map(function (thread) {
+            return `${thread.label} ${thread.detail}`;
+          })
+        )
+        .concat([
+          packet.dynamicContext.nextBeat?.sceneTitle || "",
+          packet.stablePrefix.premise,
+          packet.stablePrefix.readerPromise,
+          packet.stablePrefix.thematicCore
+        ])
+    )
+  );
+}
+
+function buildKnownEntityTerms(packet: SceneContextPacket) {
+  return extractEvidenceTerms(
+    packet.dynamicContext.relevantCodex
+      .map(function (entry) {
+        return entry.title;
+      })
+      .concat(
+        packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+          return entry.characterName;
+        })
+      )
+      .concat(
+        packet.dynamicContext.activeThreads.map(function (thread) {
+          return thread.label;
+        })
+      )
+      .concat([packet.dynamicContext.sceneTitle])
+  );
+}
+
+function extractEvidenceTerms(values: string[]) {
+  return values
+    .flatMap(function (value) {
+      return value
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]+/gu, " ")
+        .split(/\s+/)
+        .map(function (token) {
+          return token.trim();
+        });
+    })
+    .filter(function (token) {
+      return token.length >= 4 && !GERMAN_STOPWORDS.has(token);
+    });
+}
+
+function isConservativeExtractorEntry(
+  value: string,
+  evidenceTerms: Set<string>,
+  knownEntities: string[],
+  options: {
+    requireEntity: boolean;
+    minimumOverlap: number;
+  }
+) {
+  const candidateTerms = extractEvidenceTerms([value]);
+  const overlapCount = candidateTerms.filter(function (term) {
+    return evidenceTerms.has(term);
+  }).length;
+  const entityHits = knownEntities.filter(function (entity) {
+    return normalizeText(value).includes(normalizeText(entity));
+  }).length;
+  const unsupportedTerms = candidateTerms.filter(function (term) {
+    return !evidenceTerms.has(term) && !knownEntities.includes(term);
+  });
+
+  if (options.requireEntity && entityHits === 0) {
+    return false;
+  }
+
+  if (overlapCount < options.minimumOverlap) {
+    return false;
+  }
+
+  if (looksLikeHardAssertion(value) && unsupportedTerms.length >= 3) {
+    return false;
+  }
+
+  return true;
+}
+
+function looksLikeHardAssertion(value: string) {
+  return /\b(ist|war|hat|wurde|uebernahm|übernahm|bat|bittet|hinterliess|hinterließ|betreibt|fuehrt|führt|gilt|wirkte|verheimlicht)\b/i.test(
+    value
+  );
+}
+
+function combineWarnings(...values: Array<string | string[] | undefined>) {
+  return dedupeStrings(
+    values
+      .flatMap(function (value) {
+        if (Array.isArray(value)) {
+          return value;
+        }
+
+        return value ? [value] : [];
+      })
+      .filter(function (value) {
+        return Boolean(value && value.trim());
+      })
+  ).join(" | ") || undefined;
+}
+
 function countWords(value: string) {
   const words = value.trim().match(/\S+/g);
   return words ? words.length : 0;
@@ -834,6 +1045,101 @@ function dedupeStrings(values: string[]) {
     });
 }
 
+function normalizeText(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function createLocalId(prefix: string) {
   return createUuid();
 }
+
+const GERMAN_STOPWORDS = new Set([
+  "aber",
+  "auch",
+  "beim",
+  "dabei",
+  "daher",
+  "damit",
+  "dann",
+  "dass",
+  "deine",
+  "deinen",
+  "deiner",
+  "dem",
+  "den",
+  "der",
+  "des",
+  "dessen",
+  "dies",
+  "diese",
+  "diesem",
+  "diesen",
+  "dieser",
+  "doch",
+  "dort",
+  "eine",
+  "einem",
+  "einen",
+  "einer",
+  "eines",
+  "einfach",
+  "einst",
+  "er",
+  "es",
+  "etwas",
+  "fuer",
+  "für",
+  "hatte",
+  "hier",
+  "hinter",
+  "ihre",
+  "ihren",
+  "ihrer",
+  "ihres",
+  "immer",
+  "ihm",
+  "ihn",
+  "ins",
+  "ist",
+  "kein",
+  "keine",
+  "keinen",
+  "konnte",
+  "mehr",
+  "nicht",
+  "noch",
+  "oder",
+  "ohne",
+  "schon",
+  "sein",
+  "seine",
+  "seinen",
+  "seiner",
+  "sich",
+  "sie",
+  "sind",
+  "sofort",
+  "statt",
+  "ueber",
+  "über",
+  "und",
+  "unter",
+  "vom",
+  "von",
+  "vor",
+  "weil",
+  "weiter",
+  "wenn",
+  "wieder",
+  "wird",
+  "wurde",
+  "zum",
+  "zur",
+  "zwar"
+]);
