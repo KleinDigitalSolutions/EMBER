@@ -137,9 +137,9 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
 ### Modellpolitik
 Wir fahren initial einen Hybrid-Ansatz aus Premium-Modellen und einem guenstigen Test-/Fallback-Pfad.
 - OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
-- Anthropic: Claude Opus 4 für schwere Strukturarbeit, Claude Sonnet 4 für den täglichen Draft-/Review-Betrieb `erledigt 2026-04-18`
+- Anthropic: Claude Opus 4.7 ist im Code der aktuelle starke Book-Default; Continuity-Audits laufen separat auf einem leichteren Anthropic-Modell. Deployment-spezifische Wechsel bleiben weiterhin über Env oder UI-Override möglich `aktualisiert 2026-04-20`
 - Gemini: `gemini-2.5-flash` als dritter Provider fuer schnelle und guenstigere Draft-/Testlaeufe via Google AI Studio / Gemini API `erledigt 2026-04-19`
-- Anthropic-Livepfad aktuell auf `claude-sonnet-4-6`; der konkrete Anthropic-Default liegt in `ANTHROPIC_BOOK_MODEL`, sodass Sonnet/Opus-Wechsel pro Deployment nur ueber Env-Konfiguration laufen; Continuity-Audits koennen separat auf einem leichteren Modell (`ANTHROPIC_CONTINUITY_MODEL`, Default Haiku) laufen `erledigt 2026-04-19`
+- Anthropic-Livepfad fuer Book-Jobs ist seit `2026-04-20` gehaertet: dynamisches Output-Budget, robuster JSON-Parse statt blindem Auto-Parse, Retry mit hoeherem Tokenbudget, kompakteres Prompting fuer Metadaten und ein gezielter Repair-Pass fuer Qualitaetsabweichungen. Dadurch bleibt der Pfad in echten `/api/book-jobs`-Läufen deutlich stabiler remote statt auf `local_fallback` zu kippen.
 
 Optional später:
 - kleinere GPT-5-Varianten oder Sonnet/Haiku-Klassen nur für Extraktion, Audits und Hintergrundjobs
@@ -153,6 +153,7 @@ Optional später:
 - Statische Prompt-Module stehen vorn, variable Szenendaten hinten, damit Caching sauber greift.
 - Prompt Caching ist im Anthropic-Pfad fuer den stabilen Prefix des System-Prompts umgesetzt; variabel bleibt der Scene Pack `erledigt 2026-04-19`
 - Provider-State wie Responses/Conversations, `previous_response_id` oder Compaction ist Infrastruktur, nicht das eigentliche Story-Gedaechtnis.
+- Remote-Qualitaet darf nur anhand von Jobs im Modus `remote` bewertet werden; `local_fallback` ist ein Sicherheitsnetz, kein Modellurteil. `ergaenzt 2026-04-20`
 
 ### Einsatzregeln
 - Keine KI bei jedem Tastendruck
@@ -426,6 +427,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - strukturierte Rueckgaben statt Freitext-Only `erledigt`
 - Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs `erledigt` als initialer Provider-Flow; aktuell OpenAI, Anthropic und Gemini plus lokaler Fallback
 - stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`; Anthropic nutzt fuer den stabilen Prefix Prompt Caching
+- Anthropic-Book-Pfad gegen JSON-Abbrueche und Formatdrift gehaertet: dynamisches Tokenbudget, Retry, JSON-Extraktion, defensive Array-Normalisierung und Repair-Pass `erledigt 2026-04-20`
 
 ### Phase 4: Continuity + Quality `in Arbeit`
 - Continuity-Checks fuer Wissensstand, Timeline und Payoffs `erledigt 2026-04-18` lokal, serverseitige Persistierung aktiv
@@ -436,7 +438,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-18`
 - **Foundation:** `erledigt`. Book-Blueprint in Schema integriert. Plan-Modus unterstützt Master Brief & Market Brief.
 - **Memory Backbone:** `erledigt`. Canon Ledger, Character Ledger und Open Threads werden persistent in Supabase verwaltet.
-- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-5.4`) und Anthropic (`claude-sonnet-4-6`) als Defaults; die konkreten Provider-Modelle bleiben ueber die jeweiligen Env-Variablen pro Umgebung austauschbar. Context-Packs werden server-seitig generiert.
+- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-5.4`) und Anthropic als konfigurierbarem Premium-Pfad; die konkreten Provider-Modelle bleiben ueber Env und spaeter auch per UI-Override austauschbar. Context-Packs werden server-seitig generiert.
 - **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
 ## Status Report `2026-04-19`
@@ -455,17 +457,25 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
 
+## Status Report `2026-04-20`
+- **Anthropic Book Hardening:** `erledigt 2026-04-20`. Der serverseitige Anthropic-Pfad in `BookJobService` arbeitet nicht mehr mit einem starren kleinen Tokenlimit und blindem Auto-Parse, sondern mit dynamischem Output-Budget, robuster JSON-Extraktion, Retry bei unvollstaendigem Output und einem gezielten Repair-Pass fuer Qualitaetsverletzungen.
+- **Remote Stability:** `erledigt 2026-04-20`. Echte End-to-End-Läufe ueber `/api/book-jobs` mit `claude-opus-4-7` bleiben nun im Modus `remote`, statt systematisch auf `local_fallback` zu kippen. Der Pfad ist damit fuer den alltäglichen Einsatz deutlich belastbarer.
+- **Model Defaults im Code:** `aktualisiert 2026-04-20`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `claude-opus-4-7` fuer den Hauptdraft und `claude-haiku-4-5` fuer Continuity. Deployment-spezifische Env-Werte koennen davon weiterhin abweichen.
+- **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
+- **Offene Grenze:** `bekannt 2026-04-20`. Der Anthropic-Pfad ist stabiler, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Die Längensteuerung ist damit kein Infrastruktur-Problem mehr, sondern die naechste qualitative Optimierungsstufe.
+
 ### Nächste technische Prioritäten
-1. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
-2. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
-3. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
-4. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
+1. **Rewrite-Length Control:** Zweiten gezielten Expand-/Repair-Pass einführen, damit `rewriteText` hohe Zielbereiche wie `1350-1650` zuverlässiger erreicht, ohne die Prosa zu verwässern.
+2. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
+3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
+4. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
+5. **Continuity Dashboard:** Zentrale Übersicht aller Risiken und offenen Threads über das gesamte Buch hinweg.
 
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
 - Responses liefert Stateful Context, Structured Outputs, bessere Cache-Nutzung und passt damit sauber zu einem serverseitigen Schreibsystem.
 - OpenAI-GPT-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; kleinere GPT-5-Modelle bleiben Kandidaten fuer Extractor- und Audit-Paesse.
-- Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option.
+- Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option; im EMBER-Book-Track ist Opus 4.7 inzwischen der robuste Premium-Pfad fuer wichtige Szenen, waehrend Haiku den Continuity-Audit tragen kann.
 - Gemini 2.5 Flash ist als schnellerer und guenstigerer Provider fuer Drafting-/Testpfade angebunden; die Architektur traegt damit bewusst mehr als einen Premium-Pfad.
 - Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt; dieser Split ist fuer Anthropic jetzt konkret umgesetzt.
 - Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
