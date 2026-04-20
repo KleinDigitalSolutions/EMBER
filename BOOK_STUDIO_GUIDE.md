@@ -15,7 +15,7 @@ Die Grundidee:
 
 - Du definierst zuerst die Leitplanken des Buchs.
 - Du strukturierst dann Akte, Kapitel und Szenen.
-- Für einzelne Szenen erzeugt EMBER Draft-Jobs mit Kontext, Outline, Draft, Extract, Continuity und Rewrite.
+- Für einzelne Szenen erzeugt EMBER Draft-Jobs mit `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity` und `quality_eval`.
 - Die Ergebnisse landen nicht nur als Text, sondern auch als nutzbarer Zustand für Kanon, Figuren, offene Fäden und spätere Szenenarbeit.
 
 ## 2. Die drei Modi oben links
@@ -202,6 +202,12 @@ Praxis:
 - `Gemini` eignet sich gut für schnelle Läufe und breite Kontexte.
 - `Auto` nimmt den besten verfügbaren Pfad auf Basis der Umgebung.
 
+Für den ersten echten Testlauf ist besser:
+
+- keinen `Auto`-Lauf, sondern einen bewussten Provider wählen
+- nur dann bewerten, wenn der Job im Ergebnis `remote` ist
+- bei fehlenden API-Keys erst die Umgebung korrigieren, nicht die Szene
+
 #### Modell-IDs
 
 Unterhalb des Providers kannst du pro Provider konkrete Modell-IDs setzen.
@@ -212,6 +218,14 @@ Wichtig zu verstehen:
 - Du kannst für Anthropic getrennt das Hauptmodell und das Continuity-Modell setzen.
 - Das Hauptmodell schreibt und überarbeitet.
 - Das Continuity-Modell prüft auf Risiken und Stilabweichungen.
+
+Voraussetzung für echte Remote-Läufe:
+
+- `OPENAI_API_KEY` für OpenAI
+- `ANTHROPIC_API_KEY` für Anthropic
+- `GEMINI_API_KEY` oder `GOOGLE_API_KEY` oder `GOOGLE_GEMINI_API_KEY` für Gemini
+
+Fehlt der Key für den gewählten Provider, fällt EMBER auf `local_fallback` zurück oder nutzt den Provider gar nicht.
 
 #### Ziel-Länge
 
@@ -257,25 +271,32 @@ Ein einzelner Job durchläuft diese Stufen:
 1. `Context`  
    Das System baut den Szenenkontext aus Blueprint, Szenenstruktur, Kanon, Figurenstatus und benachbarten Beats.
 
-2. `Outline`  
-   Die Szene wird in operative Beats zerlegt.
+2. `Beat Plan`  
+   Die Szene wird in operative Beats mit Wortbudgets und klaren Payoffs zerlegt.
 
 3. `Draft`  
    Ein erster Szenenentwurf wird erzeugt.
 
-4. `Extract`  
-   Das System extrahiert neue Fakten, Figurenveränderungen, offene Fäden und Foreshadowing.
+4. `Rewrite`  
+   Das Modell überarbeitet den Draft in Richtung Zielprosa und Zielkorridor.
 
-5. `Continuity`  
-   Der Entwurf wird gegen Kanon, Stil und laufende Logik geprüft.
+5. `Length Control`  
+   Wenn die Szene deutlich unter oder über dem Ziel liegt, greift ein eigener `expand`- oder `compress`-Pass.
 
-6. `Rewrite`  
-   Das Modell überarbeitet den Entwurf in Richtung der Zielprosa.
+6. `Extract`  
+   Das System extrahiert neue Fakten, Figurenveränderungen, offene Fäden und Foreshadowing aus dem finalen Rewrite.
+
+7. `Continuity`  
+   Der Rewrite wird gegen Kanon, Stil und laufende Logik geprüft.
+
+8. `Quality Eval`  
+   Die fertige Szene bekommt Wortmetriken, Scores und konkrete Issues.
 
 Das bedeutet:
 
 - Du bekommst nicht nur einen Text.
 - Du bekommst auch verwertbare Produktionsdaten für Folgearbeit.
+- Prosa und Metadaten konkurrieren nicht mehr im selben großen JSON-Output.
 
 ## 8. Wie du Job-Ergebnisse richtig liest
 
@@ -285,11 +306,13 @@ Nach einem Run zeigt der Writer:
 - Ausführungsmodus
 - Modellname
 - Stage-Status
-- Outline
+- Beat-Plan
 - Draft / Rewrite
+- Length-Control-Status
 - Rewrite Notes
 - Extract-Karten
 - Continuity-Karten
+- Quality-Hinweise
 
 ### Provider und Modus
 
@@ -303,6 +326,11 @@ Hier ist besonders wichtig:
 
 Wenn du Modellqualität beurteilen willst, muss der Job `remote` sein.
 
+Für den ersten Testlauf gilt deshalb:
+
+- `remote` = echter Modelllauf, auswertbar
+- `local_fallback` = Sicherheitsnetz, nicht als Qualitätsurteil lesen
+
 ### Rewrite Notes
 
 Diese zeigen, was im überarbeiteten Text verändert oder geschärft wurde.
@@ -314,6 +342,16 @@ Gut:
 - knapp
 
 Wenn die Notes generisch wirken, ist oft die Szene oder Director Note noch zu weich.
+
+### Length Control
+
+Diese Stage ist neu wichtig.
+
+- `accept` bedeutet: Die Szene lag schon im brauchbaren Korridor.
+- `expand` bedeutet: Der Rewrite war zu kurz und wurde gezielt vertieft.
+- `compress` bedeutet: Der Rewrite war zu lang und wurde verdichtet.
+
+Für den ersten Lauf ist `accept` oder ein sauberer einzelner `expand`-/`compress`-Pass ein gutes Zeichen. Wiederholt harte Längenprobleme deuten meist auf eine zu schwache Summary oder eine unklare Director Note hin.
 
 ### Extract State
 
@@ -384,12 +422,14 @@ Besonders wichtig sind:
 
 1. Szene auswählen.
 2. Summary schärfen.
-3. Wortziel setzen.
-4. Provider und Modell bewusst wählen.
+3. Wortziel setzen, für den ersten Lauf am besten `1200–1600`.
+4. Provider und Modell bewusst wählen, nicht `Auto`.
 5. Director Note nur für die aktuelle Szene schreiben.
 6. Job starten.
-7. Rewrite, Notes und Continuity lesen.
-8. Gute Fassung übernehmen oder mit neuer Director Note neu ansetzen.
+7. Prüfen, ob der Lauf `remote` ist.
+8. Beat-Plan, Rewrite, Length Control, Notes und Continuity lesen.
+9. Quality-Hinweise prüfen.
+10. Gute Fassung übernehmen oder mit neuer Director Note neu ansetzen.
 
 ### Workflow für mehrere Iterationen
 
@@ -410,6 +450,27 @@ Nutze nicht zehn vage Wiederholungen. Nutze drei saubere Iterationen:
 - realistische Wortziele
 - regelmäßige Review-Kontrolle
 
+## 12a. Erster Testlauf
+
+Wenn du deinen ersten echten Run machen willst, nimm diesen Minimalpfad:
+
+1. `npm run dev`
+2. `/studio` öffnen
+3. eine Szene mit klarer Summary wählen
+4. Provider bewusst auf `OpenAI`, `Anthropic` oder `Gemini` setzen
+5. Wortziel auf `1200–1600`
+6. eine kurze operative Director Note schreiben
+7. Job starten
+8. nur auswerten, wenn `mode = remote`
+
+Danach prüfst du in dieser Reihenfolge:
+
+1. Ist der Beat-Plan plausibel?
+2. Trägt der Rewrite die Szene bis zum Endhaken?
+3. Musste `length_control` eingreifen?
+4. Gibt es echte Continuity-Risiken?
+5. Meldet `quality_eval` grobe Issues?
+
 ## 13. Was regelmäßig schlechte Ergebnisse erzeugt
 
 - leere oder dünne Summary
@@ -419,6 +480,8 @@ Nutze nicht zehn vage Wiederholungen. Nutze drei saubere Iterationen:
 - zu viele Ziele in einer Szene gleichzeitig
 - Modellqualität auf Basis von `local_fallback` beurteilen
 - Kontinuitätswarnungen ignorieren
+- einen ersten Lauf mit zu hohem Wortziel aufblasen
+- `Auto` benutzen und danach nicht wissen, welcher echte Pfad lief
 
 ## 14. Hinweise zu Kosten und Laufzeit
 
@@ -427,6 +490,7 @@ Nicht alle Provider verhalten sich gleich.
 - stärkere Modelle kosten mehr
 - längere Zieltexte kosten mehr
 - zusätzliche Repair- oder Continuity-Pässe kosten mehr
+- `length_control` und `quality_eval` sind zusätzliche Stufen und können Laufzeit erhöhen
 - bessere Qualität ist oft teurer, aber billiger als zehn unbrauchbare Billigläufe
 
 Praxis:
@@ -441,8 +505,8 @@ Wenn du nur die wichtigste Arbeitsregel mitnehmen willst, dann diese:
 
 - Erst Blueprint scharf machen.
 - Dann pro Szene eine gute Summary schreiben.
-- Dann mit klarer Director Note generieren.
-- Danach den Rewrite und die Continuity lesen, nicht nur den ersten Textblock.
+- Dann mit klarer Director Note und bewusstem Provider generieren.
+- Danach Beat-Plan, Rewrite, Length Control und Continuity lesen, nicht nur den ersten Textblock.
 
 EMBER belohnt saubere Führung. Wer das Tool wie einen Chat benutzt, bekommt mittelmäßige Ergebnisse. Wer es wie ein Produktionssystem führt, bekommt deutlich bessere.
 
