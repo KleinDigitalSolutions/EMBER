@@ -33,6 +33,7 @@ Story {
   title
   status
   meta
+  assistant
   world_bible
   variables[]
   acts[]
@@ -103,6 +104,7 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
 - `Outline`: lineare Übersicht `erledigt`
 - `Playtest`: Story als Leser testen `erledigt`
 - `Review`: narrative Compiler-Sicht `erledigt` als lokales Submission Gate
+- `Assistant`: thread-basierter Story-Chat mit Regiebriefen und Artefakt-Sidebar `erledigt 2026-04-19`
 
 ### Wichtige Studio-Mechaniken
 - Decision Slots: Das Studio schlägt vor, wo Entscheidungen dramaturgisch Sinn ergeben. `erledigt` als lokaler Editor-Flow
@@ -146,6 +148,7 @@ Optional später:
 ### Betriebsprinzip
 - Der Chat ist nie die Quelle der Wahrheit.
 - Persistente Kanon-Artefakte liegen im Story-System beziehungsweise später in der DB (Memory Ledger). `erledigt 2026-04-18`
+- Assistant-Threads, Kontext-Praeferenzen und Regie-Artefakte liegen im Story-Dokument und reisen mit Import/Export mit. `erledigt 2026-04-19`
 - Pro Schreibschritt wird nur ein kleiner relevanter Kontext-Pack geladen (Context Composer). `erledigt 2026-04-18`
 - Statische Prompt-Module stehen vorn, variable Szenendaten hinten, damit Caching sauber greift.
 - Prompt Caching ist im Anthropic-Pfad fuer den stabilen Prefix des System-Prompts umgesetzt; variabel bleibt der Scene Pack `erledigt 2026-04-19`
@@ -357,7 +360,8 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
 - **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`OpenAI` / `Anthropic` / `Gemini` / `Local Fallback`) im Writer-Panel integriert.
 - **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → outline → draft → extract → continuity → rewrite`.
-- **Studio Brainstormer:** RAG-basierter Chat, der Codex und Historie kennt. `geplant`
+- **Assistant Workspace:** `erledigt 2026-04-19`. Thread-basierter Story-Chat mit serverseitiger Route, Provider-/Modellwahl, Scope (`Projekt` / `Act` / `Kapitel` / `Szene`) und strukturierten Outputs fuer Antwort oder Regie-Dokument.
+- **Studio Brainstormer:** RAG-basierter Ausbau des Assistant Workspace mit tieferer Codex-/Historien-Einbindung. `geplant`
 - **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
 
 ### Phase 4: Collaboration + Review `nächste Priorität`
@@ -437,10 +441,13 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 
 ## Status Report `2026-04-19`
 - **Book Writer Panel:** `erledigt`. Dediziertes Schreib-Interface für fokussiertes Authoring von Buch-Projekten implementiert.
-- **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review).
+- **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review, Assistant).
 - **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic` / `Gemini`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
 - **Per-Job Model Switcher:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel koennen jetzt pro Job konkrete Modell-IDs je Provider ueberschreiben; die Auswahl wird lokal gespeichert und als Request-Override an den Server gereicht.
 - **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-2.5-flash` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
+- **Assistant Workspace:** `erledigt 2026-04-19`. Neues Chat-Panel mit Thread-Liste, Quick Prompts, Kontext-Scope und Regie-Modus fuer speicherbare Markdown-Dokumente.
+- **Story Chat Service:** `erledigt 2026-04-19`. Neue serverseitige `/api/story-chat`-Route plus Provider-Routing fuer OpenAI, Anthropic, Gemini und lokalen Fallback bei fehlenden Keys oder Remote-Fehlern.
+- **Assistant Schema:** `erledigt 2026-04-19`. `StoryDocument` traegt jetzt Assistant-Praeferenzen, Threads, Nachrichten und Artefakte inklusive Normalisierung fuer Legacy-Daten.
 - **Schema & Persistence:** `erledigt`. Supabase-Enum `ai_provider` um `gemini` erweitert; `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
 - **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
 - **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; ein separater Continuity-Audit kann auf einem leichteren Anthropic-Modell statt auf dem Haupt-Draft-Modell laufen.
