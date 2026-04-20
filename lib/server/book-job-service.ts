@@ -43,6 +43,22 @@ const continuityAuditSchema = z.object({
 
 type DraftJobPayload = z.infer<typeof draftJobSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
+type DraftGenerationOptions = {
+  modelOverrides?: BookJobModelOverrides;
+  targetSceneWordsMin: number;
+  targetSceneWordsMax: number;
+  directorNote: string;
+};
+type DraftQualityIssue = {
+  code: "rewrite_length" | "meta_language" | "extractor_discipline";
+  detail: string;
+};
+type DraftProviderResult = {
+  modelName: string;
+  continuityModelName: string | null;
+  payload: DraftJobPayload;
+  warning?: string;
+};
 export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
 
@@ -95,7 +111,7 @@ export async function generateBookDraftJob(params: {
   }
 
   try {
-    const providerOptions = {
+    const providerOptions: DraftGenerationOptions = {
       modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
@@ -112,6 +128,7 @@ export async function generateBookDraftJob(params: {
     return {
       provider: remoteProvider,
       mode: "remote",
+      warning: result.warning,
       job: hydrateDraftJob(params.sceneId, packet, result.payload, {
         provider: remoteProvider,
         mode: "remote",
@@ -163,13 +180,8 @@ function resolveRemoteProvider(provider: BookJobProvider) {
 
 async function generateWithOpenAI(
   packet: SceneContextPacket,
-  options: {
-    modelOverrides?: BookJobModelOverrides;
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  }
-) {
+  options: DraftGenerationOptions
+): Promise<DraftProviderResult> {
   const modelName = resolveBookJobModelValue(
     options.modelOverrides?.openai,
     process.env.OPENAI_BOOK_MODEL,
@@ -211,13 +223,8 @@ async function generateWithOpenAI(
 
 async function generateWithAnthropic(
   packet: SceneContextPacket,
-  options: {
-    modelOverrides?: BookJobModelOverrides;
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  }
-) {
+  options: DraftGenerationOptions
+): Promise<DraftProviderResult> {
   const modelName = resolveBookJobModelValue(
     options.modelOverrides?.anthropic,
     process.env.ANTHROPIC_BOOK_MODEL,
@@ -269,13 +276,8 @@ async function generateWithAnthropic(
 
 async function generateWithGemini(
   packet: SceneContextPacket,
-  options: {
-    modelOverrides?: BookJobModelOverrides;
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  }
-) {
+  options: DraftGenerationOptions
+): Promise<DraftProviderResult> {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
@@ -306,10 +308,14 @@ async function generateWithGemini(
     throw new Error("Gemini returned no text output.");
   }
 
+  const payload = draftJobSchema.parse(JSON.parse(response.text));
+  const repaired = await maybeRepairGeminiPayload(client, modelName, packet, options, payload);
+
   return {
     modelName,
     continuityModelName: null,
-    payload: draftJobSchema.parse(JSON.parse(response.text))
+    payload: repaired.payload,
+    warning: repaired.warning
   };
 }
 
@@ -402,15 +408,19 @@ function buildSystemPrompt(packet: SceneContextPacket) {
 
 function buildDynamicUserPrompt(
   packet: SceneContextPacket,
-  options: {
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  }
+  options: DraftGenerationOptions
 ) {
   return [
     "Create one drafting job for the selected scene.",
     `Target rewrite length: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Hard requirements:",
+    "- All fields must be written in German, including rewriteNotes, canon facts, state updates, continuity risks, and style notes.",
+    "- rewriteText must land inside the target range and must not stop early.",
+    "- Write for a commercially sharp German psychothriller audience: immediate unease, clean readability, scene pressure, social friction, concrete observation, and a strong closing hook.",
+    "- No imitation or mention of real authors. Use market traits, not author mimicry.",
+    "- Avoid generic TV-crime filler, soft exposition, decorative literary padding, and melodramatic over-explaining.",
+    "- rewriteNotes must describe real visible revisions in the rewriteText, not invented process commentary.",
+    "- extractedState must stay conservative: only explicit facts from packet or generated scene text become facts. Uncertainty belongs in continuityRisks.",
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
@@ -467,11 +477,14 @@ function buildCoreSystemPrompt() {
     "You are the drafting engine for EMBER Book Studio.",
     "Return only structured output matching the requested schema.",
     "Do not imitate living authors or copyrighted prose.",
+    "Write all output in German unless a field explicitly requires another language, which it does not here.",
     "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
     "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
     "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
     "Publishing and KDP rules shape readability, quality, and packaging; they must never appear as meta commentary inside the scene prose.",
-    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation."
+    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation.",
+    "Target a premium German psychothriller rhythm: fast scene entry, controlled sentence pressure, sharp observation, psychologically loaded dialogue, and a destabilizing end beat.",
+    "The prose should feel bestselling and immediate, not literary for its own sake and not generic procedural filler."
   ].join("\n");
 }
 
@@ -503,15 +516,65 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
   ];
 }
 
+async function maybeRepairGeminiPayload(
+  client: GoogleGenAI,
+  modelName: string,
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  payload: DraftJobPayload
+) {
+  const issues = assessDraftPayloadQuality(payload, options);
+
+  if (!issues.length) {
+    return {
+      payload
+    };
+  }
+
+  try {
+    const response = await client.models.generateContent({
+      model: modelName,
+      contents: buildRepairUserPrompt(packet, options, payload, issues),
+      config: {
+        systemInstruction: buildSystemPrompt(packet),
+        responseMimeType: "application/json",
+        responseJsonSchema: z.toJSONSchema(draftJobSchema)
+      }
+    });
+
+    if (!response.text) {
+      return {
+        payload,
+        warning: `Gemini repair returned no text. Issues remained: ${formatQualityIssues(issues)}`
+      };
+    }
+
+    const repairedPayload = draftJobSchema.parse(JSON.parse(response.text));
+    const originalPenalty = computeDraftQualityPenalty(payload, options);
+    const repairedPenalty = computeDraftQualityPenalty(repairedPayload, options);
+    const finalIssues = assessDraftPayloadQuality(
+      repairedPenalty <= originalPenalty ? repairedPayload : payload,
+      options
+    );
+
+    return {
+      payload: repairedPenalty <= originalPenalty ? repairedPayload : payload,
+      warning: finalIssues.length
+        ? `Gemini output repaired but not fully clean: ${formatQualityIssues(finalIssues)}`
+        : `Gemini output repaired: ${formatQualityIssues(issues)}`
+    };
+  } catch (error) {
+    return {
+      payload,
+      warning: `Gemini repair failed. Issues remained: ${formatQualityIssues(issues)}${error instanceof Error ? ` | ${error.message}` : ""}`
+    };
+  }
+}
+
 async function runAnthropicContinuityAudit(
   client: Anthropic,
   packet: SceneContextPacket,
-  options: {
-    modelOverrides?: BookJobModelOverrides;
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  },
+  options: DraftGenerationOptions,
   draft: {
     payload: DraftJobPayload;
   }
@@ -547,11 +610,7 @@ async function runAnthropicContinuityAudit(
 
 function buildContinuityAuditPrompt(
   packet: SceneContextPacket,
-  options: {
-    targetSceneWordsMin: number;
-    targetSceneWordsMax: number;
-    directorNote: string;
-  },
+  options: DraftGenerationOptions,
   payload: DraftJobPayload
 ) {
   return [
@@ -609,6 +668,136 @@ function mergeContinuityAudit(payload: DraftJobPayload, audit: ContinuityAuditPa
       ).slice(0, 6)
     }
   };
+}
+
+function buildRepairUserPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  payload: DraftJobPayload,
+  issues: DraftQualityIssue[]
+) {
+  return [
+    "Repair the existing draft-job output and return the full JSON again.",
+    "Keep what is already strong. Only fix the violations.",
+    `Target rewrite length remains ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Act: ${packet.dynamicContext.actTitle}`,
+    `Chapter: ${packet.dynamicContext.chapterTitle}`,
+    `Scene: ${packet.dynamicContext.sceneTitle}`,
+    "Violations to fix:",
+    issues.map(function (issue) {
+      return `- ${issue.detail}`;
+    }).join("\n"),
+    "Repair rules:",
+    "- Keep every field in German.",
+    "- Rewrite notes must describe concrete visible revisions in the rewriteText.",
+    "- Strengthen commercial German psychothriller pull: tension through observation, dialogue friction, social unease, and a clean end hook.",
+    "- Do not imitate real authors; use only the requested market characteristics.",
+    "- Remove unsupported specifics from extractedState. If something is uncertain, move it to continuityRisks instead of canon facts.",
+    "Current JSON:",
+    JSON.stringify(payload, null, 2)
+  ].join("\n");
+}
+
+function assessDraftPayloadQuality(payload: DraftJobPayload, options: DraftGenerationOptions) {
+  const issues: DraftQualityIssue[] = [];
+  const rewriteWords = countWords(payload.rewriteText);
+
+  if (rewriteWords < options.targetSceneWordsMin) {
+    issues.push({
+      code: "rewrite_length",
+      detail: `rewriteText is too short with ${rewriteWords} words; it must reach at least ${options.targetSceneWordsMin} words.`
+    });
+  } else if (rewriteWords > options.targetSceneWordsMax + 80) {
+    issues.push({
+      code: "rewrite_length",
+      detail: `rewriteText is too long with ${rewriteWords} words; it should stay close to the upper bound ${options.targetSceneWordsMax}.`
+    });
+  }
+
+  if (hasEnglishMetaLeak(payload)) {
+    issues.push({
+      code: "meta_language",
+      detail: "Meta fields leak English. rewriteNotes and extractedState entries must be German."
+    });
+  }
+
+  if (hasSpeculativeExtractorLeak(payload)) {
+    issues.push({
+      code: "extractor_discipline",
+      detail: "extractedState sounds too speculative. Facts must stay explicit; uncertainty belongs in continuityRisks."
+    });
+  }
+
+  return issues;
+}
+
+function computeDraftQualityPenalty(payload: DraftJobPayload, options: DraftGenerationOptions) {
+  const rewriteWords = countWords(payload.rewriteText);
+  let penalty = 0;
+
+  if (rewriteWords < options.targetSceneWordsMin) {
+    penalty += options.targetSceneWordsMin - rewriteWords;
+  }
+
+  if (rewriteWords > options.targetSceneWordsMax) {
+    penalty += rewriteWords - options.targetSceneWordsMax;
+  }
+
+  if (hasEnglishMetaLeak(payload)) {
+    penalty += 400;
+  }
+
+  if (hasSpeculativeExtractorLeak(payload)) {
+    penalty += 180;
+  }
+
+  return penalty;
+}
+
+function hasEnglishMetaLeak(payload: DraftJobPayload) {
+  return [
+    ...payload.rewriteNotes,
+    ...payload.extractedState.newCanonFacts,
+    ...payload.extractedState.characterStateUpdates,
+    ...payload.extractedState.openThreadsCreated,
+    ...payload.extractedState.openThreadsResolved,
+    ...payload.extractedState.foreshadowingAdded,
+    ...payload.extractedState.continuityRisks,
+    ...payload.extractedState.styleDriftNotes
+  ].some(function (value) {
+    return looksLikeEnglishMeta(value);
+  });
+}
+
+function looksLikeEnglishMeta(value: string) {
+  const englishHits =
+    value.match(/\b(expanded|deepened|enhanced|introduced|extended|ensured|return|only|with|and|the|scene|draft|hook|village|notes?|cleaner|revised)\b/gi)?.length ?? 0;
+  const germanHits =
+    value.match(/\b(und|mit|der|die|das|nicht|Szene|Kapitel|Dorf|Hinweis|Spannung|Haken|Fokus|Regel|wird|soll|muss)\b/gi)?.length ?? 0;
+
+  return englishHits >= 2 && englishHits > germanHits;
+}
+
+function hasSpeculativeExtractorLeak(payload: DraftJobPayload) {
+  return payload.extractedState.newCanonFacts
+    .concat(payload.extractedState.characterStateUpdates)
+    .concat(payload.extractedState.foreshadowingAdded)
+    .some(function (value) {
+      return /\b(vielleicht|moeglicherweise|möglicherweise|koennte|könnte|scheint|wirkt|deutet darauf hin|wahrscheinlich)\b/i.test(
+        value
+      );
+    });
+}
+
+function formatQualityIssues(issues: DraftQualityIssue[]) {
+  return issues.map(function (issue) {
+    return issue.code;
+  }).join(", ");
+}
+
+function countWords(value: string) {
+  const words = value.trim().match(/\S+/g);
+  return words ? words.length : 0;
 }
 
 function dedupeStrings(values: string[]) {
