@@ -1508,12 +1508,20 @@ function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[numbe
     return "Context";
   }
 
-  if (stageId === "outline") {
-    return "Outline";
+  if (stageId === "beat_plan") {
+    return "Beat Plan";
   }
 
   if (stageId === "draft") {
     return "Draft";
+  }
+
+  if (stageId === "rewrite") {
+    return "Rewrite";
+  }
+
+  if (stageId === "length_control") {
+    return "Length Control";
   }
 
   if (stageId === "extract") {
@@ -1524,7 +1532,7 @@ function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[numbe
     return "Continuity";
   }
 
-  return "Rewrite";
+  return "Quality Eval";
 }
 
 function EditableStringListSection({

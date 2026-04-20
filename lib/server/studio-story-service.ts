@@ -425,6 +425,16 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
             draftEngineMeta.targetSceneWordsMax,
             fallbackBook.draftEngine.targetSceneWordsMax
           ),
+          styleProfileVersion:
+            typeof draftEngineMeta.styleProfileVersion === "string" &&
+            draftEngineMeta.styleProfileVersion.trim()
+              ? draftEngineMeta.styleProfileVersion
+              : fallbackBook.draftEngine.styleProfileVersion,
+          marketProfileVersion:
+            typeof draftEngineMeta.marketProfileVersion === "string" &&
+            draftEngineMeta.marketProfileVersion.trim()
+              ? draftEngineMeta.marketProfileVersion
+              : fallbackBook.draftEngine.marketProfileVersion,
           jobs: buildDraftJobs({
             rows: draftJobsResult.data ?? [],
             memoryLastSyncedAt,
@@ -496,7 +506,9 @@ export async function saveStudioStory(story: StoryDocument) {
     assistant: nextStory.assistant,
     draftEngine: {
       targetSceneWordsMin: nextStory.book.draftEngine.targetSceneWordsMin,
-      targetSceneWordsMax: nextStory.book.draftEngine.targetSceneWordsMax
+      targetSceneWordsMax: nextStory.book.draftEngine.targetSceneWordsMax,
+      styleProfileVersion: nextStory.book.draftEngine.styleProfileVersion,
+      marketProfileVersion: nextStory.book.draftEngine.marketProfileVersion
     }
   }
 
@@ -1563,11 +1575,13 @@ function normalizeStageRuns(
 
   return {
     context: normalizeStageRun(record.context, fallbackRuns.context),
-    outline: normalizeStageRun(record.outline, fallbackRuns.outline),
+    beat_plan: normalizeStageRun(record.beat_plan ?? record.outline, fallbackRuns.beat_plan),
     draft: normalizeStageRun(record.draft, fallbackRuns.draft),
+    rewrite: normalizeStageRun(record.rewrite, fallbackRuns.rewrite),
+    length_control: normalizeStageRun(record.length_control, fallbackRuns.length_control),
     extract: normalizeStageRun(record.extract, fallbackRuns.extract),
     continuity: normalizeStageRun(record.continuity, fallbackRuns.continuity),
-    rewrite: normalizeStageRun(record.rewrite, fallbackRuns.rewrite)
+    quality_eval: normalizeStageRun(record.quality_eval, fallbackRuns.quality_eval)
   }
 }
 
@@ -1582,8 +1596,34 @@ function normalizeStageRun(value: unknown, fallback: BookDraftStageRun): BookDra
     provider: normalizeProvider(record.provider ?? fallback.provider),
     modelName: typeof record.modelName === "string" ? record.modelName : fallback.modelName,
     updatedAt: typeof record.updatedAt === "string" ? record.updatedAt : fallback.updatedAt,
+    attemptCount: toNumber(record.attemptCount, fallback.attemptCount),
+    repairCount: toNumber(record.repairCount, fallback.repairCount),
+    durationMs: normalizeIntegerOrNull(record.durationMs, fallback.durationMs),
+    inputTokens: normalizeIntegerOrNull(record.inputTokens, fallback.inputTokens),
+    outputTokens: normalizeIntegerOrNull(record.outputTokens, fallback.outputTokens),
+    costCents: normalizeIntegerOrNull(record.costCents, fallback.costCents),
+    stopReason: typeof record.stopReason === "string" ? record.stopReason : fallback.stopReason,
+    targetWordsMin: normalizeIntegerOrNull(record.targetWordsMin, fallback.targetWordsMin),
+    targetWordsMax: normalizeIntegerOrNull(record.targetWordsMax, fallback.targetWordsMax),
+    actualWords: normalizeIntegerOrNull(record.actualWords, fallback.actualWords),
+    qualityScore:
+      typeof record.qualityScore === "number" && Number.isFinite(record.qualityScore)
+        ? record.qualityScore
+        : fallback.qualityScore,
+    qualityIssues:
+      normalizeStringArray(record.qualityIssues).length > 0
+        ? normalizeStringArray(record.qualityIssues)
+        : fallback.qualityIssues,
     notes: normalizeStringArray(record.notes).length > 0 ? normalizeStringArray(record.notes) : fallback.notes
   }
+}
+
+function normalizeIntegerOrNull(value: unknown, fallback: number | null) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.round(value)
+  }
+
+  return fallback
 }
 
 function normalizeStoryValue(value: unknown): boolean | string | number {

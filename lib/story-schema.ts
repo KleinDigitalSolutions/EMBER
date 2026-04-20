@@ -6,26 +6,42 @@ export type BookJobProvider = "openai" | "anthropic" | "gemini" | "local";
 export type BookJobMode = "remote" | "local_fallback";
 export type BookDraftStageId =
   | "context"
-  | "outline"
+  | "beat_plan"
   | "draft"
+  | "rewrite"
+  | "length_control"
   | "extract"
   | "continuity"
-  | "rewrite";
+  | "quality_eval";
 export type BookDraftStageStatus = "completed" | "failed" | "skipped";
 export type BookDraftStageRun = {
   status: BookDraftStageStatus;
   provider: BookJobProvider;
   modelName: string | null;
   updatedAt: string | null;
+  attemptCount: number;
+  repairCount: number;
+  durationMs: number | null;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  costCents: number | null;
+  stopReason: string | null;
+  targetWordsMin: number | null;
+  targetWordsMax: number | null;
+  actualWords: number | null;
+  qualityScore: number | null;
+  qualityIssues: string[];
   notes: string[];
 };
 export type BookDraftStageRuns = {
   context: BookDraftStageRun;
-  outline: BookDraftStageRun;
+  beat_plan: BookDraftStageRun;
   draft: BookDraftStageRun;
+  rewrite: BookDraftStageRun;
+  length_control: BookDraftStageRun;
   extract: BookDraftStageRun;
   continuity: BookDraftStageRun;
-  rewrite: BookDraftStageRun;
+  quality_eval: BookDraftStageRun;
 };
 
 export const LEGACY_BOOK_WRITER_CONSTITUTION = [
@@ -194,6 +210,8 @@ export type BookDraftEngine = {
   mode: "local";
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
+  styleProfileVersion: string;
+  marketProfileVersion: string;
   jobs: BookDraftJob[];
 };
 
@@ -570,6 +588,8 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       mode: "local",
       targetSceneWordsMin: 900,
       targetSceneWordsMax: 1400,
+      styleProfileVersion: "rewrite_length_control_v2",
+      marketProfileVersion: "rewrite_length_control_v2",
       jobs: []
     },
     amazonOps: {

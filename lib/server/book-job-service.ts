@@ -13,17 +13,33 @@ import {
 } from "@/lib/book-job-models";
 import {
   buildSceneContextPacket,
-  createCompletedDraftStageRuns,
   createDraftJobFromPacket,
+  createStageRun,
   type SceneContextPacket
 } from "@/lib/book-engine";
-import { normalizeBookDraftTargets, type BookDraftJob, type StoryDocument } from "@/lib/story-schema";
+import {
+  normalizeBookDraftTargets,
+  type BookDraftJob,
+  type BookDraftStageRuns,
+  type DraftExtractionState,
+  type StoryDocument
+} from "@/lib/story-schema";
 import { createUuid } from "@/lib/id";
 
-const draftJobSchema = z.object({
-  outline: z.array(z.string()).min(3).max(6),
-  draftText: z.string().min(120),
-  rewriteText: z.string().min(120),
+const beatPlanSchema = z.object({
+  beats: z.array(
+    z.object({
+      label: z.string().min(1).max(80),
+      purpose: z.string().min(1).max(240),
+      targetWords: z.number().int().min(50).max(1200),
+      mustLand: z.string().min(1).max(180)
+    })
+  )
+    .min(3)
+    .max(6)
+});
+
+const stateExtractionSchema = z.object({
   rewriteNotes: z.array(z.string()).min(1).max(6),
   extractedState: z.object({
     newCanonFacts: z.array(z.string()).max(6),
@@ -41,30 +57,103 @@ const continuityAuditSchema = z.object({
   styleDriftNotes: z.array(z.string()).max(6)
 });
 
-const ANTHROPIC_DRAFT_MIN_OUTPUT_TOKENS = 5000;
-const ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS = 12000;
-const ANTHROPIC_DRAFT_RETRY_STEP_TOKENS = 2000;
-const ANTHROPIC_DRAFT_RETRY_LIMIT = 2;
-const ANTHROPIC_CONTINUITY_MAX_TOKENS = 1200;
+const qualityEvalSchema = z.object({
+  wordTargetMin: z.number().int().min(0),
+  wordTargetMax: z.number().int().min(0),
+  wordActual: z.number().int().min(0),
+  hookScore: z.number().int().min(0).max(10),
+  tensionScore: z.number().int().min(0).max(10),
+  dialogueScore: z.number().int().min(0).max(10),
+  specificityScore: z.number().int().min(0).max(10),
+  germanCleanlinessScore: z.number().int().min(0).max(10),
+  continuityScore: z.number().int().min(0).max(10),
+  marketFitScore: z.number().int().min(0).max(10),
+  povDisciplineScore: z.number().int().min(0).max(10),
+  readabilityScore: z.number().int().min(0).max(10),
+  issues: z.array(z.string()).max(8)
+});
 
-type DraftJobPayload = z.infer<typeof draftJobSchema>;
+const ANTHROPIC_PROSE_MIN_TOKENS = 1800;
+const ANTHROPIC_PROSE_MAX_TOKENS = 10000;
+const OPENAI_PROSE_MIN_TOKENS = 1200;
+const OPENAI_PROSE_MAX_TOKENS = 9000;
+const GEMINI_PROSE_MIN_TOKENS = 1200;
+const GEMINI_PROSE_MAX_TOKENS = 9000;
+const STRUCTURED_STAGE_MAX_TOKENS = 1400;
+
+type BeatPlanPayload = z.infer<typeof beatPlanSchema>;
+type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
+type QualityEvalPayload = z.infer<typeof qualityEvalSchema>;
+
 type DraftGenerationOptions = {
   modelOverrides?: BookJobModelOverrides;
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
   directorNote: string;
 };
-type DraftQualityIssue = {
-  code: "rewrite_length" | "meta_language" | "extractor_discipline";
-  detail: string;
+
+type StageCallMetrics = {
+  modelName: string | null;
+  attemptCount: number;
+  repairCount: number;
+  durationMs: number | null;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  stopReason: string | null;
 };
+
+type StructuredStageResult<T> = {
+  payload: T;
+  metrics: StageCallMetrics;
+};
+
+type TextStageResult = {
+  text: string;
+  metrics: StageCallMetrics;
+};
+
+type LengthControlAction = "accept" | "expand" | "compress";
+
+type ScenePipelineAdapter = {
+  provider: RemoteBookJobProvider;
+  modelName: string;
+  continuityModelName: string | null;
+  generateBeatPlan: () => Promise<StructuredStageResult<BeatPlanPayload>>;
+  writeDraft: (beatPlan: BeatPlanPayload) => Promise<TextStageResult>;
+  rewriteScene: (beatPlan: BeatPlanPayload, draftText: string) => Promise<TextStageResult>;
+  expandScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
+  compressScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
+  extractSceneState: (
+    beatPlan: BeatPlanPayload,
+    rewriteText: string
+  ) => Promise<StructuredStageResult<StateExtractionPayload>>;
+  auditContinuity: (
+    beatPlan: BeatPlanPayload,
+    draftText: string,
+    rewriteText: string,
+    extractedState: DraftExtractionState
+  ) => Promise<StructuredStageResult<ContinuityAuditPayload>>;
+  evaluateQuality: (
+    beatPlan: BeatPlanPayload,
+    rewriteText: string,
+    extractedState: DraftExtractionState
+  ) => Promise<StructuredStageResult<QualityEvalPayload>>;
+};
+
 type DraftProviderResult = {
   modelName: string;
   continuityModelName: string | null;
-  payload: DraftJobPayload;
+  beatPlan: BeatPlanPayload;
+  draftText: string;
+  rewriteText: string;
+  rewriteNotes: string[];
+  extractedState: DraftExtractionState;
+  qualityEval: QualityEvalPayload;
+  stages: BookDraftStageRuns;
   warning?: string;
 };
+
 export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
 type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
 
@@ -134,17 +223,15 @@ export async function generateBookDraftJob(params: {
         : remoteProvider === "anthropic"
           ? await generateWithAnthropic(packet, providerOptions)
           : await generateWithGemini(packet, providerOptions);
-    const sanitizedResult = sanitizeDraftJobPayload(packet, result.payload);
 
     return {
       provider: remoteProvider,
       mode: "remote",
-      warning: combineWarnings(result.warning, sanitizedResult.notes),
-      job: hydrateDraftJob(params.sceneId, packet, sanitizedResult.payload, {
+      warning: result.warning,
+      job: hydrateDraftJob(params.sceneId, packet, result, {
         provider: remoteProvider,
         mode: "remote",
-        modelName: result.modelName,
-        continuityModelName: result.continuityModelName ?? null
+        modelName: result.modelName
       })
     };
   } catch (error) {
@@ -202,34 +289,94 @@ async function generateWithOpenAI(
     apiKey: process.env.OPENAI_API_KEY
   });
 
-  const response = await client.responses.parse({
-    model: modelName,
-    store: false,
-    reasoning: { effort: "medium" },
-    input: [
-      {
-        role: "system",
-        content: buildSystemPrompt(packet)
-      },
-      {
-        role: "user",
-        content: buildDynamicUserPrompt(packet, options)
-      }
-    ],
-    text: {
-      format: zodTextFormat(draftJobSchema, "ember_book_job")
+  return runScenePipeline(packet, options, {
+    provider: "openai",
+    modelName,
+    continuityModelName: modelName,
+    generateBeatPlan: function () {
+      return requestOpenAIStructured({
+        client,
+        modelName,
+        schema: beatPlanSchema,
+        schemaName: "ember_book_beat_plan",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildBeatPlanPrompt(packet, options)
+      });
+    },
+    writeDraft: function (beatPlan) {
+      return requestOpenAIText({
+        client,
+        modelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(resolveDraftWordTargets(options).max)
+      });
+    },
+    rewriteScene: function (beatPlan, draftText) {
+      return requestOpenAIText({
+        client,
+        modelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    expandScene: function (beatPlan, rewriteText) {
+      return requestOpenAIText({
+        client,
+        modelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    compressScene: function (beatPlan, rewriteText) {
+      return requestOpenAIText({
+        client,
+        modelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    extractSceneState: function (beatPlan, rewriteText) {
+      return requestOpenAIStructured({
+        client,
+        modelName,
+        schema: stateExtractionSchema,
+        schemaName: "ember_book_state_extract",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+      });
+    },
+    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+      return requestOpenAIStructured({
+        client,
+        modelName,
+        schema: continuityAuditSchema,
+        schemaName: "ember_book_continuity_audit",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildContinuityAuditPrompt(
+          packet,
+          options,
+          beatPlan,
+          draftText,
+          rewriteText,
+          extractedState
+        )
+      });
+    },
+    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+      return requestOpenAIStructured({
+        client,
+        modelName,
+        schema: qualityEvalSchema,
+        schemaName: "ember_book_quality_eval",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
     }
   });
-
-  if (!response.output_parsed) {
-    throw new Error("OpenAI returned no parsed output.");
-  }
-
-  return {
-    modelName,
-    continuityModelName: null,
-    payload: response.output_parsed
-  };
 }
 
 async function generateWithAnthropic(
@@ -241,37 +388,126 @@ async function generateWithAnthropic(
     process.env.ANTHROPIC_BOOK_MODEL,
     DEFAULT_BOOK_JOB_MODELS.anthropic
   );
+  const continuityModelName = resolveBookJobModelValue(
+    options.modelOverrides?.anthropicContinuity,
+    process.env.ANTHROPIC_CONTINUITY_MODEL,
+    DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
+  );
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
-  const draftResult = await requestAnthropicDraftPayload(client, modelName, packet, options);
-  const repairedDraftResult = await maybeRepairAnthropicPayload(
-    client,
-    modelName,
-    packet,
-    options,
-    draftResult.payload
-  );
 
-  const continuityAudit = await runAnthropicContinuityAudit(client, packet, options, {
-    payload: repairedDraftResult.payload
+  return runScenePipeline(packet, options, {
+    provider: "anthropic",
+    modelName,
+    continuityModelName,
+    generateBeatPlan: function () {
+      return requestAnthropicStructured({
+        client,
+        modelName,
+        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        schema: beatPlanSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildBeatPlanPrompt(packet, options)
+      });
+    },
+    writeDraft: function (beatPlan) {
+      return requestAnthropicText({
+        client,
+        modelName,
+        maxTokens: resolveAnthropicProseMaxTokens(resolveDraftWordTargets(options).max),
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildAnthropicScenePrompt({
+          mode: "draft",
+          packet,
+          options,
+          beatPlan
+        })
+      });
+    },
+    rewriteScene: function (beatPlan, draftText) {
+      return requestAnthropicText({
+        client,
+        modelName,
+        maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildAnthropicScenePrompt({
+          mode: "rewrite",
+          packet,
+          options,
+          beatPlan,
+          draftText
+        })
+      });
+    },
+    expandScene: function (beatPlan, rewriteText) {
+      return requestAnthropicText({
+        client,
+        modelName,
+        maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildAnthropicScenePrompt({
+          mode: "expand",
+          packet,
+          options,
+          beatPlan,
+          rewriteText
+        })
+      });
+    },
+    compressScene: function (beatPlan, rewriteText) {
+      return requestAnthropicText({
+        client,
+        modelName,
+        maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildAnthropicScenePrompt({
+          mode: "compress",
+          packet,
+          options,
+          beatPlan,
+          rewriteText
+        })
+      });
+    },
+    extractSceneState: function (beatPlan, rewriteText) {
+      return requestAnthropicStructured({
+        client,
+        modelName,
+        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        schema: stateExtractionSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+      });
+    },
+    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+      return requestAnthropicStructured({
+        client,
+        modelName: continuityModelName,
+        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        schema: continuityAuditSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildContinuityAuditPrompt(
+          packet,
+          options,
+          beatPlan,
+          draftText,
+          rewriteText,
+          extractedState
+        )
+      });
+    },
+    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+      return requestAnthropicStructured({
+        client,
+        modelName,
+        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        schema: qualityEvalSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
+    }
   });
-
-  return {
-    modelName,
-    continuityModelName:
-      continuityAudit && continuityAudit.continuityRisks.concat(continuityAudit.styleDriftNotes).length
-        ? resolveBookJobModelValue(
-            options.modelOverrides?.anthropicContinuity,
-            process.env.ANTHROPIC_CONTINUITY_MODEL,
-            DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
-          )
-        : modelName,
-    payload: continuityAudit
-      ? mergeContinuityAudit(repairedDraftResult.payload, continuityAudit)
-      : repairedDraftResult.payload,
-    warning: combineWarnings(draftResult.warning, repairedDraftResult.warning)
-  };
 }
 
 async function generateWithGemini(
@@ -284,39 +520,443 @@ async function generateWithGemini(
     throw new Error("Missing Gemini API key.");
   }
 
-  const modelName =
-    resolveBookJobModelValue(
-      options.modelOverrides?.gemini,
-      process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
-      DEFAULT_BOOK_JOB_MODELS.gemini
-    );
+  const modelName = resolveBookJobModelValue(
+    options.modelOverrides?.gemini,
+    process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
+    DEFAULT_BOOK_JOB_MODELS.gemini
+  );
   const client = new GoogleGenAI({
     apiKey
   });
 
-  const response = await client.models.generateContent({
-    model: modelName,
-    contents: buildDynamicUserPrompt(packet, options),
-    config: {
-      systemInstruction: buildSystemPrompt(packet),
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(draftJobSchema)
+  return runScenePipeline(packet, options, {
+    provider: "gemini",
+    modelName,
+    continuityModelName: modelName,
+    generateBeatPlan: function () {
+      return requestGeminiStructured({
+        client,
+        modelName,
+        schema: beatPlanSchema,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildBeatPlanPrompt(packet, options)
+      });
+    },
+    writeDraft: function (beatPlan) {
+      return requestGeminiText({
+        client,
+        modelName,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
+        maxOutputTokens: resolveGeminiProseMaxTokens(resolveDraftWordTargets(options).max)
+      });
+    },
+    rewriteScene: function (beatPlan, draftText) {
+      return requestGeminiText({
+        client,
+        modelName,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
+        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    expandScene: function (beatPlan, rewriteText) {
+      return requestGeminiText({
+        client,
+        modelName,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    compressScene: function (beatPlan, rewriteText) {
+      return requestGeminiText({
+        client,
+        modelName,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    extractSceneState: function (beatPlan, rewriteText) {
+      return requestGeminiStructured({
+        client,
+        modelName,
+        schema: stateExtractionSchema,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+      });
+    },
+    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+      return requestGeminiStructured({
+        client,
+        modelName,
+        schema: continuityAuditSchema,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildContinuityAuditPrompt(
+          packet,
+          options,
+          beatPlan,
+          draftText,
+          rewriteText,
+          extractedState
+        )
+      });
+    },
+    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+      return requestGeminiStructured({
+        client,
+        modelName,
+        schema: qualityEvalSchema,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
     }
   });
+}
 
-  if (!response.text) {
-    throw new Error("Gemini returned no text output.");
+async function runScenePipeline(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  adapter: ScenePipelineAdapter
+): Promise<DraftProviderResult> {
+  const warnings: string[] = [];
+  const draftTargets = resolveDraftWordTargets(options);
+
+  const beatPlanResult = await adapter.generateBeatPlan();
+  const beatPlan = sanitizeBeatPlan(packet, options, beatPlanResult.payload);
+  const outlineNotes = buildOutlineFromBeatPlan(beatPlan);
+
+  const draftResult = await adapter.writeDraft(beatPlan);
+  const draftText = sanitizeSceneText(draftResult.text);
+
+  if (!draftText) {
+    throw new Error("Draft stage returned no prose.");
   }
 
-  const payload = draftJobSchema.parse(JSON.parse(response.text));
-  const repaired = await maybeRepairGeminiPayload(client, modelName, packet, options, payload);
+  const rewriteResult = await adapter.rewriteScene(beatPlan, draftText);
+  const rewrittenText = sanitizeSceneText(rewriteResult.text);
+
+  if (!rewrittenText) {
+    throw new Error("Rewrite stage returned no prose.");
+  }
+
+  const lengthControl = await maybeRunLengthControl(packet, options, adapter, beatPlan, rewrittenText);
+
+  if (lengthControl.warning) {
+    warnings.push(lengthControl.warning);
+  }
+
+  const extractionResult = await adapter.extractSceneState(beatPlan, lengthControl.text);
+  const normalizedExtraction = normalizeStateExtractionPayload(extractionResult.payload);
+  const sanitizedExtraction = sanitizeSceneStateExtraction(packet, normalizedExtraction);
+  let extractedState = sanitizedExtraction.payload.extractedState;
+
+  if (sanitizedExtraction.notes.length) {
+    warnings.push(sanitizedExtraction.notes.join(" | "));
+  }
+
+  let continuityStage = createStageRun({
+    status: "skipped",
+    provider: adapter.provider,
+    modelName: adapter.continuityModelName ?? adapter.modelName,
+    updatedAt: new Date().toISOString(),
+    attemptCount: 0,
+    notes: ["Continuity-Audit wurde nicht ausgefuehrt."]
+  });
+
+  try {
+    const continuityResult = await adapter.auditContinuity(
+      beatPlan,
+      draftText,
+      lengthControl.text,
+      extractedState
+    );
+    extractedState = mergeContinuityAudit(extractedState, continuityResult.payload);
+    continuityStage = createStageRun({
+      provider: adapter.provider,
+      modelName: adapter.continuityModelName ?? continuityResult.metrics.modelName,
+      updatedAt: new Date().toISOString(),
+      attemptCount: continuityResult.metrics.attemptCount,
+      repairCount: continuityResult.metrics.repairCount,
+      durationMs: continuityResult.metrics.durationMs,
+      inputTokens: continuityResult.metrics.inputTokens,
+      outputTokens: continuityResult.metrics.outputTokens,
+      stopReason: continuityResult.metrics.stopReason,
+      notes:
+        extractedState.continuityRisks.concat(extractedState.styleDriftNotes).length > 0
+          ? extractedState.continuityRisks.concat(extractedState.styleDriftNotes)
+          : ["Keine offenen Continuity-Hinweise."]
+    });
+  } catch (error) {
+    continuityStage = createStageRun({
+      status: "failed",
+      provider: adapter.provider,
+      modelName: adapter.continuityModelName ?? adapter.modelName,
+      updatedAt: new Date().toISOString(),
+      notes: [
+        `Continuity-Audit fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
+      ]
+    });
+    warnings.push(continuityStage.notes[0]);
+  }
+
+  let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
+  let qualityStage = createStageRun({
+    status: "skipped",
+    provider: adapter.provider,
+    modelName: adapter.modelName,
+    updatedAt: new Date().toISOString(),
+    attemptCount: 0,
+    targetWordsMin: options.targetSceneWordsMin,
+    targetWordsMax: options.targetSceneWordsMax,
+    actualWords: qualityEval.wordActual,
+    notes: ["Quality-Eval wurde nicht ausgefuehrt."]
+  });
+
+  try {
+    const qualityResult = await adapter.evaluateQuality(beatPlan, lengthControl.text, extractedState);
+    qualityEval = sanitizeQualityEval(qualityResult.payload, options, countWords(lengthControl.text));
+    const qualityScore = computeQualityScore(qualityEval);
+    qualityStage = createStageRun({
+      provider: adapter.provider,
+      modelName: qualityResult.metrics.modelName,
+      updatedAt: new Date().toISOString(),
+      attemptCount: qualityResult.metrics.attemptCount,
+      repairCount: qualityResult.metrics.repairCount,
+      durationMs: qualityResult.metrics.durationMs,
+      inputTokens: qualityResult.metrics.inputTokens,
+      outputTokens: qualityResult.metrics.outputTokens,
+      stopReason: qualityResult.metrics.stopReason,
+      targetWordsMin: qualityEval.wordTargetMin,
+      targetWordsMax: qualityEval.wordTargetMax,
+      actualWords: qualityEval.wordActual,
+      qualityScore,
+      qualityIssues: qualityEval.issues,
+      notes: buildQualityEvalNotes(qualityEval, qualityScore)
+    });
+  } catch (error) {
+    qualityStage = createStageRun({
+      status: "failed",
+      provider: adapter.provider,
+      modelName: adapter.modelName,
+      updatedAt: new Date().toISOString(),
+      targetWordsMin: options.targetSceneWordsMin,
+      targetWordsMax: options.targetSceneWordsMax,
+      actualWords: countWords(lengthControl.text),
+      notes: [
+        `Quality-Eval fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
+      ]
+    });
+    warnings.push(qualityStage.notes[0]);
+  }
+
+  const rewriteNotes = normalizeRewriteNotes(
+    sanitizedExtraction.payload.rewriteNotes,
+    lengthControl.text,
+    beatPlan
+  );
+  const rewriteWords = countWords(lengthControl.text);
 
   return {
-    modelName,
-    continuityModelName: null,
-    payload: repaired.payload,
-    warning: repaired.warning
+    modelName: adapter.modelName,
+    continuityModelName: adapter.continuityModelName,
+    beatPlan,
+    draftText,
+    rewriteText: lengthControl.text,
+    rewriteNotes,
+    extractedState,
+    qualityEval,
+    stages: {
+      context: createStageRun({
+        provider: adapter.provider,
+        modelName: adapter.modelName,
+        updatedAt: new Date().toISOString(),
+        notes: ["Context-Pack vorbereitet."]
+      }),
+      beat_plan: createStageRun({
+        provider: adapter.provider,
+        modelName: beatPlanResult.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: beatPlanResult.metrics.attemptCount,
+        repairCount: beatPlanResult.metrics.repairCount,
+        durationMs: beatPlanResult.metrics.durationMs,
+        inputTokens: beatPlanResult.metrics.inputTokens,
+        outputTokens: beatPlanResult.metrics.outputTokens,
+        stopReason: beatPlanResult.metrics.stopReason,
+        notes: outlineNotes
+      }),
+      draft: createStageRun({
+        provider: adapter.provider,
+        modelName: draftResult.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: draftResult.metrics.attemptCount,
+        repairCount: draftResult.metrics.repairCount,
+        durationMs: draftResult.metrics.durationMs,
+        inputTokens: draftResult.metrics.inputTokens,
+        outputTokens: draftResult.metrics.outputTokens,
+        stopReason: draftResult.metrics.stopReason,
+        targetWordsMin: draftTargets.min,
+        targetWordsMax: draftTargets.max,
+        actualWords: countWords(draftText),
+        notes: [`Erster Prosa-Pass mit ${countWords(draftText)} Wörtern erstellt.`]
+      }),
+      rewrite: createStageRun({
+        provider: adapter.provider,
+        modelName: rewriteResult.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: rewriteResult.metrics.attemptCount,
+        repairCount: rewriteResult.metrics.repairCount,
+        durationMs: rewriteResult.metrics.durationMs,
+        inputTokens: rewriteResult.metrics.inputTokens,
+        outputTokens: rewriteResult.metrics.outputTokens,
+        stopReason: rewriteResult.metrics.stopReason,
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords: countWords(rewrittenText),
+        notes: [`Rewrite-Pass mit ${countWords(rewrittenText)} Wörtern erzeugt.`]
+      }),
+      length_control: lengthControl.stage,
+      extract: createStageRun({
+        provider: adapter.provider,
+        modelName: extractionResult.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: extractionResult.metrics.attemptCount,
+        repairCount: extractionResult.metrics.repairCount,
+        durationMs: extractionResult.metrics.durationMs,
+        inputTokens: extractionResult.metrics.inputTokens,
+        outputTokens: extractionResult.metrics.outputTokens,
+        stopReason: extractionResult.metrics.stopReason,
+        notes: buildExtractionNotes(rewriteNotes, sanitizedExtraction.notes)
+      }),
+      continuity: continuityStage,
+      quality_eval: qualityStage
+    },
+    warning: combineWarnings(warnings)
   };
+}
+
+async function maybeRunLengthControl(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  adapter: ScenePipelineAdapter,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string
+) {
+  const actualWords = countWords(rewriteText);
+  const action = resolveLengthControlAction(actualWords, options);
+
+  if (action === "accept") {
+    return {
+      text: rewriteText,
+      warning: undefined,
+      stage: createStageRun({
+        status: "skipped",
+        provider: adapter.provider,
+        modelName: adapter.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: 0,
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords,
+        notes: [`Length-Control akzeptiert ${actualWords} Wörter ohne Korrektur.`]
+      })
+    };
+  }
+
+  try {
+    const result =
+      action === "expand"
+        ? await adapter.expandScene(beatPlan, rewriteText)
+        : await adapter.compressScene(beatPlan, rewriteText);
+    const candidateText = sanitizeSceneText(result.text);
+    const finalText = selectBetterLengthCandidate(rewriteText, candidateText, options);
+    const finalWords = countWords(finalText);
+    const notes =
+      action === "expand"
+        ? [`Expand-Pass abgeschlossen. Wortstand: ${finalWords}.`]
+        : [`Compress-Pass abgeschlossen. Wortstand: ${finalWords}.`];
+    const warning =
+      finalText === rewriteText
+        ? `Length-Control ${action} lieferte keine bessere Fassung und wurde verworfen.`
+        : undefined;
+
+    return {
+      text: finalText,
+      warning,
+      stage: createStageRun({
+        provider: adapter.provider,
+        modelName: result.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: result.metrics.attemptCount,
+        repairCount: result.metrics.repairCount,
+        durationMs: result.metrics.durationMs,
+        inputTokens: result.metrics.inputTokens,
+        outputTokens: result.metrics.outputTokens,
+        stopReason: result.metrics.stopReason,
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords: finalWords,
+        notes
+      })
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown error";
+
+    return {
+      text: rewriteText,
+      warning: `Length-Control ${action} fehlgeschlagen: ${message}`,
+      stage: createStageRun({
+        status: "failed",
+        provider: adapter.provider,
+        modelName: adapter.modelName,
+        updatedAt: new Date().toISOString(),
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords,
+        notes: [`Length-Control ${action} fehlgeschlagen: ${message}`]
+      })
+    };
+  }
+}
+
+function resolveLengthControlAction(actualWords: number, options: DraftGenerationOptions): LengthControlAction {
+  if (actualWords < Math.floor(options.targetSceneWordsMin * 0.92)) {
+    return "expand";
+  }
+
+  if (actualWords > Math.ceil(options.targetSceneWordsMax * 1.05)) {
+    return "compress";
+  }
+
+  return "accept";
+}
+
+function selectBetterLengthCandidate(
+  originalText: string,
+  candidateText: string,
+  options: DraftGenerationOptions
+) {
+  if (!candidateText.trim()) {
+    return originalText;
+  }
+
+  const originalPenalty = computeRangePenalty(countWords(originalText), options);
+  const candidatePenalty = computeRangePenalty(countWords(candidateText), options);
+
+  return candidatePenalty <= originalPenalty ? candidateText : originalText;
+}
+
+function computeRangePenalty(actualWords: number, options: DraftGenerationOptions) {
+  if (actualWords < options.targetSceneWordsMin) {
+    return options.targetSceneWordsMin - actualWords;
+  }
+
+  if (actualWords > options.targetSceneWordsMax) {
+    return actualWords - options.targetSceneWordsMax;
+  }
+
+  return 0;
 }
 
 function getGeminiApiKey() {
@@ -331,12 +971,11 @@ function getGeminiApiKey() {
 function hydrateDraftJob(
   sceneId: string,
   packet: SceneContextPacket,
-  payload: DraftJobPayload,
+  payload: DraftProviderResult,
   meta: {
     provider: BookDraftJob["provider"];
     mode: BookDraftJob["mode"];
     modelName: string | null;
-    continuityModelName: string | null;
   }
 ): BookDraftJob {
   const now = new Date().toISOString();
@@ -352,21 +991,12 @@ function hydrateDraftJob(
     modelName: meta.modelName,
     status: "ready" as const,
     acceptedAt: null,
-    outline: payload.outline,
+    outline: buildOutlineFromBeatPlan(payload.beatPlan),
     draftText: payload.draftText,
     rewriteText: payload.rewriteText,
     rewriteNotes: payload.rewriteNotes,
     extractedState: payload.extractedState,
-    stages: createCompletedDraftStageRuns({
-      provider: meta.provider,
-      modelName: meta.modelName,
-      continuityModelName: meta.continuityModelName,
-      updatedAt: now,
-      continuityNotes: payload.extractedState.continuityRisks.concat(
-        payload.extractedState.styleDriftNotes
-      ),
-      rewriteNotes: payload.rewriteNotes
-    }),
+    stages: payload.stages,
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
       memorySyncedAt: packet.dynamicContext.memorySyncedAt,
@@ -399,151 +1029,296 @@ function createLocalExecution(
   };
 }
 
-function buildSystemPrompt(packet: SceneContextPacket) {
-  return [
-    buildCoreSystemPrompt(),
-    buildStablePrefixPrompt(packet)
-  ].join("\n");
+async function requestOpenAIStructured<T>(params: {
+  client: OpenAI;
+  modelName: string;
+  schema: z.ZodType<T>;
+  schemaName: string;
+  systemPrompt: string;
+  userPrompt: string;
+}) {
+  const startedAt = Date.now();
+  const response = await params.client.responses.parse({
+    model: params.modelName,
+    store: false,
+    reasoning: { effort: "medium" },
+    input: buildOpenAIInput(params.systemPrompt, params.userPrompt),
+    text: {
+      format: zodTextFormat(params.schema, params.schemaName)
+    }
+  });
+
+  if (!response.output_parsed) {
+    throw new Error("OpenAI returned no parsed output.");
+  }
+
+  return {
+    payload: response.output_parsed,
+    metrics: buildOpenAIMetrics(response, params.modelName, startedAt)
+  };
 }
 
-function buildDynamicUserPrompt(
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions
-) {
-  return [
-    "Create one drafting job for the selected scene.",
-    `Target rewrite length: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Hard requirements:",
-    "- All fields must be written in German, including rewriteNotes, canon facts, state updates, continuity risks, and style notes.",
-    "- Return exactly one JSON object and nothing else. No markdown fences, no preface, no trailing commentary.",
-    "- rewriteText must land inside the target range and must not stop early.",
-    "- draftText is a compact first pass and should stay materially shorter than rewriteText, roughly 55-70% of the rewrite length.",
-    "- Write for a commercially sharp German psychothriller audience: immediate unease, clean readability, scene pressure, social friction, concrete observation, and a strong closing hook.",
-    "- No imitation or mention of real authors. Use market traits, not author mimicry.",
-    "- Avoid generic TV-crime filler, soft exposition, decorative literary padding, and melodramatic over-explaining.",
-    "- rewriteNotes must describe real visible revisions in the rewriteText, not invented process commentary.",
-    "- Keep outline beats, rewriteNotes, and extractedState entries compact and concrete; one short sentence per item is enough.",
-    "- extractedState must stay conservative: only explicit facts from packet or generated scene text become facts. Uncertainty belongs in continuityRisks.",
-    `Act: ${packet.dynamicContext.actTitle}`,
-    `Chapter: ${packet.dynamicContext.chapterTitle}`,
-    `Scene: ${packet.dynamicContext.sceneTitle}`,
-    `Scene summary: ${packet.dynamicContext.sceneSummary}`,
-    `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
-    `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
-    `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
-    `Previous beats: ${packet.dynamicContext.previousBeats
-      .map(function (beat) {
-        return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
-      })
-      .join(" || ")}`,
-    `Next beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "none"}`,
-    `Relevant codex: ${packet.dynamicContext.relevantCodex
-      .map(function (entry) {
-        return `${entry.title}: ${entry.summary}`;
-      })
-      .join(" || ")}`,
-    `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
-      .map(function (entry) {
-        return formatCharacterStatePrompt(entry);
-      })
-      .join(" || ")}`,
-    `Active threads: ${packet.dynamicContext.activeThreads
-      .map(function (thread) {
-        return `${thread.label}: ${thread.detail}`;
-      })
-      .join(" || ")}`,
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
-    "Produce:",
-    "- outline beats",
-    "- draftText as a scene draft",
-    "- rewriteText as the cleaner revised version",
-    "- rewriteNotes",
-    "- extractedState with canon facts, character updates, open threads, foreshadowing, continuity risks, and style drift notes",
-    "Use exactly this JSON shape and key casing:",
-    buildDraftJobJsonShapePrompt()
-  ].join("\n");
+async function requestOpenAIText(params: {
+  client: OpenAI;
+  modelName: string;
+  systemPrompt: string;
+  userPrompt: string;
+  maxOutputTokens: number;
+}) {
+  const startedAt = Date.now();
+  const response = await params.client.responses.create({
+    model: params.modelName,
+    store: false,
+    reasoning: { effort: "medium" },
+    input: buildOpenAIInput(params.systemPrompt, params.userPrompt),
+    max_output_tokens: params.maxOutputTokens
+  });
+  const text = response.output_text?.trim();
+
+  if (!text) {
+    throw new Error("OpenAI returned no text output.");
+  }
+
+  return {
+    text,
+    metrics: buildOpenAIMetrics(response, params.modelName, startedAt)
+  };
 }
 
-async function requestAnthropicDraftPayload(
-  client: Anthropic,
-  modelName: string,
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions
-) {
-  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
-  const baseMaxTokens = resolveAnthropicDraftMaxTokens(options);
-  const attemptWarnings: string[] = [];
-  let lastFailure = "Anthropic returned no structured draft output.";
-
-  for (let attempt = 0; attempt < ANTHROPIC_DRAFT_RETRY_LIMIT; attempt += 1) {
-    const maxTokens = Math.min(
-      ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS,
-      baseMaxTokens + attempt * ANTHROPIC_DRAFT_RETRY_STEP_TOKENS
-    );
-    const message = await client.messages.create({
-      model: modelName,
-      max_tokens: maxTokens,
-      system: systemPromptBlocks,
-      messages: [
-        {
-          role: "user",
-          content: buildAnthropicDraftUserPrompt(packet, options, attempt > 0)
-        }
-      ]
-    });
-    const parsed = parseAnthropicDraftResponse(message);
-
-    if (parsed.payload) {
-      if (attempt > 0) {
-        attemptWarnings.push(
-          `Anthropic Draft wurde nach unvollstaendigem JSON mit hoeherem Output-Budget erfolgreich wiederholt (${maxTokens} max_tokens).`
-        );
+async function requestAnthropicStructured<T>(params: {
+  client: Anthropic;
+  modelName: string;
+  maxTokens: number;
+  schema: z.ZodType<T>;
+  systemBlocks: Anthropic.TextBlockParam[];
+  userPrompt: string;
+}) {
+  const startedAt = Date.now();
+  const message = await params.client.messages.parse({
+    model: params.modelName,
+    max_tokens: params.maxTokens,
+    system: params.systemBlocks,
+    messages: [
+      {
+        role: "user",
+        content: params.userPrompt
       }
-
-      return {
-        payload: parsed.payload,
-        warning: combineWarnings(attemptWarnings, parsed.warning)
-      };
+    ],
+    output_config: {
+      format: zodOutputFormat(params.schema)
     }
+  });
 
-    lastFailure = `Anthropic draft parse failed (stop_reason=${message.stop_reason || "unknown"}, max_tokens=${maxTokens}). ${parsed.error}`;
-
-    if (attempt < ANTHROPIC_DRAFT_RETRY_LIMIT - 1) {
-      attemptWarnings.push(lastFailure);
-      continue;
-    }
+  if (!message.parsed_output) {
+    throw new Error("Anthropic returned no parsed output.");
   }
 
-  throw new Error(lastFailure);
+  return {
+    payload: message.parsed_output,
+    metrics: buildAnthropicMetrics(message, params.modelName, startedAt)
+  };
 }
 
-function formatPromptList(label: string, items: string[]) {
-  const compactItems = items
-    .map(function (item) {
-      return item.trim();
-    })
-    .filter(Boolean);
+async function requestAnthropicText(params: {
+  client: Anthropic;
+  modelName: string;
+  maxTokens: number;
+  systemBlocks: Anthropic.TextBlockParam[];
+  userPrompt: string;
+}) {
+  const startedAt = Date.now();
+  const message = await params.client.messages.create({
+    model: params.modelName,
+    max_tokens: params.maxTokens,
+    system: params.systemBlocks,
+    messages: [
+      {
+        role: "user",
+        content: params.userPrompt
+      }
+    ]
+  });
+  const text = collectAnthropicText(message).trim();
 
-  if (!compactItems.length) {
-    return `${label}: none`;
+  if (!text) {
+    throw new Error("Anthropic returned no text output.");
   }
 
-  return `${label}: ${compactItems.join(" | ")}`;
+  return {
+    text,
+    metrics: buildAnthropicMetrics(message, params.modelName, startedAt)
+  };
+}
+
+async function requestGeminiStructured<T>(params: {
+  client: GoogleGenAI;
+  modelName: string;
+  schema: z.ZodType<T>;
+  systemInstruction: string;
+  userPrompt: string;
+}) {
+  const startedAt = Date.now();
+  const response = await params.client.models.generateContent({
+    model: params.modelName,
+    contents: params.userPrompt,
+    config: {
+      systemInstruction: params.systemInstruction,
+      responseMimeType: "application/json",
+      responseJsonSchema: z.toJSONSchema(params.schema)
+    }
+  });
+
+  if (!response.text) {
+    throw new Error("Gemini returned no text output.");
+  }
+
+  return {
+    payload: params.schema.parse(JSON.parse(response.text)),
+    metrics: buildGeminiMetrics(response, params.modelName, startedAt)
+  };
+}
+
+async function requestGeminiText(params: {
+  client: GoogleGenAI;
+  modelName: string;
+  systemInstruction: string;
+  userPrompt: string;
+  maxOutputTokens: number;
+}) {
+  const startedAt = Date.now();
+  const response = await params.client.models.generateContent({
+    model: params.modelName,
+    contents: params.userPrompt,
+    config: {
+      systemInstruction: params.systemInstruction,
+      maxOutputTokens: params.maxOutputTokens
+    }
+  });
+  const text = response.text?.trim();
+
+  if (!text) {
+    throw new Error("Gemini returned no text output.");
+  }
+
+  return {
+    text,
+    metrics: buildGeminiMetrics(response, params.modelName, startedAt)
+  };
+}
+
+function buildOpenAIInput(systemPrompt: string, userPrompt: string) {
+  return [
+    {
+      role: "system" as const,
+      content: systemPrompt
+    },
+    {
+      role: "user" as const,
+      content: userPrompt
+    }
+  ];
+}
+
+function buildOpenAIMetrics(
+  response: {
+    usage?: { input_tokens: number; output_tokens: number } | null;
+    incomplete_details?: { reason?: string | null } | null;
+    status?: string | null;
+  },
+  modelName: string,
+  startedAt: number
+): StageCallMetrics {
+  return {
+    modelName,
+    attemptCount: 1,
+    repairCount: 0,
+    durationMs: Date.now() - startedAt,
+    inputTokens: response.usage?.input_tokens ?? null,
+    outputTokens: response.usage?.output_tokens ?? null,
+    stopReason: response.incomplete_details?.reason ?? response.status ?? null
+  };
+}
+
+function buildAnthropicMetrics(
+  message: Anthropic.Message,
+  modelName: string,
+  startedAt: number
+): StageCallMetrics {
+  const inputTokens =
+    (message.usage.input_tokens ?? 0) +
+      (message.usage.cache_creation_input_tokens ?? 0) +
+      (message.usage.cache_read_input_tokens ?? 0) || null;
+
+  return {
+    modelName,
+    attemptCount: 1,
+    repairCount: 0,
+    durationMs: Date.now() - startedAt,
+    inputTokens,
+    outputTokens: message.usage.output_tokens ?? null,
+    stopReason: message.stop_reason ?? null
+  };
+}
+
+function buildGeminiMetrics(
+  response: {
+    usageMetadata?: {
+      promptTokenCount?: number;
+      candidatesTokenCount?: number;
+    } | null;
+    candidates?: Array<{
+      finishReason?: string | null;
+    }> | null;
+  },
+  modelName: string,
+  startedAt: number
+): StageCallMetrics {
+  return {
+    modelName,
+    attemptCount: 1,
+    repairCount: 0,
+    durationMs: Date.now() - startedAt,
+    inputTokens: response.usageMetadata?.promptTokenCount ?? null,
+    outputTokens: response.usageMetadata?.candidatesTokenCount ?? null,
+    stopReason: response.candidates?.[0]?.finishReason ?? null
+  };
+}
+
+function resolveDraftWordTargets(options: DraftGenerationOptions) {
+  const min = Math.max(250, Math.round(options.targetSceneWordsMin * 0.58));
+  const max = Math.max(min + 120, Math.round(options.targetSceneWordsMax * 0.72));
+
+  return { min, max };
+}
+
+function resolveOpenAIProseMaxTokens(targetWordMax: number) {
+  return clampNumber(Math.round(targetWordMax * 3.2), OPENAI_PROSE_MIN_TOKENS, OPENAI_PROSE_MAX_TOKENS);
+}
+
+function resolveAnthropicProseMaxTokens(targetWordMax: number) {
+  return clampNumber(
+    Math.round(targetWordMax * 3.25),
+    ANTHROPIC_PROSE_MIN_TOKENS,
+    ANTHROPIC_PROSE_MAX_TOKENS
+  );
+}
+
+function resolveGeminiProseMaxTokens(targetWordMax: number) {
+  return clampNumber(Math.round(targetWordMax * 3.1), GEMINI_PROSE_MIN_TOKENS, GEMINI_PROSE_MAX_TOKENS);
+}
+
+function buildSystemPrompt(packet: SceneContextPacket) {
+  return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
 }
 
 function buildCoreSystemPrompt() {
   return [
     "You are the drafting engine for EMBER Book Studio.",
-    "Return only structured output matching the requested schema.",
-    "Do not imitate living authors or copyrighted prose.",
-    "Write all output in German unless a field explicitly requires another language, which it does not here.",
-    "Honor the canon, preserve tone consistency, and surface continuity risks explicitly.",
-    "Write commercially readable genre prose, but keep it grounded in the supplied scene context.",
-    "If canon is insufficient, do not invent silently; flag the gap in continuityRisks.",
-    "Publishing and KDP rules shape readability, quality, and packaging; they must never appear as meta commentary inside the scene prose.",
-    "Favor scene truth, subtext, momentum, and readability over exposition-heavy explanation.",
-    "Target a premium German psychothriller rhythm: fast scene entry, controlled sentence pressure, sharp observation, psychologically loaded dialogue, and a destabilizing end beat.",
-    "The prose should feel bestselling and immediate, not literary for its own sake and not generic procedural filler."
+    "Write all output in German.",
+    "Honor canon, continuity, and scene-level causality.",
+    "Do not imitate real authors or copyrighted prose.",
+    "Favor commercial readability, tension, subtext, concrete observation, and clean scene movement.",
+    "If context is insufficient, flag risk explicitly instead of inventing hidden facts."
   ].join("\n");
 }
 
@@ -575,531 +1350,403 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
   ];
 }
 
-function buildAnthropicDraftUserPrompt(
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  isRetry: boolean
-) {
-  const basePrompt = buildDynamicUserPrompt(packet, options);
-
-  if (!isRetry) {
-    return basePrompt;
-  }
+function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGenerationOptions) {
+  const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
 
   return [
-    basePrompt,
-    "Retry mode:",
-    "- The previous response was incomplete or invalid JSON.",
-    "- Start with { and end with }.",
-    "- Use exactly these keys: outline, draftText, rewriteText, rewriteNotes, extractedState, newCanonFacts, characterStateUpdates, openThreadsCreated, openThreadsResolved, foreshadowingAdded, continuityRisks, styleDriftNotes.",
-    "- Keep outline to 3-4 beats if needed.",
-    "- Keep rewriteNotes and extractedState entries very short.",
-    "- Spend the token budget on a complete rewriteText, not on verbose metadata."
+    "Create a compact beat plan for one scene.",
+    "Return only structured output matching the requested schema.",
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred total beat budget: ${totalTarget} words.`,
+    "Requirements:",
+    "- 3 to 5 beats.",
+    "- Each beat must have a functional purpose and a concrete mustLand payoff.",
+    "- targetWords across all beats should roughly sum to the preferred total.",
+    "- Keep beats dramatic, not essayistic.",
+    buildSceneContextPrompt(packet),
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
 }
 
-function buildDraftJobJsonShapePrompt() {
-  return JSON.stringify(
-    {
-      outline: ["string"],
-      draftText: "string",
-      rewriteText: "string",
-      rewriteNotes: ["string"],
-      extractedState: {
-        newCanonFacts: ["string"],
-        characterStateUpdates: ["string"],
-        openThreadsCreated: ["string"],
-        openThreadsResolved: ["string"],
-        foreshadowingAdded: ["string"],
-        continuityRisks: ["string"],
-        styleDriftNotes: ["string"]
-      }
-    },
-    null,
-    2
-  );
-}
-
-async function maybeRepairGeminiPayload(
-  client: GoogleGenAI,
-  modelName: string,
+function buildDraftProsePrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
-  payload: DraftJobPayload
+  beatPlan: BeatPlanPayload
 ) {
-  const issues = assessDraftPayloadQuality(payload, options);
+  const draftTargets = resolveDraftWordTargets(options);
 
-  if (!issues.length) {
-    return {
-      payload
-    };
-  }
-
-  try {
-    const response = await client.models.generateContent({
-      model: modelName,
-      contents: buildRepairUserPrompt(packet, options, payload, issues),
-      config: {
-        systemInstruction: buildSystemPrompt(packet),
-        responseMimeType: "application/json",
-        responseJsonSchema: z.toJSONSchema(draftJobSchema)
-      }
-    });
-
-    if (!response.text) {
-      return {
-        payload,
-        warning: `Gemini repair returned no text. Issues remained: ${formatQualityIssues(issues)}`
-      };
-    }
-
-    const repairedPayload = draftJobSchema.parse(JSON.parse(response.text));
-    const originalPenalty = computeDraftQualityPenalty(payload, options);
-    const repairedPenalty = computeDraftQualityPenalty(repairedPayload, options);
-    const finalIssues = assessDraftPayloadQuality(
-      repairedPenalty <= originalPenalty ? repairedPayload : payload,
-      options
-    );
-
-    return {
-      payload: repairedPenalty <= originalPenalty ? repairedPayload : payload,
-      warning: finalIssues.length
-        ? `Gemini output repaired but not fully clean: ${formatQualityIssues(finalIssues)}`
-        : `Gemini output repaired: ${formatQualityIssues(issues)}`
-    };
-  } catch (error) {
-    return {
-      payload,
-      warning: `Gemini repair failed. Issues remained: ${formatQualityIssues(issues)}${error instanceof Error ? ` | ${error.message}` : ""}`
-    };
-  }
+  return [
+    "Write the first draft of the selected scene.",
+    "Return prose only. No JSON, no headings, no bullet points, no commentary.",
+    `Draft target range: ${draftTargets.min}-${draftTargets.max} words.`,
+    "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
+    "Hit every beat, but keep some sentences raw enough that a later rewrite can sharpen them.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
+  ].join("\n");
 }
 
-async function maybeRepairAnthropicPayload(
-  client: Anthropic,
-  modelName: string,
+function buildRewriteProsePrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
-  payload: DraftJobPayload
+  beatPlan: BeatPlanPayload,
+  draftText: string
 ) {
-  const issues = assessDraftPayloadQuality(payload, options);
-
-  if (!issues.length) {
-    return {
-      payload
-    };
-  }
-
-  const systemPromptBlocks = buildAnthropicSystemPromptBlocks(packet);
-
-  try {
-    const message = await client.messages.create({
-      model: modelName,
-      max_tokens: Math.min(
-        ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS,
-        resolveAnthropicDraftMaxTokens(options) + 1200
-      ),
-      system: systemPromptBlocks,
-      messages: [
-        {
-          role: "user",
-          content: [
-            buildRepairUserPrompt(packet, options, payload, issues),
-            "Return exactly one JSON object with this shape:",
-            buildDraftJobJsonShapePrompt()
-          ].join("\n")
-        }
-      ]
-    });
-    const parsed = parseAnthropicDraftResponse(message);
-
-    if (!parsed.payload) {
-      return {
-        payload,
-        warning: `Anthropic repair failed. Issues remained: ${formatQualityIssues(issues)} | ${parsed.error}`
-      };
-    }
-
-    const originalPenalty = computeDraftQualityPenalty(payload, options);
-    const repairedPenalty = computeDraftQualityPenalty(parsed.payload, options);
-    const finalPayload = repairedPenalty <= originalPenalty ? parsed.payload : payload;
-    const finalIssues = assessDraftPayloadQuality(finalPayload, options);
-
-    return {
-      payload: finalPayload,
-      warning: finalIssues.length
-        ? `Anthropic output repaired but not fully clean: ${formatQualityIssues(finalIssues)}`
-        : `Anthropic output repaired: ${formatQualityIssues(issues)}`
-    };
-  } catch (error) {
-    return {
-      payload,
-      warning: `Anthropic repair failed. Issues remained: ${formatQualityIssues(issues)}${error instanceof Error ? ` | ${error.message}` : ""}`
-    };
-  }
+  return [
+    "Rewrite the scene into the final prose pass.",
+    "Return prose only. No JSON, no commentary.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Tighten rhythm, sharpen observation, improve dialogue subtext, and end on a stronger hook.",
+    "Preserve canon and beat order. Expand pressure, not fluff.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Current draft: ${draftText}`
+  ].join("\n");
 }
 
-async function runAnthropicContinuityAudit(
-  client: Anthropic,
+function buildExpandPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
-  draft: {
-    payload: DraftJobPayload;
-  }
+  beatPlan: BeatPlanPayload,
+  rewriteText: string
 ) {
-  const continuityModelName =
-    resolveBookJobModelValue(
-      options.modelOverrides?.anthropicContinuity,
-      process.env.ANTHROPIC_CONTINUITY_MODEL,
-      DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
-    );
-
-  try {
-    const message = await client.messages.parse({
-      model: continuityModelName,
-      max_tokens: ANTHROPIC_CONTINUITY_MAX_TOKENS,
-      system: buildAnthropicSystemPromptBlocks(packet),
-      messages: [
-        {
-          role: "user",
-          content: buildContinuityAuditPrompt(packet, options, draft.payload)
-        }
-      ],
-      output_config: {
-        format: zodOutputFormat(continuityAuditSchema)
-      }
-    });
-
-    return message.parsed_output ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function resolveAnthropicDraftMaxTokens(options: DraftGenerationOptions) {
-  const rewriteBudget = Math.round(options.targetSceneWordsMax * 3.2);
-  const draftBudget = Math.round(options.targetSceneWordsMax * 2.1);
-  const metadataBudget = 900;
-
-  return clampNumber(
-    rewriteBudget + draftBudget + metadataBudget,
-    ANTHROPIC_DRAFT_MIN_OUTPUT_TOKENS,
-    ANTHROPIC_DRAFT_MAX_OUTPUT_TOKENS
-  );
-}
-
-function parseAnthropicDraftResponse(message: Anthropic.Message) {
-  const rawText = collectAnthropicText(message).trim();
-
-  if (!rawText) {
-    return {
-      payload: null,
-      error: "Anthropic returned no text content."
-    };
-  }
-
-  const candidates = [rawText, extractFirstJsonObject(rawText)].filter(function (
-    value
-  ): value is string {
-    return Boolean(value && value.trim());
+  const beatsToExpand = beatPlan.beats.slice(-2).map(function (beat) {
+    return `${beat.label}: ${beat.purpose}`;
   });
 
-  for (const candidate of candidates) {
-    try {
-      const parsedJson = normalizeDraftJobJsonCandidate(JSON.parse(candidate));
-      const parsedPayload = draftJobSchema.safeParse(parsedJson);
-
-      if (parsedPayload.success) {
-        return {
-          payload: parsedPayload.data,
-          warning:
-            candidate !== rawText
-              ? "Anthropic JSON wurde aus einer umgebenden Textantwort extrahiert."
-              : undefined
-        };
-      }
-
-      return {
-        payload: null,
-        error: parsedPayload.error.issues
-          .map(function (issue) {
-            return `${issue.path.join(".") || "root"}: ${issue.message}`;
-          })
-          .join("; ")
-      };
-    } catch (error) {
-      if (candidate === candidates[candidates.length - 1]) {
-        return {
-          payload: null,
-          error: error instanceof Error ? error.message : "Invalid JSON."
-        };
-      }
-    }
-  }
-
-  return {
-    payload: null,
-    error: "Anthropic returned no parseable JSON object."
-  };
+  return [
+    "Expand the scene while preserving continuity and voice.",
+    "Return prose only.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Only deepen up to two named beats. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
+    `Preferred expansion beats: ${beatsToExpand.join(" | ") || "last two beats"}`,
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Current rewrite: ${rewriteText}`
+  ].join("\n");
 }
 
-function normalizeDraftJobJsonCandidate(value: unknown) {
-  if (!value || typeof value !== "object") {
-    return value;
-  }
+function buildCompressPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string
+) {
+  return [
+    "Compress the scene while preserving all essential story movement.",
+    "Return prose only.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Current rewrite: ${rewriteText}`
+  ].join("\n");
+}
 
-  const candidate = value as {
-    outline?: unknown;
-    draftText?: unknown;
-    rewriteText?: unknown;
-    rewriteNotes?: unknown;
-    extractedState?: Record<string, unknown>;
-  };
-
-  return {
-    ...candidate,
-    outline: Array.isArray(candidate.outline) ? candidate.outline.slice(0, 6) : candidate.outline,
-    rewriteNotes: Array.isArray(candidate.rewriteNotes)
-      ? candidate.rewriteNotes.slice(0, 6)
-      : candidate.rewriteNotes,
-    extractedState:
-      candidate.extractedState && typeof candidate.extractedState === "object"
-        ? {
-            ...candidate.extractedState,
-            newCanonFacts: Array.isArray(candidate.extractedState.newCanonFacts)
-              ? candidate.extractedState.newCanonFacts.slice(0, 6)
-              : candidate.extractedState.newCanonFacts,
-            characterStateUpdates: Array.isArray(candidate.extractedState.characterStateUpdates)
-              ? candidate.extractedState.characterStateUpdates.slice(0, 6)
-              : candidate.extractedState.characterStateUpdates,
-            openThreadsCreated: Array.isArray(candidate.extractedState.openThreadsCreated)
-              ? candidate.extractedState.openThreadsCreated.slice(0, 6)
-              : candidate.extractedState.openThreadsCreated,
-            openThreadsResolved: Array.isArray(candidate.extractedState.openThreadsResolved)
-              ? candidate.extractedState.openThreadsResolved.slice(0, 6)
-              : candidate.extractedState.openThreadsResolved,
-            foreshadowingAdded: Array.isArray(candidate.extractedState.foreshadowingAdded)
-              ? candidate.extractedState.foreshadowingAdded.slice(0, 6)
-              : candidate.extractedState.foreshadowingAdded,
-            continuityRisks: Array.isArray(candidate.extractedState.continuityRisks)
-              ? candidate.extractedState.continuityRisks.slice(0, 6)
-              : candidate.extractedState.continuityRisks,
-            styleDriftNotes: Array.isArray(candidate.extractedState.styleDriftNotes)
-              ? candidate.extractedState.styleDriftNotes.slice(0, 6)
-              : candidate.extractedState.styleDriftNotes
-          }
-        : candidate.extractedState
-  };
+function buildStateExtractionPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string
+) {
+  return [
+    "Extract scene state from the finished rewrite.",
+    "Return only structured output matching the requested schema.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Rules:",
+    "- rewriteNotes must describe concrete visible revisions or strengths in the final rewrite.",
+    "- extractedState must stay conservative: explicit facts only.",
+    "- Uncertainty belongs in continuityRisks.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Final rewrite: ${rewriteText}`
+  ].join("\n");
 }
 
 function buildContinuityAuditPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
-  payload: DraftJobPayload
+  beatPlan: BeatPlanPayload,
+  draftText: string,
+  rewriteText: string,
+  extractedState: DraftExtractionState
 ) {
   return [
-    "Audit the generated scene draft for continuity and style drift only.",
-    "This is not a creative writing pass.",
-    `Target rewrite length remains ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Audit this scene for continuity and style drift only.",
+    "Return only structured output matching the requested schema.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Draft text: ${draftText}`,
+    `Rewrite text: ${rewriteText}`,
+    `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Existing style drift notes: ${extractedState.styleDriftNotes.join(" | ") || "none"}`
+  ].join("\n");
+}
+
+function buildQualityEvalPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string,
+  extractedState: DraftExtractionState
+) {
+  return [
+    "Evaluate the final scene quality.",
+    "Return only structured output matching the requested schema.",
+    "Score from 0 to 10.",
+    `wordTargetMin must equal ${options.targetSceneWordsMin}.`,
+    `wordTargetMax must equal ${options.targetSceneWordsMax}.`,
+    `wordActual must equal the actual word count of the scene text.`,
+    "Issues should be short, concrete, and user-facing.",
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Final rewrite: ${rewriteText}`
+  ].join("\n");
+}
+
+function buildAnthropicScenePrompt(params: {
+  mode: "draft" | "rewrite" | "expand" | "compress";
+  packet: SceneContextPacket;
+  options: DraftGenerationOptions;
+  beatPlan: BeatPlanPayload;
+  draftText?: string;
+  rewriteText?: string;
+}) {
+  const sceneContext = buildSceneContextXml(params.packet);
+  const modeInstruction =
+    params.mode === "draft"
+      ? `Write a first-pass scene in ${resolveDraftWordTargets(params.options).min}-${resolveDraftWordTargets(params.options).max} words.`
+      : params.mode === "rewrite"
+        ? `Rewrite the scene into a polished final pass in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`
+        : params.mode === "expand"
+          ? `Expand the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by deepening at most two beats.`
+          : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
+
+  return [
+    `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
+    `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
+    `<scene_context>${sceneContext}</scene_context>`,
+    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
+    `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
+    params.draftText ? `<draft_pass>${escapeXml(params.draftText)}</draft_pass>` : "",
+    params.rewriteText ? `<current_rewrite>${escapeXml(params.rewriteText)}</current_rewrite>` : "",
+    `<output_contract>${escapeXml(`${modeInstruction} Return prose only in German. No headings, no JSON, no commentary.`)}</output_contract>`
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function buildSceneContextPrompt(packet: SceneContextPacket) {
+  return [
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
+    `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
       })
-      .join(" || ")}`,
+      .join(" || ") || "none"}`,
     `Next beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
         return `${entry.title}: ${entry.summary}`;
       })
-      .join(" || ")}`,
+      .join(" || ") || "none"}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
       .map(function (entry) {
         return formatCharacterStatePrompt(entry);
       })
-      .join(" || ")}`,
+      .join(" || ") || "none"}`,
     `Active threads: ${packet.dynamicContext.activeThreads
       .map(function (thread) {
         return `${thread.label}: ${thread.detail}`;
       })
-      .join(" || ")}`,
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
-    `Outline beats: ${payload.outline.join(" | ")}`,
-    `Draft text: ${payload.draftText}`,
-    `Rewrite text: ${payload.rewriteText}`,
-    `Existing continuity risks: ${payload.extractedState.continuityRisks.join(" | ") || "none"}`,
-    `Existing style drift notes: ${payload.extractedState.styleDriftNotes.join(" | ") || "none"}`,
-    "Return only:",
-    "- continuityRisks",
-    "- styleDriftNotes"
+      .join(" || ") || "none"}`
   ].join("\n");
 }
 
-function mergeContinuityAudit(payload: DraftJobPayload, audit: ContinuityAuditPayload): DraftJobPayload {
+function buildSceneContextXml(packet: SceneContextPacket) {
+  return escapeXml(buildSceneContextPrompt(packet));
+}
+
+function buildContinuityContext(packet: SceneContextPacket) {
+  return [
+    `Relevant codex: ${packet.dynamicContext.relevantCodex
+      .map(function (entry) {
+        return `${entry.title}: ${entry.summary}`;
+      })
+      .join(" | ") || "none"}`,
+    `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
+      .map(function (entry) {
+        return formatCharacterStatePrompt(entry);
+      })
+      .join(" | ") || "none"}`,
+    `Active threads: ${packet.dynamicContext.activeThreads
+      .map(function (thread) {
+        return `${thread.label}: ${thread.detail}`;
+      })
+      .join(" | ") || "none"}`
+  ].join("\n");
+}
+
+function formatPromptList(label: string, items: string[]) {
+  const compactItems = items
+    .map(function (item) {
+      return item.trim();
+    })
+    .filter(Boolean);
+
+  if (!compactItems.length) {
+    return `${label}: none`;
+  }
+
+  return `${label}: ${compactItems.join(" | ")}`;
+}
+
+function sanitizeBeatPlan(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  payload: BeatPlanPayload
+): BeatPlanPayload {
+  const fallback = buildFallbackBeatPlan(packet, options);
+  const rawBeats = Array.isArray(payload.beats) && payload.beats.length ? payload.beats : fallback.beats;
+  const trimmedBeats = rawBeats.slice(0, 5).map(function (beat, index) {
+    return {
+      label: beat.label.trim() || `Beat ${index + 1}`,
+      purpose: beat.purpose.trim() || fallback.beats[index]?.purpose || packet.dynamicContext.sceneSummary,
+      targetWords: clampNumber(beat.targetWords, 60, options.targetSceneWordsMax),
+      mustLand: beat.mustLand.trim() || fallback.beats[index]?.mustLand || "Die Szene kippt sichtbar."
+    };
+  });
+
   return {
-    ...payload,
+    beats: rebalanceBeatTargets(trimmedBeats, Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2))
+  };
+}
+
+function buildFallbackBeatPlan(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions
+): BeatPlanPayload {
+  const source = packet.dynamicContext.sceneCardOutline.length
+    ? packet.dynamicContext.sceneCardOutline
+    : [
+        `${packet.dynamicContext.sceneTitle} startet unter Druck.`,
+        packet.dynamicContext.sceneSummary,
+        "Die Szene endet mit einer sichtbaren Verschiebung."
+      ];
+  const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
+  const perBeat = Math.max(90, Math.round(totalTarget / source.length));
+
+  return {
+    beats: source.slice(0, 5).map(function (entry, index) {
+      return {
+        label: `Beat ${index + 1}`,
+        purpose: entry,
+        targetWords: perBeat,
+        mustLand: entry
+      };
+    })
+  };
+}
+
+function rebalanceBeatTargets(
+  beats: BeatPlanPayload["beats"],
+  totalTarget: number
+): BeatPlanPayload["beats"] {
+  const safeBeats = beats.length ? beats : [{ label: "Beat 1", purpose: "", targetWords: totalTarget, mustLand: "" }];
+  const currentTotal = safeBeats.reduce(function (sum, beat) {
+    return sum + beat.targetWords;
+  }, 0);
+
+  if (!currentTotal) {
+    return safeBeats.map(function (beat) {
+      return {
+        ...beat,
+        targetWords: Math.max(80, Math.round(totalTarget / safeBeats.length))
+      };
+    });
+  }
+
+  const scale = totalTarget / currentTotal;
+
+  return safeBeats.map(function (beat, index) {
+    const scaled = Math.max(60, Math.round(beat.targetWords * scale));
+
+    return {
+      ...beat,
+      targetWords: index === safeBeats.length - 1
+        ? Math.max(
+            60,
+            totalTarget -
+              safeBeats
+                .slice(0, index)
+                .reduce(function (sum, currentBeat) {
+                  return sum + Math.max(60, Math.round(currentBeat.targetWords * scale));
+                }, 0)
+          )
+        : scaled
+    };
+  });
+}
+
+function buildOutlineFromBeatPlan(beatPlan: BeatPlanPayload) {
+  return beatPlan.beats.map(function (beat) {
+    return `${beat.label}: ${beat.purpose} (${beat.targetWords}W, Payoff: ${beat.mustLand})`;
+  });
+}
+
+function formatBeatPlanForPrompt(beatPlan: BeatPlanPayload) {
+  return beatPlan.beats
+    .map(function (beat) {
+      return `${beat.label} [${beat.targetWords}W] - ${beat.purpose} -> ${beat.mustLand}`;
+    })
+    .join(" | ");
+}
+
+function normalizeStateExtractionPayload(payload: StateExtractionPayload): StateExtractionPayload {
+  return {
+    rewriteNotes: dedupeStrings(payload.rewriteNotes).slice(0, 6),
     extractedState: {
-      ...payload.extractedState,
-      continuityRisks: dedupeStrings(
-        payload.extractedState.continuityRisks.concat(audit.continuityRisks)
-      ).slice(0, 6),
-      styleDriftNotes: dedupeStrings(
-        payload.extractedState.styleDriftNotes.concat(audit.styleDriftNotes)
-      ).slice(0, 6)
+      newCanonFacts: dedupeStrings(payload.extractedState.newCanonFacts).slice(0, 6),
+      characterStateUpdates: dedupeStrings(payload.extractedState.characterStateUpdates).slice(0, 6),
+      openThreadsCreated: dedupeStrings(payload.extractedState.openThreadsCreated).slice(0, 6),
+      openThreadsResolved: dedupeStrings(payload.extractedState.openThreadsResolved).slice(0, 6),
+      foreshadowingAdded: dedupeStrings(payload.extractedState.foreshadowingAdded).slice(0, 6),
+      continuityRisks: dedupeStrings(payload.extractedState.continuityRisks).slice(0, 6),
+      styleDriftNotes: dedupeStrings(payload.extractedState.styleDriftNotes).slice(0, 6)
     }
   };
 }
 
-function formatCharacterStatePrompt(
-  entry: SceneContextPacket["dynamicContext"]["relevantCharacterStates"][number]
+function normalizeRewriteNotes(
+  notes: string[],
+  rewriteText: string,
+  beatPlan: BeatPlanPayload
 ) {
-  const recentSnapshots = entry.snapshots.slice(-3).map(function (snapshot) {
-    return `${snapshot.scope}:${snapshot.sourceLabel || snapshot.currentState} => ${snapshot.currentState}`;
-  });
+  const sanitized = dedupeStrings(notes).slice(0, 6);
+
+  if (sanitized.length) {
+    return sanitized;
+  }
 
   return [
-    `${entry.characterName}: ${entry.currentState}`,
-    entry.innerShift ? `inner_shift=${entry.innerShift}` : "",
-    entry.agenda ? `agenda=${entry.agenda}` : "",
-    recentSnapshots.length ? `snapshot_trail=${recentSnapshots.join(" | ")}` : ""
-  ]
-    .filter(Boolean)
-    .join(" || ");
+    `Beat-Folge ${beatPlan.beats[0]?.label || "Beat 1"} bis ${beatPlan.beats[beatPlan.beats.length - 1]?.label || "Finale"} sichtbar gehalten.`,
+    `Rewrite auf ${countWords(rewriteText)} Wörter im Zielkorridor stabilisiert.`
+  ];
 }
 
-function buildRepairUserPrompt(
+function sanitizeSceneStateExtraction(
   packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  payload: DraftJobPayload,
-  issues: DraftQualityIssue[]
-) {
-  return [
-    "Repair the existing draft-job output and return the full JSON again.",
-    "Keep what is already strong. Only fix the violations.",
-    `Target rewrite length remains ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    `Act: ${packet.dynamicContext.actTitle}`,
-    `Chapter: ${packet.dynamicContext.chapterTitle}`,
-    `Scene: ${packet.dynamicContext.sceneTitle}`,
-    "Violations to fix:",
-    issues.map(function (issue) {
-      return `- ${issue.detail}`;
-    }).join("\n"),
-    "Repair rules:",
-    "- Keep every field in German.",
-    "- Rewrite notes must describe concrete visible revisions in the rewriteText.",
-    "- Strengthen commercial German psychothriller pull: tension through observation, dialogue friction, social unease, and a clean end hook.",
-    "- Do not imitate real authors; use only the requested market characteristics.",
-    "- Remove unsupported specifics from extractedState. If something is uncertain, move it to continuityRisks instead of canon facts.",
-    "Current JSON:",
-    JSON.stringify(payload, null, 2)
-  ].join("\n");
-}
-
-function assessDraftPayloadQuality(payload: DraftJobPayload, options: DraftGenerationOptions) {
-  const issues: DraftQualityIssue[] = [];
-  const rewriteWords = countWords(payload.rewriteText);
-
-  if (rewriteWords < options.targetSceneWordsMin) {
-    issues.push({
-      code: "rewrite_length",
-      detail: `rewriteText is too short with ${rewriteWords} words; it must reach at least ${options.targetSceneWordsMin} words.`
-    });
-  } else if (rewriteWords > options.targetSceneWordsMax + 80) {
-    issues.push({
-      code: "rewrite_length",
-      detail: `rewriteText is too long with ${rewriteWords} words; it should stay close to the upper bound ${options.targetSceneWordsMax}.`
-    });
-  }
-
-  if (hasEnglishMetaLeak(payload)) {
-    issues.push({
-      code: "meta_language",
-      detail: "Meta fields leak English. rewriteNotes and extractedState entries must be German."
-    });
-  }
-
-  if (hasSpeculativeExtractorLeak(payload)) {
-    issues.push({
-      code: "extractor_discipline",
-      detail: "extractedState sounds too speculative. Facts must stay explicit; uncertainty belongs in continuityRisks."
-    });
-  }
-
-  return issues;
-}
-
-function computeDraftQualityPenalty(payload: DraftJobPayload, options: DraftGenerationOptions) {
-  const rewriteWords = countWords(payload.rewriteText);
-  let penalty = 0;
-
-  if (rewriteWords < options.targetSceneWordsMin) {
-    penalty += options.targetSceneWordsMin - rewriteWords;
-  }
-
-  if (rewriteWords > options.targetSceneWordsMax) {
-    penalty += rewriteWords - options.targetSceneWordsMax;
-  }
-
-  if (hasEnglishMetaLeak(payload)) {
-    penalty += 400;
-  }
-
-  if (hasSpeculativeExtractorLeak(payload)) {
-    penalty += 180;
-  }
-
-  return penalty;
-}
-
-function hasEnglishMetaLeak(payload: DraftJobPayload) {
-  return [
-    ...payload.rewriteNotes,
-    ...payload.extractedState.newCanonFacts,
-    ...payload.extractedState.characterStateUpdates,
-    ...payload.extractedState.openThreadsCreated,
-    ...payload.extractedState.openThreadsResolved,
-    ...payload.extractedState.foreshadowingAdded,
-    ...payload.extractedState.continuityRisks,
-    ...payload.extractedState.styleDriftNotes
-  ].some(function (value) {
-    return looksLikeEnglishMeta(value);
-  });
-}
-
-function looksLikeEnglishMeta(value: string) {
-  const englishHits =
-    value.match(/\b(expanded|deepened|enhanced|introduced|extended|ensured|return|only|with|and|the|scene|draft|hook|village|notes?|cleaner|revised)\b/gi)?.length ?? 0;
-  const germanHits =
-    value.match(/\b(und|mit|der|die|das|nicht|Szene|Kapitel|Dorf|Hinweis|Spannung|Haken|Fokus|Regel|wird|soll|muss)\b/gi)?.length ?? 0;
-
-  return englishHits >= 2 && englishHits > germanHits;
-}
-
-function hasSpeculativeExtractorLeak(payload: DraftJobPayload) {
-  return payload.extractedState.newCanonFacts
-    .concat(payload.extractedState.characterStateUpdates)
-    .concat(payload.extractedState.foreshadowingAdded)
-    .some(function (value) {
-      return /\b(vielleicht|moeglicherweise|möglicherweise|koennte|könnte|scheint|wirkt|deutet darauf hin|wahrscheinlich)\b/i.test(
-        value
-      );
-    });
-}
-
-function formatQualityIssues(issues: DraftQualityIssue[]) {
-  return issues.map(function (issue) {
-    return issue.code;
-  }).join(", ");
-}
-
-function sanitizeDraftJobPayload(
-  packet: SceneContextPacket,
-  payload: DraftJobPayload
+  payload: StateExtractionPayload
 ) {
   const evidenceTerms = buildPacketEvidenceTerms(packet);
   const knownEntities = buildKnownEntityTerms(packet);
@@ -1159,7 +1806,7 @@ function sanitizeDraftJobPayload(
 
   return {
     payload: {
-      ...payload,
+      rewriteNotes: payload.rewriteNotes,
       extractedState: {
         ...payload.extractedState,
         newCanonFacts: dedupeStrings(filteredCanonFacts).slice(0, 6),
@@ -1173,6 +1820,107 @@ function sanitizeDraftJobPayload(
     },
     notes: reviewNotes
   };
+}
+
+function mergeContinuityAudit(
+  extractedState: DraftExtractionState,
+  audit: ContinuityAuditPayload
+): DraftExtractionState {
+  return {
+    ...extractedState,
+    continuityRisks: dedupeStrings(extractedState.continuityRisks.concat(audit.continuityRisks)).slice(0, 6),
+    styleDriftNotes: dedupeStrings(extractedState.styleDriftNotes.concat(audit.styleDriftNotes)).slice(0, 6)
+  };
+}
+
+function sanitizeQualityEval(
+  payload: QualityEvalPayload,
+  options: DraftGenerationOptions,
+  actualWords: number
+): QualityEvalPayload {
+  return {
+    wordTargetMin: options.targetSceneWordsMin,
+    wordTargetMax: options.targetSceneWordsMax,
+    wordActual: actualWords,
+    hookScore: clampNumber(payload.hookScore, 0, 10),
+    tensionScore: clampNumber(payload.tensionScore, 0, 10),
+    dialogueScore: clampNumber(payload.dialogueScore, 0, 10),
+    specificityScore: clampNumber(payload.specificityScore, 0, 10),
+    germanCleanlinessScore: clampNumber(payload.germanCleanlinessScore, 0, 10),
+    continuityScore: clampNumber(payload.continuityScore, 0, 10),
+    marketFitScore: clampNumber(payload.marketFitScore, 0, 10),
+    povDisciplineScore: clampNumber(payload.povDisciplineScore, 0, 10),
+    readabilityScore: clampNumber(payload.readabilityScore, 0, 10),
+    issues: dedupeStrings(payload.issues).slice(0, 8)
+  };
+}
+
+function createFallbackQualityEval(
+  options: DraftGenerationOptions,
+  actualWords: number
+): QualityEvalPayload {
+  return {
+    wordTargetMin: options.targetSceneWordsMin,
+    wordTargetMax: options.targetSceneWordsMax,
+    wordActual: actualWords,
+    hookScore: 0,
+    tensionScore: 0,
+    dialogueScore: 0,
+    specificityScore: 0,
+    germanCleanlinessScore: 0,
+    continuityScore: 0,
+    marketFitScore: 0,
+    povDisciplineScore: 0,
+    readabilityScore: 0,
+    issues: []
+  };
+}
+
+function computeQualityScore(payload: QualityEvalPayload) {
+  const total =
+    payload.hookScore +
+    payload.tensionScore +
+    payload.dialogueScore +
+    payload.specificityScore +
+    payload.germanCleanlinessScore +
+    payload.continuityScore +
+    payload.marketFitScore +
+    payload.povDisciplineScore +
+    payload.readabilityScore;
+
+  return Math.round((total / 9) * 10) / 10;
+}
+
+function buildQualityEvalNotes(payload: QualityEvalPayload, qualityScore: number) {
+  const notes = [`Quality-Score ${qualityScore}/10 bei ${payload.wordActual} Wörtern.`];
+
+  if (payload.issues.length) {
+    return notes.concat(payload.issues.slice(0, 3));
+  }
+
+  return notes.concat(["Keine offenen Eval-Issues."]);
+}
+
+function buildExtractionNotes(rewriteNotes: string[], reviewNotes: string[]) {
+  const notes = rewriteNotes.slice(0, 2).concat(reviewNotes);
+  return notes.length ? notes : ["State-Extraktion abgeschlossen."];
+}
+
+function formatCharacterStatePrompt(
+  entry: SceneContextPacket["dynamicContext"]["relevantCharacterStates"][number]
+) {
+  const recentSnapshots = entry.snapshots.slice(-3).map(function (snapshot) {
+    return `${snapshot.scope}:${snapshot.sourceLabel || snapshot.currentState} => ${snapshot.currentState}`;
+  });
+
+  return [
+    `${entry.characterName}: ${entry.currentState}`,
+    entry.innerShift ? `inner_shift=${entry.innerShift}` : "",
+    entry.agenda ? `agenda=${entry.agenda}` : "",
+    recentSnapshots.length ? `snapshot_trail=${recentSnapshots.join(" | ")}` : ""
+  ]
+    .filter(Boolean)
+    .join(" || ");
 }
 
 function buildPacketEvidenceTerms(packet: SceneContextPacket) {
@@ -1291,20 +2039,16 @@ function looksLikeHardAssertion(value: string) {
   );
 }
 
-function combineWarnings(...values: Array<string | string[] | undefined>) {
-  return dedupeStrings(
-    values
-      .flatMap(function (value) {
-        if (Array.isArray(value)) {
-          return value;
-        }
+function combineWarnings(values: string[]) {
+  return dedupeStrings(values).join(" | ") || undefined;
+}
 
-        return value ? [value] : [];
-      })
-      .filter(function (value) {
-        return Boolean(value && value.trim());
-      })
-  ).join(" | ") || undefined;
+function sanitizeSceneText(value: string) {
+  return value
+    .trim()
+    .replace(/^```(?:text|markdown)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
 }
 
 function countWords(value: string) {
@@ -1322,63 +2066,6 @@ function collectAnthropicText(message: Anthropic.Message) {
       return block.type === "text" ? block.text : "";
     })
     .join("\n");
-}
-
-function extractFirstJsonObject(value: string) {
-  let depth = 0;
-  let startIndex = -1;
-  let inString = false;
-  let isEscaped = false;
-
-  for (let index = 0; index < value.length; index += 1) {
-    const char = value[index];
-
-    if (inString) {
-      if (isEscaped) {
-        isEscaped = false;
-        continue;
-      }
-
-      if (char === "\\") {
-        isEscaped = true;
-        continue;
-      }
-
-      if (char === "\"") {
-        inString = false;
-      }
-
-      continue;
-    }
-
-    if (char === "\"") {
-      inString = true;
-      continue;
-    }
-
-    if (char === "{") {
-      if (depth === 0) {
-        startIndex = index;
-      }
-
-      depth += 1;
-      continue;
-    }
-
-    if (char === "}") {
-      if (depth === 0) {
-        continue;
-      }
-
-      depth -= 1;
-
-      if (depth === 0 && startIndex !== -1) {
-        return value.slice(startIndex, index + 1);
-      }
-    }
-  }
-
-  return null;
 }
 
 function dedupeStrings(values: string[]) {
@@ -1400,6 +2087,15 @@ function normalizeText(value: string) {
     .replace(/[^a-z0-9\s-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
 function createLocalId(prefix: string) {

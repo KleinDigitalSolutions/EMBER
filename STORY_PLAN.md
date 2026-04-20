@@ -95,6 +95,12 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
   - `branch_options`
   - `continuity_report`
   - `submission_report`
+- Rewrite-Length Control v2 ist im Book-Job-Service umgesetzt `aktualisiert 2026-04-20`:
+  - `beat_plan` als eigener strukturierter Planungs-Schritt
+  - `draft` und `rewrite` als getrennte reine Prosa-Calls
+  - `length_control` mit `expand` oder `compress` statt pauschalem Gesamtrepair
+  - separate Struktur-Calls für `extract`, `continuity` und `quality_eval`
+  - Stage-Runs mit Telemetrie statt nur statischen Notes
 
 ## Studio-Oberfläche
 ### Kernansichten
@@ -173,6 +179,8 @@ Optional später:
 ## Prompt-Architektur
 Nicht ein einziger Mega-Prompt. Stattdessen modulare System-Prompts.
 
+`aktualisiert 2026-04-20`: Der Book-Drafting-Pfad läuft jetzt nicht mehr als ein kombiniertes Draft/Rewrite/Extract-Schema. Prosa und Metadaten sind getrennt, damit Wortbudget, Qualitätsmessung und nachgelagerte Korrekturen belastbar steuerbar bleiben.
+
 ### Gemeinsamer Basis-Prompt
 - Rolle des Modells
 - klare Aufgabe
@@ -248,6 +256,7 @@ Das Studio sollte pro Kapitel automatisch bewerten:
 - `ai_patches` `erledigt 2026-04-18`
 - `book_projects` `erledigt 2026-04-18`
 - `book_draft_jobs` `erledigt 2026-04-18`
+- `book_quality_evals` `erledigt 2026-04-20`
 - `book_canon_facts` `erledigt 2026-04-18`
 - `book_character_states` `erledigt 2026-04-18`
 - `book_open_threads` `erledigt 2026-04-18`
@@ -261,6 +270,11 @@ Das Studio sollte pro Kapitel automatisch bewerten:
 
 ### Wichtig
 Story-Inhalt nicht nur als ein riesiges JSON-Feld speichern. Zusätzlich normalisierte Tabellen für Query, Analyse, Review und spätere Shop-Filter. `erledigt 2026-04-18` (Supabase Schema implementiert)
+
+### Book-Drafting V2
+- `book_draft_jobs.stage_runs` speichert seit `2026-04-20` Wortziel, Wort-Ist, Attempts, Repairs, Tokens, Dauer, Stop-Grund, Quality-Score und Issues.
+- Die Stage-Reihenfolge im Remote-Book-Pfad ist jetzt `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity`, `quality_eval`.
+- `draftEngine` trägt zusätzlich `styleProfileVersion` und `marketProfileVersion`, damit Stil- und Marktprofile versioniert nachvollziehbar bleiben.
 
 ## Backend-Entscheidungen
 ### Lokal jetzt

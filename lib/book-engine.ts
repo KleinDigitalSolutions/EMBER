@@ -1,5 +1,6 @@
 import {
   type BookDraftStageId,
+  countWords,
   findSceneContext,
   getAllScenes,
   normalizeStoryWordCounts,
@@ -97,11 +98,13 @@ export type AmazonLaunchPackage = {
 
 export const BOOK_DRAFT_STAGE_SEQUENCE: BookDraftStageId[] = [
   "context",
-  "outline",
+  "beat_plan",
   "draft",
+  "rewrite",
+  "length_control",
   "extract",
   "continuity",
-  "rewrite"
+  "quality_eval"
 ];
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
@@ -307,7 +310,7 @@ export function createLocalDraftJob(
 export function createDraftJobFromPacket(
   packet: SceneContextPacket,
   targetSceneWordsMin: number,
-  _targetSceneWordsMax: number
+  targetSceneWordsMax: number
 ): BookDraftJob {
   const outline = buildOutlineSteps(packet);
   const draftText = buildDraftText(packet, targetSceneWordsMin);
@@ -315,6 +318,7 @@ export function createDraftJobFromPacket(
   const rewriteNotes = buildRewriteNotes(packet, draftText, extractedState);
   const rewriteText = buildRewriteText(packet, draftText, rewriteNotes);
   const now = new Date().toISOString();
+  const actualWords = countWords(rewriteText);
 
   return {
     id: createLocalId("draft_job"),
@@ -336,8 +340,15 @@ export function createDraftJobFromPacket(
       provider: "local",
       modelName: null,
       updatedAt: now,
+      targetWordsMin: targetSceneWordsMin,
+      targetWordsMax: targetSceneWordsMax,
+      draftWords: countWords(draftText),
+      rewriteWords: actualWords,
       continuityNotes: extractedState.continuityRisks.concat(extractedState.styleDriftNotes),
-      rewriteNotes
+      rewriteNotes,
+      beatPlanNotes: outline,
+      qualityScore: null,
+      qualityIssues: []
     }),
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
@@ -361,39 +372,93 @@ export function createCompletedDraftStageRuns(params: {
   provider: BookJobProvider;
   modelName: string | null;
   updatedAt: string;
+  targetWordsMin?: number | null;
+  targetWordsMax?: number | null;
+  draftWords?: number | null;
+  rewriteWords?: number | null;
   continuityModelName?: string | null;
   continuityNotes?: string[];
   rewriteNotes?: string[];
+  beatPlanNotes?: string[];
+  qualityScore?: number | null;
+  qualityIssues?: string[];
 }): BookDraftStageRuns {
   return {
-    context: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
-      "Context-Pack vorbereitet."
-    ]),
-    outline: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
-      "Outline fuer die Szene erzeugt."
-    ]),
-    draft: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
-      "Szenendraft erzeugt."
-    ]),
-    extract: createCompletedStageRun(params.provider, params.modelName, params.updatedAt, [
-      "State-Extraktion aus dem Draft abgeschlossen."
-    ]),
-    continuity: createCompletedStageRun(
-      params.provider,
-      params.continuityModelName ?? params.modelName,
-      params.updatedAt,
-      params.continuityNotes && params.continuityNotes.length
-        ? params.continuityNotes
-        : ["Keine offenen Continuity-Hinweise."]
-    ),
-    rewrite: createCompletedStageRun(
-      params.provider,
-      params.modelName,
-      params.updatedAt,
-      params.rewriteNotes && params.rewriteNotes.length
-        ? params.rewriteNotes
-        : ["Rewrite abgeschlossen."]
-    )
+    context: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      notes: ["Context-Pack vorbereitet."]
+    }),
+    beat_plan: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      notes:
+        params.beatPlanNotes && params.beatPlanNotes.length
+          ? params.beatPlanNotes
+          : ["Beat-Plan fuer die Szene erzeugt."]
+    }),
+    draft: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      targetWordsMin: params.targetWordsMin ?? null,
+      targetWordsMax: params.targetWordsMax ?? null,
+      actualWords: params.draftWords ?? null,
+      notes: ["Szenendraft erzeugt."]
+    }),
+    rewrite: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      targetWordsMin: params.targetWordsMin ?? null,
+      targetWordsMax: params.targetWordsMax ?? null,
+      actualWords: params.rewriteWords ?? null,
+      notes:
+        params.rewriteNotes && params.rewriteNotes.length
+          ? params.rewriteNotes
+          : ["Rewrite abgeschlossen."]
+    }),
+    length_control: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      attemptCount: 0,
+      targetWordsMin: params.targetWordsMin ?? null,
+      targetWordsMax: params.targetWordsMax ?? null,
+      actualWords: params.rewriteWords ?? null,
+      notes: ["Keine separate Length-Control erforderlich."]
+    }),
+    extract: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      notes: ["State-Extraktion aus dem finalen Rewrite abgeschlossen."]
+    }),
+    continuity: createStageRun({
+      provider: params.provider,
+      modelName: params.continuityModelName ?? params.modelName,
+      updatedAt: params.updatedAt,
+      notes:
+        params.continuityNotes && params.continuityNotes.length
+          ? params.continuityNotes
+          : ["Keine offenen Continuity-Hinweise."]
+    }),
+    quality_eval: createStageRun({
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      targetWordsMin: params.targetWordsMin ?? null,
+      targetWordsMax: params.targetWordsMax ?? null,
+      actualWords: params.rewriteWords ?? null,
+      qualityScore: params.qualityScore ?? null,
+      qualityIssues: params.qualityIssues ?? [],
+      notes:
+        params.qualityIssues && params.qualityIssues.length
+          ? params.qualityIssues
+          : ["Keine offenen Quality-Eval-Probleme."]
+    })
   };
 }
 
@@ -409,18 +474,43 @@ export function createFallbackDraftStageRuns(params: {
   });
 }
 
-function createCompletedStageRun(
-  provider: BookJobProvider,
-  modelName: string | null,
-  updatedAt: string,
-  notes: string[]
-): BookDraftStageRun {
+export function createStageRun(params: {
+  provider: BookJobProvider;
+  modelName: string | null;
+  updatedAt: string | null;
+  status?: BookDraftStageRun["status"];
+  attemptCount?: number;
+  repairCount?: number;
+  durationMs?: number | null;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  costCents?: number | null;
+  stopReason?: string | null;
+  targetWordsMin?: number | null;
+  targetWordsMax?: number | null;
+  actualWords?: number | null;
+  qualityScore?: number | null;
+  qualityIssues?: string[];
+  notes?: string[];
+}): BookDraftStageRun {
   return {
-    status: "completed",
-    provider,
-    modelName,
-    updatedAt,
-    notes
+    status: params.status ?? "completed",
+    provider: params.provider,
+    modelName: params.modelName,
+    updatedAt: params.updatedAt,
+    attemptCount: params.attemptCount ?? 1,
+    repairCount: params.repairCount ?? 0,
+    durationMs: params.durationMs ?? null,
+    inputTokens: params.inputTokens ?? null,
+    outputTokens: params.outputTokens ?? null,
+    costCents: params.costCents ?? null,
+    stopReason: params.stopReason ?? null,
+    targetWordsMin: params.targetWordsMin ?? null,
+    targetWordsMax: params.targetWordsMax ?? null,
+    actualWords: params.actualWords ?? null,
+    qualityScore: params.qualityScore ?? null,
+    qualityIssues: params.qualityIssues ?? [],
+    notes: params.notes ?? []
   };
 }
 

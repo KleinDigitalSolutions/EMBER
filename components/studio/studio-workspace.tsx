@@ -2692,6 +2692,16 @@ function normalizeBookBlueprint(
       mode: "local",
       targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
       targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
+      styleProfileVersion:
+        typeof candidate.draftEngine?.styleProfileVersion === "string" &&
+        candidate.draftEngine.styleProfileVersion.trim()
+          ? candidate.draftEngine.styleProfileVersion
+          : fallback.draftEngine.styleProfileVersion,
+      marketProfileVersion:
+        typeof candidate.draftEngine?.marketProfileVersion === "string" &&
+        candidate.draftEngine.marketProfileVersion.trim()
+          ? candidate.draftEngine.marketProfileVersion
+          : fallback.draftEngine.marketProfileVersion,
       jobs:
         Array.isArray(candidate.draftEngine?.jobs) &&
         candidate.draftEngine.jobs.every(function (job) {

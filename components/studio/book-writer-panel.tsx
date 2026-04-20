@@ -1162,12 +1162,20 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
     return "Kontext";
   }
 
-  if (stageId === "outline") {
-    return "Outline";
+  if (stageId === "beat_plan") {
+    return "Beat-Plan";
   }
 
   if (stageId === "draft") {
     return "Entwurf";
+  }
+
+  if (stageId === "rewrite") {
+    return "Rewrite";
+  }
+
+  if (stageId === "length_control") {
+    return "Längensteuerung";
   }
 
   if (stageId === "extract") {
@@ -1178,7 +1186,7 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
     return "Kontinuität";
   }
 
-  return "Rewrite";
+  return "Quality Eval";
 }
 
 function createBlockId() {
