@@ -1,3 +1,6 @@
+alter table public.book_scene_cards
+add column if not exists outline jsonb not null default '[]'::jsonb;
+
 create table if not exists public.book_character_state_snapshots (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.workspaces (id) on delete cascade,
