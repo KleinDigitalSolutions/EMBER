@@ -1,5 +1,6 @@
 # EMBER Story Document — „Der Echo-Effekt"
-> Format: EMBER Book Blueprint v1 | Stand: 2026-04-19
+> Format: EMBER Book Blueprint v2 | Stand: 2026-04-21
+> Autor: Özgür Azap
 > Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads
 
 ---
@@ -45,7 +46,7 @@
 
 ### Stilregeln (Negativ — verboten)
 - Kein Superhelden-Hacking. Keine „Ich bin in 10 Sekunden im System"-Szenen.
-- Keine lange innere Monologe mit Selbstreflexion (außer gezielt in ruhigen Szenen nach einem Twist)
+- Keine langen inneren Monologe mit Selbstreflexion (außer gezielt in ruhigen Szenen nach einem Twist)
 - Kein erklärender Erzähler. Der Leser schlussfolgert selbst.
 - Keine KI als Ermittler. Menschen irren sich. Das ist der Punkt.
 - Keine sauberen Auflösungen. Jede Szene endet mit einer offenen Frage oder neuem Risiko.
@@ -115,10 +116,9 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
       "status": "aktiv — Countdown-Anker"
     },
     {
-      "id": "CF005",
-      "fact": "In Irenes Büro wurde Viktor-DNA gefunden. Die Herkunft der DNA ist ungeklärt — kein Blut, kein Gewebe, nur Hautschuppen auf einem Griff.",
-      "first_established": "Act 1, Scene 2",
-      "status": "aktiv — potenzielle Fälschung"
+      "id": "CF005_REV",
+      "fact": "Am Tatort wurde Blut von Viktor gefunden, das seine DNA vor seiner Knochenmarkspende aufweist (Chimären-Falle).",
+      "impact": "Beweist eine geplante Rahmung durch jemanden mit Zugriff auf Krankenakten."
     },
     {
       "id": "CF006",
@@ -128,7 +128,7 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
     },
     {
       "id": "CF007",
-      "fact": "Irene Marek hat ihre eigene Entführung inszeniert. Motivkern: Viktor weiß von einem internen Vectalis-Skandal und hat geschwiegen, um seine Stiftung zu schützen.",
+      "fact": "Irene Marek hat ihre eigene Entführung inszeniert. Motivkern: Viktor weiß von einem internen Vectalis-Skandal (Halcyon) und hat geschwiegen, um seine Stiftung zu schützen.",
       "first_established": "Act 3, Scene 2",
       "status": "Kern-Twist — vor Act 3 nicht nennen"
     },
@@ -143,6 +143,18 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
       "fact": "Das verlassene Labor im Industriegebiet enthält keine Drogenkomponenten, sondern Aerosolisierungs-Equipment für einen biologischen Wirkstoff. Ziel: Belüftungsanlage der Gala-Location.",
       "first_established": "Act 2, Scene 4",
       "status": "aktiv ab Act 2"
+    },
+    {
+      "id": "CF010",
+      "fact": "Viktor bereitet seit Beginn des Falls seine eigene Flucht vor — unabhängig vom Ausgang des Verfahrens. Er löst seit acht Monaten still die Stiftungsstruktur auf und transferiert Vermögen. Freispruch oder Verurteilung: Er will weg, bevor Vectalis vor ihm handelt.",
+      "first_established": "Act 3, Scene 3",
+      "status": "Twist — vor Act 3 nicht nennen. Öffnet Buch 2."
+    },
+    {
+      "id": "CF011",
+      "fact": "Irenes letzter Tag enthält um 14:23 Uhr einen ausgehenden Anruf (Dauer: 4 Min. 17 Sek.) bei einer Nummer der Vectalis Pharma Holding GmbH, Niederlassung Verath. Die Nummer war bis vor drei Monaten aktiv. Mara flaggt den Eintrag — und geht weiter.",
+      "first_established": "Act 1, Scene 2",
+      "status": "aktiv — Halcyon-Spur, Plant für Act 2"
     }
   ]
 }
@@ -159,6 +171,12 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
   "name": "Leon Farkas",
   "role": "Pattern-Seeker",
   "background": "Ehemaliger BND-Analyst. Frühpensioniert nach einem Einsatz, bei dem er das Richtige getan und dabei drei Kollegen in Gefahr gebracht hat. Liest Gesichter wie andere Uhren lesen.",
+  "wunde": {
+    "was_passiert_ist": "Während eines BND-Einsatzes hat Leon eine Zielperson beobachtet, die in Gefahr geriet. Er hat die Situation analysiert, die Risiken abgewogen — und in der Zeit ist sie gestorben. Er hatte Recht mit seiner Analyse. Das hat nichts geändert.",
+    "was_es_heute_macht": "Er friert in dem Moment ein, wo Handlung zählt und keine Zeit mehr zum Denken bleibt. Er weiß es. Er hat kein Gegenmittel.",
+    "was_er_niemals_tut": "Ohne vollständige Information handeln — und genau das wird das Buch von ihm verlangen.",
+    "arc_abschluss": "Leon handelt gegen Veiths direkten Befehl. Zum ersten Mal seit Jahren. Nicht weil er sicher ist — sondern weil er weiß, was Schweigen kostet."
+  },
   "initial_state": {
     "physisch": "Mitte 40, ruhige Bewegungen, spricht wenig",
     "psychisch": "Kontrolliert. Vertraut keinem Reflex, der nicht zweimal geprüft wurde",
@@ -167,8 +185,8 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
   },
   "arc": [
     {"phase": "Act 1", "state": "Sicherer Analytiker. Glaubt an Veith."},
-    {"phase": "Act 2", "state": "Erste Zweifel: Daten passen nicht zur offiziellen Version."},
-    {"phase": "Act 3", "state": "Konfrontiert Veith direkt. Muss entscheiden zwischen Loyalität und Wahrheit."}
+    {"phase": "Act 2", "state": "Erste Zweifel: Daten passen nicht zur offiziellen Version. Sieht Veiths Gesicht — und liest etwas, das er nicht benennen kann."},
+    {"phase": "Act 3", "state": "Konfrontiert Veith direkt. Muss entscheiden zwischen Loyalität und Wahrheit. Handelt — trotz Starre."}
   ],
   "speech_pattern": "Kurze Sätze. Keine Fragen, nur Feststellungen. Wenn er unsicher ist: Schweigen."
 }
@@ -180,7 +198,13 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
   "character_id": "MARA",
   "name": "Mara Solis",
   "role": "Archivarin",
-  "background": "Investigativjournalistin, 38. Hat einen Korruptionsfall veröffentlicht, der ihr die Karriere und fast die Freiheit gekostet hat. Arbeitet jetzt lieber unsichtbar.",
+  "background": "Investigativjournalistin, 38. Hat einen Korruptionsfall zurückgehalten — aus Angst. Drei Monate später veröffentlichte ihn jemand anderes. Die Quelle, die ihr vertraut hatte, verlor dabei alles. Mara arbeitet seitdem lieber unsichtbar.",
+  "wunde": {
+    "was_passiert_ist": "Sie hatte die Geschichte. Sie hatte die Beweise. Sie hat aus Angst vor den Konsequenzen gewartet — und jemand anderes hat den Abzug gezogen. Die Quelle wurde exponiert. Mara sagt sich, sie hat die Quelle schützen wollen. Der Unterschied zwischen Schutz und Feigheit ist kleiner als sie sich eingesteht.",
+    "was_es_heute_macht": "Sie teilt nie alles auf einmal. Hält immer etwas zurück — als Versicherung, als Kontrolle, als Beweis, dass sie diesmal nicht unvorbereitet ist.",
+    "was_sie_niemals_tut": "Alles auf einmal zeigen. Kapitel 5: Sie schließt das Fenster bevor Leon es sehen kann. Das ist nicht Strategie. Das ist Reflex.",
+    "arc_abschluss": "Sie schickt die Backup-Datei an drei Journalisten. Ohne Absicherung. Ohne Plan B. Das ist ihr Moment — sie tut das, was sie damals nicht getan hat."
+  },
   "initial_state": {
     "physisch": "Unscheinbar, zieht das bewusst durch — graue Jacken, kein Schmuck",
     "psychisch": "Zynisch nach außen, moralisch kompromisslos nach innen",
@@ -188,9 +212,9 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
     "verhältnis_zu_veith": "Skeptisch von Anfang an. Hat ihn nie direkt angegriffen, aber nie gelobt."
   },
   "arc": [
-    {"phase": "Act 1", "state": "Findet Irenes digitale Spuren — etwas stimmt nicht."},
-    {"phase": "Act 2", "state": "Rekonstruiert gelöschte Kommunikation. Erkennt Irene als Akteurin, nicht Opfer."},
-    {"phase": "Act 3", "state": "Entdeckt Veiths Löschung. Muss das Ergebnis veröffentlichen — oder schützt sie das Team?"}
+    {"phase": "Act 1", "state": "Findet Irenes digitale Spuren — etwas stimmt nicht. Flaggt den Vectalis-Anruf. Geht weiter."},
+    {"phase": "Act 2", "state": "Rekonstruiert gelöschte Kommunikation. Erkennt Irene als Akteurin, nicht Opfer. Hält es zurück."},
+    {"phase": "Act 3", "state": "Entdeckt Veiths Löschung. Schickt die Datei raus — diesmal ohne zu warten."}
   ],
   "speech_pattern": "Stellt Fragen als Feststellungen verkleidet. 'Interessant, dass...' statt 'Warum...'"
 }
@@ -202,17 +226,27 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
   "character_id": "KAI",
   "name": "Kai Renn",
   "role": "Feld-Agent",
-  "background": "Ehemaliger Verdeckter Ermittler, LKA. Hat einen Einsatz abgebrochen, weil er das Ziel für unschuldig hielt. Die Behörde sah das anders. Jetzt freiberuflich.",
+  "background": "Ehemaliger Verdeckter Ermittler, LKA. Hat einen Einsatz abgebrochen, weil er das Ziel für unschuldig hielt. Die Behörde zog den Fall durch. Das Ziel wurde verurteilt. Kai hat danach alles versucht — interne Meldungen, Anwälte, ein Journalist. Niemand hat zugehört. Der Mann sitzt noch.",
+  "wunde": {
+    "was_passiert_ist": "Ein Unschuldiger sitzt im Gefängnis, weil Kai geschwiegen hat, solange es darauf ankam — und danach zu laut war, als es nichts mehr half.",
+    "was_es_heute_macht": "Er hat sich eine einzige Regel gegeben: Schweigen ist Mitschuld. Die Wahrheit wird ausgesprochen — immer, sofort, egal vor wem und egal was es kostet.",
+    "was_er_niemals_tut": "Eine unbequeme Wahrheit zurückhalten. Auch wenn Leon sagt: warten. Auch wenn Mara sagt: zu früh. Auch wenn es den Einsatz gefährdet.",
+    "arc_abschluss": "Kai erkennt in Akt 3, dass Viktor ihn manipuliert hat — genau über diese Regel. Viktor wusste: Kai handelt, wenn man ihm die richtige Wahrheit gibt. Das erschüttert ihn mehr als alles andere im Fall."
+  },
+  "viktor_manipulation": {
+    "wie": "Im Briefing erwähnt Viktor beiläufig, dass er Kroll bereits zweimal in der Nähe seiner Wohnung gesehen hat — einmal nachts, einmal früh morgens. Er sagt es ohne Nachdruck, als wäre es eine Randnotiz. Kai hört es. Viktor weiß, dass Kai es hört. Und er weiß, dass Kai nicht warten wird.",
+    "warum_funktioniert_es": "Viktor hat Kai in fünf Minuten gelesen. Er sieht: dieser Mann handelt, wenn er glaubt, das Richtige zu tun. Also gibt er ihm einen Grund."
+  },
   "initial_state": {
     "physisch": "Anfang 30, beweglich, passt sich Umgebungen an — heute Bauarbeiter, morgen Lieferbote",
-    "psychisch": "Impulsiv. Handelt bevor er denkt. Bereut es manchmal.",
+    "psychisch": "Impulsiv. Handelt bevor er denkt. Bereut es manchmal — aber nicht das Handeln selbst.",
     "verhältnis_zu_team": "Mag Mara. Reibt sich an Leons Methodik.",
     "verhältnis_zu_veith": "Respekt vor der Karriere. Kein persönliches Verhältnis."
   },
   "arc": [
-    {"phase": "Act 1", "state": "Verfolgt Kroll & Tamás. Glaubt, die Entführer gefunden zu haben."},
-    {"phase": "Act 2", "state": "Pivot: Die Männer sind Detektive, keine Täter. Kai hat sich blamiert — und lernt daraus."},
-    {"phase": "Act 3", "state": "Betritt das Labor. Erkennt die echte Bedrohung. Entscheidet allein und handelt."}
+    {"phase": "Act 1", "state": "Verfolgt Kroll & Tamás. Glaubt, die Entführer gefunden zu haben. Handelt — weil Viktor ihm den richtigen Impuls gegeben hat."},
+    {"phase": "Act 2", "state": "Pivot: Die Männer sind Detektive, keine Täter. Kai hat sich blamiert. Lernt — aber versteht noch nicht, warum er so schnell zugebissen hat."},
+    {"phase": "Act 3", "state": "Betritt das Labor. Handelt allein. Erkennt danach Viktors Manipulation. Das trifft ihn härter als der Fall selbst."}
   ],
   "speech_pattern": "Direkt, manchmal zu direkt. Humor als Schutzmechanismus in Hochdrucksituationen."
 }
@@ -235,9 +269,39 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
     {"phase": "Act 2", "state": "Hält Informationen zurück. Lenkt das Team subtil weg vom Labor."},
     {"phase": "Act 3", "state": "Konfrontation. Gesteht — nicht aus Reue, sondern weil er noch immer Recht glaubt zu haben."}
   ],
-  "speech_pattern": "Lange Sätze. Viele Nebensätze. Erklärt immer den größeren Kontext."
+  "speech_pattern": "Lange Sätze. Viele Nebensätze. Erklärt immer den größeren Kontext.",
+  "kern_satz_act3": "'Du hättest dasselbe getan.' — Er sagt es Leon nach. Und er meint es ernst."
 }
 ```
+
+### Viktor Marek — Klient / verborgene Agenda
+```json
+{
+  "character_id": "VIKTOR",
+  "name": "Viktor Marek",
+  "role": "Klient — kein passives Opfer",
+  "background": "Philanthrop, 54. Mitgründer einer Stiftung für Bildungstechnologie. Weiß seit Jahren von Halcyon — dem internen Vectalis-Skandal — und hat geschwiegen, um die Stiftung zu schützen. Hat damit Irenes Entscheidung ausgelöst.",
+  "verborgene_agenda": {
+    "echtes_ziel": "Viktor hat das Team nicht engagiert um freigesprochen zu werden. Er hat es engagiert um drei bis vier Tage zu gewinnen. Solange das Team ermittelt, ist die Aufmerksamkeit der Behörden auf den Fall gerichtet — nicht auf seine Konten, nicht auf seine Reisebewegungen, nicht auf die Stiftungsstruktur die er seit acht Monaten still auflöst.",
+    "fluchtplan": "Er bereitet seine eigene Flucht vor. Freispruch oder Verurteilung — beides kann er von woanders abwarten. Was er nicht abwarten kann: dass Vectalis vor ihm handelt.",
+    "was_er_weiss": "Er kennt Irenes Aufenthaltsort nicht. Aber er weiß, dass sie lebt — weil er die Entführung von Anfang an nicht geglaubt hat. Er kennt Irene. Sie flieht nicht. Sie handelt.",
+    "act3_moment": "Leon findet heraus, dass Viktor ausreisen wollte — Ticket, falscher Name, Abflug zwei Stunden nach der Gala. Viktor ist noch da. Warum? Das beantwortet Viktor mit einem einzigen Satz. Dieser Satz öffnet Buch 2.",
+    "kai_manipulation": "Im Briefing erwähnt Viktor beiläufig, dass er Kroll bereits zweimal in der Nähe seiner Wohnung gesehen hat — einmal nachts, einmal früh morgens. Beiläufig. Ohne Nachdruck. Kai beißt an. Viktor hat ihn in fünf Minuten gelesen."
+  }
+}
+```
+
+---
+
+## HALCYON — PLANT & PAYOFF
+
+### Erster Hinweis (Kapitel 2 — Maras OSINT-Recherche)
+In Irenes rekonstruiertem Tagesablauf taucht um 14:23 Uhr ein Anruf auf — ausgehend, Dauer 4 Minuten 17 Sekunden. Die Nummer ist nicht in Irenes Kontakten gespeichert. Mara schlägt sie nach. Die Nummer ist abgemeldet, war aber bis vor drei Monaten auf eine Holdinggesellschaft registriert: **Vectalis Pharma Holding GmbH, Niederlassung Verath.** Mara markiert den Eintrag mit einem gelben Flag und geht weiter. Sie hat noch vierzig andere Datenpunkte vor sich.
+
+**Infobox-Element für Kapitel 2:** Anrufprotokoll-Fragment — Nummer geschwärzt bis auf Vorwahl, Zeitstempel sichtbar, Dauer sichtbar. Kein Kommentar im Text. Der Leser sieht es. Niemand spricht darüber.
+
+### Payoff (Kapitel 7 — Leon erkennt den Flag)
+Leon sieht Maras gelben Flag in den gemeinsamen Notizen — während er mit dem Chemiker telefoniert und das Wort „Vectalis" fällt. Er friert einen Moment ein. Nicht aus Starre. Aus Erkenntnis. Er öffnet den Eintrag. Schaut auf die Uhrzeit. Schaut auf die Dauer. Sagt nichts.
 
 ---
 
@@ -281,6 +345,12 @@ Alle Ermittlungstools müssen real oder realistisch erweiterbar sein:
       "thread": "Was passiert mit der Gala, wenn das Team scheitert?",
       "status": "offen — Countdown-Druck",
       "payoff_act": "Act 3 — Finale"
+    },
+    {
+      "id": "OT007",
+      "thread": "Viktor hatte ein Ticket — falscher Name, Abflug nach der Gala. Er ist nicht geflogen. Warum?",
+      "status": "offen — Buch 2",
+      "payoff_act": "Epilog (angedeutet) — vollständiger Payoff in Band 2"
     }
   ]
 }
@@ -304,8 +374,9 @@ Scene Card
   einstieg: Leon sieht Veiths Gesicht und liest es — etwas stimmt nicht, aber er kann es nicht benennen.
   kern_aktion: Veith briefed das Team. Viktor Marek sitzt dabei. Er wirkt nicht wie ein Mörder.
   beat: Viktor zeigt dem Team die belastende Mail. Mara fragt: "Wer hat die Mail-Header geprüft?"
+  viktor_moment: Viktor erwähnt beiläufig, Kroll zweimal nachts in der Nähe seiner Wohnung gesehen zu haben. Kein Nachdruck. Kai hört es.
   ende: Der Truck rollt. Die Stadt empfängt sie mit Regen.
-  setup: OT001 (DNA), Leon-Veith-Beziehung
+  setup: OT001 (DNA), Leon-Veith-Beziehung, Viktor-Kai-Manipulation (gesät)
   infobox_typ: Personenbeschreibung Viktor, Tatzeit-Übersicht
 ```
 
@@ -318,10 +389,11 @@ Scene Card
   uhrzeit: 22:15 Uhr
   ziel: OSINT-Aufbau. Leser lernt, wie das Team wirklich arbeitet.
   kern_aktion: Mara rekonstruiert Irenes letzten Tag aus öffentlichen Quellen.
-  beat: Irenes Smartphone-Ortsdaten zeigen eine Lücke von 40 Minuten, die nicht erklärbar ist — außer: sie hat das Gerät freiwillig abgelegt.
+  beat: Irenes Smartphone-Ortsdaten zeigen eine Lücke von 40 Minuten — sie hat das Gerät freiwillig abgelegt.
+  halcyon_plant: Mara findet den Vectalis-Anruf um 14:23 Uhr. Flaggt ihn. Geht weiter.
   ende: "Sie ist nicht geflohen. Sie ist gegangen." Mara sagt es laut. Leon antwortet nicht.
-  setup: OT002 (Irenes Motiv), OT004 (Maras gelöschte Datei)
-  infobox_typ: Zeitstrahl Irenes letzter Tag, Geodaten-Fragment
+  setup: OT002 (Irenes Motiv), OT004 (Maras gelöschte Datei), CF011 (Halcyon-Spur gesät)
+  infobox_typ: Zeitstrahl Irenes letzter Tag, Geodaten-Fragment, Anrufprotokoll-Fragment (Nummer geschwärzt)
 ```
 
 #### Kapitel 3: „Beschatter"
@@ -334,8 +406,9 @@ Scene Card
   ziel: Erste Feldaktion. Tempo anziehen.
   kern_aktion: Kai identifiziert Kroll & Tamás — zwei Männer, die Viktor seit Tagen verfolgen.
   beat: Kai ist überzeugt: Das sind die Täter. Er will zugreifen. Leon sagt: warten.
+  subtext: Kai handelt nicht nur aus Impuls — er handelt, weil Viktor ihm exakt den richtigen Impuls gegeben hat. Das zeigt sich hier, ohne dass Kai es weiß.
   ende: Kai wartet nicht.
-  setup: OT003 (Labor), Kai-Impulsivität als Charaktermerkmal
+  setup: OT003 (Labor), Kai-Impulsivität, Viktor-Manipulation (erste Konsequenz sichtbar)
   infobox_typ: Observierungs-Log (Zeitstempel + Bewegungsprotokoll)
 ```
 
@@ -369,6 +442,7 @@ Scene Card
   ziel: Mara findet das Verbindungsstück zwischen Irene, Viktor und Vectalis.
   kern_aktion: Wiederhergestellte gelöschte Signal-Nachrichten zwischen Irene und einem unbekannten Kontakt.
   beat: Der Ton der Nachrichten ist nicht Angst — es ist Planung. Irene ist keine Geisel.
+  charakter_subtext: Mara schließt das Fenster nicht aus Strategie. Es ist Reflex. Ihre Wunde arbeitet.
   ende: Mara schließt das Fenster, bevor Leon es sehen kann. Sie braucht noch eine Stunde.
   setup: OT004 (Payoff Teil 1), OT002 (Annäherung)
   infobox_typ: Signal-Nachrichten-Fragment (Metadaten sichtbar, Inhalt teilweise geschwärzt)
@@ -398,9 +472,10 @@ Scene Card
   uhrzeit: 04:00 Uhr
   ziel: Exposition der biologischen Bedrohung ohne Info-Dump. Druck erhöhen.
   kern_aktion: Leon kontaktiert einen alten BND-Kontakt (kein Name — "der Chemiker"). Bestätigung: Aerosolisierungs-Setup für Belüftungsanlage. Ziel: geschlossener Veranstaltungsraum.
+  halcyon_payoff: Während des Telefonats fällt das Wort "Vectalis". Leon öffnet Maras geteilte Notizen. Sieht den gelben Flag. Öffnet den Eintrag. Schaut auf Uhrzeit und Dauer. Sagt nichts.
   beat: Die Gala in drei Tagen. 600 Menschen.
   ende: Mara öffnet ihr gesperrtes Fenster. "Jetzt müsst ihr das sehen."
-  setup: CF004 (Gala-Countdown), OT001 (DNA — neue Spur durch Chemiker-Info), Überleitung Act 3
+  setup: CF004 (Gala-Countdown), CF011 (Halcyon-Payoff), OT001 (neue Spur), Überleitung Act 3
   infobox_typ: Zeitlicher Countdown bis Gala (Tage/Stunden)
 ```
 
@@ -434,7 +509,8 @@ Scene Card
   ziel: Veith-Verrat aufdecken. Emotional stärkste Szene.
   kern_aktion: Leon findet Metadaten einer gelöschten Kameraaufnahme — von einem System, auf das nur Veith Zugriff hatte. Er fährt zu ihm.
   beat: Veith gesteht ohne Drama: "Ja. Ich habe es gelöscht. Viktor wäre freigesprochen worden, und Halcyon wäre in jeder Zeitung gewesen. Ich habe entschieden, dass das nicht geht."
-  ende: Leon verlässt das Büro ohne ein weiteres Wort. Veith ruft ihm nach: "Du hättest dasselbe getan."
+  leon_arc_moment: Leon verlässt das Büro ohne ein weiteres Wort. Er handelt danach — ohne auf vollständige Information zu warten. Das ist sein Arc-Abschluss.
+  ende: Veith ruft ihm nach: "Du hättest dasselbe getan."
   setup: CF008 (Payoff), OT005 (Backup-Kopie — Mara hat sie)
   infobox_typ: Metadaten-Fragment (Dateilöschungs-Log)
 ```
@@ -449,8 +525,9 @@ Scene Card
   ziel: Finaler Einsatz. Biologische Bedrohung neutralisieren.
   kern_aktion: Kai schleust sich in die Location ein (als Caterer). Findet das Belüftungssystem. Neutralisiert es physisch — kein Hacking, ein Schraubenzieher und ein Kabel.
   beat: Kroll taucht auf. Nicht als Feind — er wurde auch zu dieser Lösung geschickt. Von Vectalis. Das Unternehmen will keine Zeugen, nicht einmal sein eigenes Werk.
-  ende: Die Gala beginnt. Niemand weiß. Mara schickt die Backup-Datei an drei Journalisten.
-  setup: OT006 (Payoff), Überleitung zum Epilog
+  kai_arc_moment: Nach dem Einsatz erfährt Kai, dass Viktor ein Ticket hatte — falscher Name. Viktor hat ihn benutzt. Das trifft ihn härter als alles andere.
+  ende: Die Gala beginnt. Niemand weiß. Mara schickt die Backup-Datei an drei Journalisten — ohne Absicherung, ohne Plan B.
+  setup: OT006 (Payoff), OT007 (Viktor-Ticket — angedeutet), Überleitung zum Epilog
   infobox_typ: Simultanschnitt-Zeitstempel, Kai's Lagebeschreibung als kurze Checkliste
 ```
 
@@ -463,8 +540,9 @@ Scene Card
   uhrzeit: 23:00 Uhr
   ziel: Kein Erklärung. Ein Bild. Offene Frage.
   kern_aktion: Das Team sitzt schweigend. Viktor ist frei. Veith ist zurückgetreten (steht in einer Push-Nachricht auf Leons Bildschirm). Irene ist verschwunden — freiwillig, diesmal wirklich.
+  buch2_hinweis: Viktor hatte ein Ticket. Er ist nicht geflogen. Warum — das bleibt offen.
   letzter_satz: "Leon löschte die Push-Nachricht und starrte auf den leeren Bildschirm. Irgendwo in der Stadt trug eine Kamera gerade sein Gesicht weiter."
-  setup: —
+  setup: OT007 (offen — Buch 2)
   infobox_typ: Keine.
 ```
 
@@ -474,17 +552,29 @@ Scene Card
 
 | Beat | Uhrzeit | Kapitel | Ereignis |
 |---|---|---|---|
-| B01 | Tag 1, 21:30 | 1 | Team nimmt Auftrag an |
-| B02 | Tag 1, 22:15 | 2 | Irenes 40-Minuten-Lücke entdeckt |
-| B03 | Tag 1, 23:45 | 3 | Kai verfolgt Kroll & Tamás |
-| B04 | Tag 2, 00:20 | 4 | Pivot: Privatdetektive, nicht Entführer |
-| B05 | Tag 2, 01:05 | 5 | Mara findet Irenes Nachrichten |
-| B06 | Tag 2, 02:40 | 6 | Labor entdeckt |
-| B07 | Tag 2, 04:00 | 7 | Biologische Bedrohung bestätigt |
-| B08 | Tag 3, 06:15 | 8 | Mara findet Irene — Twist 1 |
-| B09 | Tag 3, 08:00 | 9 | Leon konfrontiert Veith — Twist 2 |
-| B10 | Tag 4, 19:45 | 10 | Finaler Einsatz, Gala |
-| B11 | Tag 4, 23:00 | Epilog | Stille |
+| B01 | Tag 1, 21:30 | 1 | Team nimmt Auftrag an. Viktor sät Kai-Impuls. |
+| B02 | Tag 1, 22:15 | 2 | Irenes 40-Minuten-Lücke entdeckt. Vectalis-Anruf geflaggt. |
+| B03 | Tag 1, 23:45 | 3 | Kai verfolgt Kroll & Tamás — weil Viktor es so eingerichtet hat. |
+| B04 | Tag 2, 00:20 | 4 | Pivot: Privatdetektive, nicht Entführer. |
+| B05 | Tag 2, 01:05 | 5 | Mara findet Irenes Nachrichten. Hält zurück. |
+| B06 | Tag 2, 02:40 | 6 | Labor entdeckt. Leon: "Ruf Veith nicht an." |
+| B07 | Tag 2, 04:00 | 7 | Biologische Bedrohung bestätigt. Halcyon-Flag erkannt. |
+| B08 | Tag 3, 06:15 | 8 | Mara findet Irene — Twist 1. |
+| B09 | Tag 3, 08:00 | 9 | Leon konfrontiert Veith — Twist 2. Leon handelt. |
+| B10 | Tag 4, 19:45 | 10 | Finaler Einsatz, Gala. Alle Arcs schließen. |
+| B11 | Tag 4, 23:00 | Epilog | Stille. Viktor-Ticket. Buch 2 öffnet sich. |
+
+---
+
+## CHARAKTER-ARC ÜBERSICHT
+
+| Figur | Wunde | Was er/sie niemals tut | Arc-Abschluss |
+|---|---|---|---|
+| **Leon** | Sah jemanden sterben — während er analysierte | Ohne vollständige Info handeln | Handelt gegen Veiths Befehl |
+| **Mara** | Hat eine Geschichte zurückgehalten — jemand hat dafür bezahlt | Alles auf einmal zeigen | Schickt die Datei — ohne Plan B |
+| **Kai** | Unschuldiger sitzt im Gefängnis — weil niemand zugehört hat | Eine Wahrheit zurückhalten | Erkennt, dass Viktor seine Regel gegen ihn benutzt hat |
+| **Viktor** | Hat über Halcyon geschwiegen — um die Stiftung zu retten | — | Hatte ein Ticket. Ist nicht geflogen. Warum? |
+| **Veith** | Glaubt aufrichtig, das Richtige getan zu haben | — | "Du hättest dasselbe getan." |
 
 ---
 
@@ -500,7 +590,7 @@ DYNAMISCHER PACK (szenenbezogen):
   - Scene Card der aktuellen Szene (vollständig)
   - Scene Card der vorherigen Szene (nur: pov, beat, ende)
   - Relevante Canon Facts (nur die in der Scene Card referenzierten IDs)
-  - Character State der POV-Figur (aktueller Stand)
+  - Character State der POV-Figur (aktueller Stand inkl. Wunde)
   - Aktive Open Threads (nur offen gebliebene, die in dieser Szene relevant sind)
 
 OPTIONALER AUSBLICK:
@@ -519,3 +609,7 @@ OPTIONALER AUSBLICK:
 - [ ] Letzter Satz ist ein Bild, keine Aussage
 - [ ] Kein direktes KI-Ermitteln (kein System löst den Fall — Menschen tun es)
 - [ ] Veiths Motiv ist nicht böse, sondern utilitaristisch — das muss spürbar sein
+- [ ] Jede Figur hat eine Wunde die ihr Verhalten erklärt — nicht nur ihre Rolle
+- [ ] Kais Manipulation durch Viktor ist spürbar — aber erst im Rückblick vollständig sichtbar
+- [ ] Halcyon-Flag in Kapitel 2 ist vorhanden — ohne Kommentar, ohne Erklärung
+- [ ] Viktor-Ticket im Epilog angedeutet — Antwort offen für Buch 2

@@ -1,4 +1,5 @@
 import {
+  createEmptyBookSceneCardDirectives,
   type BookDraftStageId,
   countWords,
   findSceneContext,
@@ -46,6 +47,9 @@ export type SceneContextPacket = {
     sceneSummary: string;
     sceneExcerpt: string;
     sceneCardOutline: string[];
+    sceneCardLabel: string | null;
+    sceneHeaderHints: string[];
+    sceneHardConstraints: string[];
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -248,6 +252,9 @@ export function buildSceneContextPacket(
       sceneSummary: sceneContext.scene.summary,
       sceneExcerpt: buildSceneExcerpt(sceneContext.scene),
       sceneCardOutline: timeline[sceneIndex]?.outline ?? [],
+      sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
+      sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
+      sceneHardConstraints: buildSceneHardConstraints(timeline[sceneIndex] ?? null),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -840,6 +847,7 @@ function deriveTimelineBeats(story: StoryDocument): TimelineBeat[] {
           excerpt: buildSceneExcerpt(scene),
           orderLabel: `A${actIndex + 1} · C${chapterIndex + 1} · S${sceneIndex + 1}`,
           chapterGoal,
+          directives: createEmptyBookSceneCardDirectives(),
           outline: buildSceneCardOutline(scene, chapterGoal, chapter.scenes[sceneIndex + 1]?.title ?? null)
         };
       });
@@ -1242,7 +1250,7 @@ function rankRelevantCodexForScene(
       return right.score - left.score || right.entry.mentionCount - left.entry.mentionCount;
     })
     .filter(function (item) {
-      return item.score > 0;
+      return item.score > 1;
     })
     .map(function (item) {
       return item.entry;
@@ -1559,6 +1567,147 @@ function buildSceneExcerpt(scene: StoryScene) {
     .join(" ");
 
   return clampText(text || scene.summary, 220);
+}
+
+function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
+  if (!sceneCard) {
+    return [];
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const hints = [directives.timeAnchor, directives.location]
+    .map(function (value) {
+      return value?.trim() || "";
+    })
+    .filter(Boolean);
+
+  return hints.slice(0, 2);
+}
+
+function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
+  if (!sceneCard) {
+    return [];
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const hardConstraints: string[] = [];
+
+  if (directives.pov) {
+    hardConstraints.push(`POV ist ${directives.pov}. Bleib in dieser Perspektive.`)
+  }
+
+  if (directives.location) {
+    hardConstraints.push(`Ort der Szene: ${directives.location}. Ersetze ihn nicht durch einen anderen Schauplatz.`)
+  }
+
+  if (directives.timeAnchor) {
+    hardConstraints.push(`Zeit der Szene: ${directives.timeAnchor}. Verwende keine andere konkrete Uhrzeit.`)
+  }
+
+  if (directives.objective) {
+    hardConstraints.push(`Szenenziel: ${directives.objective}. Die Szene darf nicht in einen anderen Zweck abdriften.`)
+  }
+
+  if (directives.opening) {
+    hardConstraints.push(`Pflicht-Einstieg: ${directives.opening}`)
+  }
+
+  if (directives.coreAction) {
+    hardConstraints.push(`Pflicht-Kernaktion: ${directives.coreAction}`)
+  }
+
+  if (directives.dramaticBeat) {
+    hardConstraints.push(`Pflicht-Beat: ${directives.dramaticBeat}`)
+  }
+
+  if (directives.ending) {
+    hardConstraints.push(`Pflicht-Ende: ${directives.ending}`)
+  }
+
+  if (directives.closingLine) {
+    hardConstraints.push(`Pflicht-Schlusssatz oder Schlussbild: ${directives.closingLine}`)
+  }
+
+  directives.custom.forEach(function (entry) {
+    if (
+      entry.key.endsWith("_moment") ||
+      entry.key.endsWith("_plant") ||
+      entry.key.endsWith("_payoff") ||
+      entry.key === "setup" ||
+      entry.key === "subtext" ||
+      entry.key === "charakter_subtext" ||
+      entry.key === "buch2_hinweis"
+    ) {
+      hardConstraints.push(`${entry.key}: ${entry.value}`)
+    }
+  });
+
+  return hardConstraints.slice(0, 12);
+}
+
+function resolveSceneCardDirectives(sceneCard: TimelineBeat) {
+  const fallbackFields = parseSceneCardOutlineFields(sceneCard.outline);
+  const nextDirectives = sceneCard.directives ?? createEmptyBookSceneCardDirectives();
+  const customEntries = nextDirectives.custom.length
+    ? nextDirectives.custom
+    : Object.entries(fallbackFields)
+        .filter(function ([key, value]) {
+          if (!value) {
+            return false;
+          }
+
+          return ![
+            "pov",
+            "ort",
+            "uhrzeit",
+            "ziel",
+            "einstieg",
+            "kern_aktion",
+            "beat",
+            "ende",
+            "letzter_satz"
+          ].includes(key);
+        })
+        .map(function ([key, value]) {
+          return { key, value };
+        });
+
+  return {
+    pov: nextDirectives.pov || fallbackFields.pov || null,
+    location: nextDirectives.location || fallbackFields.ort || null,
+    timeAnchor: nextDirectives.timeAnchor || fallbackFields.uhrzeit || null,
+    objective: nextDirectives.objective || fallbackFields.ziel || null,
+    opening: nextDirectives.opening || fallbackFields.einstieg || null,
+    coreAction: nextDirectives.coreAction || fallbackFields.kern_aktion || null,
+    dramaticBeat: nextDirectives.dramaticBeat || fallbackFields.beat || null,
+    ending: nextDirectives.ending || fallbackFields.ende || null,
+    closingLine: nextDirectives.closingLine || fallbackFields.letzter_satz || null,
+    custom: customEntries
+  };
+}
+
+function parseSceneCardOutlineFields(outline: string[]) {
+  return outline.reduce(function (fields, line) {
+    const separatorIndex = line.indexOf(":");
+
+    if (separatorIndex === -1) {
+      return fields;
+    }
+
+    const rawKey = line.slice(0, separatorIndex).trim();
+    const value = line.slice(separatorIndex + 1).trim();
+
+    if (!rawKey || !value) {
+      return fields;
+    }
+
+    const normalizedKey = normalizeText(rawKey)
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+
+    fields[normalizedKey] = value;
+    return fields;
+  }, {} as Record<string, string>);
 }
 
 function buildSceneCardOutline(scene: StoryScene, chapterGoal: string, nextSceneTitle: string | null) {

@@ -143,9 +143,22 @@ Für jede Szene sind besonders wichtig:
 
 - `Title`
 - `Summary`
+- strukturierte Scene-Card-Regie
 - vorhandene Textblöcke
 
 Die Summary ist der wichtigste direkte Arbeitsanker für die KI.
+
+Zusätzlich wichtig seit dem aktuellen Regie-Sync:
+
+- `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenregie
+- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending` und freie Spezialfelder
+- diese harten Szenen-Constraints haben Vorrang vor allgemeinen Stilregeln oder Modellgewohnheiten
+
+Praktisch heißt das:
+
+- Regie bleibt die Quelle
+- die DB hält daraus eine normalisierte Runtime-Fassung
+- wenn Scene Card und Summary sich widersprechen, ist die Scene Card der härtere Anker
 
 Eine gute Szenen-Summary sollte enthalten:
 
@@ -331,6 +344,26 @@ Für den ersten Testlauf gilt deshalb:
 - `remote` = echter Modelllauf, auswertbar
 - `local_fallback` = Sicherheitsnetz, nicht als Qualitätsurteil lesen
 
+### Generate, Accept, Save
+
+Der wichtigste UI-Punkt:
+
+- `Generate` startet nur den Draft-Job
+- der erzeugte Text liegt danach zunächst im Job (`draft` / `rewrite`)
+- erst `Accept` / `Übernehmen` schreibt den `rewriteText` in die eigentliche Szene
+- erst nach erfolgreichem Speichern ist der Text sicher in Supabase und damit stabil in der UI
+
+Das bedeutet konkret:
+
+1. `Generate`
+2. Ergebnis prüfen
+3. `Accept`
+4. auf den Save-Status achten oder manuell `Speichern` klicken
+
+Wenn du nur `Generate` drückst, aber nicht `Accept`, entsteht noch kein sichtbarer Szenentext in den Scene Blocks.
+
+Wenn du `Accept` gedrückt hast, aber der Save fehlschlägt, ist der Text nur lokal im Browser-Draft und nicht garantiert in Supabase.
+
 ### Rewrite Notes
 
 Diese zeigen, was im überarbeiteten Text verändert oder geschärft wurde.
@@ -428,8 +461,10 @@ Besonders wichtig sind:
 6. Job starten.
 7. Prüfen, ob der Lauf `remote` ist.
 8. Beat-Plan, Rewrite, Length Control, Notes und Continuity lesen.
-9. Quality-Hinweise prüfen.
-10. Gute Fassung übernehmen oder mit neuer Director Note neu ansetzen.
+9. Gute Fassung nur dann `Accept` / `Übernehmen`, wenn sie wirklich in die Szene soll.
+10. danach den Save-Status abwarten oder explizit `Speichern` drücken.
+11. erst dann die Szene in der UI oder DB als wirklich übernommen betrachten.
+12. Quality-Hinweise prüfen oder mit neuer Director Note neu ansetzen.
 
 ### Workflow für mehrere Iterationen
 
@@ -462,6 +497,7 @@ Wenn du deinen ersten echten Run machen willst, nimm diesen Minimalpfad:
 6. eine kurze operative Director Note schreiben
 7. Job starten
 8. nur auswerten, wenn `mode = remote`
+9. gute Fassung immer zusätzlich `Accept` und danach `Speichern`
 
 Danach prüfst du in dieser Reihenfolge:
 
@@ -482,6 +518,8 @@ Danach prüfst du in dieser Reihenfolge:
 - Kontinuitätswarnungen ignorieren
 - einen ersten Lauf mit zu hohem Wortziel aufblasen
 - `Auto` benutzen und danach nicht wissen, welcher echte Pfad lief
+- `Generate` mit „Text ist jetzt schon in der Szene“ verwechseln
+- nach `Accept` nicht auf den Save-Status achten
 
 ## 14. Hinweise zu Kosten und Laufzeit
 

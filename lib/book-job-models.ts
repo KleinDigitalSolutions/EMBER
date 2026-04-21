@@ -18,7 +18,7 @@ export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
   openai: ["gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
   anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
   anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-7"],
-  gemini: ["gemini-3.1-pro", "gemini-3.1-flash-lite", "gemini-2.0-flash-exp"]
+  gemini: ["gemini-3.1-pro", "gemini-3.1-flash-lite", "gemini-2.0-flash-exp", "gemini-1.5-flash"]
 };
 
 export function createEmptyBookJobModelSelection(): BookJobModelSelection {

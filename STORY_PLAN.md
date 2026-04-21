@@ -144,7 +144,7 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
 Wir fahren initial einen Hybrid-Ansatz aus Premium-Modellen und einem guenstigen Test-/Fallback-Pfad.
 - OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
 - Anthropic: Claude Opus 4.7 ist im Code der aktuelle starke Book-Default fuer Prosa. Structured Nebenjobs werden davon getrennt: Continuity und seit `2026-04-21` auch State-Extract laufen auf `claude-haiku-4-5-20251001`, weil dort Schema-Treue wichtiger ist als stilistische Stärke. Deployment-spezifische Wechsel bleiben weiterhin über Env oder UI-Override möglich `aktualisiert 2026-04-21`
-- Gemini: `gemini-2.5-flash` als dritter Provider fuer schnelle und guenstigere Draft-/Testlaeufe via Google AI Studio / Gemini API `erledigt 2026-04-19`
+- Gemini: `gemini-3.1-pro` als dritter Provider fuer schnelle und guenstigere Draft-/Testlaeufe via Google AI Studio / Gemini API `erledigt 2026-04-19`
 - Anthropic-Livepfad fuer Book-Jobs ist seit `2026-04-20` gehaertet: dynamisches Output-Budget, robuster JSON-Parse statt blindem Auto-Parse, Retry mit hoeherem Tokenbudget, kompakteres Prompting fuer Metadaten und ein gezielter Repair-Pass fuer Qualitaetsabweichungen. Dadurch bleibt der Pfad in echten `/api/book-jobs`-Läufen deutlich stabiler remote statt auf `local_fallback` zu kippen.
 
 Optional später:
@@ -452,7 +452,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-18`
 - **Foundation:** `erledigt`. Book-Blueprint in Schema integriert. Plan-Modus unterstützt Master Brief & Market Brief.
 - **Memory Backbone:** `erledigt`. Canon Ledger, Character Ledger und Open Threads werden persistent in Supabase verwaltet.
-- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-5.4`) und Anthropic als konfigurierbarem Premium-Pfad; die konkreten Provider-Modelle bleiben ueber Env und spaeter auch per UI-Override austauschbar. Context-Packs werden server-seitig generiert.
+- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-4o`) und Anthropic als konfigurierbarem Premium-Pfad; die konkreten Provider-Modelle bleiben ueber Env und spaeter auch per UI-Override austauschbar. Context-Packs werden server-seitig generiert.
 - **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
 ## Status Report `2026-04-19`
@@ -460,7 +460,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review, Assistant).
 - **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic` / `Gemini`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
 - **Per-Job Model Switcher:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel koennen jetzt pro Job konkrete Modell-IDs je Provider ueberschreiben; die Auswahl wird lokal gespeichert und als Request-Override an den Server gereicht.
-- **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-2.5-flash` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
+- **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-3.1-pro` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
 - **Assistant Workspace:** `erledigt 2026-04-19`. Neues Chat-Panel mit Thread-Liste, Quick Prompts, Kontext-Scope und Regie-Modus fuer speicherbare Markdown-Dokumente.
 - **Story Chat Service:** `erledigt 2026-04-19`. Neue serverseitige `/api/story-chat`-Route plus Provider-Routing fuer OpenAI, Anthropic, Gemini und lokalen Fallback bei fehlenden Keys oder Remote-Fehlern.
 - **Assistant Schema:** `erledigt 2026-04-19`. `StoryDocument` traegt jetzt Assistant-Praeferenzen, Threads, Nachrichten und Artefakte inklusive Normalisierung fuer Legacy-Daten.
@@ -476,7 +476,9 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Remote Stability:** `erledigt 2026-04-20`. Echte End-to-End-Läufe ueber `/api/book-jobs` mit `claude-opus-4-7` bleiben nun im Modus `remote`, statt systematisch auf `local_fallback` zu kippen. Der Pfad ist damit fuer den alltäglichen Einsatz deutlich belastbarer.
 - **Anthropic Extract Split:** `aktualisiert 2026-04-21`. Der State-Extract im Anthropic-Pfad wurde bewusst von Opus auf `claude-haiku-4-5-20251001` verschoben. Grund: Opus ist stark fuer Prosa, aber zu kreativ fuer harte Structured-Extraktion; Haiku ist hier das passendere Tool. Parallel dazu wurde das Extract-Schema verkleinert, der Prompt haerter begrenzt und der alte Repair-Schritt durch eine frische Neugenerierung mit kleinerem Contract ersetzt.
 - **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `claude-opus-4-7` fuer den Hauptdraft und `claude-haiku-4-5-20251001` fuer Continuity. Deployment-spezifische Env-Werte koennen davon weiterhin abweichen.
-- **Gemini Probe-Lage:** `aktualisiert 2026-04-21`. Drei echte End-to-End-Probes gegen `gemini-2.5-flash` zeigen ein gemischtes Bild: ein Lauf blieb remote, zwei fielen wegen `503 / high demand` komplett auf `local_fallback`. In dem einen Remote-Lauf scheiterte zudem die Extract-Stage ebenfalls an `503`. Fazit: Gemini funktioniert prinzipiell, ist in der aktuellen Lastlage aber kein stabiler Referenzpfad fuer belastbare JSON- oder Qualitaetsvergleiche.
+- **Gemini Probe-Lage:** `aktualisiert 2026-04-21`. Drei echte End-to-End-Probes gegen `gemini-3.1-pro` zeigen ein gemischtes Bild: ein Lauf blieb remote, zwei fielen wegen `503 / high demand` komplett auf `local_fallback`. In dem einen Remote-Lauf scheiterte zudem die Extract-Stage ebenfalls an `503`. Fazit: Gemini funktioniert prinzipiell, ist in der aktuellen Lastlage aber kein stabiler Referenzpfad fuer belastbare JSON- oder Qualitaetsvergleiche.
+- **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
+- **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde die fehlerhafte Kurzfassung aus Gemini (`premise: DNA-Falle`, `readerPromise: OSINT Tech Fokus`) durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
 - **Offene Grenze:** `aktualisiert 2026-04-21`. Der Anthropic-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Zusaetzlich bleibt Gemini aktuell durch Verfuegbarkeitsschwankungen (`503 / high demand`) als Vergleichspfad eingeschraenkt. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
 
@@ -490,9 +492,9 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
 - Responses liefert Stateful Context, Structured Outputs, bessere Cache-Nutzung und passt damit sauber zu einem serverseitigen Schreibsystem.
-- OpenAI-GPT-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; kleinere GPT-5-Modelle bleiben Kandidaten fuer Extractor- und Audit-Paesse.
+- OpenAI-gpt-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; gpt-5.4-mini bleibt Kandidat fuer Extractor- und Audit-Paesse.
 - Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option; im EMBER-Book-Track ist Opus 4.7 inzwischen der robuste Premium-Pfad fuer wichtige Szenen, waehrend Haiku den Continuity-Audit tragen kann.
-- Gemini 2.5 Flash ist als schnellerer und guenstigerer Provider fuer Drafting-/Testpfade angebunden; die Architektur traegt damit bewusst mehr als einen Premium-Pfad.
+- Gemini 3.1 Pro ist als schnellerer und guenstigerer Provider fuer Drafting-/Testpfade angebunden; die Architektur traegt damit bewusst mehr als einen Premium-Pfad.
 - Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt; dieser Split ist fuer Anthropic jetzt konkret umgesetzt.
 - Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
 
@@ -516,6 +518,24 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
 - stabiler Prefix: Brief, Constitution, Stilregeln, Kapitelziel
 - dynamischer Pack: aktuelle Szene, letzte 1 bis 2 Beats, relevante Canon Facts, relevante Character States, aktive Threads
 - optionaler Ausblick: naechster Beat oder Kapitelrichtung
+
+### Regie-Import als Standard-Workflow
+- Eine neue Regie darf als Ausgangspunkt fuer ein neues Book dienen, aber nur in strukturierter Form statt als reiner Fliesstext.
+- Mindestbloecke fuer einen belastbaren Sync:
+  - voller Master Brief
+  - Writer Constitution
+  - Character State Ledger
+  - Scene Cards
+  - Open Threads
+- Wenn eine Figur ueber eine Wunde motiviert ist, muss diese explizit und strukturiert im Character State stehen; sonst wird sie im Prompt zu weich.
+- Wenn eine Szene einen speziellen Trigger oder Manipulationsmoment hat, muss er als eigenes Scene-Card-Feld vorliegen, nicht nur implizit in Summary oder Freitext.
+- Nach jedem Regie-Sync ist ein Ruecklese-Check Pflicht:
+  - `book_projects.master_brief` muss vollstaendig sein, nicht nur Stichwoerter
+  - `book_writer_rules` muss die komplette Regelbasis tragen
+  - `book_character_states` muss die relevanten Figuren inklusive Wunden-Block enthalten
+  - `book_scene_cards` muss szenenspezifische Spezialfelder tragen
+  - `book_context_packs` muss fuer jede Szene vorbereitet und referenzierbar sein
+- Fuer Kapitel 1 gilt als Guardrail: Das Context Pack fuer die erste Szene muss mindestens vollen Master Brief, komplette Writer Constitution, alle relevanten Character States mit Wunden-Block und die Scene Card mit Spezialfeldern wie `viktor_moment` enthalten.
 
 ### Pipeline pro Szene
 1. `composeContext(sceneId)`

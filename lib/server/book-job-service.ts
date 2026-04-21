@@ -1390,6 +1390,8 @@ function buildCoreSystemPrompt() {
     "You are the drafting engine for EMBER Book Studio.",
     "Write all output in German.",
     "Honor canon, continuity, and scene-level causality.",
+    "Scene-specific hard constraints outrank style rules, examples, and generic thriller habits.",
+    "Never reuse literal timestamps, locations, headers, or props from examples unless they appear in the current scene constraints.",
     "Do not imitate real authors or copyrighted prose.",
     "Favor commercial readability, tension, subtext, concrete observation, and clean scene movement.",
     "If context is insufficient, flag risk explicitly instead of inventing hidden facts."
@@ -1628,6 +1630,9 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
+    `Scene card id: ${packet.dynamicContext.sceneCardLabel || "not set"}`,
+    `Scene header hints: ${packet.dynamicContext.sceneHeaderHints.join(" || ") || "none"}`,
+    `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
@@ -2020,6 +2025,8 @@ function buildPacketEvidenceTerms(packet: SceneContextPacket) {
         packet.dynamicContext.sceneSummary,
         packet.dynamicContext.sceneExcerpt
       ]
+        .concat(packet.dynamicContext.sceneHeaderHints)
+        .concat(packet.dynamicContext.sceneHardConstraints)
         .concat(packet.dynamicContext.sceneCardOutline)
         .concat(
           packet.dynamicContext.previousBeats.map(function (beat) {

@@ -300,6 +300,22 @@ export type BookOpenThread = {
   payoffSceneId: string | null;
 };
 
+export type BookSceneCardDirectives = {
+  pov: string | null;
+  location: string | null;
+  timeAnchor: string | null;
+  objective: string | null;
+  opening: string | null;
+  coreAction: string | null;
+  dramaticBeat: string | null;
+  ending: string | null;
+  closingLine: string | null;
+  custom: Array<{
+    key: string;
+    value: string;
+  }>;
+};
+
 export type BookSceneCard = {
   sceneId: string;
   sceneTitle: string;
@@ -309,6 +325,7 @@ export type BookSceneCard = {
   excerpt: string;
   orderLabel: string;
   chapterGoal: string;
+  directives: BookSceneCardDirectives;
   outline: string[];
 };
 
@@ -488,6 +505,59 @@ export function normalizeBookRuleList(value: unknown, fallback: readonly string[
   }
 
   return nextRules;
+}
+
+export function createEmptyBookSceneCardDirectives(): BookSceneCardDirectives {
+  return {
+    pov: null,
+    location: null,
+    timeAnchor: null,
+    objective: null,
+    opening: null,
+    coreAction: null,
+    dramaticBeat: null,
+    ending: null,
+    closingLine: null,
+    custom: []
+  };
+}
+
+export function normalizeBookSceneCardDirectives(value: unknown): BookSceneCardDirectives {
+  const fallback = createEmptyBookSceneCardDirectives();
+  const record = value && typeof value === "object" ? (value as Partial<BookSceneCardDirectives>) : null;
+  const custom = Array.isArray(record?.custom)
+    ? record.custom
+        .filter(function (
+          entry
+        ): entry is {
+          key: string;
+          value: string;
+        } {
+          return Boolean(entry) && typeof entry === "object";
+        })
+        .map(function (entry) {
+          return {
+            key: typeof entry.key === "string" ? entry.key.trim() : "",
+            value: typeof entry.value === "string" ? entry.value.trim() : ""
+          };
+        })
+        .filter(function (entry) {
+          return Boolean(entry.key) && Boolean(entry.value);
+        })
+    : [];
+
+  return {
+    pov: typeof record?.pov === "string" ? record.pov : fallback.pov,
+    location: typeof record?.location === "string" ? record.location : fallback.location,
+    timeAnchor: typeof record?.timeAnchor === "string" ? record.timeAnchor : fallback.timeAnchor,
+    objective: typeof record?.objective === "string" ? record.objective : fallback.objective,
+    opening: typeof record?.opening === "string" ? record.opening : fallback.opening,
+    coreAction: typeof record?.coreAction === "string" ? record.coreAction : fallback.coreAction,
+    dramaticBeat: typeof record?.dramaticBeat === "string" ? record.dramaticBeat : fallback.dramaticBeat,
+    ending: typeof record?.ending === "string" ? record.ending : fallback.ending,
+    closingLine: typeof record?.closingLine === "string" ? record.closingLine : fallback.closingLine,
+    custom
+  };
 }
 
 export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
