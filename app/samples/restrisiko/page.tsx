@@ -28,7 +28,7 @@ const sceneTwoParagraphs = [
   "„Und heute?\"",
   "„Heute ist Dienstag. Heute ist die Gruppe ausgefallen, weil Sie da sind.\"",
   "Fehr notierte. „Medikation?\"",
-  "„Sertralin, fünfzig, morgens. Seit elf Jahren unverändert. Nebenwirkungen keine, die ich nicht einordnen könnte.\"",
+  "„Sertralin, ohne Abweichung, morgens. Seit elf Jahren unverändert. Nebenwirkungen keine, die ich nicht einordnen könnte.\"",
   "„Einordnen in welchem Sinn?\"",
   "Cord lächelte knapp, kein Zähnezeigen, nur eine Bewegung am Mundwinkel. „Das ist eine bessere Frage als die vorherige.\" Er hob den Blick. „Sie fragen nach Routine, um zu sehen, ob ich mechanisch antworte oder ob ich abschweife. Mechanisch deutet auf Anpassung ohne innere Beteiligung. Abschweifen deutet auf mangelnde Strukturierung oder auf Ablenkungsversuche. Ich vermute, Sie hätten lieber etwas dazwischen.\"",
   "Fehr legte den Stift quer auf den Block. Er ließ seine Stimme flach.",
@@ -72,6 +72,67 @@ const sceneTwoParagraphs = [
   "Er schlug den Block zu und ließ die Hand darauf liegen."
 ];
 
+const sceneThreeParagraphs = [
+  "Der Kurier klingelte um kurz nach neunzehn Uhr. Fehr hatte die Schuhe schon ausgezogen, stand in Socken im Flur und sah durch den Spion einen Mann in dunkler Jacke, der ein DIN-A4-Kuvert vor die Brust hielt wie einen Ausweis. Kein Paketbote. Keine Uniform, die etwas bewarb. Nur die feste Haltung eines Menschen, der nicht klingelt, sondern zustellt.",
+  "„Dr. Hannes Fehr?\"",
+  "„Ja.\"",
+  "„Persönliche Übergabe. Bitte Ausweis.\"",
+  "Fehr holte den Personalausweis aus der Garderobenschale und hielt ihn in das Licht der Flurlampe. Der Kurier verglich, nickte, drehte das Klemmbrett. Unterschrift, Uhrzeit, Datum. Fehr setzte den Strich knapp, wie immer. Der Kurier riss die Durchschrift ab, gab ihm den Umschlag, sagte „Schönen Abend“ und war weg, bevor Fehr die Tür ganz geschlossen hatte.",
+  "Der Umschlag war schwer. Büttenähnliches Papier, beige, mit Prägedruck einer Kanzlei, deren Name ihm nichts sagte und gleichzeitig alles. Er trug ihn in die Küche und legte ihn auf den Tisch, neben die halb geschnittene Paprika und die leere Kante des Schneidebretts. Lea war noch im Bad. Er hörte das Wasser, das sehr regelmäßig lief, wie es nur läuft, wenn jemand zuhört.",
+  "Er hätte warten können. Er wartete nicht.",
+  "Das Begleitschreiben lag obenauf, zweifach gefaltet, mit dem Schatten einer Büroklammer, die nicht mehr da war. Die Sätze waren glatt geschliffen. Man begrüße die Bestellung eines externen Gutachters. Man lege Wert auf maximale Neutralität. Man gehe davon aus, dass etwaige frühere berufliche Berührungspunkte des Gutachters mit vergleichbaren Fallkonstellationen die gebotene Unbefangenheit nicht berührten. Drei Absätze, keiner überflüssig, keiner angreifbar. Unter der Unterschrift ein zweiter, kürzerer Hinweis: „In der Anlage finden Sie zu Ihrer Orientierung eine Kopie aus Ihrem Gutachten vom 14.06.2006, Az. bekannt.“",
+  "Fehr blätterte.",
+  "Seite drei seines alten Gutachtens. Er erkannte die eigene Syntax, bevor er den Text las. Zwei Sätze in der Mitte waren mit einem gelben Textmarker unterstrichen, einmal, sauber, offenbar mit dem Lineal, denn der Strich lief gerade durch. Eine relevante Eskalationsdynamik ist unter den gegenwärtigen Bedingungen nicht zu erwarten. Die diagnostizierten narzisstischen Anteile wirken regulierend im Sinne einer Außenorientierung.",
+  "Er las es zweimal. Er spürte das Blut nicht steigen, er spürte es sinken. Eine kleine, kühle Bewegung im Brustraum, die er seit Jahren nicht mehr ernst genommen hatte.",
+  "„Papa?\"",
+  "Lea stand in der Küchentür, die Haare noch feucht, ein Handtuch über der Schulter. Er legte das Blatt um, automatisch, mit der bedruckten Seite nach unten.",
+  "„Ich mach das fertig“, sagte er und nahm die Paprika.",
+  "Sie setzten sich gegen halb acht. Er hatte Nudeln aufgesetzt, sie die Tomatensauce. Eine Routine, die sie sich einmal ausgehandelt hatten und an die sie sich hielten, auch wenn sie beide wussten, dass sie nichts mehr aushandelten.",
+  "„Wie war's?\"",
+  "„Lang.\"",
+  "„Bei Rausch?\"",
+  "„Nein. Da war ich gestern. Heute nur Lesen.\"",
+  "Sie nickte, wickelte Nudeln auf die Gabel, sah ihn nicht an. Er fragte nach der Uni, sie antwortete knapp. Ein Referat, ein Seminar, eine Dozentin, die sie mochte. Er hörte zu, wie er in Sitzungen zuhörte, registrierte Pausen, registrierte, dass sie schneller aß als sonst. Der Umschlag lag zwei Handbreit hinter ihrem Teller, die bedruckte Seite nach unten.",
+  "„Der Neue im dritten Stock“, sagte er irgendwann, um die Stille zu füllen, „der mit dem Hund.“",
+  "„Was ist mit ihm?\"",
+  "„Der spricht niemanden an, aber er beobachtet alles. Treppenhaus, Hof, Briefkasten. Das ist ein Risikoprofil, das man nicht unterschätzen sollte.“",
+  "Er merkte es selbst, während er es sagte. Er korrigierte nicht.",
+  "Lea legte die Gabel ab. Sie legte sie nicht ärgerlich ab, sondern präzise, parallel zum Tellerrand.",
+  "„Seit wann ersetzt Beschreibung bei dir Verantwortung?\"",
+  "„Das war nur –“",
+  "„Nein. Das war nicht nur. Du hast gerade einen Nachbarn in eine Kategorie gesteckt, weil er dich grüßt oder nicht grüßt.“",
+  "„Ich habe ihn beobachtet.“",
+  "„Du hast ihn verwaltet.“",
+  "Er hielt ihren Blick, so lange es ging. Dann sah er auf den Teller. Die Sauce stand schon auf dem Rand fest.",
+  "„Das ist mein Beruf, Lea.“",
+  "„Das ist deine Angewohnheit.“",
+  "Sie sagte es ohne Schärfe. Sie sagte es, wie man jemandem sagt, dass er beim Sprechen auf sein Knie tippt, ohne es zu wissen.",
+  "„Ich mach den Tisch“, sagte sie und stand auf.",
+  "Er ließ sie. Das Wasser lief, Geschirr klapperte, der Kühlschrank ging auf und zu. Er hörte jede Bewegung, als würde sie ihm etwas diktieren, das er nicht mitschrieb. Einmal fiel ein Löffel, einmal seufzte sie leise, einmal sagte sie halblaut etwas zu sich selbst, das er nicht verstand und auch nicht verstehen sollte.",
+  "Er blieb sitzen, bis sie fertig war.",
+  "„Ich geh ins Bett lesen“, sagte sie.",
+  "„Schlaf gut.“",
+  "„Du auch.“",
+  "Sie nahm das Buch aus dem Wohnzimmer mit. Die Wohnzimmertür ließ sie angelehnt, nicht zu.",
+  "Fehr räumte das letzte Glas selbst, wischte die Arbeitsplatte ab, zweimal, obwohl einmal gereicht hätte. Dann setzte sich wieder an den Küchentisch, unter das Neonlicht der Deckenleuchte, das hier oben nicht passte und an dem er nie etwas geändert hatte.",
+  "Er las den Anwaltsbrief noch einmal. Dann die markierten Sätze. Dann die Anlagen, die darunter lagen: Auszüge aus Cords Vollzugsakte, Vermerke, Therapieverlauf, eine Liste der im Verfahren damals vernommenen Zeugen. Die Liste war zu ordentlich, um zufällig zu sein. Drei Namen waren eingerückt. Keine Markierung, keine Fettung, kein Sternchen. Nur die Einrückung, zwei Zeichen weiter nach rechts als die übrigen.",
+  "Einer davon war Weidmann.",
+  "Fehr hatte den Namen achtzehn Jahre nicht laut gesagt. Er hatte ihn in seinem damaligen Gutachten in einem Halbsatz erwähnt und in keinem Satz danach. Weidmann war der, auf den er hätte hören müssen. Weidmann war der, dessen Einschätzung er im Rahmen der Befundintegration als anekdotisch eingeordnet hatte. Das Wort stand noch in der Akte. Er wusste, auf welcher Seite.",
+  "Er stand auf, holte sein Arbeitsnotizbuch aus dem Flur, setzte sich zurück. Sitzung 2. Prüfhypothese, Teststrategie, Zielbegriffe. Unter Sondierung/Provokation hatte er heute Mittag noch nichts eingetragen. Das Feld war bewusst offen geblieben, für den Moment, in dem ihm nach dem zweiten Durchgang der Tonbandmitschrift von Sitzung 1 etwas einfallen würde.",
+  "Er schrieb:",
+  "Weidmann einführen. Ohne Kontext. Reaktion auf Namensnennung messen: Latenz, Blick, Körperhaltung, Wortwahl. Hypothese: Cord wird den Namen zuordnen und den Versuch unternehmen, ihn zu entwerten. Sekundärhypothese: Cord kennt Vernehmungsakte und wird das offen zeigen.",
+  "Er las den Eintrag. Er war zufrieden mit der Formulierung. Sie klang wie eine Frage, die aus Sitzung 1 entstanden sein konnte. Aus Cords Verhalten. Aus einer professionellen Anschlussüberlegung, die jeder erfahrene Gutachter nach einer Baseline-Sitzung anstellen würde.",
+  "Sie war es nicht.",
+  "Er wusste es, während er den Stift weglegte. Er wusste auch, dass er es nirgends notieren würde. Im Vorbereitungsblatt gab es kein Feld für die Frage, woher ein Impuls stammte. Es gab nur das Feld für den Impuls selbst.",
+  "Er schlug das Notizbuch zu, legte es auf das Dossier, darauf den Anwaltsbrief, zuoberst, die Unterschrift nach oben. Die Reihenfolge stimmte. Wenn Lea morgen früh durch die Küche ging, würde sie nur Papier sehen.",
+  "Aus dem Wohnzimmer kam kein Laut mehr. Er stand auf, ging zur Tür, sah hinein. Lea war nicht dort. Er hatte vergessen, dass sie ins Bett gegangen war. Das Buch lag aufgeschlagen auf dem Sofa, Seite nach unten, die Leselampe brannte. Er machte das Licht aus und zog die Tür leise zu.",
+  "In der Küche blieb er noch einmal am Tisch stehen.",
+  "Er zog den Anwaltsbrief herunter, das Notizbuch herunter, schlug das Dossier auf der Seite mit seinem eigenen alten Satz wieder auf und drehte das Blatt so, dass der gelbe Strich zu ihm zeigte.",
+  "Er legte die Hand flach darauf.",
+  "Das Papier unter der Hand war kühl, glatt, reagierte nicht. Er zog die Hand nicht weg. Er ließ sie liegen, bis der Raum um ihn herum nur noch aus dem leisen Brummen der Deckenleuchte und dem Ticken der Uhr über der Tür bestand, und dann noch ein paar Sekunden länger, bis er sicher war, dass er nichts anderes tun würde als das, was er bereits entschieden hatte.",
+  "Dann nahm er die Hand weg, schloss das Dossier und löschte das Licht."
+];
+
 export default function RestrisikoSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -79,7 +140,7 @@ export default function RestrisikoSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Restrisiko</h1>
-          <p>Szene 1 & 2 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -124,9 +185,25 @@ export default function RestrisikoSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
+          <h2>Die Anwalts-Akte</h2>
+          <p>
+            Der Druck von außen wird konkret: Ein Anwalts-Dossier konfrontiert 
+            Fehr mit seinen eigenen Fehlern der Vergangenheit – und seine Tochter 
+            Lea stellt die alles entscheidende Frage nach der Verantwortung.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneThreeParagraphs.map(function (paragraph, i) {
+            return <p key={`s3-p-${i}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 3</h3>
+          <h3>Szene 4 · Sitzung 2</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den 
             weiteren Verlauf der Geschichte gestalten.
