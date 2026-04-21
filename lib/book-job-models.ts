@@ -10,14 +10,14 @@ export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
 export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
   openai: "gpt-5.4-pro",
   anthropic: "claude-opus-4-7",
-  anthropicContinuity: "claude-haiku-4-5",
+  anthropicContinuity: "claude-haiku-4-5-20251001",
   gemini: "gemini-3.1-pro"
 };
 
 export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
   openai: ["gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
-  anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5"],
-  anthropicContinuity: ["claude-haiku-4-5", "claude-sonnet-4-6", "claude-opus-4-7"],
+  anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+  anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-7"],
   gemini: ["gemini-3.1-pro", "gemini-3.1-flash-lite", "gemini-2.0-flash-exp"]
 };
 

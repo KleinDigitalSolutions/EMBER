@@ -29,10 +29,10 @@ import { createUuid } from "@/lib/id";
 const beatPlanSchema = z.object({
   beats: z.array(
     z.object({
-      label: z.string().min(1).max(80),
-      purpose: z.string().min(1).max(240),
+      label: z.string().min(1).max(120),
+      purpose: z.string().min(1).max(600),
       targetWords: z.number().int().min(50).max(1200),
-      mustLand: z.string().min(1).max(180)
+      mustLand: z.string().min(1).max(320)
     })
   )
     .min(3)
@@ -40,15 +40,15 @@ const beatPlanSchema = z.object({
 });
 
 const stateExtractionSchema = z.object({
-  rewriteNotes: z.array(z.string()).min(1).max(6),
+  rewriteNotes: z.array(z.string().min(1).max(100)).min(1).max(4),
   extractedState: z.object({
-    newCanonFacts: z.array(z.string()).max(6),
-    characterStateUpdates: z.array(z.string()).max(6),
-    openThreadsCreated: z.array(z.string()).max(6),
-    openThreadsResolved: z.array(z.string()).max(6),
-    foreshadowingAdded: z.array(z.string()).max(6),
-    continuityRisks: z.array(z.string()).max(6),
-    styleDriftNotes: z.array(z.string()).max(6)
+    newCanonFacts: z.array(z.string().min(1).max(100)).max(3),
+    characterStateUpdates: z.array(z.string().min(1).max(100)).max(3),
+    openThreadsCreated: z.array(z.string().min(1).max(100)).max(3),
+    openThreadsResolved: z.array(z.string().min(1).max(100)).max(3),
+    foreshadowingAdded: z.array(z.string().min(1).max(100)).max(3),
+    continuityRisks: z.array(z.string().min(1).max(100)).max(3),
+    styleDriftNotes: z.array(z.string().min(1).max(100)).max(3)
   })
 });
 
@@ -80,6 +80,10 @@ const OPENAI_PROSE_MAX_TOKENS = 9000;
 const GEMINI_PROSE_MIN_TOKENS = 1200;
 const GEMINI_PROSE_MAX_TOKENS = 9000;
 const STRUCTURED_STAGE_MAX_TOKENS = 1400;
+const EXTRACT_STAGE_MAX_TOKENS = 900;
+const EXTRACT_ARRAY_MAX_ITEMS = 3;
+const EXTRACT_REWRITE_NOTES_MAX_ITEMS = 4;
+const EXTRACT_STRING_MAX_LENGTH = 100;
 
 type BeatPlanPayload = z.infer<typeof beatPlanSchema>;
 type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
@@ -114,11 +118,13 @@ type TextStageResult = {
 };
 
 type LengthControlAction = "accept" | "expand" | "compress";
+type AnthropicStructuredStageName = "beat_plan" | "extract" | "continuity" | "quality_eval";
 
 type ScenePipelineAdapter = {
   provider: RemoteBookJobProvider;
   modelName: string;
   continuityModelName: string | null;
+  extractModelName: string | null;
   generateBeatPlan: () => Promise<StructuredStageResult<BeatPlanPayload>>;
   writeDraft: (beatPlan: BeatPlanPayload) => Promise<TextStageResult>;
   rewriteScene: (beatPlan: BeatPlanPayload, draftText: string) => Promise<TextStageResult>;
@@ -293,6 +299,7 @@ async function generateWithOpenAI(
     provider: "openai",
     modelName,
     continuityModelName: modelName,
+    extractModelName: modelName,
     generateBeatPlan: function () {
       return requestOpenAIStructured({
         client,
@@ -388,10 +395,12 @@ async function generateWithAnthropic(
     process.env.ANTHROPIC_BOOK_MODEL,
     DEFAULT_BOOK_JOB_MODELS.anthropic
   );
-  const continuityModelName = resolveBookJobModelValue(
-    options.modelOverrides?.anthropicContinuity,
-    process.env.ANTHROPIC_CONTINUITY_MODEL,
-    DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
+  const continuityModelName = normalizeAnthropicModelName(
+    resolveBookJobModelValue(
+      options.modelOverrides?.anthropicContinuity,
+      process.env.ANTHROPIC_CONTINUITY_MODEL,
+      DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
+    )
   );
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
@@ -401,9 +410,11 @@ async function generateWithAnthropic(
     provider: "anthropic",
     modelName,
     continuityModelName,
+    extractModelName: continuityModelName,
     generateBeatPlan: function () {
       return requestAnthropicStructured({
         client,
+        stageName: "beat_plan",
         modelName,
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: beatPlanSchema,
@@ -473,8 +484,9 @@ async function generateWithAnthropic(
     extractSceneState: function (beatPlan, rewriteText) {
       return requestAnthropicStructured({
         client,
-        modelName,
-        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        stageName: "extract",
+        modelName: continuityModelName,
+        maxTokens: EXTRACT_STAGE_MAX_TOKENS,
         schema: stateExtractionSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
         userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
@@ -483,6 +495,7 @@ async function generateWithAnthropic(
     auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
       return requestAnthropicStructured({
         client,
+        stageName: "continuity",
         modelName: continuityModelName,
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: continuityAuditSchema,
@@ -500,6 +513,7 @@ async function generateWithAnthropic(
     evaluateQuality: function (beatPlan, rewriteText, extractedState) {
       return requestAnthropicStructured({
         client,
+        stageName: "quality_eval",
         modelName,
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: qualityEvalSchema,
@@ -533,6 +547,7 @@ async function generateWithGemini(
     provider: "gemini",
     modelName,
     continuityModelName: modelName,
+    extractModelName: modelName,
     generateBeatPlan: function () {
       return requestGeminiStructured({
         client,
@@ -622,10 +637,45 @@ async function runScenePipeline(
 ): Promise<DraftProviderResult> {
   const warnings: string[] = [];
   const draftTargets = resolveDraftWordTargets(options);
+  let beatPlan = buildFallbackBeatPlan(packet, options);
+  let outlineNotes = buildOutlineFromBeatPlan(beatPlan);
+  let beatPlanStage = createStageRun({
+    status: "skipped",
+    provider: adapter.provider,
+    modelName: adapter.modelName,
+    updatedAt: new Date().toISOString(),
+    attemptCount: 0,
+    notes: ["Beat-Plan wurde noch nicht erzeugt."]
+  });
 
-  const beatPlanResult = await adapter.generateBeatPlan();
-  const beatPlan = sanitizeBeatPlan(packet, options, beatPlanResult.payload);
-  const outlineNotes = buildOutlineFromBeatPlan(beatPlan);
+  try {
+    const beatPlanResult = await adapter.generateBeatPlan();
+    beatPlan = sanitizeBeatPlan(packet, options, beatPlanResult.payload);
+    outlineNotes = buildOutlineFromBeatPlan(beatPlan);
+    beatPlanStage = createStageRun({
+      provider: adapter.provider,
+      modelName: beatPlanResult.metrics.modelName,
+      updatedAt: new Date().toISOString(),
+      attemptCount: beatPlanResult.metrics.attemptCount,
+      repairCount: beatPlanResult.metrics.repairCount,
+      durationMs: beatPlanResult.metrics.durationMs,
+      inputTokens: beatPlanResult.metrics.inputTokens,
+      outputTokens: beatPlanResult.metrics.outputTokens,
+      stopReason: beatPlanResult.metrics.stopReason,
+      notes: outlineNotes
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown error";
+    const fallbackNote = `Beat-Plan fehlgeschlagen; fallback aus Scene Card verwendet. ${message}`;
+    warnings.push(fallbackNote);
+    beatPlanStage = createStageRun({
+      status: "failed",
+      provider: adapter.provider,
+      modelName: adapter.modelName,
+      updatedAt: new Date().toISOString(),
+      notes: [fallbackNote].concat(outlineNotes.slice(0, 3))
+    });
+  }
 
   const draftResult = await adapter.writeDraft(beatPlan);
   const draftText = sanitizeSceneText(draftResult.text);
@@ -646,14 +696,62 @@ async function runScenePipeline(
   if (lengthControl.warning) {
     warnings.push(lengthControl.warning);
   }
+  let rewriteNotes: string[] = [];
+  let extractedState: DraftExtractionState = buildFallbackStateExtraction(
+    packet,
+    lengthControl.text,
+    beatPlan
+  ).extractedState;
+  let extractStage = createStageRun({
+    status: "skipped",
+    provider: adapter.provider,
+    modelName: adapter.modelName,
+    updatedAt: new Date().toISOString(),
+    attemptCount: 0,
+    notes: ["State-Extraktion wurde nicht ausgefuehrt."]
+  });
 
-  const extractionResult = await adapter.extractSceneState(beatPlan, lengthControl.text);
-  const normalizedExtraction = normalizeStateExtractionPayload(extractionResult.payload);
-  const sanitizedExtraction = sanitizeSceneStateExtraction(packet, normalizedExtraction);
-  let extractedState = sanitizedExtraction.payload.extractedState;
+  try {
+    const extractionResult = await adapter.extractSceneState(beatPlan, lengthControl.text);
+    const normalizedExtraction = normalizeStateExtractionPayload(extractionResult.payload);
+    const sanitizedExtraction = sanitizeSceneStateExtraction(packet, normalizedExtraction);
+    extractedState = sanitizedExtraction.payload.extractedState;
+    rewriteNotes = normalizeRewriteNotes(
+      sanitizedExtraction.payload.rewriteNotes,
+      lengthControl.text,
+      beatPlan
+    );
 
-  if (sanitizedExtraction.notes.length) {
-    warnings.push(sanitizedExtraction.notes.join(" | "));
+    if (sanitizedExtraction.notes.length) {
+      warnings.push(sanitizedExtraction.notes.join(" | "));
+    }
+
+    extractStage = createStageRun({
+      provider: adapter.provider,
+      modelName: extractionResult.metrics.modelName,
+      updatedAt: new Date().toISOString(),
+      attemptCount: extractionResult.metrics.attemptCount,
+      repairCount: extractionResult.metrics.repairCount,
+      durationMs: extractionResult.metrics.durationMs,
+      inputTokens: extractionResult.metrics.inputTokens,
+      outputTokens: extractionResult.metrics.outputTokens,
+      stopReason: extractionResult.metrics.stopReason,
+      notes: buildExtractionNotes(rewriteNotes, sanitizedExtraction.notes)
+    });
+  } catch (error) {
+    const fallbackExtraction = buildFallbackStateExtraction(packet, lengthControl.text, beatPlan);
+    const message = error instanceof Error ? error.message : "unknown error";
+    const fallbackNote = `State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. ${message}`;
+    rewriteNotes = normalizeRewriteNotes(fallbackExtraction.rewriteNotes, lengthControl.text, beatPlan);
+    extractedState = fallbackExtraction.extractedState;
+    warnings.push(fallbackNote);
+    extractStage = createStageRun({
+      status: "failed",
+      provider: adapter.provider,
+      modelName: adapter.extractModelName || adapter.modelName,
+      updatedAt: new Date().toISOString(),
+      notes: [fallbackNote].concat(buildExtractionNotes(rewriteNotes, []))
+    });
   }
 
   let continuityStage = createStageRun({
@@ -751,13 +849,6 @@ async function runScenePipeline(
     warnings.push(qualityStage.notes[0]);
   }
 
-  const rewriteNotes = normalizeRewriteNotes(
-    sanitizedExtraction.payload.rewriteNotes,
-    lengthControl.text,
-    beatPlan
-  );
-  const rewriteWords = countWords(lengthControl.text);
-
   return {
     modelName: adapter.modelName,
     continuityModelName: adapter.continuityModelName,
@@ -774,18 +865,7 @@ async function runScenePipeline(
         updatedAt: new Date().toISOString(),
         notes: ["Context-Pack vorbereitet."]
       }),
-      beat_plan: createStageRun({
-        provider: adapter.provider,
-        modelName: beatPlanResult.metrics.modelName,
-        updatedAt: new Date().toISOString(),
-        attemptCount: beatPlanResult.metrics.attemptCount,
-        repairCount: beatPlanResult.metrics.repairCount,
-        durationMs: beatPlanResult.metrics.durationMs,
-        inputTokens: beatPlanResult.metrics.inputTokens,
-        outputTokens: beatPlanResult.metrics.outputTokens,
-        stopReason: beatPlanResult.metrics.stopReason,
-        notes: outlineNotes
-      }),
+      beat_plan: beatPlanStage,
       draft: createStageRun({
         provider: adapter.provider,
         modelName: draftResult.metrics.modelName,
@@ -817,18 +897,7 @@ async function runScenePipeline(
         notes: [`Rewrite-Pass mit ${countWords(rewrittenText)} Wörtern erzeugt.`]
       }),
       length_control: lengthControl.stage,
-      extract: createStageRun({
-        provider: adapter.provider,
-        modelName: extractionResult.metrics.modelName,
-        updatedAt: new Date().toISOString(),
-        attemptCount: extractionResult.metrics.attemptCount,
-        repairCount: extractionResult.metrics.repairCount,
-        durationMs: extractionResult.metrics.durationMs,
-        inputTokens: extractionResult.metrics.inputTokens,
-        outputTokens: extractionResult.metrics.outputTokens,
-        stopReason: extractionResult.metrics.stopReason,
-        notes: buildExtractionNotes(rewriteNotes, sanitizedExtraction.notes)
-      }),
+      extract: extractStage,
       continuity: continuityStage,
       quality_eval: qualityStage
     },
@@ -1087,6 +1156,7 @@ async function requestOpenAIText(params: {
 
 async function requestAnthropicStructured<T>(params: {
   client: Anthropic;
+  stageName: AnthropicStructuredStageName;
   modelName: string;
   maxTokens: number;
   schema: z.ZodType<T>;
@@ -1094,29 +1164,33 @@ async function requestAnthropicStructured<T>(params: {
   userPrompt: string;
 }) {
   const startedAt = Date.now();
-  const message = await params.client.messages.parse({
-    model: params.modelName,
-    max_tokens: params.maxTokens,
-    system: params.systemBlocks,
-    messages: [
-      {
-        role: "user",
-        content: params.userPrompt
+  try {
+    const message = await params.client.messages.parse({
+      model: params.modelName,
+      max_tokens: params.maxTokens,
+      system: params.systemBlocks,
+      messages: [
+        {
+          role: "user",
+          content: params.userPrompt
+        }
+      ],
+      output_config: {
+        format: zodOutputFormat(params.schema)
       }
-    ],
-    output_config: {
-      format: zodOutputFormat(params.schema)
+    });
+
+    if (!message.parsed_output) {
+      throw new Error("Anthropic returned no parsed output.");
     }
-  });
 
-  if (!message.parsed_output) {
-    throw new Error("Anthropic returned no parsed output.");
+    return {
+      payload: message.parsed_output,
+      metrics: buildAnthropicMetrics(message, params.modelName, startedAt)
+    };
+  } catch (initialError) {
+    return requestAnthropicStructuredFallback(params, startedAt, initialError);
   }
-
-  return {
-    payload: message.parsed_output,
-    metrics: buildAnthropicMetrics(message, params.modelName, startedAt)
-  };
 }
 
 async function requestAnthropicText(params: {
@@ -1363,6 +1437,9 @@ function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGeneratio
     "- Each beat must have a functional purpose and a concrete mustLand payoff.",
     "- targetWords across all beats should roughly sum to the preferred total.",
     "- Keep beats dramatic, not essayistic.",
+    "- label should stay short.",
+    "- purpose should be one compact sentence.",
+    "- mustLand should be one compact payoff sentence.",
     buildSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
@@ -1455,9 +1532,13 @@ function buildStateExtractionPrompt(
     "Return only structured output matching the requested schema.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Rules:",
-    "- rewriteNotes must describe concrete visible revisions or strengths in the final rewrite.",
+    "- rewriteNotes must describe visible revisions or strengths in plain compact language.",
+    "- rewriteNotes: 1 to 4 items, each under 100 characters.",
+    "- Every extractedState list: 0 to 3 items, each under 100 characters.",
+    "- Every extractedState entry must be a plain string. No objects.",
     "- extractedState must stay conservative: explicit facts only.",
-    "- Uncertainty belongs in continuityRisks.",
+    "- Prefer empty arrays over speculative entries.",
+    "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Final rewrite: ${rewriteText}`
@@ -1477,6 +1558,7 @@ function buildContinuityAuditPrompt(
     "Return only structured output matching the requested schema.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
+    "Keep every listed issue compact.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Draft text: ${draftText}`,
@@ -1501,6 +1583,7 @@ function buildQualityEvalPrompt(
     `wordTargetMax must equal ${options.targetSceneWordsMax}.`,
     `wordActual must equal the actual word count of the scene text.`,
     "Issues should be short, concrete, and user-facing.",
+    "Keep every issue compact.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
@@ -1620,10 +1703,16 @@ function sanitizeBeatPlan(
   const rawBeats = Array.isArray(payload.beats) && payload.beats.length ? payload.beats : fallback.beats;
   const trimmedBeats = rawBeats.slice(0, 5).map(function (beat, index) {
     return {
-      label: beat.label.trim() || `Beat ${index + 1}`,
-      purpose: beat.purpose.trim() || fallback.beats[index]?.purpose || packet.dynamicContext.sceneSummary,
+      label: truncateText(beat.label.trim() || `Beat ${index + 1}`, 80),
+      purpose: truncateText(
+        beat.purpose.trim() || fallback.beats[index]?.purpose || packet.dynamicContext.sceneSummary,
+        240
+      ),
       targetWords: clampNumber(beat.targetWords, 60, options.targetSceneWordsMax),
-      mustLand: beat.mustLand.trim() || fallback.beats[index]?.mustLand || "Die Szene kippt sichtbar."
+      mustLand: truncateText(
+        beat.mustLand.trim() || fallback.beats[index]?.mustLand || "Die Szene kippt sichtbar.",
+        180
+      )
     };
   });
 
@@ -1714,15 +1803,15 @@ function formatBeatPlanForPrompt(beatPlan: BeatPlanPayload) {
 
 function normalizeStateExtractionPayload(payload: StateExtractionPayload): StateExtractionPayload {
   return {
-    rewriteNotes: dedupeStrings(payload.rewriteNotes).slice(0, 6),
+    rewriteNotes: dedupeStrings(payload.rewriteNotes).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS),
     extractedState: {
-      newCanonFacts: dedupeStrings(payload.extractedState.newCanonFacts).slice(0, 6),
-      characterStateUpdates: dedupeStrings(payload.extractedState.characterStateUpdates).slice(0, 6),
-      openThreadsCreated: dedupeStrings(payload.extractedState.openThreadsCreated).slice(0, 6),
-      openThreadsResolved: dedupeStrings(payload.extractedState.openThreadsResolved).slice(0, 6),
-      foreshadowingAdded: dedupeStrings(payload.extractedState.foreshadowingAdded).slice(0, 6),
-      continuityRisks: dedupeStrings(payload.extractedState.continuityRisks).slice(0, 6),
-      styleDriftNotes: dedupeStrings(payload.extractedState.styleDriftNotes).slice(0, 6)
+      newCanonFacts: dedupeStrings(payload.extractedState.newCanonFacts).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      characterStateUpdates: dedupeStrings(payload.extractedState.characterStateUpdates).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      openThreadsCreated: dedupeStrings(payload.extractedState.openThreadsCreated).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      openThreadsResolved: dedupeStrings(payload.extractedState.openThreadsResolved).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      foreshadowingAdded: dedupeStrings(payload.extractedState.foreshadowingAdded).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      continuityRisks: dedupeStrings(payload.extractedState.continuityRisks).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+      styleDriftNotes: dedupeStrings(payload.extractedState.styleDriftNotes).slice(0, EXTRACT_ARRAY_MAX_ITEMS)
     }
   };
 }
@@ -1732,7 +1821,7 @@ function normalizeRewriteNotes(
   rewriteText: string,
   beatPlan: BeatPlanPayload
 ) {
-  const sanitized = dedupeStrings(notes).slice(0, 6);
+  const sanitized = dedupeStrings(notes).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS);
 
   if (sanitized.length) {
     return sanitized;
@@ -1809,13 +1898,13 @@ function sanitizeSceneStateExtraction(
       rewriteNotes: payload.rewriteNotes,
       extractedState: {
         ...payload.extractedState,
-        newCanonFacts: dedupeStrings(filteredCanonFacts).slice(0, 6),
-        characterStateUpdates: dedupeStrings(filteredCharacterUpdates).slice(0, 6),
-        openThreadsCreated: dedupeStrings(filteredOpenThreadsCreated).slice(0, 6),
-        foreshadowingAdded: dedupeStrings(filteredForeshadowing).slice(0, 6),
+        newCanonFacts: dedupeStrings(filteredCanonFacts).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+        characterStateUpdates: dedupeStrings(filteredCharacterUpdates).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+        openThreadsCreated: dedupeStrings(filteredOpenThreadsCreated).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
+        foreshadowingAdded: dedupeStrings(filteredForeshadowing).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
         continuityRisks: dedupeStrings(
           payload.extractedState.continuityRisks.concat(movedRisks.slice(0, 3))
-        ).slice(0, 6)
+        ).slice(0, EXTRACT_ARRAY_MAX_ITEMS)
       }
     },
     notes: reviewNotes
@@ -2051,6 +2140,346 @@ function sanitizeSceneText(value: string) {
     .trim();
 }
 
+async function requestAnthropicStructuredFallback<T>(
+  params: {
+    client: Anthropic;
+    stageName: AnthropicStructuredStageName;
+    modelName: string;
+    maxTokens: number;
+    schema: z.ZodType<T>;
+    systemBlocks: Anthropic.TextBlockParam[];
+    userPrompt: string;
+  },
+  startedAt: number,
+  initialError: unknown
+) {
+  const fallbackMessage = await params.client.messages.create({
+    model: params.modelName,
+    max_tokens: params.maxTokens,
+    system: params.systemBlocks,
+    messages: [
+      {
+        role: "user",
+        content: buildAnthropicStructuredJsonPrompt(params.stageName, params.userPrompt)
+      }
+    ]
+  });
+  const fallbackText = sanitizeSceneText(collectAnthropicText(fallbackMessage));
+
+  try {
+    return {
+      payload: parseAnthropicStructuredPayload(params.stageName, params.schema, fallbackText),
+      metrics: {
+        ...buildAnthropicMetrics(fallbackMessage, params.modelName, startedAt),
+        attemptCount: 2,
+        repairCount: 1
+      }
+    };
+  } catch (fallbackError) {
+    const retryMessage = await params.client.messages.create({
+      model: params.modelName,
+      max_tokens: params.maxTokens,
+      system: params.systemBlocks,
+      messages: [
+        {
+          role: "user",
+          content: buildAnthropicStructuredRetryPrompt(
+            params.stageName,
+            params.userPrompt,
+            initialError instanceof Error ? initialError.message : String(initialError),
+            fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+          )
+        }
+      ]
+    });
+    const retryText = sanitizeSceneText(collectAnthropicText(retryMessage));
+
+    return {
+      payload: parseAnthropicStructuredPayload(params.stageName, params.schema, retryText),
+      metrics: {
+        ...buildAnthropicMetrics(retryMessage, params.modelName, startedAt),
+        attemptCount: 3,
+        repairCount: 2
+      }
+    };
+  }
+}
+
+function parseAnthropicStructuredPayload<T>(
+  stageName: AnthropicStructuredStageName,
+  schema: z.ZodType<T>,
+  rawText: string
+) {
+  const jsonText = extractFirstJsonObject(rawText);
+  const parsed = JSON.parse(jsonText);
+  const repaired = repairAnthropicStructuredPayload(stageName, parsed);
+  return schema.parse(repaired);
+}
+
+function buildAnthropicStructuredJsonPrompt(
+  stageName: AnthropicStructuredStageName,
+  originalPrompt: string
+) {
+  return [
+    originalPrompt,
+    "",
+    "FORMAT REQUIREMENTS:",
+    "- Return exactly one valid JSON object.",
+    "- Use double-quoted property names and string values.",
+    "- No markdown fences.",
+    "- No prose before or after the JSON object.",
+    "- Keep all string values compact.",
+    describeAnthropicStructuredStageDiscipline(stageName),
+    `- Contract: ${describeAnthropicStructuredStageContract(stageName)}`
+  ].join("\n");
+}
+
+function buildAnthropicStructuredRetryPrompt(
+  stageName: AnthropicStructuredStageName,
+  originalPrompt: string,
+  initialError: string,
+  latestError: string
+) {
+  return [
+    originalPrompt,
+    "",
+    "RETRY INSTRUCTIONS:",
+    "Generate a fresh JSON object from scratch.",
+    "Return JSON only.",
+    "Use double-quoted property names and string values.",
+    "Do not add markdown fences or commentary.",
+    "Do not reuse or repair prior output.",
+    "Prefer fewer items, shorter strings, and empty arrays over speculative detail.",
+    describeAnthropicStructuredStageDiscipline(stageName),
+    `Contract: ${describeAnthropicStructuredStageContract(stageName)}`,
+    `Initial error: ${truncateText(initialError, 600)}`,
+    `Latest error: ${truncateText(latestError, 600)}`,
+  ].join("\n");
+}
+
+function describeAnthropicStructuredStageDiscipline(stageName: AnthropicStructuredStageName) {
+  if (stageName === "extract") {
+    return `- Extract discipline: rewriteNotes 1-${EXTRACT_REWRITE_NOTES_MAX_ITEMS}; every extractedState list 0-${EXTRACT_ARRAY_MAX_ITEMS}; every string <= ${EXTRACT_STRING_MAX_LENGTH} chars; plain strings only.`;
+  }
+
+  return "- Keep the object compact and schema-first.";
+}
+
+function describeAnthropicStructuredStageContract(stageName: AnthropicStructuredStageName) {
+  if (stageName === "beat_plan") {
+    return '{"beats":[{"label":"string","purpose":"string","targetWords":123,"mustLand":"string"}]}';
+  }
+
+  if (stageName === "extract") {
+    return '{"rewriteNotes":["string"],"extractedState":{"newCanonFacts":[],"characterStateUpdates":[],"openThreadsCreated":[],"openThreadsResolved":[],"foreshadowingAdded":[],"continuityRisks":[],"styleDriftNotes":[]}}';
+  }
+
+  if (stageName === "continuity") {
+    return '{"continuityRisks":["string"],"styleDriftNotes":["string"]}';
+  }
+
+  return '{"wordTargetMin":0,"wordTargetMax":0,"wordActual":0,"hookScore":0,"tensionScore":0,"dialogueScore":0,"specificityScore":0,"germanCleanlinessScore":0,"continuityScore":0,"marketFitScore":0,"povDisciplineScore":0,"readabilityScore":0,"issues":["string"]}';
+}
+
+function repairAnthropicStructuredPayload(stageName: AnthropicStructuredStageName, payload: unknown) {
+  if (stageName === "beat_plan") {
+    return repairBeatPlanPayload(payload);
+  }
+
+  if (stageName === "extract") {
+    return repairStateExtractionPayload(payload);
+  }
+
+  if (stageName === "continuity") {
+    return repairContinuityAuditPayload(payload);
+  }
+
+  return repairQualityEvalPayload(payload);
+}
+
+function repairBeatPlanPayload(payload: unknown): BeatPlanPayload {
+  const source = isRecord(payload) && Array.isArray(payload.beats) ? payload.beats : [];
+
+  return {
+    beats: source.slice(0, 6).map(function (beat, index) {
+      const entry = isRecord(beat) ? beat : {};
+
+      return {
+        label: truncateText(coerceString(entry.label, `Beat ${index + 1}`), 120),
+        purpose: truncateText(coerceString(entry.purpose, `Beat ${index + 1} haelt den Szenendruck.`), 600),
+        targetWords: clampNumber(coerceInteger(entry.targetWords, 120), 50, 1200),
+        mustLand: truncateText(coerceString(entry.mustLand, "Die Szene kippt sichtbar."), 320)
+      };
+    })
+  };
+}
+
+function repairStateExtractionPayload(payload: unknown): StateExtractionPayload {
+  const root = isRecord(payload) ? payload : {};
+  const extractedState = isRecord(root.extractedState) ? root.extractedState : {};
+
+  return {
+    rewriteNotes: coerceStringArray(root.rewriteNotes, EXTRACT_REWRITE_NOTES_MAX_ITEMS, [
+      "Rewrite-Fassung automatisch extrahiert und konservativ normalisiert."
+    ], EXTRACT_STRING_MAX_LENGTH).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS),
+    extractedState: {
+      newCanonFacts: coerceStringArray(
+        extractedState.newCanonFacts,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      characterStateUpdates: coerceStringArray(
+        extractedState.characterStateUpdates,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      openThreadsCreated: coerceStringArray(
+        extractedState.openThreadsCreated,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      openThreadsResolved: coerceStringArray(
+        extractedState.openThreadsResolved,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      foreshadowingAdded: coerceStringArray(
+        extractedState.foreshadowingAdded,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      continuityRisks: coerceStringArray(
+        extractedState.continuityRisks,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      ),
+      styleDriftNotes: coerceStringArray(
+        extractedState.styleDriftNotes,
+        EXTRACT_ARRAY_MAX_ITEMS,
+        [],
+        EXTRACT_STRING_MAX_LENGTH
+      )
+    }
+  };
+}
+
+function repairContinuityAuditPayload(payload: unknown): ContinuityAuditPayload {
+  const root = isRecord(payload) ? payload : {};
+
+  return {
+    continuityRisks: coerceStringArray(root.continuityRisks, 6),
+    styleDriftNotes: coerceStringArray(root.styleDriftNotes, 6)
+  };
+}
+
+function repairQualityEvalPayload(payload: unknown): QualityEvalPayload {
+  const root = isRecord(payload) ? payload : {};
+
+  return {
+    wordTargetMin: coerceInteger(root.wordTargetMin, 0),
+    wordTargetMax: coerceInteger(root.wordTargetMax, 0),
+    wordActual: coerceInteger(root.wordActual, 0),
+    hookScore: clampNumber(coerceInteger(root.hookScore, 0), 0, 10),
+    tensionScore: clampNumber(coerceInteger(root.tensionScore, 0), 0, 10),
+    dialogueScore: clampNumber(coerceInteger(root.dialogueScore, 0), 0, 10),
+    specificityScore: clampNumber(coerceInteger(root.specificityScore, 0), 0, 10),
+    germanCleanlinessScore: clampNumber(coerceInteger(root.germanCleanlinessScore, 0), 0, 10),
+    continuityScore: clampNumber(coerceInteger(root.continuityScore, 0), 0, 10),
+    marketFitScore: clampNumber(coerceInteger(root.marketFitScore, 0), 0, 10),
+    povDisciplineScore: clampNumber(coerceInteger(root.povDisciplineScore, 0), 0, 10),
+    readabilityScore: clampNumber(coerceInteger(root.readabilityScore, 0), 0, 10),
+    issues: coerceStringArray(root.issues, 8)
+  };
+}
+
+function buildFallbackStateExtraction(
+  packet: SceneContextPacket,
+  rewriteText: string,
+  beatPlan: BeatPlanPayload
+): StateExtractionPayload["extractedState"] extends infer _Unused
+  ? {
+      rewriteNotes: string[];
+      extractedState: DraftExtractionState;
+    }
+  : never {
+  return {
+    rewriteNotes: [
+      "Structured Extractor fiel aus; konservativer Fallback aus Rewrite und Packet verwendet.",
+      `Rewrite auf ${countWords(rewriteText)} Wörter stabil gehalten.`
+    ],
+    extractedState: {
+      newCanonFacts: [],
+      characterStateUpdates: [],
+      openThreadsCreated: [],
+      openThreadsResolved: [],
+      foreshadowingAdded: [],
+      continuityRisks: [
+        "Structured Extractor fiel aus; neue Canon-Fakten und Thread-Aenderungen manuell pruefen."
+      ],
+      styleDriftNotes: [
+        `Fallback-Extraktion aktiv; Beat-Folge ${beatPlan.beats[0]?.label || "Beat 1"} bis ${beatPlan.beats[beatPlan.beats.length - 1]?.label || "Finale"} nur konservativ ausgewertet.`
+      ]
+    }
+  };
+}
+
+function extractFirstJsonObject(value: string) {
+  const trimmed = value.trim();
+  const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const source = fencedMatch?.[1]?.trim() || trimmed;
+  const start = source.indexOf("{");
+
+  if (start === -1) {
+    throw new Error("No JSON object found in Anthropic output.");
+  }
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === "\\") {
+        escaped = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{") {
+      depth += 1;
+      continue;
+    }
+
+    if (char === "}") {
+      depth -= 1;
+
+      if (depth === 0) {
+        return source.slice(start, index + 1);
+      }
+    }
+  }
+
+  throw new Error("No complete JSON object found in Anthropic output.");
+}
+
 function countWords(value: string) {
   const words = value.trim().match(/\S+/g);
   return words ? words.length : 0;
@@ -2077,6 +2506,68 @@ function dedupeStrings(values: string[]) {
     .filter(function (value, index, list) {
       return list.indexOf(value) === index;
     });
+}
+
+function truncateText(value: string, maxLength: number) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return normalized.slice(0, Math.max(0, maxLength - 3)).trimEnd() + "...";
+}
+
+function coerceString(value: unknown, fallback: string) {
+  return typeof value === "string" ? value.trim() || fallback : fallback;
+}
+
+function coerceInteger(value: unknown, fallback: number) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.round(value);
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value, 10);
+
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return fallback;
+}
+
+function coerceStringArray(
+  value: unknown,
+  maxItems: number,
+  fallback: string[] = [],
+  maxLength = 240
+) {
+  if (!Array.isArray(value)) {
+    return fallback.slice(0, maxItems);
+  }
+
+  return value
+    .map(function (entry) {
+      return typeof entry === "string" ? truncateText(entry, maxLength) : "";
+    })
+    .filter(Boolean)
+    .slice(0, maxItems);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizeAnthropicModelName(value: string) {
+  const normalized = value.trim();
+
+  if (normalized === "claude-3-5-haiku-20241022" || normalized === "claude-haiku-4-5") {
+    return "claude-haiku-4-5-20251001";
+  }
+
+  return normalized;
 }
 
 function normalizeText(value: string) {

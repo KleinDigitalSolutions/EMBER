@@ -1,0 +1,420 @@
+{
+  "startedAt": "2026-04-21T04:56:55.152Z",
+  "result": {
+    "provider": "anthropic",
+    "mode": "remote",
+    "warning": "State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. No complete JSON object found in Anthropic output.",
+    "job": {
+      "id": "0949192a-a520-49bc-85ac-dd12ccfa621c",
+      "sceneId": "scene-family-intro-test",
+      "sceneTitle": "Szene 2 - Zuhause nach der Schule",
+      "createdAt": "2026-04-21T04:59:58.817Z",
+      "updatedAt": "2026-04-21T04:59:58.817Z",
+      "provider": "anthropic",
+      "mode": "remote",
+      "modelName": "claude-opus-4-7",
+      "status": "ready",
+      "acceptedAt": null,
+      "outline": [
+        "Treppenhaus und Tür: Der Körper des Jungen bringt die Prügelei mit nach Hause, während er sich vor dem Eintreten zurechtlegt, wie er unsichtbar bleibt. (300W, Payoff: Er tritt in die Wohnung ein und spürt, dass die vertrauten Gerüche und Geräusche ihn nicht auffangen, sondern nur verschlucken.)",
+        "Flur und Mutter in der Küche: Die Mutter registriert seine Verletzung im Vorbeigehen, ohne anzuhalten, und bietet Nähe allein über Handlung statt Sprache. (350W, Payoff: Sie drückt ihm ein Stück Brot oder einen feuchten Lappen in die Hand und wendet sich zum Herd zurück, ohne zu fragen, was passiert ist.)",
+        "Tisch mit Vater und Geschwistern: Am Abendtisch läuft die Familienroutine über Fernseher, Teller und knappe Worte weiter, während der Junge lernt, seinen geschwollenen Mund zu verbergen. (450W, Payoff: Der Vater sieht kurz auf, hält den Blick einen Atemzug zu lang und kehrt dann zum Teller zurück, ohne ein Wort zu sagen.)",
+        "Zimmer und leiser Schnitt: Zurückgezogen im eigenen Zimmer begreift der Junge, dass Zuhause kein Gegenteil vom Schulhof ist, nur eine leisere Variante desselben Schweigens. (300W, Payoff: Er legt sich angezogen aufs Bett, hört den Fernseher durch die Wand und beschließt wortlos, von nun an weniger zu brauchen.)"
+      ],
+      "draftText": "Das Treppenhaus roch nach kaltem Rauch und nach dem Putzmittel, das Frau Kowalski aus dem Parterre jeden Samstag benutzte. Ich stieg langsam, Stufe für Stufe, und hörte, wie mein Atem in dem engen Schacht zurückkam. Die Lippe pochte. Ich fuhr mit der Zunge darüber und schmeckte Eisen. Im zweiten Stock blieb ich stehen und zog die Jacke höher, bis der Kragen bis zum Kinn reichte. Ich prüfte im matten Licht der Flurlampe, wie ich aussah. Der Rotz an der Nase war das Schlimmste. Ich wischte ihn mit dem Ärmel ab und sah den dunklen Streifen auf dem Stoff. Egal.\n\nVor der Wohnungstür hielt ich den Schlüssel länger in der Hand, als nötig war. Drinnen lief der Fernseher. Die Nachrichten. Die Stimme des Sprechers war ruhig und gleichmäßig, und für einen Moment wollte ich, dass sie weiterspräche, ohne dass ich eintreten musste. Dann drehte ich den Schlüssel.\n\nDer Geruch kam mir entgegen, bevor ich etwas sah. Zwiebeln, Tomatenmark, das heiße Öl in der Pfanne. Der Flur war schmal, die Schuhe standen in zwei Reihen an der Wand, und aus der Küche klang das Klirren eines Löffels gegen einen Topfrand. Ich zog die Jacke aus, hängte sie so an den Haken, dass der Ärmel zur Wand zeigte. Ich ging in Socken weiter, leise, wie man in einer Bibliothek geht.\n\n„Geldin mi?\"\n\nDie Stimme meiner Mutter, ohne dass sie sich umdrehte. Sie stand am Herd, den Rücken zu mir, und rührte. Die Bluse klebte zwischen den Schulterblättern. Ein dünner Schweißfilm glänzte in ihrem Nacken.\n\n„Evet.\"\n\nIch blieb im Türrahmen. Sie drehte sich halb, nur den Kopf, und ihr Blick streifte mich. Er blieb einen Moment an der Lippe hängen. Ein kurzer Moment, nicht länger als ein Herzschlag. Dann rührte sie weiter.\n\n„Geh, wasch dir die Hände.\"\n\nSie sagte es auf Türkisch, dann gleich noch einmal auf Deutsch, als wäre sie sich nicht sicher, welche Sprache heute die richtige war. Sie nahm ein Küchentuch vom Haken neben dem Herd, hielt es unter den Wasserhahn und drückte es mir in die Hand, ohne mich anzusehen. Das Tuch war kühl. Es roch nach Spülmittel.\n\n„Yemek hazır.\"\n\nIch presste das Tuch einen Moment an die Lippe und nickte, obwohl sie es nicht sah. Dann ging ich ins Bad. Im Spiegel war es schlimmer, als ich gedacht hatte. Die Lippe war rechts aufgeplatzt, unterhalb des Nasenflügels saß ein Schatten, der in den nächsten Tagen gelb werden würde. Ich wusch mir das Gesicht, vorsichtig, und tupfte mit dem Tuch nach, bis das Blut nur noch ein dunkler Punkt war. Ich kämmte die Haare nach vorn, als könnte das helfen.\n\nAm Tisch saßen schon alle. Der Vater am Kopfende, Hemd offen bis zum zweiten Knopf, die Ärmel hochgekrempelt. Die Hände auf dem Tischtuch, groß, die Knöchel rissig. Meine Schwester stocherte in ihrem Reis. Mein kleiner Bruder kniete auf dem Stuhl und schaute zum Fernseher, der schräg im Wohnzimmer stand, so dass man vom Tisch aus hinübersehen konnte. Im Bild marschierten Soldaten. Dann kam Werbung.\n\nIch setzte mich auf meinen Platz, rechts vom Vater, und zog den Teller näher. Die Mutter stellte die Pfanne ab und schöpfte uns auf. Ich hielt den Kopf gesenkt.\n\n„Ellerini yıkadın mı?\", fragte der Vater, ohne aufzusehen.\n\n„Evet.\"\n\nEr nickte. Seine Gabel bewegte sich gleichmäßig. Er kaute langsam, wie jemand, der gelernt hat, dass Essen eine Arbeit ist wie jede andere. Einmal, nur einmal, hob er den Blick. Er sah auf meine Lippe. Er sah mich an. Es dauerte vielleicht zwei Sekunden, vielleicht drei. Ich spürte, wie meine Hände unter dem Tisch feucht wurden. Dann senkte er den Blick wieder auf den Teller und schob sich einen weiteren Bissen in den Mund.\n\n„Iss\", sagte er.\n\nDas war alles.\n\nMeine Schwester redete über eine Klassenarbeit. Mein Bruder lachte über etwas im Fernseher. Die Mutter setzte sich zuletzt, schöpfte sich selbst eine kleine Portion und aß im Stehen weiter, halb zurückgelehnt an der Küchentür, als wäre sie nur zu Besuch in ihrem eigenen Abendessen. Ich aß, kaute auf der linken Seite, schluckte, trank Wasser. Das Brot war weich und warm. Ich hätte weinen können, ich weiß nicht, warum.\n\nNach dem Essen stand ich auf, trug meinen Teller in die Küche, stellte ihn ins Becken. Die Mutter stand jetzt am Becken, die Hände im Wasser. Sie sah mich von der Seite an, kurz, diesen kurzen Blick noch einmal. Ihr Kinn bewegte sich, als wollte sie etwas sagen. Dann begann sie zu spülen.\n\n„Git, ödevini yap.\"\n\nIch ging.\n\nMein Zimmer war schmal, das Bett an der Wand, der Schreibtisch unter dem Fenster. Ich zog die Tür hinter mir zu, ohne sie ganz zu schließen, weil geschlossene Türen im Haus auffielen. Ich legte mich auf den Rücken, angezogen, die Hände auf dem Bauch. Durch die Wand hörte ich den Fernseher. Eine Werbung für Waschmittel. Das Lachen meines Bruders. Das Klirren von Besteck im Becken.\n\nIch lag da und hörte zu. Ich dachte nicht an die Jungen auf dem Schulhof. Ich dachte an den Blick meines Vaters, der zwei Sekunden gedauert hatte, und an den Blick meiner Mutter, der kürzer gewesen war. Sie hatten es gesehen. Beide. Und sie hatten weitergegessen.\n\nEs war nicht so, dass sie mich nicht liebten. Das wusste ich sogar damals schon. Es war nur so, dass die Liebe in diesem Haus keine Zunge hatte. Sie lief über Teller und Tücher und gefüllte Schüsseln. Sie lief nicht über Fragen.\n\nIch drehte mich zur Wand. Ich zog die Knie an. Ich nahm mir vor, das nächste Mal tiefer zu atmen, bevor ich eintrat. Weniger Gesicht zu zeigen. Weniger zu brauchen. Der Fernseher auf der anderen Seite der Wand wurde lauter, dann wieder leiser. Irgendwann lachte meine Mutter kurz über etwas, was der Vater gesagt hatte. Es klang, als käme es aus einem anderen Haus.",
+      "rewriteText": "Das Treppenhaus roch nach kaltem Rauch und nach dem Putzmittel, das Frau Kowalski aus dem Parterre jeden Samstag benutzte. Ich stieg langsam, Stufe für Stufe, und hörte, wie mein Atem in dem engen Schacht zurückkam. Die Lippe pochte. Ich fuhr mit der Zunge darüber und schmeckte Eisen. Im zweiten Stock blieb ich stehen und zog den Reißverschluss der Jacke so weit hoch, bis der Kragen mir ans Kinn stieß. Im matten Licht der Flurlampe prüfte ich mein Gesicht in der Milchglasscheibe der Nachbartür. Der Rotz an der Nase war das Schlimmste. Ich wischte ihn mit dem Ärmel ab und sah den dunklen Streifen auf dem Stoff. Egal.\n\nVor unserer Tür hielt ich den Schlüssel länger in der Hand als nötig. Drinnen lief der Fernseher. Die Nachrichten. Die Stimme des Sprechers war ruhig und gleichmäßig, und für einen Moment wollte ich, dass sie weiterspräche, ohne dass ich eintreten musste. Dann drehte ich den Schlüssel.\n\nDer Geruch kam mir entgegen, bevor ich etwas sah. Zwiebeln, Tomatenmark, heißes Öl in der Pfanne. Der Flur war schmal, die Schuhe standen in zwei Reihen an der Wand, und aus der Küche klang das Klirren eines Löffels gegen einen Topfrand. Ich zog die Jacke aus und hängte sie so an den Haken, dass der schmutzige Ärmel zur Wand zeigte. Ich ging in Socken weiter, leise, wie man in einer Bibliothek geht.\n\n„Geldin mi?\"\n\nDie Stimme meiner Mutter, ohne dass sie sich umdrehte. Sie stand am Herd, den Rücken zu mir, und rührte. Die Bluse klebte zwischen ihren Schulterblättern. Ein dünner Schweißfilm glänzte in ihrem Nacken.\n\n„Evet.\"\n\nIch blieb im Türrahmen. Sie drehte sich halb, nur den Kopf, und ihr Blick streifte mich. Er blieb einen Moment an der Lippe hängen. Nicht länger als ein Herzschlag. Dann rührte sie weiter.\n\n„Geh, wasch dir die Hände.\"\n\nSie sagte es auf Türkisch, dann gleich noch einmal auf Deutsch, als wäre sie sich nicht sicher, welche Sprache heute die richtige war. Sie nahm ein Küchentuch vom Haken neben dem Herd, hielt es unter den Wasserhahn und drückte es mir in die Hand, ohne mich anzusehen. Das Tuch war kühl. Es roch nach Spülmittel.\n\n„Yemek hazır.\"\n\nIch presste das Tuch einen Augenblick an die Lippe und nickte, obwohl sie es nicht sah. Dann ging ich ins Bad. Im Spiegel war es schlimmer, als ich gedacht hatte. Die Lippe war rechts aufgeplatzt, unterhalb des Nasenflügels saß ein Schatten, der in den nächsten Tagen gelb werden würde. Ich wusch mir das Gesicht, vorsichtig, und tupfte mit dem Tuch nach, bis das Blut nur noch ein dunkler Punkt war. Ich kämmte die Haare nach vorn, als könnte das etwas helfen.\n\nAm Tisch saßen schon alle. Der Vater am Kopfende, Hemd offen bis zum zweiten Knopf, die Ärmel hochgekrempelt. Die Hände auf dem Tischtuch, groß, die Knöchel rissig. Meine Schwester stocherte in ihrem Reis. Mein kleiner Bruder kniete auf dem Stuhl und schaute zum Fernseher, der schräg im Wohnzimmer stand, so dass man vom Tisch aus hinübersehen konnte. Im Bild marschierten Soldaten. Dann kam Werbung.\n\nIch setzte mich auf meinen Platz, rechts vom Vater, und zog den Teller näher. Die Mutter stellte die Pfanne ab und schöpfte uns auf. Ich hielt den Kopf gesenkt.\n\n„Ellerini yıkadın mı?\", fragte der Vater, ohne aufzusehen.\n\n„Evet.\"\n\nEr nickte. Seine Gabel bewegte sich gleichmäßig. Er kaute langsam, wie jemand, der gelernt hat, dass Essen eine Arbeit ist wie jede andere. Einmal, nur einmal, hob er den Blick. Er sah auf meine Lippe. Er sah mich an. Es dauerte vielleicht zwei Sekunden, vielleicht drei. Ich spürte, wie meine Hände unter dem Tisch feucht wurden. Dann senkte er den Blick wieder auf den Teller und schob sich einen weiteren Bissen in den Mund.\n\n„Iss\", sagte er.\n\nDas war alles.\n\nMeine Schwester redete über eine Klassenarbeit, über eine Lehrerin, die unfair gewesen sei. Mein Bruder lachte über etwas im Fernseher und bekam eine Ermahnung, nicht mit offenem Mund zu kauen. Die Mutter setzte sich zuletzt, schöpfte sich eine kleine Portion auf und aß halb im Stehen weiter, an die Küchentür gelehnt, als wäre sie nur zu Besuch bei ihrem eigenen Abendessen. Ich aß auf der linken Seite, schluckte, trank Wasser. Das Brot war weich und warm. Ich hätte weinen können, ich weiß nicht, warum.\n\nNach dem Essen stand ich auf, trug meinen Teller in die Küche, stellte ihn ins Becken. Die Mutter war mir gefolgt, die Hände bereits im Wasser. Sie sah mich von der Seite an, kurz, diesen kurzen Blick noch einmal. Ihr Kinn bewegte sich, als wollte sie etwas sagen. Dann begann sie zu spülen.\n\n„Git, ödevini yap.\"\n\nIch ging.\n\nMein Zimmer war schmal, das Bett an der Wand, der Schreibtisch unter dem Fenster. Ich zog die Tür hinter mir zu, ohne sie ganz zu schließen, weil geschlossene Türen in diesem Haus auffielen. Ich legte mich auf den Rücken, angezogen, die Hände auf dem Bauch. Durch die Wand hörte ich den Fernseher. Eine Werbung für Waschmittel. Das Lachen meines Bruders. Das Klirren von Besteck im Becken.\n\nIch lag da und hörte zu. Ich dachte nicht an die Jungen auf dem Schulhof. Nicht an Erhan, der am Zaun gestanden hatte, Hände in den Taschen, nah genug, um zu sehen, zu nah, um nicht zu sehen. Ich dachte an den Blick meines Vaters, der zwei Sekunden gedauert hatte, und an den Blick meiner Mutter, der kürzer gewesen war. Sie hatten es gesehen. Beide. Und sie hatten weitergegessen.\n\nEs war nicht so, dass sie mich nicht liebten. Das wusste ich sogar damals schon. Es war nur so, dass die Liebe in diesem Haus keine Zunge hatte. Sie lief über Teller und feuchte Tücher und gefüllte Schüsseln. Sie lief über den Schlüssel, der morgens neben meinem Platz lag, über die Schuhe, die jemand gerade gerückt hatte, bevor ich sie bemerkte. Sie lief nicht über Fragen.\n\nVielleicht, dachte ich, war es bei ihnen genauso gewesen. Vielleicht hatte auch meinen Vater niemand je gefragt, was passiert war, wenn er als Junge mit einer aufgeplatzten Lippe nach Hause kam. Vielleicht hatte ihm jemand ein Tuch in die Hand gedrückt und gesagt, er solle sich die Hände waschen, und er hatte gelernt, dass das die Form war, in der man getragen wurde. Jetzt reichte er mir dieselbe Form weiter, sauber gefaltet, über den Tisch.\n\nIch drehte mich zur Wand. Ich zog die Knie an. Irgendetwas in mir wollte noch einmal an die Küchentür gehen, noch einmal an seiner Schulter vorbei, langsamer diesmal, damit er das Gesicht genauer sehen musste. Ich blieb liegen. Ich nahm mir vor, das nächste Mal tiefer zu atmen, bevor ich eintrat. Weniger Gesicht zu zeigen. Weniger zu brauchen.\n\nDer Fernseher auf der anderen Seite der Wand wurde lauter, dann wieder leiser. Irgendwann lachte meine Mutter kurz über etwas, was der Vater gesagt hatte. Es klang, als käme es aus einem anderen Haus. Ich legte das feuchte Küchentuch, das ich noch immer in der Faust hielt, auf den Nachttisch. Es hinterließ einen dunklen Kreis auf dem Holz. Ich sah ihn an, bis er trocken war.",
+      "rewriteNotes": [
+        "Structured Extractor fiel aus; konservativer Fallback aus Rewrite und Packet verwendet.",
+        "Rewrite auf 1160 Wörter stabil gehalten."
+      ],
+      "extractedState": {
+        "newCanonFacts": [],
+        "characterStateUpdates": [],
+        "openThreadsCreated": [],
+        "openThreadsResolved": [],
+        "foreshadowingAdded": [],
+        "continuityRisks": [
+          "Structured Extractor fiel aus; neue Canon-Fakten und Thread-Aenderungen manuell pruefen.",
+          "Erhan wird in der Rewrite-Version erstmals erwähnt (‚Erhan, der am Zaun gestanden hatte'), existiert aber nicht in Draft-Version; unklar, ob diese Figur aus Szene 1 stammt oder neue Exposition ist.",
+          "Vater-Monolog im Schluss (‚Vielleicht hatte auch meinen Vater niemand je gefragt...') führt spekulatives inneres Leben des Vaters ein, das weder in Draft noch in Codex verankert ist und möglicherweise zukünftige Vater-Szenen kollidiert.",
+          "Küchentuch-Motiv verdoppelt sich in Rewrite: erst Mutter drückt es in Hand, später wird es auf Nachttisch gelegt mit ‚dunklem Kreis'; unklar, ob gleiches oder anderes Tuch gemeint ist.",
+          "Schwester erhält in Rewrite spezifisches Redethema (‚eine Lehrerin, die unfair gewesen sei'), das in Draft fehlt und möglicherweise zu ihrer Charakterisierung passt oder nicht."
+        ],
+        "styleDriftNotes": [
+          "Fallback-Extraktion aktiv; Beat-Folge Treppenhaus und Tür bis Zimmer und leiser Schnitt nur konservativ ausgewertet.",
+          "Rewrite führt metaphorische Tiefe ein (‚feuchte Tücher und gefüllte Schüsseln' als Formen von Liebe), die vorher sparsamer war; Gefahr, dass Subtext-Versprechen zu explizit wird.",
+          "Satz ‚Es hinterließ einen dunklen Kreis auf dem Holz' tendiert zu Symbolik hin, während Rest der Szene körperlich-funktional bleibt; Gleichgewicht prüfen.",
+          "Vater-Innenleben und generationales Trauma-Echo wirken essayistisch gegen Writer Constitution (‚Subtext vor Erklärung'); könnte als versteckte Erklärsprosa lesbar sein.",
+          "Rewrite dehnt finale innere Regung (‚Irgendetwas in mir wollte noch einmal...') zu ausgeführtem Gedankengang aus; ursprüngliche Knappheit des Moments verdünnt sich.",
+          "Tonale Verschiebung im letzten Absatz: ‚Ich sah ihn an, bis er trocken war' wirkt literarischer als der nüchterne Grundton der Szene; Check gegen Character Voice."
+        ]
+      },
+      "stages": {
+        "context": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:59:58.816Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": null,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costCents": null,
+          "stopReason": null,
+          "targetWordsMin": null,
+          "targetWordsMax": null,
+          "actualWords": null,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Context-Pack vorbereitet."
+          ]
+        },
+        "beat_plan": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:57:07.179Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": 12026,
+          "inputTokens": 2912,
+          "outputTokens": 672,
+          "costCents": null,
+          "stopReason": "end_turn",
+          "targetWordsMin": null,
+          "targetWordsMax": null,
+          "actualWords": null,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Treppenhaus und Tür: Der Körper des Jungen bringt die Prügelei mit nach Hause, während er sich vor dem Eintreten zurechtlegt, wie er unsichtbar bleibt. (300W, Payoff: Er tritt in die Wohnung ein und spürt, dass die vertrauten Gerüche und Geräusche ihn nicht auffangen, sondern nur verschlucken.)",
+            "Flur und Mutter in der Küche: Die Mutter registriert seine Verletzung im Vorbeigehen, ohne anzuhalten, und bietet Nähe allein über Handlung statt Sprache. (350W, Payoff: Sie drückt ihm ein Stück Brot oder einen feuchten Lappen in die Hand und wendet sich zum Herd zurück, ohne zu fragen, was passiert ist.)",
+            "Tisch mit Vater und Geschwistern: Am Abendtisch läuft die Familienroutine über Fernseher, Teller und knappe Worte weiter, während der Junge lernt, seinen geschwollenen Mund zu verbergen. (450W, Payoff: Der Vater sieht kurz auf, hält den Blick einen Atemzug zu lang und kehrt dann zum Teller zurück, ohne ein Wort zu sagen.)",
+            "Zimmer und leiser Schnitt: Zurückgezogen im eigenen Zimmer begreift der Junge, dass Zuhause kein Gegenteil vom Schulhof ist, nur eine leisere Variante desselben Schweigens. (300W, Payoff: Er legt sich angezogen aufs Bett, hört den Fernseher durch die Wand und beschließt wortlos, von nun an weniger zu brauchen.)"
+          ]
+        },
+        "draft": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:59:58.816Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": 48550,
+          "inputTokens": 3894,
+          "outputTokens": 2787,
+          "costCents": null,
+          "stopReason": "end_turn",
+          "targetWordsMin": 696,
+          "targetWordsMax": 1152,
+          "actualWords": 955,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Erster Prosa-Pass mit 955 Wörtern erstellt."
+          ]
+        },
+        "rewrite": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:59:58.816Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": 40925,
+          "inputTokens": 6730,
+          "outputTokens": 3371,
+          "costCents": null,
+          "stopReason": "end_turn",
+          "targetWordsMin": 1200,
+          "targetWordsMax": 1600,
+          "actualWords": 1160,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Rewrite-Pass mit 1160 Wörtern erzeugt."
+          ]
+        },
+        "length_control": {
+          "status": "skipped",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:58:36.657Z",
+          "attemptCount": 0,
+          "repairCount": 0,
+          "durationMs": null,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costCents": null,
+          "stopReason": null,
+          "targetWordsMin": 1200,
+          "targetWordsMax": 1600,
+          "actualWords": 1160,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Length-Control akzeptiert 1160 Wörter ohne Korrektur."
+          ]
+        },
+        "extract": {
+          "status": "failed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:59:38.056Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": null,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costCents": null,
+          "stopReason": null,
+          "targetWordsMin": null,
+          "targetWordsMax": null,
+          "actualWords": null,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. No complete JSON object found in Anthropic output.",
+            "Structured Extractor fiel aus; konservativer Fallback aus Rewrite und Packet verwendet.",
+            "Rewrite auf 1160 Wörter stabil gehalten."
+          ]
+        },
+        "continuity": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-haiku-4-5-20251001",
+          "updatedAt": "2026-04-21T04:59:45.813Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": 7757,
+          "inputTokens": 7142,
+          "outputTokens": 593,
+          "costCents": null,
+          "stopReason": "end_turn",
+          "targetWordsMin": null,
+          "targetWordsMax": null,
+          "actualWords": null,
+          "qualityScore": null,
+          "qualityIssues": [],
+          "notes": [
+            "Structured Extractor fiel aus; neue Canon-Fakten und Thread-Aenderungen manuell pruefen.",
+            "Erhan wird in der Rewrite-Version erstmals erwähnt (‚Erhan, der am Zaun gestanden hatte'), existiert aber nicht in Draft-Version; unklar, ob diese Figur aus Szene 1 stammt oder neue Exposition ist.",
+            "Vater-Monolog im Schluss (‚Vielleicht hatte auch meinen Vater niemand je gefragt...') führt spekulatives inneres Leben des Vaters ein, das weder in Draft noch in Codex verankert ist und möglicherweise zukünftige Vater-Szenen kollidiert.",
+            "Küchentuch-Motiv verdoppelt sich in Rewrite: erst Mutter drückt es in Hand, später wird es auf Nachttisch gelegt mit ‚dunklem Kreis'; unklar, ob gleiches oder anderes Tuch gemeint ist.",
+            "Schwester erhält in Rewrite spezifisches Redethema (‚eine Lehrerin, die unfair gewesen sei'), das in Draft fehlt und möglicherweise zu ihrer Charakterisierung passt oder nicht.",
+            "Fallback-Extraktion aktiv; Beat-Folge Treppenhaus und Tür bis Zimmer und leiser Schnitt nur konservativ ausgewertet.",
+            "Rewrite führt metaphorische Tiefe ein (‚feuchte Tücher und gefüllte Schüsseln' als Formen von Liebe), die vorher sparsamer war; Gefahr, dass Subtext-Versprechen zu explizit wird.",
+            "Satz ‚Es hinterließ einen dunklen Kreis auf dem Holz' tendiert zu Symbolik hin, während Rest der Szene körperlich-funktional bleibt; Gleichgewicht prüfen.",
+            "Vater-Innenleben und generationales Trauma-Echo wirken essayistisch gegen Writer Constitution (‚Subtext vor Erklärung'); könnte als versteckte Erklärsprosa lesbar sein.",
+            "Rewrite dehnt finale innere Regung (‚Irgendetwas in mir wollte noch einmal...') zu ausgeführtem Gedankengang aus; ursprüngliche Knappheit des Moments verdünnt sich.",
+            "Tonale Verschiebung im letzten Absatz: ‚Ich sah ihn an, bis er trocken war' wirkt literarischer als der nüchterne Grundton der Szene; Check gegen Character Voice."
+          ]
+        },
+        "quality_eval": {
+          "status": "completed",
+          "provider": "anthropic",
+          "modelName": "claude-opus-4-7",
+          "updatedAt": "2026-04-21T04:59:58.816Z",
+          "attemptCount": 1,
+          "repairCount": 0,
+          "durationMs": 13002,
+          "inputTokens": 7682,
+          "outputTokens": 451,
+          "costCents": null,
+          "stopReason": "end_turn",
+          "targetWordsMin": 1200,
+          "targetWordsMax": 1600,
+          "actualWords": 1160,
+          "qualityScore": 8.3,
+          "qualityIssues": [
+            "Vater-Spekulation ('Vielleicht hatte auch meinen Vater niemand je gefragt...') kippt kurz ins Essayistische und nimmt späteren Vater-Szenen Raum.",
+            "Küchentuch-Motiv verdoppelt sich (Mutter drückt es in die Hand, später auf Nachttisch) - Konsistenz prüfen: dasselbe Tuch?",
+            "Erhan wird knapp erwähnt; falls in Szene 1 nicht namentlich etabliert, Name hier redundant oder unklar.",
+            "Schlussbild mit 'dunklem Kreis' leicht symbolschwer - Autorenkonstitution 'Subtext vor Erklärung' am Rand.",
+            "Satz 'die Liebe in diesem Haus keine Zunge hatte' ist der lyrischste Moment und steht in Spannung zur 'nüchtern-präzise'-Vorgabe."
+          ],
+          "notes": [
+            "Quality-Score 8.3/10 bei 1160 Wörtern.",
+            "Vater-Spekulation ('Vielleicht hatte auch meinen Vater niemand je gefragt...') kippt kurz ins Essayistische und nimmt späteren Vater-Szenen Raum.",
+            "Küchentuch-Motiv verdoppelt sich (Mutter drückt es in die Hand, später auf Nachttisch) - Konsistenz prüfen: dasselbe Tuch?",
+            "Erhan wird knapp erwähnt; falls in Szene 1 nicht namentlich etabliert, Name hier redundant oder unklar."
+          ]
+        }
+      },
+      "contextSnapshot": {
+        "contextPackId": "manual-family-intro-opus-probe",
+        "memorySyncedAt": "2026-04-20T00:00:00.000Z",
+        "chapterTitle": "Kapitel 1 - Zuhause nach der Schule",
+        "sceneSummary": "Nach der Schulhof-Prügelei kommt der Junge nach Hause in die Wohnung der Familie im Immigrantenviertel. Zum ersten Mal lernen die Leser Mutter, Vater, Geschwister und die Atmosphäre der Familie kennen. Niemand fragt ihn wirklich nach dem, was passiert ist. Die Szene zeigt, dass auch Zuhause vieles über Funktion, Routine und Schweigen läuft.",
+        "relevantCodexTitles": [
+          "Protagonist",
+          "Vater",
+          "Mutter",
+          "Wohnung im Viertel"
+        ],
+        "relevantCharacterNames": [
+          "Erzähler",
+          "Vater",
+          "Mutter"
+        ],
+        "activeThreadLabels": [
+          "Zugehörigkeit",
+          "Tragen ohne Frage"
+        ]
+      }
+    }
+  },
+  "records": [
+    {
+      "kind": "create",
+      "callIndex": 2,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Create a compact beat plan for one scene. Return only structured output matching the requested schema. Target scene range: 1200-1600 words. Preferred total beat budget: 1400 words. Requirements: - 3 to 5 beats. - Each be",
+      "textOutput": "{\"beats\":[{\"label\":\"Treppenhaus und Tür\",\"purpose\":\"Der Körper des Jungen bringt die Prügelei mit nach Hause, während er sich vor dem Eintreten zurechtlegt, wie er unsichtbar bleibt.\",\"targetWords\":300,\"mustLand\":\"Er tritt in die Wohnung ein und spürt, dass die vertrauten Gerüche und Geräusche ihn nicht auffangen, sondern nur verschlucken.\"},{\"label\":\"Flur und Mutter in der Küche\",\"purpose\":\"Die Mutter registriert seine Verletzung im Vorbeigehen, ohne anzuhalten, und bietet Nähe allein über Handlung statt Sprache.\",\"targetWords\":350,\"mustLand\":\"Sie drückt ihm ein Stück Brot oder einen feuchten Lappen in die Hand und wendet sich zum Herd zurück, ohne zu fragen, was passiert ist.\"},{\"label\":\"Tisch mit Vater und Geschwistern\",\"purpose\":\"Am Abendtisch läuft die Familienroutine über Fernseher, Teller und knappe Worte weiter, während der Junge lernt, seinen geschwollenen Mund zu verbergen.\",\"targetWords\":450,\"mustLand\":\"Der Vater sieht kurz auf, hält den Blick einen Atemzug zu lang und kehrt dann zum Teller zurück, ohne ein Wort zu sagen.\"},{\"label\":\"Zimmer und leiser Schnitt\",\"purpose\":\"Zurückgezogen im eigenen Zimmer begreift der Junge, dass Zuhause kein Gegenteil vom Schulhof ist, nur eine leisere Variante desselben Schweigens.\",\"targetWords\":300,\"mustLand\":\"Er legt sich angezogen aufs Bett, hört den Fernseher durch die Wand und beschließt wortlos, von nun an weniger zu brauchen.\"}]}"
+    },
+    {
+      "kind": "parse",
+      "callIndex": 1,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Create a compact beat plan for one scene. Return only structured output matching the requested schema. Target scene range: 1200-1600 words. Preferred total beat budget: 1400 words. Requirements: - 3 to 5 beats. - Each be",
+      "textOutput": "{\"beats\":[{\"label\":\"Treppenhaus und Tür\",\"purpose\":\"Der Körper des Jungen bringt die Prügelei mit nach Hause, während er sich vor dem Eintreten zurechtlegt, wie er unsichtbar bleibt.\",\"targetWords\":300,\"mustLand\":\"Er tritt in die Wohnung ein und spürt, dass die vertrauten Gerüche und Geräusche ihn nicht auffangen, sondern nur verschlucken.\"},{\"label\":\"Flur und Mutter in der Küche\",\"purpose\":\"Die Mutter registriert seine Verletzung im Vorbeigehen, ohne anzuhalten, und bietet Nähe allein über Handlung statt Sprache.\",\"targetWords\":350,\"mustLand\":\"Sie drückt ihm ein Stück Brot oder einen feuchten Lappen in die Hand und wendet sich zum Herd zurück, ohne zu fragen, was passiert ist.\"},{\"label\":\"Tisch mit Vater und Geschwistern\",\"purpose\":\"Am Abendtisch läuft die Familienroutine über Fernseher, Teller und knappe Worte weiter, während der Junge lernt, seinen geschwollenen Mund zu verbergen.\",\"targetWords\":450,\"mustLand\":\"Der Vater sieht kurz auf, hält den Blick einen Atemzug zu lang und kehrt dann zum Teller zurück, ohne ein Wort zu sagen.\"},{\"label\":\"Zimmer und leiser Schnitt\",\"purpose\":\"Zurückgezogen im eigenen Zimmer begreift der Junge, dass Zuhause kein Gegenteil vom Schulhof ist, nur eine leisere Variante desselben Schweigens.\",\"targetWords\":300,\"mustLand\":\"Er legt sich angezogen aufs Bett, hört den Fernseher durch die Wand und beschließt wortlos, von nun an weniger zu brauchen.\"}]}",
+      "parsedOutput": {
+        "beats": [
+          {
+            "label": "Treppenhaus und Tür",
+            "purpose": "Der Körper des Jungen bringt die Prügelei mit nach Hause, während er sich vor dem Eintreten zurechtlegt, wie er unsichtbar bleibt.",
+            "targetWords": 300,
+            "mustLand": "Er tritt in die Wohnung ein und spürt, dass die vertrauten Gerüche und Geräusche ihn nicht auffangen, sondern nur verschlucken."
+          },
+          {
+            "label": "Flur und Mutter in der Küche",
+            "purpose": "Die Mutter registriert seine Verletzung im Vorbeigehen, ohne anzuhalten, und bietet Nähe allein über Handlung statt Sprache.",
+            "targetWords": 350,
+            "mustLand": "Sie drückt ihm ein Stück Brot oder einen feuchten Lappen in die Hand und wendet sich zum Herd zurück, ohne zu fragen, was passiert ist."
+          },
+          {
+            "label": "Tisch mit Vater und Geschwistern",
+            "purpose": "Am Abendtisch läuft die Familienroutine über Fernseher, Teller und knappe Worte weiter, während der Junge lernt, seinen geschwollenen Mund zu verbergen.",
+            "targetWords": 450,
+            "mustLand": "Der Vater sieht kurz auf, hält den Blick einen Atemzug zu lang und kehrt dann zum Teller zurück, ohne ein Wort zu sagen."
+          },
+          {
+            "label": "Zimmer und leiser Schnitt",
+            "purpose": "Zurückgezogen im eigenen Zimmer begreift der Junge, dass Zuhause kein Gegenteil vom Schulhof ist, nur eine leisere Variante desselben Schweigens.",
+            "targetWords": 300,
+            "mustLand": "Er legt sich angezogen aufs Bett, hört den Fernseher durch die Wand und beschließt wortlos, von nun an weniger zu brauchen."
+          }
+        ]
+      }
+    },
+    {
+      "kind": "create",
+      "callIndex": 3,
+      "model": "claude-opus-4-7",
+      "promptPreview": "<market_traits>Autofiction | Entwicklungsroman | Memoir | Ein Mann, der Menschen lesen kann, weil niemand je gelernt hat, seinen eigenen Schmerz mit ihm zu tragen.</market_traits> <writer_constitution>Nüchtern und präzis",
+      "textOutput": "Das Treppenhaus roch nach kaltem Rauch und nach dem Putzmittel, das Frau Kowalski aus dem Parterre jeden Samstag benutzte. Ich stieg langsam, Stufe für Stufe, und hörte, wie mein Atem in dem engen Schacht zurückkam. Die Lippe pochte. Ich fuhr mit der Zunge darüber und schmeckte Eisen. Im zweiten Stock blieb ich stehen und zog die Jacke höher, bis der Kragen bis zum Kinn reichte. Ich prüfte im matten Licht der Flurlampe, wie ich aussah. Der Rotz an der Nase war das Schlimmste. Ich wischte ihn mit dem Ärmel ab und sah den dunklen Streifen auf dem Stoff. Egal.\n\nVor der Wohnungstür hielt ich den Schlüssel länger in der Hand, als nötig war. Drinnen lief der Fernseher. Die Nachrichten. Die Stimme des Sprechers war ruhig und gleichmäßig, und für einen Moment wollte ich, dass sie weiterspräche, ohne dass ich eintreten musste. Dann drehte ich den Schlüssel.\n\nDer Geruch kam mir entgegen, bevor ich etwas sah. Zwiebeln, Tomatenmark, das heiße Öl in der Pfanne. Der Flur war schmal, die Schuhe standen in zwei Reihen an der Wand, und aus der Küche klang das Klirren eines Löffels gegen einen Topfrand. Ich zog die Jacke aus, hängte sie so an den Haken, dass der Ärmel zur Wand zeigte. Ich ging in Socken weiter, leise, wie man in einer Bibliothek geht.\n\n„Geldin mi?\"\n\nDie Stimme meiner Mutter, ohne dass sie sich umdrehte. Sie stand am Herd, den Rücken zu mir, und rührte. Die Bluse klebte zwischen den Schulterblättern. Ein dünner Schweißfilm glänzte in ihrem Nacken.\n\n„Evet.\"\n\nIch blieb im Türrahmen. Sie drehte sich halb, nur den Kopf, und ihr Blick streifte mich. Er blieb einen Moment an der Lippe hängen. Ein kurzer Moment, nicht länger als ein Herzschlag. Dann rührte sie weiter.\n\n„Geh, wasch dir die Hände.\"\n\nSie sagte es auf Türkisch, dann gleich noch einmal auf Deutsch, als wäre sie sich nicht sicher, welche Sprache heute die richtige war. Sie nahm ein Küchentuch vom Haken neben dem Herd, hielt es unter den Wasserhahn und drückte es mir in die Hand, ohne mich anzusehen. Das Tuch war kühl. Es roch nach Spülmittel.\n\n„Yemek hazır.\"\n\nIch presste das Tuch einen Moment an die Lippe und nickte, obwohl sie es nicht sah. Dann ging ich ins Bad. Im Spiegel war es schlimmer, als ich gedacht hatte. Die Lippe war rechts aufgeplatzt, unterhalb des Nasenflügels saß ein Schatten, der in den nächsten Tagen gelb werden würde. Ich wusch mir das Gesicht, vorsichtig, und tupfte mit dem Tuch nach, bis das Blut nur noch ein dunkler Punkt war. Ich kämmte die Haare nach vorn, als könnte das helfen.\n\nAm Tisch saßen schon alle. Der Vater am Kopfende, Hemd offen bis zum zweiten Knopf, die Ärmel hochgekrempelt. Die Hände auf dem Tischtuch, groß, die Knöchel rissig. Meine Schwester stocherte in ihrem Reis. Mein kleiner Bruder kniete auf dem Stuhl und schaute zum Fernseher, der schräg im Wohnzimmer stand, so dass man vom Tisch aus hinübersehen konnte. Im Bild marschierten Soldaten. Dann kam Werbung.\n\nIch setzte mich auf meinen Platz, rechts vom Vater, und zog den Teller näher. Die Mutter stellte die Pfanne ab und schöpfte uns auf. Ich hielt den Kopf gesenkt.\n\n„Ellerini yıkadın mı?\", fragte der Vater, ohne aufzusehen.\n\n„Evet.\"\n\nEr nickte. Seine Gabel bewegte sich gleichmäßig. Er kaute langsam, wie jemand, der gelernt hat, dass Essen eine Arbeit ist wie jede andere. Einmal, nur einmal, hob er den Blick. Er sah auf meine Lippe. Er sah mich an. Es dauerte vielleicht zwei Sekunden, vielleicht drei. Ich spürte, wie meine Hände unter dem Tisch feucht wurden. Dann senkte er den Blick wieder auf den Teller und schob sich einen weiteren Bissen in den Mund.\n\n„Iss\", sagte er.\n\nDas war alles.\n\nMeine Schwester redete über eine Klassenarbeit. Mein Bruder lachte über etwas im Fernseher. Die Mutter setzte sich zuletzt, schöpfte sich selbst eine kleine Portion und aß im Stehen weiter, halb zurückgelehnt an der Küchentür, als wäre sie nur zu Besuch in ihrem eigenen Abendessen. Ich aß, kaute auf der linken Seite, schluckte, trank Wasser. Das Brot war weich und warm. Ich hätte weinen können, ich weiß nicht, warum.\n\nNach dem Essen stand ich auf, trug meinen Teller in die Küche, stellte ihn ins Becken. Die Mutter stand jetzt am Becken, die Hände im Wasser. Sie sah mich von der Seite an, kurz, diesen kurzen Blick noch einmal. Ihr Kinn bewegte sich, als wollte sie etwas sagen. Dann begann sie zu spülen.\n\n„Git, ödevini yap.\"\n\nIch ging.\n\nMein Zimmer war schmal, das Bett an der Wand, der Schreibtisch unter dem Fenster. Ich zog die Tür hinter mir zu, ohne sie ganz zu schließen, weil geschlossene Türen im Haus auffielen. Ich legte mich auf den Rücken, angezogen, die Hände auf dem Bauch. Durch die Wand hörte ich den Fernseher. Eine Werbung für Waschmittel. Das Lachen meines Bruders. Das Klirren von Besteck im Becken.\n\nIch lag da und hörte zu. Ich dachte nicht an die Jungen auf dem Schulhof. Ich dachte an den Blick meines Vaters, der zwei Sekunden gedauert hatte, und an den Blick meiner Mutter, der kürzer gewesen war. Sie hatten es gesehen. Beide. Und sie hatten weitergegessen.\n\nEs war nicht so, dass sie mich nicht liebten. Das wusste ich sogar damals schon. Es war nur so, dass die Liebe in diesem Haus keine Zunge hatte. Sie lief über Teller und Tücher und gefüllte Schüsseln. Sie lief nicht über Fragen.\n\nIch drehte mich zur Wand. Ich zog die Knie an. Ich nahm mir vor, das nächste Mal tiefer zu atmen, bevor ich eintrat. Weniger Gesicht zu zeigen. Weniger zu brauchen. Der Fernseher auf der anderen Seite der Wand wurde lauter, dann wieder leiser. Irgendwann lachte meine Mutter kurz über etwas, was der Vater gesagt hatte. Es klang, als käme es aus einem anderen Haus."
+    },
+    {
+      "kind": "create",
+      "callIndex": 4,
+      "model": "claude-opus-4-7",
+      "promptPreview": "<market_traits>Autofiction | Entwicklungsroman | Memoir | Ein Mann, der Menschen lesen kann, weil niemand je gelernt hat, seinen eigenen Schmerz mit ihm zu tragen.</market_traits> <writer_constitution>Nüchtern und präzis",
+      "textOutput": "Das Treppenhaus roch nach kaltem Rauch und nach dem Putzmittel, das Frau Kowalski aus dem Parterre jeden Samstag benutzte. Ich stieg langsam, Stufe für Stufe, und hörte, wie mein Atem in dem engen Schacht zurückkam. Die Lippe pochte. Ich fuhr mit der Zunge darüber und schmeckte Eisen. Im zweiten Stock blieb ich stehen und zog den Reißverschluss der Jacke so weit hoch, bis der Kragen mir ans Kinn stieß. Im matten Licht der Flurlampe prüfte ich mein Gesicht in der Milchglasscheibe der Nachbartür. Der Rotz an der Nase war das Schlimmste. Ich wischte ihn mit dem Ärmel ab und sah den dunklen Streifen auf dem Stoff. Egal.\n\nVor unserer Tür hielt ich den Schlüssel länger in der Hand als nötig. Drinnen lief der Fernseher. Die Nachrichten. Die Stimme des Sprechers war ruhig und gleichmäßig, und für einen Moment wollte ich, dass sie weiterspräche, ohne dass ich eintreten musste. Dann drehte ich den Schlüssel.\n\nDer Geruch kam mir entgegen, bevor ich etwas sah. Zwiebeln, Tomatenmark, heißes Öl in der Pfanne. Der Flur war schmal, die Schuhe standen in zwei Reihen an der Wand, und aus der Küche klang das Klirren eines Löffels gegen einen Topfrand. Ich zog die Jacke aus und hängte sie so an den Haken, dass der schmutzige Ärmel zur Wand zeigte. Ich ging in Socken weiter, leise, wie man in einer Bibliothek geht.\n\n„Geldin mi?\"\n\nDie Stimme meiner Mutter, ohne dass sie sich umdrehte. Sie stand am Herd, den Rücken zu mir, und rührte. Die Bluse klebte zwischen ihren Schulterblättern. Ein dünner Schweißfilm glänzte in ihrem Nacken.\n\n„Evet.\"\n\nIch blieb im Türrahmen. Sie drehte sich halb, nur den Kopf, und ihr Blick streifte mich. Er blieb einen Moment an der Lippe hängen. Nicht länger als ein Herzschlag. Dann rührte sie weiter.\n\n„Geh, wasch dir die Hände.\"\n\nSie sagte es auf Türkisch, dann gleich noch einmal auf Deutsch, als wäre sie sich nicht sicher, welche Sprache heute die richtige war. Sie nahm ein Küchentuch vom Haken neben dem Herd, hielt es unter den Wasserhahn und drückte es mir in die Hand, ohne mich anzusehen. Das Tuch war kühl. Es roch nach Spülmittel.\n\n„Yemek hazır.\"\n\nIch presste das Tuch einen Augenblick an die Lippe und nickte, obwohl sie es nicht sah. Dann ging ich ins Bad. Im Spiegel war es schlimmer, als ich gedacht hatte. Die Lippe war rechts aufgeplatzt, unterhalb des Nasenflügels saß ein Schatten, der in den nächsten Tagen gelb werden würde. Ich wusch mir das Gesicht, vorsichtig, und tupfte mit dem Tuch nach, bis das Blut nur noch ein dunkler Punkt war. Ich kämmte die Haare nach vorn, als könnte das etwas helfen.\n\nAm Tisch saßen schon alle. Der Vater am Kopfende, Hemd offen bis zum zweiten Knopf, die Ärmel hochgekrempelt. Die Hände auf dem Tischtuch, groß, die Knöchel rissig. Meine Schwester stocherte in ihrem Reis. Mein kleiner Bruder kniete auf dem Stuhl und schaute zum Fernseher, der schräg im Wohnzimmer stand, so dass man vom Tisch aus hinübersehen konnte. Im Bild marschierten Soldaten. Dann kam Werbung.\n\nIch setzte mich auf meinen Platz, rechts vom Vater, und zog den Teller näher. Die Mutter stellte die Pfanne ab und schöpfte uns auf. Ich hielt den Kopf gesenkt.\n\n„Ellerini yıkadın mı?\", fragte der Vater, ohne aufzusehen.\n\n„Evet.\"\n\nEr nickte. Seine Gabel bewegte sich gleichmäßig. Er kaute langsam, wie jemand, der gelernt hat, dass Essen eine Arbeit ist wie jede andere. Einmal, nur einmal, hob er den Blick. Er sah auf meine Lippe. Er sah mich an. Es dauerte vielleicht zwei Sekunden, vielleicht drei. Ich spürte, wie meine Hände unter dem Tisch feucht wurden. Dann senkte er den Blick wieder auf den Teller und schob sich einen weiteren Bissen in den Mund.\n\n„Iss\", sagte er.\n\nDas war alles.\n\nMeine Schwester redete über eine Klassenarbeit, über eine Lehrerin, die unfair gewesen sei. Mein Bruder lachte über etwas im Fernseher und bekam eine Ermahnung, nicht mit offenem Mund zu kauen. Die Mutter setzte sich zuletzt, schöpfte sich eine kleine Portion auf und aß halb im Stehen weiter, an die Küchentür gelehnt, als wäre sie nur zu Besuch bei ihrem eigenen Abendessen. Ich aß auf der linken Seite, schluckte, trank Wasser. Das Brot war weich und warm. Ich hätte weinen können, ich weiß nicht, warum.\n\nNach dem Essen stand ich auf, trug meinen Teller in die Küche, stellte ihn ins Becken. Die Mutter war mir gefolgt, die Hände bereits im Wasser. Sie sah mich von der Seite an, kurz, diesen kurzen Blick noch einmal. Ihr Kinn bewegte sich, als wollte sie etwas sagen. Dann begann sie zu spülen.\n\n„Git, ödevini yap.\"\n\nIch ging.\n\nMein Zimmer war schmal, das Bett an der Wand, der Schreibtisch unter dem Fenster. Ich zog die Tür hinter mir zu, ohne sie ganz zu schließen, weil geschlossene Türen in diesem Haus auffielen. Ich legte mich auf den Rücken, angezogen, die Hände auf dem Bauch. Durch die Wand hörte ich den Fernseher. Eine Werbung für Waschmittel. Das Lachen meines Bruders. Das Klirren von Besteck im Becken.\n\nIch lag da und hörte zu. Ich dachte nicht an die Jungen auf dem Schulhof. Nicht an Erhan, der am Zaun gestanden hatte, Hände in den Taschen, nah genug, um zu sehen, zu nah, um nicht zu sehen. Ich dachte an den Blick meines Vaters, der zwei Sekunden gedauert hatte, und an den Blick meiner Mutter, der kürzer gewesen war. Sie hatten es gesehen. Beide. Und sie hatten weitergegessen.\n\nEs war nicht so, dass sie mich nicht liebten. Das wusste ich sogar damals schon. Es war nur so, dass die Liebe in diesem Haus keine Zunge hatte. Sie lief über Teller und feuchte Tücher und gefüllte Schüsseln. Sie lief über den Schlüssel, der morgens neben meinem Platz lag, über die Schuhe, die jemand gerade gerückt hatte, bevor ich sie bemerkte. Sie lief nicht über Fragen.\n\nVielleicht, dachte ich, war es bei ihnen genauso gewesen. Vielleicht hatte auch meinen Vater niemand je gefragt, was passiert war, wenn er als Junge mit einer aufgeplatzten Lippe nach Hause kam. Vielleicht hatte ihm jemand ein Tuch in die Hand gedrückt und gesagt, er solle sich die Hände waschen, und er hatte gelernt, dass das die Form war, in der man getragen wurde. Jetzt reichte er mir dieselbe Form weiter, sauber gefaltet, über den Tisch.\n\nIch drehte mich zur Wand. Ich zog die Knie an. Irgendetwas in mir wollte noch einmal an die Küchentür gehen, noch einmal an seiner Schulter vorbei, langsamer diesmal, damit er das Gesicht genauer sehen musste. Ich blieb liegen. Ich nahm mir vor, das nächste Mal tiefer zu atmen, bevor ich eintrat. Weniger Gesicht zu zeigen. Weniger zu brauchen.\n\nDer Fernseher auf der anderen Seite der Wand wurde lauter, dann wieder leiser. Irgendwann lachte meine Mutter kurz über etwas, was der Vater gesagt hatte. Es klang, als käme es aus einem anderen Haus. Ich legte das feuchte Küchentuch, das ich noch immer in der Faust hielt, auf den Nachttisch. Es hinterließ einen dunklen Kreis auf dem Holz. Ich sah ihn an, bis er trocken war."
+    },
+    {
+      "kind": "create",
+      "callIndex": 6,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Extract scene state from the finished rewrite. Return only structured output matching the requested schema. Target rewrite range: 1200-1600 words. Rules: - rewriteNotes must describe concrete visible revisions or strengt",
+      "textOutput": "{\"rewriteNotes\":[\"Treppenhaus öffnet sensorisch präzise (Rauch, Putzmittel, Eisen auf der Zunge) statt mit Innensicht zu erklären.\",\"Zweisprachigkeit (Türkisch/Deutsch) als konkrete Textur eingebaut, ohne zu exotisieren.\",\"Zwei-Sekunden-Blick des Vaters trägt den Kern der Szene subtextuell, ohne Kommentar.\",\"Mutterfürsorge über Objekte (feuchtes Tuch, Brot, Teller) statt Sprache - erfüllt 'Liebe ohne Zunge'.\",\"Schlussbild mit feuchtem Kreis auf dem Nachttisch liefert konkretes, nicht-lyrisches Schnittbild.\",\"Kurzer essayistischer Reflexionsabsatz über den Vater als Junge grenzt an Erklärprosa - Risiko notiert.\"],\"extractedState\":{\"newCanonFacts\":[\"Die Familie spricht zu Hause Türkisch und Deutsch gemischt.\",\"Der Protagonist hat eine ältere (oder gleichaltrige) Schwester und einen jüngeren Bruder.\",\"Die Familie wohnt mindestens im zweiten Stock eines Mehrparteienhauses.\",\"Eine Nachbarin namens Frau Kowalski wohnt im Parterre.\",\"Der Vater sitzt am Kopfende des Tisches, die Mutter isst oft im Stehen an der Küchentür.\",\"Der Protagonist hat eine aufgeplatzte Oberlippe rechts und einen Bluterguss unter dem Nasenflügel.\"],\"characterStateUpdates\":[\"Erzähler: entscheidet wortlos, künftig 'weniger zu brauchen' und weniger Gesicht zu zeigen.\",\"Erzähler: erkennt, dass Eltern die Verletzung gesehen und bewusst nicht benannt haben.\",\"Vater: hält den Blick auf die Lippe des Sohnes zwei Sekunden, sagt nur 'Iss'.\",\"Mutter: drückt dem Sohn ein feuchtes Küchentuch in die Hand, fragt nicht nach.\",\"Mutter: lacht später kurz am Tisch - erste Andeutung von Leichtigkeit, die den Jungen ausschließt.\",\"Erzähler: formuliert inneres Bild, dass 'Liebe in diesem Haus keine Zunge hatte'.\"],\"openThreadsCreated\":[\"Vaterlinie: Ahnung, dass der Vater selbst nie gefragt wurde und die Form weiterreicht.\",\"Selbstverkleinerung: bewusster Entschluss des Jungen, weniger zu brauchen und sich zu verbergen.\",\"Erhan am Zaun bleibt als ungeklärte Zeugenschaft präsent, auch wenn aktiv weggedacht.\"],\"openThreadsResolved\":[],\"foreshadowingAdded\":[\"Die Notiz 'weniger zu brauchen' deutet auf spätere innere Betäubung und Funktionieren im Jugendalter.\",\"Der Gedanke an den Vater als Junge kündigt eine spätere generationale Rückblende oder Einsicht an.\",\"Das präzise Lesen der Zwei-Sekunden-Blicke deutet die erwachsene Fähigkeit, Menschen zu lesen, voraus.\"],\"continuityRisks\":[\"Alter und genaue Reihenfolge der Geschwister bleiben unbestimmt (Schwester stochert im Reis, Bruder kniet kindlich).\",\"Stockwerk der Wohnung: Protagonist hält im zweiten Stock, ob die Familienwohnung dort oder höher liegt, bleibt offen.\",\"Reflexionsabsatz über 'Liebe ohne Zunge' tangiert Guardrail gegen essayistische Erklärprosa.\",\"Sprache der Eltern schwankt zwischen Türkisch und Deutsch - Konvention für künftige Szenen noch nicht"
+    },
+    {
+      "kind": "parse",
+      "callIndex": 5,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Extract scene state from the finished rewrite. Return only structured output matching the requested schema. Target rewrite range: 1200-1600 words. Rules: - rewriteNotes must describe concrete visible revisions or strengt",
+      "textOutput": "",
+      "error": "Error: Failed to parse structured output: Error: Failed to parse structured output as JSON: Unterminated string in JSON at position 2800 (line 1 column 2801)\n    at parseOutputFormat (/Users/bucci/EMBER/node_modules/@anthropic-ai/sdk/src/lib/parser.ts:123:11)\n    at <anonymous> (/Users/bucci/EMBER/node_modules/@anthropic-ai/sdk/src/lib/parser.ts:84:30)\n    at Array.map (<anonymous>)\n    at parseMessage (/Users/bucci/EMBER/node_modules/@anthropic-ai/sdk/src/lib/parser.ts:81:102)\n    at <anonymous> (/Users/bucci/EMBER/node_modules/@anthropic-ai/sdk/src/resources/messages/messages.ts:129:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Messages.patchedParse (/Users/bucci/EMBER/.tmp_book_job_probe.ts:48:21)\n    at async requestAnthropicStructured (/Users/bucci/EMBER/lib/server/book-job-service.ts:1160:21)\n    at async runScenePipeline (/Users/bucci/EMBER/lib/server/book-job-service.ts:707:30)\n    at async generateBookDraftJob (/Users/bucci/EMBER/lib/server/book-job-service.ts:225:13)"
+    },
+    {
+      "kind": "create",
+      "callIndex": 7,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Extract scene state from the finished rewrite. Return only structured output matching the requested schema. Target rewrite range: 1200-1600 words. Rules: - rewriteNotes must describe concrete visible revisions or strengt",
+      "textOutput": "{\"rewriteNotes\":[\"Eröffnung im Treppenhaus nutzt konkrete sensorische Details (Putzmittel, Milchglas, Eisengeschmack) statt Innenschau.\",\"Zweisprachigkeit (Türkisch/Deutsch) wird szenisch eingebettet, nicht erklärt.\",\"Der Blick des Vaters wird als präziser, gezählter Moment gesetzt (zwei, vielleicht drei Sekunden) und trägt den Subtext der Szene.\",\"Fürsorge der Mutter läuft konsequent über Handlung: feuchtes Tuch, Essen aufschöpfen, halb im Stehen essen.\",\"Schlussbild des feuchten Tuchs auf dem Nachttisch liefert ein stilles, konkretes Objekt statt Reflexion.\",\"Kurzer Rückbezug zu Erhan am Zaun verbindet sauber zur vorigen Szene, ohne zu wiederholen.\",\"Die Einsicht über 'Liebe ohne Zunge' kippt leicht ins Essayistische, bleibt aber durch konkrete Beispiele (Teller, Schlüssel, Schuhe) geerdet.\",\"Entscheidung 'weniger zu brauchen' als innerer Schnitt am Ende ist wortlos und körperlich verankert.\"],\"extractedState\":{\"newCanonFacts\":[\"Die Familie wohnt im zweiten Stock eines Mietshauses.\",\"Eine Nachbarin namens Frau Kowalski wohnt im Parterre.\",\"Der Junge hat eine ältere Schwester und einen jüngeren Bruder.\",\"Am Esstisch sitzt der Vater am Kopfende, der Junge rechts von ihm.\",\"Die Familie spricht zu Hause Türkisch und Deutsch gemischt.\",\"Der Fernseher steht schräg im Wohnzimmer, vom Esstisch aus sichtbar.\",\"Die Verletzung des Jungen: aufgeplatzte Lippe rechts, Bluterguss unter dem Nasenflügel.\"],\"characterStateUpdates\":[{\"character\":\"Erzähler\",\"inner_shift\":\"Begreift, dass gesehen werden und gefragt werden zwei verschiedene Dinge sind; fasst den wortlosen Entschluss, weniger zu brauchen.\",\"agenda\":\"Weniger Gesicht zeigen, weniger brauchen, Verletzung verbergen.\",\"snapshot\":\"Körperlich versehrt, emotional zurückgezogen, innerlich härter werdend.\"},{\"character\":\"Vater\",\"inner_shift\":\"Sieht die Verletzung, wählt aber Schweigen und Routine als Form der Anwesenheit.\",\"agenda\":\"Abendordnung halten, Sohn über Funktion (Iss) adressieren.\",\"snapshot\":\"Still, kontrolliert, erschöpft präsent.\"},{\"character\":\"Mutter\",\"inner_shift\":\"Registriert die Verletzung, übersetzt Fürsorge in Handlung (Tuch, Essen) statt Sprache.\",\"agenda\":\"Familienrhythmus am Laufen halten, Nähe ohne Frage anbieten.\",\"snapshot\":\"Beweglich, knapp, halb im Stehen essend.\"}],\"openThreadsCreated\":[\"Liebe ohne Zunge: Fürsorge der Familie läuft über Objekte und Handlungen, nie über Fragen.\",\"Weitergegebene Form: Vermutung, dass der Vater dieselbe wortlose Form selbst einmal empfangen hat.\",\"Entschluss weniger zu brauchen: der Junge beginnt, sich emotional zurückzunehmen.\"],\"openThreadsResolved\":[],\"foreshadowingAdded\":[\"Das Motiv des präzisen Lesens von Blicken (zwei Sekunden des Vaters, kurzer Blick der Mutter) deutet die spätere Fähigkeit des Erzählers an, Menschen zu lesen.\",\"Der dunkle Kreis des feuchten Tuchs auf dem Holz als stumm"
+    },
+    {
+      "kind": "create",
+      "callIndex": 8,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Repair the following malformed or schema-violating output into one valid JSON object. Return JSON only. Use double-quoted property names and string values. Do not add markdown fences or commentary. Contract: {\"rewriteNot",
+      "textOutput": "{\"rewriteNotes\":[\"Eröffnung im Treppenhaus nutzt konkrete sensorische Details (Putzmittel, Milchglas, Eisengeschmack) statt Innenschau.\",\"Zweisprachigkeit (Türkisch/Deutsch) wird szenisch eingebettet, nicht erklärt.\",\"Der Blick des Vaters wird als präziser, gezählter Moment gesetzt (zwei, vielleicht drei Sekunden) und trägt den Subtext der Szene.\",\"Fürsorge der Mutter läuft konsequent über Handlung: feuchtes Tuch, Essen aufschöpfen, halb im Stehen essen.\",\"Schlussbild des feuchten Tuchs auf dem Nachttisch liefert ein stilles, konkretes Objekt statt Reflexion.\",\"Kurzer Rückbezug zu Erhan am Zaun verbindet sauber zur vorigen Szene, ohne zu wiederholen.\",\"Die Einsicht über 'Liebe ohne Zunge' kippt leicht ins Essayistische, bleibt aber durch konkrete Beispiele (Teller, Schlüssel, Schuhe) geerdet.\",\"Entscheidung 'weniger zu brauchen' als innerer Schnitt am Ende ist wortlos und körperlich verankert.\"],\"extractedState\":{\"newCanonFacts\":[\"Die Familie wohnt im zweiten Stock eines Mietshauses.\",\"Eine Nachbarin namens Frau Kowalski wohnt im Parterre.\",\"Der Junge hat eine ältere Schwester und einen jüngeren Bruder.\",\"Am Esstisch sitzt der Vater am Kopfende, der Junge rechts von ihm.\",\"Die Familie spricht zu Hause Türkisch und Deutsch gemischt.\",\"Der Fernseher steht schräg im Wohnzimmer, vom Esstisch aus sichtbar.\",\"Die Verletzung des Jungen: aufgeplatzte Lippe rechts, Bluterguss unter dem Nasenflügel.\"],\"characterStateUpdates\":[{\"character\":\"Erzähler\",\"inner_shift\":\"Begreift, dass gesehen werden und gefragt werden zwei verschiedene Dinge sind; fasst den wortlosen Entschluss, weniger zu brauchen.\",\"agenda\":\"Weniger Gesicht zeigen, weniger brauchen, Verletzung verbergen.\",\"snapshot\":\"Körperlich versehrt, emotional zurückgezogen, innerlich härter werdend.\"},{\"character\":\"Vater\",\"inner_shift\":\"Sieht die Verletzung, wählt aber Schweigen und Routine als Form der Anwesenheit.\",\"agenda\":\"Abendordnung halten, Sohn über Funktion (Iss) adressieren.\",\"snapshot\":\"Still, kontrolliert, erschöpft präsent.\"},{\"character\":\"Mutter\",\"inner_shift\":\"Registriert die Verletzung, übersetzt Fürsorge in Handlung (Tuch, Essen) statt Sprache.\",\"agenda\":\"Familienrhythmus am Laufen halten, Nähe ohne Frage anbieten.\",\"snapshot\":\"Beweglich, knapp, halb im Stehen essend.\"}],\"openThreadsCreated\":[\"Liebe ohne Zunge: Fürsorge der Familie läuft über Objekte und Handlungen, nie über Fragen.\",\"Weitergegebene Form: Vermutung, dass der Vater dieselbe wortlose Form selbst einmal empfangen hat.\",\"Entschluss weniger zu brauchen: der Junge beginnt, sich emotional zurückzunehmen.\"],\"openThreadsResolved\":[],\"foreshadowingAdded\":[\"Das Motiv des präzisen Lesens von Blicken (zwei Sekunden des Vaters, kurzer Blick der Mutter) deutet die spätere Fähigkeit des Erzählers an, Menschen zu lesen.\",\"Der dunkle Kreis des feuchten Tuchs auf dem Holz als stumm"
+    },
+    {
+      "kind": "create",
+      "callIndex": 10,
+      "model": "claude-haiku-4-5-20251001",
+      "promptPreview": "Audit this scene for continuity and style drift only. Return only structured output matching the requested schema. Target rewrite range: 1200-1600 words. Do not rewrite the scene. Only flag issues that matter for canon o",
+      "textOutput": "{\"continuityRisks\": [\"Erhan wird in der Rewrite-Version erstmals erwähnt (‚Erhan, der am Zaun gestanden hatte'), existiert aber nicht in Draft-Version; unklar, ob diese Figur aus Szene 1 stammt oder neue Exposition ist.\", \"Vater-Monolog im Schluss (‚Vielleicht hatte auch meinen Vater niemand je gefragt...') führt spekulatives inneres Leben des Vaters ein, das weder in Draft noch in Codex verankert ist und möglicherweise zukünftige Vater-Szenen kollidiert.\", \"Küchentuch-Motiv verdoppelt sich in Rewrite: erst Mutter drückt es in Hand, später wird es auf Nachttisch gelegt mit ‚dunklem Kreis'; unklar, ob gleiches oder anderes Tuch gemeint ist.\", \"Schwester erhält in Rewrite spezifisches Redethema (‚eine Lehrerin, die unfair gewesen sei'), das in Draft fehlt und möglicherweise zu ihrer Charakterisierung passt oder nicht.\"], \"styleDriftNotes\": [\"Rewrite führt metaphorische Tiefe ein (‚feuchte Tücher und gefüllte Schüsseln' als Formen von Liebe), die vorher sparsamer war; Gefahr, dass Subtext-Versprechen zu explizit wird.\", \"Satz ‚Es hinterließ einen dunklen Kreis auf dem Holz' tendiert zu Symbolik hin, während Rest der Szene körperlich-funktional bleibt; Gleichgewicht prüfen.\", \"Vater-Innenleben und generationales Trauma-Echo wirken essayistisch gegen Writer Constitution (‚Subtext vor Erklärung'); könnte als versteckte Erklärsprosa lesbar sein.\", \"Rewrite dehnt finale innere Regung (‚Irgendetwas in mir wollte noch einmal...') zu ausgeführtem Gedankengang aus; ursprüngliche Knappheit des Moments verdünnt sich.\", \"Tonale Verschiebung im letzten Absatz: ‚Ich sah ihn an, bis er trocken war' wirkt literarischer als der nüchterne Grundton der Szene; Check gegen Character Voice.\"]}"
+    },
+    {
+      "kind": "parse",
+      "callIndex": 9,
+      "model": "claude-haiku-4-5-20251001",
+      "promptPreview": "Audit this scene for continuity and style drift only. Return only structured output matching the requested schema. Target rewrite range: 1200-1600 words. Do not rewrite the scene. Only flag issues that matter for canon o",
+      "textOutput": "{\"continuityRisks\": [\"Erhan wird in der Rewrite-Version erstmals erwähnt (‚Erhan, der am Zaun gestanden hatte'), existiert aber nicht in Draft-Version; unklar, ob diese Figur aus Szene 1 stammt oder neue Exposition ist.\", \"Vater-Monolog im Schluss (‚Vielleicht hatte auch meinen Vater niemand je gefragt...') führt spekulatives inneres Leben des Vaters ein, das weder in Draft noch in Codex verankert ist und möglicherweise zukünftige Vater-Szenen kollidiert.\", \"Küchentuch-Motiv verdoppelt sich in Rewrite: erst Mutter drückt es in Hand, später wird es auf Nachttisch gelegt mit ‚dunklem Kreis'; unklar, ob gleiches oder anderes Tuch gemeint ist.\", \"Schwester erhält in Rewrite spezifisches Redethema (‚eine Lehrerin, die unfair gewesen sei'), das in Draft fehlt und möglicherweise zu ihrer Charakterisierung passt oder nicht.\"], \"styleDriftNotes\": [\"Rewrite führt metaphorische Tiefe ein (‚feuchte Tücher und gefüllte Schüsseln' als Formen von Liebe), die vorher sparsamer war; Gefahr, dass Subtext-Versprechen zu explizit wird.\", \"Satz ‚Es hinterließ einen dunklen Kreis auf dem Holz' tendiert zu Symbolik hin, während Rest der Szene körperlich-funktional bleibt; Gleichgewicht prüfen.\", \"Vater-Innenleben und generationales Trauma-Echo wirken essayistisch gegen Writer Constitution (‚Subtext vor Erklärung'); könnte als versteckte Erklärsprosa lesbar sein.\", \"Rewrite dehnt finale innere Regung (‚Irgendetwas in mir wollte noch einmal...') zu ausgeführtem Gedankengang aus; ursprüngliche Knappheit des Moments verdünnt sich.\", \"Tonale Verschiebung im letzten Absatz: ‚Ich sah ihn an, bis er trocken war' wirkt literarischer als der nüchterne Grundton der Szene; Check gegen Character Voice.\"]}",
+      "parsedOutput": {
+        "continuityRisks": [
+          "Erhan wird in der Rewrite-Version erstmals erwähnt (‚Erhan, der am Zaun gestanden hatte'), existiert aber nicht in Draft-Version; unklar, ob diese Figur aus Szene 1 stammt oder neue Exposition ist.",
+          "Vater-Monolog im Schluss (‚Vielleicht hatte auch meinen Vater niemand je gefragt...') führt spekulatives inneres Leben des Vaters ein, das weder in Draft noch in Codex verankert ist und möglicherweise zukünftige Vater-Szenen kollidiert.",
+          "Küchentuch-Motiv verdoppelt sich in Rewrite: erst Mutter drückt es in Hand, später wird es auf Nachttisch gelegt mit ‚dunklem Kreis'; unklar, ob gleiches oder anderes Tuch gemeint ist.",
+          "Schwester erhält in Rewrite spezifisches Redethema (‚eine Lehrerin, die unfair gewesen sei'), das in Draft fehlt und möglicherweise zu ihrer Charakterisierung passt oder nicht."
+        ],
+        "styleDriftNotes": [
+          "Rewrite führt metaphorische Tiefe ein (‚feuchte Tücher und gefüllte Schüsseln' als Formen von Liebe), die vorher sparsamer war; Gefahr, dass Subtext-Versprechen zu explizit wird.",
+          "Satz ‚Es hinterließ einen dunklen Kreis auf dem Holz' tendiert zu Symbolik hin, während Rest der Szene körperlich-funktional bleibt; Gleichgewicht prüfen.",
+          "Vater-Innenleben und generationales Trauma-Echo wirken essayistisch gegen Writer Constitution (‚Subtext vor Erklärung'); könnte als versteckte Erklärsprosa lesbar sein.",
+          "Rewrite dehnt finale innere Regung (‚Irgendetwas in mir wollte noch einmal...') zu ausgeführtem Gedankengang aus; ursprüngliche Knappheit des Moments verdünnt sich.",
+          "Tonale Verschiebung im letzten Absatz: ‚Ich sah ihn an, bis er trocken war' wirkt literarischer als der nüchterne Grundton der Szene; Check gegen Character Voice."
+        ]
+      }
+    },
+    {
+      "kind": "create",
+      "callIndex": 12,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Evaluate the final scene quality. Return only structured output matching the requested schema. Score from 0 to 10. wordTargetMin must equal 1200. wordTargetMax must equal 1600. wordActual must equal the actual word count",
+      "textOutput": "{\"wordTargetMin\":1200,\"wordTargetMax\":1600,\"wordActual\":1211,\"hookScore\":8,\"tensionScore\":8,\"dialogueScore\":8,\"specificityScore\":9,\"germanCleanlinessScore\":9,\"continuityScore\":7,\"marketFitScore\":8,\"povDisciplineScore\":9,\"readabilityScore\":9,\"issues\":[\"Vater-Spekulation ('Vielleicht hatte auch meinen Vater niemand je gefragt...') kippt kurz ins Essayistische und nimmt späteren Vater-Szenen Raum.\",\"Küchentuch-Motiv verdoppelt sich (Mutter drückt es in die Hand, später auf Nachttisch) - Konsistenz prüfen: dasselbe Tuch?\",\"Erhan wird knapp erwähnt; falls in Szene 1 nicht namentlich etabliert, Name hier redundant oder unklar.\",\"Schlussbild mit 'dunklem Kreis' leicht symbolschwer - Autorenkonstitution 'Subtext vor Erklärung' am Rand.\",\"Satz 'die Liebe in diesem Haus keine Zunge hatte' ist der lyrischste Moment und steht in Spannung zur 'nüchtern-präzise'-Vorgabe.\"]}"
+    },
+    {
+      "kind": "parse",
+      "callIndex": 11,
+      "model": "claude-opus-4-7",
+      "promptPreview": "Evaluate the final scene quality. Return only structured output matching the requested schema. Score from 0 to 10. wordTargetMin must equal 1200. wordTargetMax must equal 1600. wordActual must equal the actual word count",
+      "textOutput": "{\"wordTargetMin\":1200,\"wordTargetMax\":1600,\"wordActual\":1211,\"hookScore\":8,\"tensionScore\":8,\"dialogueScore\":8,\"specificityScore\":9,\"germanCleanlinessScore\":9,\"continuityScore\":7,\"marketFitScore\":8,\"povDisciplineScore\":9,\"readabilityScore\":9,\"issues\":[\"Vater-Spekulation ('Vielleicht hatte auch meinen Vater niemand je gefragt...') kippt kurz ins Essayistische und nimmt späteren Vater-Szenen Raum.\",\"Küchentuch-Motiv verdoppelt sich (Mutter drückt es in die Hand, später auf Nachttisch) - Konsistenz prüfen: dasselbe Tuch?\",\"Erhan wird knapp erwähnt; falls in Szene 1 nicht namentlich etabliert, Name hier redundant oder unklar.\",\"Schlussbild mit 'dunklem Kreis' leicht symbolschwer - Autorenkonstitution 'Subtext vor Erklärung' am Rand.\",\"Satz 'die Liebe in diesem Haus keine Zunge hatte' ist der lyrischste Moment und steht in Spannung zur 'nüchtern-präzise'-Vorgabe.\"]}",
+      "parsedOutput": {
+        "wordTargetMin": 1200,
+        "wordTargetMax": 1600,
+        "wordActual": 1211,
+        "hookScore": 8,
+        "tensionScore": 8,
+        "dialogueScore": 8,
+        "specificityScore": 9,
+        "germanCleanlinessScore": 9,
+        "continuityScore": 7,
+        "marketFitScore": 8,
+        "povDisciplineScore": 9,
+        "readabilityScore": 9,
+        "issues": [
+          "Vater-Spekulation ('Vielleicht hatte auch meinen Vater niemand je gefragt...') kippt kurz ins Essayistische und nimmt späteren Vater-Szenen Raum.",
+          "Küchentuch-Motiv verdoppelt sich (Mutter drückt es in die Hand, später auf Nachttisch) - Konsistenz prüfen: dasselbe Tuch?",
+          "Erhan wird knapp erwähnt; falls in Szene 1 nicht namentlich etabliert, Name hier redundant oder unklar.",
+          "Schlussbild mit 'dunklem Kreis' leicht symbolschwer - Autorenkonstitution 'Subtext vor Erklärung' am Rand.",
+          "Satz 'die Liebe in diesem Haus keine Zunge hatte' ist der lyrischste Moment und steht in Spannung zur 'nüchtern-präzise'-Vorgabe."
+        ]
+      }
+    }
+  ]
+}

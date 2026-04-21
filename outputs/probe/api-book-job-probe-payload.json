@@ -1,0 +1,150 @@
+{
+  "sceneId": "scene-family-intro-test",
+  "packet": {
+    "sceneId": "scene-family-intro-test",
+    "stablePrefix": {
+      "premise": "Ein türkisch-alevitischer Junge wächst im deutschen Immigrantenviertel auf und lernt früh, dass Zugehörigkeit jederzeit entzogen werden kann.",
+      "readerPromise": "Der Leser erlebt die Kindheit und Jugend eines Jungen, der Menschen präzise lesen lernt, weil seine eigene Verletzlichkeit nirgends sicher aufgehoben ist.",
+      "endingPromise": "Die Geschichte führt zu einem erwachsenen Erzähler, der den stillen Schmerz anderer erkennt, weil er den eigenen zu früh verbergen musste.",
+      "thematicCore": "Wir sehen den Schmerz des Menschen neben uns nicht und urteilen, bevor wir fragen.",
+      "storyArchitecture": [
+        "Kindheit im Viertel: frühe Prägungen durch Familie, Herkunft und Gewalt.",
+        "Jugend und frühes Erwachsensein: Funktionieren, Anpassung, innere Betäubung.",
+        "Spätere Einsicht: Menschen lesen können, weil der eigene Schmerz nie getragen wurde."
+      ],
+      "categoryLane": "Autofiction | Entwicklungsroman | Memoir",
+      "marketHook": "Ein Mann, der Menschen lesen kann, weil niemand je gelernt hat, seinen eigenen Schmerz mit ihm zu tragen.",
+      "publishingGuardrails": [
+        "Keine essayistische Erklärprosa.",
+        "Keine künstliche Exposition.",
+        "Konkrete Beobachtung vor Abstraktion."
+      ],
+      "writerConstitution": [
+        "Nüchtern und präzise statt lyrisch überladen.",
+        "Szenisch, körperlich, spannungsnah.",
+        "Subtext vor Erklärung."
+      ]
+    },
+    "dynamicContext": {
+      "actTitle": "Kapitel 1",
+      "chapterTitle": "Kapitel 1 - Zuhause nach der Schule",
+      "sceneTitle": "Szene 2 - Zuhause nach der Schule",
+      "sceneSummary": "Nach der Schulhof-Prügelei kommt der Junge nach Hause in die Wohnung der Familie im Immigrantenviertel. Zum ersten Mal lernen die Leser Mutter, Vater, Geschwister und die Atmosphäre der Familie kennen. Niemand fragt ihn wirklich nach dem, was passiert ist. Die Szene zeigt, dass auch Zuhause vieles über Funktion, Routine und Schweigen läuft.",
+      "sceneExcerpt": "Der Junge kommt verletzt nach Hause, hört den Fernseher, riecht Essen aus der Küche und merkt, dass auch in der Familie vieles über Schweigen und Weiterfunktionieren läuft.",
+      "sceneCardOutline": [
+        "Treppenhaus und Wohnungstür: der Körper bringt den Schlag mit nach Hause.",
+        "Flur und Küche: die Mutter registriert ihn, fragt aber nicht.",
+        "Tisch mit Vater und Geschwistern: Alltag läuft weiter, niemand sieht genau hin.",
+        "Zimmer und Schluss: er begreift, dass Zuhause nicht das Gegenteil vom Schulhof ist, nur leiser."
+      ],
+      "contextPackId": "manual-family-intro-opus-probe",
+      "memorySyncedAt": "2026-04-20T00:00:00.000Z",
+      "previousBeats": [
+        {
+          "sceneId": "scene-schoolyard-beating",
+          "sceneTitle": "Szene 1 - Schulhof",
+          "summary": "Auf dem Schulhof wird der Junge verprügelt, weil andere ihn für einen Kurden halten; Erhan steht nah genug, um alles zu sehen, aber nicht nah genug, um einzugreifen.",
+          "excerpt": "Er lernt, dass Zugehörigkeit im Viertel entzogen und verteilt wird und dass selbst Freundschaft keine Sicherheit garantiert."
+        }
+      ],
+      "nextBeat": null,
+      "relevantCodex": [
+        {
+          "id": "canon-protagonist",
+          "title": "Protagonist",
+          "summary": "Türkischer Alevit aus Kars, aufgewachsen in einem deutschen Immigrantenviertel. Immer zwischen Zugehörigkeiten. Liest Menschen präzise, fühlt sich selbst aber nirgends sicher."
+        },
+        {
+          "id": "canon-vater",
+          "title": "Vater",
+          "summary": "Arbeitet hart, ist präsent, aber emotional still. Reagiert eher über Funktion und Ordnung als über offene Sprache."
+        },
+        {
+          "id": "canon-mutter",
+          "title": "Mutter",
+          "summary": "Trägt den Familienalltag über Bewegung, Arbeit und knappe Fürsorge. Registriert mehr, als sie ausspricht."
+        },
+        {
+          "id": "canon-wohnung",
+          "title": "Wohnung im Viertel",
+          "summary": "Enge Familienwohnung im Immigrantenviertel; Gerüche, Geräusche und Routinen tragen den Alltag, ohne ihn weich zu machen."
+        }
+      ],
+      "relevantCharacterStates": [
+        {
+          "id": "char-protagonist",
+          "characterName": "Erzähler",
+          "currentState": "Kommt verletzt und beschämt nach Hause und will nicht auffallen.",
+          "innerShift": "Spürt, dass er zu Hause nicht gefragt wird, obwohl etwas gesehen wird.",
+          "agenda": "Die Verletzung verbergen und trotzdem irgendwo gehalten werden.",
+          "snapshots": [
+            {
+              "id": "snap-1",
+              "scope": "baseline",
+              "sourceLabel": "Baseline",
+              "currentState": "Zwischen Zugehörigkeiten und früh auf Alarm.",
+              "capturedAt": "2026-04-20T00:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "id": "char-vater",
+          "characterName": "Vater",
+          "currentState": "Zu Hause, erschöpft, funktional präsent, aber sprachlich zurückgenommen.",
+          "innerShift": "Registriert den Sohn, ohne offen nachzufragen.",
+          "agenda": "Abendroutine und Ordnung halten.",
+          "snapshots": [
+            {
+              "id": "snap-2",
+              "scope": "baseline",
+              "sourceLabel": "Baseline",
+              "currentState": "Still, kontrolliert, arbeitend.",
+              "capturedAt": "2026-04-20T00:00:00.000Z"
+            }
+          ]
+        },
+        {
+          "id": "char-mutter",
+          "characterName": "Mutter",
+          "currentState": "In Küchenbewegung, fürsorglich, aber knapp und funktional.",
+          "innerShift": "Sie sieht etwas und lässt es zugleich im Ablauf verschwinden.",
+          "agenda": "Essen, Rhythmus und Familie am Laufen halten.",
+          "snapshots": [
+            {
+              "id": "snap-3",
+              "scope": "baseline",
+              "sourceLabel": "Baseline",
+              "currentState": "Trägt den Alltag über Handlung statt Worte.",
+              "capturedAt": "2026-04-20T00:00:00.000Z"
+            }
+          ]
+        }
+      ],
+      "activeThreads": [
+        {
+          "id": "thread-1",
+          "label": "Zugehörigkeit",
+          "detail": "Der Junge wird im Viertel falsch gelesen und erlebt Zugehörigkeit als etwas, das andere über ihn entscheiden."
+        },
+        {
+          "id": "thread-2",
+          "label": "Tragen ohne Frage",
+          "detail": "Niemand trägt den Schmerz aktiv mit; der Junge lernt, dass selbst Fürsorge oft ohne Sprache und ohne Anhalten kommt."
+        }
+      ],
+      "variables": []
+    },
+    "extractorTemplate": {
+      "new_canon_facts": [],
+      "character_state_updates": [],
+      "open_threads_created": [],
+      "open_threads_resolved": [],
+      "foreshadowing_added": [],
+      "continuity_risks": [],
+      "style_drift_notes": []
+    }
+  },
+  "provider": "anthropic",
+  "targetSceneWordsMin": 1200,
+  "targetSceneWordsMax": 1600
+}
