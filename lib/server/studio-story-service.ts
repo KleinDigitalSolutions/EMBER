@@ -3,6 +3,7 @@ import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
+  normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
   normalizeAssistantWorkspace,
   type BookDraftJob,
@@ -383,6 +384,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               excerpt: (row.excerpt as string) ?? "",
               orderLabel: (row.order_label as string) ?? "",
               chapterGoal: (row.chapter_goal as string) ?? "",
+              directives: normalizeBookSceneCardDirectives(row.directives),
               outline: normalizeStringArray(row.outline)
             }
           }),
@@ -501,6 +503,57 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
 export async function saveStudioStory(story: StoryDocument) {
   const nextStory = syncStoryBookArtifacts(story)
   const ownerProfileId = await loadWorkspaceOwnerId(nextStory.workspaceId)
+  const [
+    existingWorldBibleCount,
+    existingCharacterStateCount,
+    existingWriterRuleCount,
+    existingCanonFactCount,
+    existingOpenThreadCount,
+    existingSceneCardCount,
+    existingContextPackCount,
+    existingDraftJobCount
+  ] = await Promise.all([
+    countRowsByStoryId("world_bible_entries", nextStory.id),
+    countRowsByStoryId("book_character_states", nextStory.id),
+    countRowsByStoryId("book_writer_rules", nextStory.id),
+    countRowsByStoryId("book_canon_facts", nextStory.id),
+    countRowsByStoryId("book_open_threads", nextStory.id),
+    countRowsByStoryId("book_scene_cards", nextStory.id),
+    countRowsByStoryId("book_context_packs", nextStory.id),
+    countRowsByStoryId("book_draft_jobs", nextStory.id)
+  ])
+  const preserveWorldBible =
+    nextStory.worldBible.length === 0 && existingWorldBibleCount > 0
+  const preserveDraftJobs =
+    nextStory.book.draftEngine.jobs.length === 0 && existingDraftJobCount > 0
+  const preserveWriterRules =
+    nextStory.book.writerConstitution.length === 0 && existingWriterRuleCount > 0
+  const preserveSceneCards =
+    nextStory.book.memory.sceneCards.length === 0 && existingSceneCardCount > 0
+  const preserveCanonFacts =
+    existingCanonFactCount > 0 &&
+    (nextStory.book.memory.canonLedger.length === 0 || preserveWorldBible || preserveDraftJobs)
+  const preserveOpenThreads =
+    existingOpenThreadCount > 0 &&
+    (nextStory.book.memory.openThreads.length === 0 || preserveDraftJobs)
+  const preserveCharacterLedger =
+    existingCharacterStateCount > 0 &&
+    (
+      nextStory.book.memory.characterLedger.length === 0 ||
+      preserveWorldBible ||
+      preserveCanonFacts ||
+      preserveOpenThreads ||
+      preserveDraftJobs
+    )
+  const preserveContextPacks =
+    existingContextPackCount > 0 &&
+    (
+      nextStory.book.memory.contextPacks.length === 0 ||
+      preserveCanonFacts ||
+      preserveCharacterLedger ||
+      preserveOpenThreads ||
+      preserveSceneCards
+    )
   const meta = {
     ...nextStory.meta,
     assistant: nextStory.assistant,
@@ -547,7 +600,16 @@ export async function saveStudioStory(story: StoryDocument) {
     throw new Error(`Book Project Upsert: ${bookProjectUpsert.error.message}`)
   }
 
-  await deleteStoryGraph(nextStory.id)
+  await deleteStoryGraph(nextStory.id, {
+    preserveWorldBible,
+    preserveCharacterLedger,
+    preserveWriterRules,
+    preserveCanonFacts,
+    preserveOpenThreads,
+    preserveSceneCards,
+    preserveContextPacks,
+    preserveDraftJobs
+  })
 
   const acts = nextStory.acts.map(function (act) {
     return {
@@ -780,6 +842,7 @@ export async function saveStudioStory(story: StoryDocument) {
       excerpt: sceneCard.excerpt,
       order_label: sceneCard.orderLabel,
       chapter_goal: sceneCard.chapterGoal,
+      directives: sceneCard.directives,
       outline: sceneCard.outline
     }
   })
@@ -856,19 +919,35 @@ export async function saveStudioStory(story: StoryDocument) {
   await insertRows("choices", choices)
   await insertRows("choice_conditions", choiceConditions)
   await insertRows("choice_effects", choiceEffects)
-  await insertRows("world_bible_entries", worldBibleEntries)
-  await insertRows("book_writer_rules", bookWriterRules)
-  await insertRows("book_canon_facts", bookCanonFacts)
-  await insertRows("book_canon_fact_scene_refs", bookCanonFactSceneRefs)
-  await insertRows("book_character_states", bookCharacterStates)
-  await insertRows("book_character_state_snapshots", bookCharacterStateSnapshots)
-  await insertRows("book_open_threads", bookOpenThreads)
-  await insertRows("book_scene_cards", bookSceneCards)
-  await insertRows("book_context_packs", bookContextPacks)
-  await insertRows("book_context_pack_canon_facts", bookContextPackCanonFacts)
-  await insertRows("book_context_pack_character_states", bookContextPackCharacterStates)
-  await insertRows("book_context_pack_threads", bookContextPackThreads)
-  await insertRows("book_draft_jobs", bookDraftJobs)
+  if (!preserveWorldBible && worldBibleEntries.length > 0) {
+    await upsertRows("world_bible_entries", worldBibleEntries, "id")
+  }
+  if (!preserveWriterRules) {
+    await insertRows("book_writer_rules", bookWriterRules)
+  }
+  if (!preserveCanonFacts) {
+    await upsertRows("book_canon_facts", bookCanonFacts, "id")
+    await insertRows("book_canon_fact_scene_refs", bookCanonFactSceneRefs)
+  }
+  if (!preserveCharacterLedger && bookCharacterStates.length > 0) {
+    await upsertRows("book_character_states", bookCharacterStates, "id")
+    await upsertRows("book_character_state_snapshots", bookCharacterStateSnapshots, "id")
+  }
+  if (!preserveOpenThreads) {
+    await upsertRows("book_open_threads", bookOpenThreads, "id")
+  }
+  if (!preserveSceneCards) {
+    await insertRows("book_scene_cards", bookSceneCards)
+  }
+  if (!preserveContextPacks) {
+    await upsertRows("book_context_packs", bookContextPacks, "id")
+    await insertRows("book_context_pack_canon_facts", bookContextPackCanonFacts)
+    await insertRows("book_context_pack_character_states", bookContextPackCharacterStates)
+    await insertRows("book_context_pack_threads", bookContextPackThreads)
+  }
+  if (!preserveDraftJobs) {
+    await upsertRows("book_draft_jobs", bookDraftJobs, "id")
+  }
 
   return nextStory
 }
@@ -1169,16 +1248,44 @@ function buildBootstrapStory(workspaceId: string): StoryDocument {
   }
 }
 
-async function deleteStoryGraph(storyId: string) {
-  await deleteRows("book_draft_jobs", storyId)
-  await deleteRows("book_context_packs", storyId)
-  await deleteRows("book_scene_cards", storyId)
-  await deleteRows("book_open_threads", storyId)
-  await deleteRows("book_character_state_snapshots", storyId)
-  await deleteRows("book_character_states", storyId)
-  await deleteRows("book_canon_facts", storyId)
-  await deleteRows("book_writer_rules", storyId)
-  await deleteRows("world_bible_entries", storyId)
+async function deleteStoryGraph(
+  storyId: string,
+  options?: {
+    preserveWorldBible?: boolean
+    preserveCharacterLedger?: boolean
+    preserveWriterRules?: boolean
+    preserveCanonFacts?: boolean
+    preserveOpenThreads?: boolean
+    preserveSceneCards?: boolean
+    preserveContextPacks?: boolean
+    preserveDraftJobs?: boolean
+  }
+) {
+  if (!options?.preserveDraftJobs) {
+    await deleteRows("book_draft_jobs", storyId)
+  }
+  if (!options?.preserveContextPacks) {
+    await deleteRows("book_context_packs", storyId)
+  }
+  if (!options?.preserveSceneCards) {
+    await deleteRows("book_scene_cards", storyId)
+  }
+  if (!options?.preserveOpenThreads) {
+    await deleteRows("book_open_threads", storyId)
+  }
+  if (!options?.preserveCharacterLedger) {
+    await deleteRows("book_character_state_snapshots", storyId)
+    await deleteRows("book_character_states", storyId)
+  }
+  if (!options?.preserveCanonFacts) {
+    await deleteRows("book_canon_facts", storyId)
+  }
+  if (!options?.preserveWriterRules) {
+    await deleteRows("book_writer_rules", storyId)
+  }
+  if (!options?.preserveWorldBible) {
+    await deleteRows("world_bible_entries", storyId)
+  }
   await deleteRows("story_variables", storyId)
   await deleteRows("acts", storyId)
 }
@@ -1195,6 +1302,28 @@ async function insertRows(table: string, rows: Row[]) {
 
   const result = await supabaseAdmin.from(table).insert(rows)
   assertNoError(`${table} insert`, result.error)
+}
+
+async function upsertRows(table: string, rows: Row[], onConflict: string) {
+  if (!rows.length) {
+    return
+  }
+
+  const result = await supabaseAdmin.from(table).upsert(rows, {
+    onConflict
+  })
+  assertNoError(`${table} upsert`, result.error)
+}
+
+async function countRowsByStoryId(table: string, storyId: string) {
+  const result = await supabaseAdmin
+    .from(table)
+    .select("id", { count: "exact", head: true })
+    .eq("story_id", storyId)
+
+  assertNoError(`${table} count`, result.error)
+
+  return result.count ?? 0
 }
 
 async function loadRowsByIds(table: string, column: string, ids: string[]) {

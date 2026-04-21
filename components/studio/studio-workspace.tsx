@@ -56,6 +56,7 @@ type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "book" | "write" | "playtest" | "patch" | "review";
 type SidebarMode = "library" | "chat" | "codex";
 type SaveState = "idle" | "saving" | "saved" | "error";
+type StoryUpdateGuardMode = "none" | "book";
 
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
 const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "patch", "review"];
@@ -440,7 +441,10 @@ export function StudioWorkspace({
 
         try {
           const snapshot = await persistStudioStoryRemote(nextPersist.story);
-          lastPersistedPayloadRef.current = nextPersist.payload;
+          lastPersistedPayloadRef.current = JSON.stringify(snapshot.story);
+          setDraftStory(function (currentStory) {
+            return JSON.stringify(currentStory) === nextPersist.payload ? snapshot.story : currentStory;
+          });
           setLastSavedAt(snapshot.savedAt);
           setSaveState(pendingPersistRef.current ? "saving" : "saved");
         } catch {
@@ -465,9 +469,22 @@ export function StudioWorkspace({
     void flushPersistQueue();
   }
 
-  function commitStoryUpdate(updater: (story: StoryDocument) => StoryDocument) {
+  function commitStoryUpdate(
+    updater: (story: StoryDocument) => StoryDocument,
+    options?: {
+      guardMode?: StoryUpdateGuardMode;
+      source?: string;
+    }
+  ) {
     setDraftStory(function (currentStory) {
-      return syncStoryBookArtifacts(updater(currentStory));
+      const nextStory = updater(currentStory);
+      const syncedStory = syncStoryBookArtifacts(nextStory);
+
+      if (options?.guardMode === "book") {
+        return guardBookPanelStoryState(currentStory, syncedStory, options.source ?? "book");
+      }
+
+      return syncedStory;
     });
   }
 
@@ -485,6 +502,18 @@ export function StudioWorkspace({
     commitStoryUpdate(function (currentStory) {
       return updater(currentStory);
     });
+  }
+
+  function updateBookDraftStory(updater: (story: StoryDocument) => StoryDocument, source: string) {
+    commitStoryUpdate(
+      function (currentStory) {
+        return updater(currentStory);
+      },
+      {
+        guardMode: "book",
+        source
+      }
+    );
   }
 
   function updateStoryStatus(status: StoryStatus) {
@@ -519,7 +548,10 @@ export function StudioWorkspace({
 
     try {
       const snapshot = await persistStudioStoryRemote(normalizedStory);
-      lastPersistedPayloadRef.current = payload;
+      lastPersistedPayloadRef.current = JSON.stringify(snapshot.story);
+      setDraftStory(function (currentStory) {
+        return JSON.stringify(currentStory) === payload ? snapshot.story : currentStory;
+      });
       setLastSavedAt(snapshot.savedAt);
       setSaveState("saved");
       return true;
@@ -1742,7 +1774,9 @@ export function StudioWorkspace({
               onDeleteChapter={handleDeleteChapter}
               onDeleteScene={handleDeleteScene}
               onUpdateScene={updateSelectedScene}
-              onUpdateStory={updateDraftStory}
+              onUpdateStory={function (updater) {
+                updateBookDraftStory(updater, "book-writer-panel");
+              }}
               onOpenBranchEditor={function () {
                 setAuthorMode("write");
               }}
@@ -1941,7 +1975,9 @@ export function StudioWorkspace({
                   story={draftStory}
                   selectedSceneId={selectedSceneId}
                   onSelectScene={setSelectedSceneId}
-                  onUpdateStory={updateDraftStory}
+                  onUpdateStory={function (updater) {
+                    updateBookDraftStory(updater, "book-blueprint-panel");
+                  }}
                 />
               ) : authorMode === "playtest" ? (
                 <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />
@@ -2157,6 +2193,137 @@ function isViewMode(value: string): value is ViewMode {
   return VIEW_MODES.includes(value as ViewMode);
 }
 
+function guardBookPanelStoryState(
+  previousStory: StoryDocument,
+  nextStory: StoryDocument,
+  source: string
+): StoryDocument {
+  const restoredSegments: string[] = [];
+  let guardedWorldBible = nextStory.worldBible;
+  let guardedDraftJobs = nextStory.book.draftEngine.jobs;
+  let guardedMemory = nextStory.book.memory;
+
+  if (previousStory.worldBible.length > 0 && nextStory.worldBible.length === 0) {
+    guardedWorldBible = previousStory.worldBible;
+    restoredSegments.push("worldBible");
+  }
+
+  if (
+    previousStory.book.draftEngine.jobs.length > 0 &&
+    nextStory.book.draftEngine.jobs.length === 0
+  ) {
+    guardedDraftJobs = previousStory.book.draftEngine.jobs;
+    restoredSegments.push("draftJobs");
+  }
+
+  if (
+    previousStory.book.memory.canonLedger.length > 0 &&
+    nextStory.book.memory.canonLedger.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      canonLedger: previousStory.book.memory.canonLedger
+    };
+    restoredSegments.push("canonLedger");
+  }
+
+  if (
+    previousStory.book.memory.characterLedger.length > 0 &&
+    nextStory.book.memory.characterLedger.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      characterLedger: previousStory.book.memory.characterLedger
+    };
+    restoredSegments.push("characterLedger");
+  }
+
+  if (
+    previousStory.book.memory.openThreads.length > 0 &&
+    nextStory.book.memory.openThreads.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      openThreads: previousStory.book.memory.openThreads
+    };
+    restoredSegments.push("openThreads");
+  }
+
+  if (
+    previousStory.book.memory.sceneCards.length > 0 &&
+    nextStory.book.memory.sceneCards.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      sceneCards: previousStory.book.memory.sceneCards
+    };
+    restoredSegments.push("sceneCards");
+  }
+
+  if (
+    previousStory.book.memory.contextPacks.length > 0 &&
+    nextStory.book.memory.contextPacks.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      contextPacks: previousStory.book.memory.contextPacks
+    };
+    restoredSegments.push("contextPacks");
+  }
+
+  if (
+    previousStory.book.memory.continuityNotes.length > 0 &&
+    nextStory.book.memory.continuityNotes.length === 0
+  ) {
+    guardedMemory = {
+      ...guardedMemory,
+      continuityNotes: previousStory.book.memory.continuityNotes
+    };
+    restoredSegments.push("continuityNotes");
+  }
+
+  if (!restoredSegments.length) {
+    return nextStory;
+  }
+
+  console.warn("[EMBER] Prevented suspicious book-state drop during local update.", {
+    source,
+    storyId: nextStory.id,
+    restoredSegments,
+    previousCounts: {
+      worldBible: previousStory.worldBible.length,
+      draftJobs: previousStory.book.draftEngine.jobs.length,
+      canonLedger: previousStory.book.memory.canonLedger.length,
+      characterLedger: previousStory.book.memory.characterLedger.length,
+      openThreads: previousStory.book.memory.openThreads.length,
+      sceneCards: previousStory.book.memory.sceneCards.length,
+      contextPacks: previousStory.book.memory.contextPacks.length
+    },
+    nextCounts: {
+      worldBible: nextStory.worldBible.length,
+      draftJobs: nextStory.book.draftEngine.jobs.length,
+      canonLedger: nextStory.book.memory.canonLedger.length,
+      characterLedger: nextStory.book.memory.characterLedger.length,
+      openThreads: nextStory.book.memory.openThreads.length,
+      sceneCards: nextStory.book.memory.sceneCards.length,
+      contextPacks: nextStory.book.memory.contextPacks.length
+    }
+  });
+
+  return {
+    ...nextStory,
+    worldBible: guardedWorldBible,
+    book: {
+      ...nextStory.book,
+      draftEngine: {
+        ...nextStory.book.draftEngine,
+        jobs: guardedDraftJobs
+      },
+      memory: guardedMemory
+    }
+  };
+}
+
 async function persistStudioStoryRemote(draftStory: StoryDocument) {
   const response = await fetch(`/api/stories/${draftStory.id}`, {
     method: "PUT",
@@ -2174,6 +2341,7 @@ async function persistStudioStoryRemote(draftStory: StoryDocument) {
   }
 
   return {
+    story: payload.story as StoryDocument,
     savedAt:
       typeof payload.savedAt === "string" ? payload.savedAt : new Date().toISOString()
   };
