@@ -193,6 +193,22 @@
 
   const storefrontStories = [
     {
+      title: "Restrisiko",
+      subtitle: "Buchprobe",
+      description:
+        "Psychologischer Thriller um einen forensischen Gutachter, der an einem prominenten Fall und an der eigenen alten Fehlprognose entlang in seine blinden Flecken gerät.",
+      tags: ["Psychothriller", "Forensik", "Literary Crime"],
+      imageSrc: "./Der_Auftrag.png",
+      imageAlt: "Aktenmappe und Schreibtischlicht im Morgengrau",
+      imagePosition: "center 12%",
+      status: "Leseprobe",
+      available: true,
+      action: "open-link",
+      href: "/samples/restrisiko",
+      buttonLabel: "Lesen",
+      progressLabel: "Szene 1 online"
+    },
+    {
       title: STORY.meta.appTitle,
       subtitle: STORY.meta.storyTitle,
       description: STORY.meta.storyDescription,
@@ -284,9 +300,7 @@
       })
       .join("");
     const buttonLabel = story.available
-      ? hasMeaningfulProgress()
-        ? "Öffnen"
-        : "Ansehen"
+      ? story.buttonLabel || (hasMeaningfulProgress() ? "Öffnen" : "Ansehen")
       : "Gesperrt";
 
     return `
@@ -304,11 +318,16 @@
           <div class="tag-row">${tagsMarkup}</div>
           <div class="store-card-footer">
             <span class="store-card-meta">${escapeHtml(
-              story.available ? getProgressLabel() : "Noch nicht freigeschaltet"
+              story.available ? story.progressLabel || getProgressLabel() : "Noch nicht freigeschaltet"
             )}</span>
             <button
               class="button${story.available && isFeatured ? " button--solid" : ""}"
               ${story.available ? `data-action="${escapeHtml(story.action)}"` : "disabled"}
+              ${
+                story.available && story.href
+                  ? `data-href="${escapeHtml(story.href)}"`
+                  : ""
+              }
             >
               ${escapeHtml(buttonLabel)}
             </button>
@@ -442,9 +461,9 @@
         return renderStoreCard(story, false);
       })
       .join("");
-    const primaryLabel = hasMeaningfulProgress() ? "Fortsetzen" : "Ansehen";
+    const primaryLabel = featuredStory.buttonLabel || (hasMeaningfulProgress() ? "Fortsetzen" : "Ansehen");
     const secondaryLabel = hasMeaningfulProgress() ? "Neu starten" : "Direkt starten";
-    const primaryAction = hasMeaningfulProgress() ? "resume" : "start";
+    const primaryAction = featuredStory.action || (hasMeaningfulProgress() ? "resume" : "start");
 
     return `
       <section class="view view--start">
@@ -475,16 +494,17 @@
               <p class="lede">${escapeHtml(featuredStory.description)}</p>
               <div class="store-hero-meta">
                 <span class="store-hero-pill">${escapeHtml(featuredStory.status)}</span>
-                <span class="store-hero-status">${escapeHtml(getProgressLabel())}</span>
-                <span class="store-hero-status">1 Story freigeschaltet</span>
+                <span class="store-hero-status">${escapeHtml(featuredStory.progressLabel || getProgressLabel())}</span>
+                <span class="store-hero-status">2 Storys freigeschaltet</span>
               </div>
               <div class="actions actions--hero">
-                <button class="button button--solid" data-action="${primaryAction}" data-autofocus="true">${escapeHtml(
-                  primaryLabel
-                )}</button>
-                <button class="button button--ghost" data-action="begin">${escapeHtml(
-                  secondaryLabel
-                )}</button>
+                <button
+                  class="button button--solid"
+                  data-action="${primaryAction}"
+                  ${featuredStory.href ? `data-href="${escapeHtml(featuredStory.href)}"` : ""}
+                  data-autofocus="true"
+                >${escapeHtml(primaryLabel)}</button>
+                <button class="button button--ghost" data-action="begin">${escapeHtml(secondaryLabel)}</button>
               </div>
             </div>
           </section>
@@ -801,6 +821,15 @@
 
     if (action === "studio") {
       window.parent.location.href = "/studio";
+      return;
+    }
+
+    if (action === "open-link") {
+      const href = target.getAttribute("data-href");
+
+      if (href) {
+        window.parent.location.href = href;
+      }
       return;
     }
   });

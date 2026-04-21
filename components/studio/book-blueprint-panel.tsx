@@ -39,12 +39,14 @@ export function BookBlueprintPanel({
   story,
   selectedSceneId,
   onSelectScene,
-  onUpdateStory
+  onUpdateStory,
+  layoutMode = "docked"
 }: {
   story: StoryDocument;
   selectedSceneId: string;
   onSelectScene: (sceneId: string) => void;
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
+  layoutMode?: "docked" | "focus";
 }) {
   const stats = useMemo(function () {
     return countStoryStats(story);
@@ -163,7 +165,10 @@ export function BookBlueprintPanel({
   }
 
   return (
-    <aside className="book-panel" aria-label="Book Blueprint Panel">
+    <aside
+      className={"book-panel" + (layoutMode === "focus" ? " book-panel--focus" : "")}
+      aria-label="Book Blueprint Panel"
+    >
       <div className="book-panel__header">
         <div>
           <span className="scene-editor__eyebrow">Book Engine</span>

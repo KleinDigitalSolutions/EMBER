@@ -55,6 +55,7 @@ import {
 type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "book" | "write" | "playtest" | "patch" | "review";
 type SidebarMode = "library" | "chat" | "codex";
+type PlanLayoutMode = "split" | "focus";
 type SaveState = "idle" | "saving" | "saved" | "error";
 type StoryUpdateGuardMode = "none" | "book";
 
@@ -78,6 +79,7 @@ export function StudioWorkspace({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [planLayoutMode, setPlanLayoutMode] = useState<PlanLayoutMode>("focus");
   const [search, setSearch] = useState("");
   const [librarySearch, setLibrarySearch] = useState("");
   const [libraryStories, setLibraryStories] = useState(stories);
@@ -425,6 +427,7 @@ export function StudioWorkspace({
 
   const selectedScene = selectedSceneContext?.scene ?? null;
   const isChatSidebar = sidebarMode === "chat";
+  const isPlanFocusMode = !isChatSidebar && authorMode === "plan" && planLayoutMode === "focus";
   const defaultAssistantContext = selectedSceneContext
     ? createAssistantContextSelectionFromSceneContext(selectedSceneContext)
     : createDefaultAssistantContextSelection();
@@ -1685,7 +1688,34 @@ export function StudioWorkspace({
               </div>
             )}
 
-            {!isChatSidebar && authorMode !== "book" ? (
+            {!isChatSidebar && authorMode === "plan" ? (
+              <div className="pill-group pill-group--view" aria-label="Plan Layout">
+                <button
+                  className={
+                    "pill-button" + (planLayoutMode === "split" ? " pill-button--active" : "")
+                  }
+                  onClick={function () {
+                    setPlanLayoutMode("split");
+                  }}
+                  type="button"
+                >
+                  Split
+                </button>
+                <button
+                  className={
+                    "pill-button" + (planLayoutMode === "focus" ? " pill-button--active" : "")
+                  }
+                  onClick={function () {
+                    setPlanLayoutMode("focus");
+                  }}
+                  type="button"
+                >
+                  Focus
+                </button>
+              </div>
+            ) : null}
+
+            {!isChatSidebar && authorMode !== "book" && !isPlanFocusMode ? (
               <div className="pill-group pill-group--view" aria-label="View">
                 {VIEW_MODES.map(function (mode) {
                   return (
@@ -1706,9 +1736,11 @@ export function StudioWorkspace({
               </div>
             ) : null}
 
-            {!isChatSidebar && authorMode !== "book" ? <span className="filter-label">FILTER:</span> : null}
+            {!isChatSidebar && authorMode !== "book" && !isPlanFocusMode ? (
+              <span className="filter-label">FILTER:</span>
+            ) : null}
 
-            {!isChatSidebar && authorMode !== "book" ? (
+            {!isChatSidebar && authorMode !== "book" && !isPlanFocusMode ? (
               <label className="search-field search-field--topbar">
                 <span className="search-icon" />
                 <input
@@ -1796,6 +1828,18 @@ export function StudioWorkspace({
                 setAuthorMode("write");
               }}
             />
+          ) : authorMode === "plan" && planLayoutMode === "focus" ? (
+            <div className="plan-focus-shell">
+              <BookBlueprintPanel
+                story={draftStory}
+                selectedSceneId={selectedSceneId}
+                onSelectScene={setSelectedSceneId}
+                onUpdateStory={function (updater) {
+                  updateBookDraftStory(updater, "book-blueprint-panel");
+                }}
+                layoutMode="focus"
+              />
+            </div>
           ) : (
             <div className="workspace-panels">
               <div className="board-panel">
@@ -1993,6 +2037,7 @@ export function StudioWorkspace({
                   onUpdateStory={function (updater) {
                     updateBookDraftStory(updater, "book-blueprint-panel");
                   }}
+                  layoutMode="docked"
                 />
               ) : authorMode === "playtest" ? (
                 <PlaytestPanel story={draftStory} selectedSceneId={selectedSceneId} />

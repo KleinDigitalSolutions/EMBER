@@ -175,6 +175,12 @@ textarea {
   min-width: 0;
 }
 
+.book-panel--focus {
+  width: min(100%, 88rem);
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
 .book-panel__header,
 .book-card,
 .book-architecture-card,
@@ -217,6 +223,10 @@ textarea {
 .book-panel__content {
   display: grid;
   gap: 1rem;
+}
+
+.book-panel--focus .book-panel__content {
+  gap: 1.15rem;
 }
 
 .book-card {
@@ -282,6 +292,10 @@ textarea {
 
 .book-context-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.book-panel--focus .book-context-grid {
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
 }
 
 .book-context-stack {
@@ -1334,6 +1348,11 @@ textarea {
   grid-template-columns: minmax(0, 1fr) 25rem;
   gap: 1rem;
   min-height: 0;
+}
+
+.plan-focus-shell {
+  min-height: 0;
+  padding-inline: 0.35rem;
 }
 
 .board-panel {
@@ -3960,6 +3979,68 @@ textarea {
   height: 100%;
   border: 0;
   background: #050507;
+}
+
+.sample-reader {
+  padding: 1.5rem;
+  overflow: auto;
+  background:
+    radial-gradient(circle at top left, rgba(199, 177, 139, 0.08), transparent 24%),
+    linear-gradient(180deg, #111216 0%, #090a0d 100%);
+}
+
+.sample-reader__topbar {
+  max-width: 58rem;
+  margin: 0 auto 1.25rem;
+}
+
+.sample-reader__topbar p:last-child {
+  max-width: 42rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.sample-reader__article {
+  width: min(100%, 58rem);
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sample-reader__hero,
+.sample-reader__divider {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sample-reader__hero h2,
+.sample-reader__divider h3 {
+  margin: 0;
+}
+
+.sample-reader__hero p,
+.sample-reader__divider p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.sample-reader__scene {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.sample-reader__scene p {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.02rem, 1.1vw, 1.12rem);
+  line-height: 1.95;
 }
 
 @media (max-width: 1280px) {
