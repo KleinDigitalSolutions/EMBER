@@ -358,7 +358,7 @@ export function createDraftJobFromPacket(
       qualityIssues: []
     }),
     contextSnapshot: {
-      contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
+      contextPackId: packet.dynamicContext.contextPackId || null,
       memorySyncedAt: packet.dynamicContext.memorySyncedAt,
       chapterTitle: packet.dynamicContext.chapterTitle,
       sceneSummary: packet.dynamicContext.sceneSummary,
@@ -1067,13 +1067,16 @@ export function acceptDraftJobToScene(
 
   const nextStory = updateSceneInStory(story, job.sceneId, function (scene) {
     const paragraphs = splitIntoParagraphs(job.rewriteText);
+    const reusableBlockIds = scene.blocks.map(function (block) {
+      return isUuid(block.id) ? block.id : createUuid();
+    });
 
     return {
       ...scene,
       summary: deriveSceneSummary(job),
       blocks: paragraphs.map(function (paragraph, index) {
         return {
-          id: `${scene.id}_draft_block_${index + 1}`,
+          id: reusableBlockIds[index] ?? createUuid(),
           kind: "paragraph",
           text: paragraph
         };

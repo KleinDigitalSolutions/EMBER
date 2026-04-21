@@ -1067,7 +1067,7 @@ function hydrateDraftJob(
     extractedState: payload.extractedState,
     stages: payload.stages,
     contextSnapshot: {
-      contextPackId: packet.dynamicContext.contextPackId || createLocalId("pack"),
+      contextPackId: packet.dynamicContext.contextPackId || null,
       memorySyncedAt: packet.dynamicContext.memorySyncedAt,
       chapterTitle: packet.dynamicContext.chapterTitle,
       sceneSummary: packet.dynamicContext.sceneSummary,

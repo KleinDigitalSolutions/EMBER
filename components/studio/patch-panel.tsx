@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { createUuid } from "@/lib/id";
 import {
   countSceneWords,
   getAllScenes,
@@ -213,7 +214,7 @@ function buildPatchSuggestions(story: StoryDocument, sceneContext: SceneContext)
       return {
         ...currentScene,
         blocks: currentScene.blocks.concat({
-          id: `${currentScene.id}_patch_block_${currentScene.blocks.length + 1}`,
+          id: createUuid(),
           kind: "paragraph",
           text: buildParagraphPatchText(currentScene)
         })
@@ -256,7 +257,7 @@ function buildPatchSuggestions(story: StoryDocument, sceneContext: SceneContext)
         return {
           ...currentScene,
           choices: currentScene.choices.concat({
-            id: `${currentScene.id}_patch_choice_${currentScene.choices.length + 1}`,
+            id: createUuid(),
             label: buildChoiceLabel(currentScene),
             toSceneId: targetScene.id,
             conditions: [],

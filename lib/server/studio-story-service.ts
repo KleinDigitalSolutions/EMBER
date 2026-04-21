@@ -501,7 +501,23 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
 }
 
 export async function saveStudioStory(story: StoryDocument) {
+  return saveStudioStoryInternal(story)
+}
+
+async function saveStudioStoryInternal(
+  story: StoryDocument,
+  options?: {
+    rollbackStory?: StoryDocument | null
+    isRollback?: boolean
+  }
+) {
   const nextStory = syncStoryBookArtifacts(story)
+  const rollbackStory =
+    options?.isRollback
+      ? null
+      : options?.rollbackStory !== undefined
+        ? options.rollbackStory
+        : await loadExistingStorySnapshot(nextStory.id)
   const ownerProfileId = await loadWorkspaceOwnerId(nextStory.workspaceId)
   const [
     existingWorldBibleCount,
@@ -567,389 +583,409 @@ export async function saveStudioStory(story: StoryDocument) {
 
   const storyStatus = denormalizeStoryStatus(nextStory.status)
 
-  const storyUpsert = await supabaseAdmin.from("stories").upsert({
-    id: nextStory.id,
-    workspace_id: nextStory.workspaceId,
-    title: nextStory.title || "Untitled Book",
-    author_name: nextStory.authorName || "",
-    status: storyStatus,
-    mode: nextStory.mode || "book",
-    meta,
-    created_by: ownerProfileId,
-    current_version_id: null
-  })
-
-  if (storyUpsert.error) {
-    throw new Error(`Story Upsert: ${storyUpsert.error.message}`)
-  }
-
-  const bookProjectUpsert = await supabaseAdmin.from("book_projects").upsert({
-    story_id: nextStory.id,
-    workspace_id: nextStory.workspaceId,
-    priority: nextStory.book.priority || "primary",
-    active_phase: nextStory.book.activePhase || "phase_1_foundation",
-    target_format: nextStory.book.targetFormat || "novel",
-    target_length_words: nextStory.book.targetLengthWords || 70000,
-    master_brief: nextStory.book.masterBrief,
-    market_brief: nextStory.book.marketBrief,
-    amazon_ops: nextStory.book.amazonOps,
-    memory_last_synced_at: nextStory.book.memory.lastSyncedAt
-  })
-
-  if (bookProjectUpsert.error) {
-    throw new Error(`Book Project Upsert: ${bookProjectUpsert.error.message}`)
-  }
-
-  await deleteStoryGraph(nextStory.id, {
-    preserveWorldBible,
-    preserveCharacterLedger,
-    preserveWriterRules,
-    preserveCanonFacts,
-    preserveOpenThreads,
-    preserveSceneCards,
-    preserveContextPacks,
-    preserveDraftJobs
-  })
-
-  const acts = nextStory.acts.map(function (act) {
-    return {
-      id: act.id,
+  try {
+    const storyUpsert = await supabaseAdmin.from("stories").upsert({
+      id: nextStory.id,
       workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      title: act.title,
-      sort_order: act.order
-    }
-  })
+      title: nextStory.title || "Untitled Book",
+      author_name: nextStory.authorName || "",
+      status: storyStatus,
+      mode: nextStory.mode || "book",
+      meta,
+      created_by: ownerProfileId,
+      current_version_id: null
+    })
 
-  const chapters = nextStory.acts.flatMap(function (act) {
-    return act.chapters.map(function (chapter) {
+    if (storyUpsert.error) {
+      throw new Error(`Story Upsert: ${storyUpsert.error.message}`)
+    }
+
+    const bookProjectUpsert = await supabaseAdmin.from("book_projects").upsert({
+      story_id: nextStory.id,
+      workspace_id: nextStory.workspaceId,
+      priority: nextStory.book.priority || "primary",
+      active_phase: nextStory.book.activePhase || "phase_1_foundation",
+      target_format: nextStory.book.targetFormat || "novel",
+      target_length_words: nextStory.book.targetLengthWords || 70000,
+      master_brief: nextStory.book.masterBrief,
+      market_brief: nextStory.book.marketBrief,
+      amazon_ops: nextStory.book.amazonOps,
+      memory_last_synced_at: nextStory.book.memory.lastSyncedAt
+    })
+
+    if (bookProjectUpsert.error) {
+      throw new Error(`Book Project Upsert: ${bookProjectUpsert.error.message}`)
+    }
+
+    await deleteStoryGraph(nextStory.id, {
+      preserveWorldBible,
+      preserveCharacterLedger,
+      preserveWriterRules,
+      preserveCanonFacts,
+      preserveOpenThreads,
+      preserveSceneCards,
+      preserveContextPacks,
+      preserveDraftJobs
+    })
+
+    const acts = nextStory.acts.map(function (act) {
       return {
-        id: chapter.id,
+        id: act.id,
         workspace_id: nextStory.workspaceId,
         story_id: nextStory.id,
-        act_id: act.id,
-        title: chapter.title,
-        sort_order: chapter.order,
-        word_count: chapter.wordCount
+        title: act.title,
+        sort_order: act.order
       }
     })
-  })
 
-  const scenes = nextStory.acts.flatMap(function (act) {
-    return act.chapters.flatMap(function (chapter) {
-      return chapter.scenes.map(function (scene) {
+    const chapters = nextStory.acts.flatMap(function (act) {
+      return act.chapters.map(function (chapter) {
         return {
-          id: scene.id,
+          id: chapter.id,
           workspace_id: nextStory.workspaceId,
           story_id: nextStory.id,
-          chapter_id: chapter.id,
-          title: scene.title,
-          label: scene.label,
-          summary: scene.summary,
-          sort_order: scene.order,
-          word_count: scene.wordCount
+          act_id: act.id,
+          title: chapter.title,
+          sort_order: chapter.order,
+          word_count: chapter.wordCount
         }
       })
     })
-  })
 
-  const sceneBlocks = nextStory.acts.flatMap(function (act) {
-    return act.chapters.flatMap(function (chapter) {
-      return chapter.scenes.flatMap(function (scene) {
-        return scene.blocks.map(function (block, index) {
+    const scenes = nextStory.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes.map(function (scene) {
           return {
-            id: block.id,
+            id: scene.id,
             workspace_id: nextStory.workspaceId,
             story_id: nextStory.id,
-            scene_id: scene.id,
-            kind: block.kind,
-            content: block.text,
-            sort_order: index + 1
+            chapter_id: chapter.id,
+            title: scene.title,
+            label: scene.label,
+            summary: scene.summary,
+            sort_order: scene.order,
+            word_count: scene.wordCount
           }
         })
       })
     })
-  })
 
-  const storyVariables = nextStory.variables.map(function (variable) {
-    return {
-      id: variable.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      key: variable.key,
-      label: variable.label,
-      value_type: variable.type,
-      default_value: variable.defaultValue
-    }
-  })
-
-  const choices = nextStory.acts.flatMap(function (act) {
-    return act.chapters.flatMap(function (chapter) {
-      return chapter.scenes.flatMap(function (scene) {
-        return scene.choices.map(function (choice, index) {
-          return {
-            id: choice.id,
-            workspace_id: nextStory.workspaceId,
-            story_id: nextStory.id,
-            scene_id: scene.id,
-            to_scene_id: choice.toSceneId,
-            label: choice.label,
-            sort_order: index + 1
-          }
-        })
-      })
-    })
-  })
-
-  const choiceConditions = nextStory.acts.flatMap(function (act) {
-    return act.chapters.flatMap(function (chapter) {
-      return chapter.scenes.flatMap(function (scene) {
-        return scene.choices.flatMap(function (choice) {
-          return choice.conditions.map(function (condition) {
+    const sceneBlocks = nextStory.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes.flatMap(function (scene) {
+          return scene.blocks.map(function (block, index) {
             return {
+              id: block.id,
               workspace_id: nextStory.workspaceId,
               story_id: nextStory.id,
-              choice_id: choice.id,
-              variable_key: condition.variableKey,
-              equals_value: condition.equals
+              scene_id: scene.id,
+              kind: block.kind,
+              content: block.text,
+              sort_order: index + 1
             }
           })
         })
       })
     })
-  })
 
-  const choiceEffects = nextStory.acts.flatMap(function (act) {
-    return act.chapters.flatMap(function (chapter) {
-      return chapter.scenes.flatMap(function (scene) {
-        return scene.choices.flatMap(function (choice) {
-          return choice.effects.map(function (effect) {
-            return {
-              workspace_id: nextStory.workspaceId,
-              story_id: nextStory.id,
-              choice_id: choice.id,
-              variable_key: effect.variableKey,
-              set_to_value: effect.setTo
-            }
-          })
-        })
-      })
-    })
-  })
-
-  const worldBibleEntries = nextStory.worldBible.map(function (entry) {
-    return {
-      id: entry.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      title: entry.title,
-      kind: entry.kind,
-      summary: entry.summary
-    }
-  })
-
-  const bookWriterRules = nextStory.book.writerConstitution.map(function (rule, index) {
-    return {
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      sort_order: index + 1,
-      rule_text: rule
-    }
-  })
-
-  const bookCanonFacts = nextStory.book.memory.canonLedger.map(function (fact) {
-    return {
-      id: fact.entryId,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      source_world_bible_entry_id: findWorldBibleSourceId(nextStory.worldBible, fact),
-      title: fact.title,
-      kind: fact.kind,
-      summary: fact.summary,
-      mention_count: fact.mentionCount,
-      importance: fact.importance,
-      status: fact.status
-    }
-  })
-
-  const bookCanonFactSceneRefs = nextStory.book.memory.canonLedger.flatMap(function (fact) {
-    return fact.sceneIds.map(function (sceneId) {
+    const storyVariables = nextStory.variables.map(function (variable) {
       return {
-        canon_fact_id: fact.entryId,
-        scene_id: sceneId
-      }
-    })
-  })
-
-  const bookCharacterStates = nextStory.book.memory.characterLedger.map(function (state) {
-    return {
-      id: state.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      world_bible_entry_id: state.characterEntryId || null,
-      character_name: state.characterName,
-      current_state: state.currentState,
-      inner_shift: state.innerShift,
-      agenda: state.agenda,
-      updated_from_scene_id: state.updatedFromSceneId || null,
-      state_updated_at: state.updatedAt
-    }
-  })
-
-  const bookCharacterStateSnapshots = nextStory.book.memory.characterLedger.flatMap(function (state) {
-    return state.snapshots.map(function (snapshot) {
-      return {
-        id: snapshot.id,
+        id: variable.id,
         workspace_id: nextStory.workspaceId,
         story_id: nextStory.id,
-        character_state_id: state.id,
-        scope: snapshot.scope,
-        sort_order: snapshot.sortOrder,
-        source_scene_id: snapshot.sourceSceneId,
-        source_chapter_id: snapshot.sourceChapterId,
-        source_label: snapshot.sourceLabel,
-        current_state: snapshot.currentState,
-        inner_shift: snapshot.innerShift,
-        agenda: snapshot.agenda,
-        captured_at: snapshot.capturedAt
+        key: variable.key,
+        label: variable.label,
+        value_type: variable.type,
+        default_value: variable.defaultValue
       }
     })
-  })
 
-  const bookOpenThreads = nextStory.book.memory.openThreads.map(function (thread) {
-    return {
-      id: thread.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      label: thread.label,
-      detail: thread.detail,
-      source_scene_id: thread.sourceSceneId || null,
-      status: thread.status,
-      priority: thread.priority,
-      payoff_scene_id: thread.payoffSceneId
-    }
-  })
+    const choices = nextStory.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes.flatMap(function (scene) {
+          return scene.choices.map(function (choice, index) {
+            return {
+              id: choice.id,
+              workspace_id: nextStory.workspaceId,
+              story_id: nextStory.id,
+              scene_id: scene.id,
+              to_scene_id: choice.toSceneId,
+              label: choice.label,
+              sort_order: index + 1
+            }
+          })
+        })
+      })
+    })
 
-  const bookSceneCards = nextStory.book.memory.sceneCards.map(function (sceneCard) {
-    return {
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      scene_id: sceneCard.sceneId,
-      act_title: sceneCard.actTitle,
-      chapter_title: sceneCard.chapterTitle,
-      scene_title: sceneCard.sceneTitle,
-      summary: sceneCard.summary,
-      excerpt: sceneCard.excerpt,
-      order_label: sceneCard.orderLabel,
-      chapter_goal: sceneCard.chapterGoal,
-      directives: sceneCard.directives,
-      outline: sceneCard.outline
-    }
-  })
+    const choiceConditions = nextStory.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes.flatMap(function (scene) {
+          return scene.choices.flatMap(function (choice) {
+            return choice.conditions.map(function (condition) {
+              return {
+                workspace_id: nextStory.workspaceId,
+                story_id: nextStory.id,
+                choice_id: choice.id,
+                variable_key: condition.variableKey,
+                equals_value: condition.equals
+              }
+            })
+          })
+        })
+      })
+    })
 
-  const bookContextPacks = nextStory.book.memory.contextPacks.map(function (pack) {
-    return {
-      id: pack.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      scene_id: pack.sceneId,
-      stable_prefix_signature: pack.stablePrefixSignature,
-      previous_scene_ids: pack.previousSceneIds,
-      next_scene_id: pack.nextSceneId,
-      prepared_at: pack.preparedAt
-    }
-  })
+    const choiceEffects = nextStory.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes.flatMap(function (scene) {
+          return scene.choices.flatMap(function (choice) {
+            return choice.effects.map(function (effect) {
+              return {
+                workspace_id: nextStory.workspaceId,
+                story_id: nextStory.id,
+                choice_id: choice.id,
+                variable_key: effect.variableKey,
+                set_to_value: effect.setTo
+              }
+            })
+          })
+        })
+      })
+    })
 
-  const bookContextPackCanonFacts = nextStory.book.memory.contextPacks.flatMap(function (pack) {
-    return pack.relevantCanonEntryIds.map(function (canonFactId, index) {
+    const worldBibleEntries = nextStory.worldBible.map(function (entry) {
       return {
-        context_pack_id: pack.id,
-        canon_fact_id: canonFactId,
-        sort_order: index + 1
+        id: entry.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        title: entry.title,
+        kind: entry.kind,
+        summary: entry.summary
       }
     })
-  })
 
-  const bookContextPackCharacterStates = nextStory.book.memory.contextPacks.flatMap(function (pack) {
-    return pack.relevantCharacterStateIds.map(function (characterStateId, index) {
+    const bookWriterRules = nextStory.book.writerConstitution.map(function (rule, index) {
       return {
-        context_pack_id: pack.id,
-        character_state_id: characterStateId,
-        sort_order: index + 1
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        sort_order: index + 1,
+        rule_text: rule
       }
     })
-  })
 
-  const bookContextPackThreads = nextStory.book.memory.contextPacks.flatMap(function (pack) {
-    return pack.activeThreadIds.map(function (threadId, index) {
+    const bookCanonFacts = nextStory.book.memory.canonLedger.map(function (fact) {
       return {
-        context_pack_id: pack.id,
-        thread_id: threadId,
-        sort_order: index + 1
+        id: fact.entryId,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        source_world_bible_entry_id: findWorldBibleSourceId(nextStory.worldBible, fact),
+        title: fact.title,
+        kind: fact.kind,
+        summary: fact.summary,
+        mention_count: fact.mentionCount,
+        importance: fact.importance,
+        status: fact.status
       }
     })
-  })
 
-  const bookDraftJobs = nextStory.book.draftEngine.jobs.map(function (job) {
-    return {
-      id: job.id,
-      workspace_id: nextStory.workspaceId,
-      story_id: nextStory.id,
-      scene_id: job.sceneId,
-      context_pack_id: job.contextSnapshot.contextPackId || null,
-      provider: job.provider,
-      mode: job.mode,
-      model_name: job.modelName,
-      status: job.status,
-      outline: job.outline,
-      draft_text: job.draftText,
-      rewrite_text: job.rewriteText,
-      rewrite_notes: job.rewriteNotes,
-      extracted_state: job.extractedState,
-      stage_runs: job.stages,
-      accepted_at: job.acceptedAt
+    const bookCanonFactSceneRefs = nextStory.book.memory.canonLedger.flatMap(function (fact) {
+      return fact.sceneIds.map(function (sceneId) {
+        return {
+          canon_fact_id: fact.entryId,
+          scene_id: sceneId
+        }
+      })
+    })
+
+    const bookCharacterStates = nextStory.book.memory.characterLedger.map(function (state) {
+      return {
+        id: state.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        world_bible_entry_id: state.characterEntryId || null,
+        character_name: state.characterName,
+        current_state: state.currentState,
+        inner_shift: state.innerShift,
+        agenda: state.agenda,
+        updated_from_scene_id: state.updatedFromSceneId || null,
+        state_updated_at: state.updatedAt
+      }
+    })
+
+    const bookCharacterStateSnapshots = nextStory.book.memory.characterLedger.flatMap(function (state) {
+      return state.snapshots.map(function (snapshot) {
+        return {
+          id: snapshot.id,
+          workspace_id: nextStory.workspaceId,
+          story_id: nextStory.id,
+          character_state_id: state.id,
+          scope: snapshot.scope,
+          sort_order: snapshot.sortOrder,
+          source_scene_id: snapshot.sourceSceneId,
+          source_chapter_id: snapshot.sourceChapterId,
+          source_label: snapshot.sourceLabel,
+          current_state: snapshot.currentState,
+          inner_shift: snapshot.innerShift,
+          agenda: snapshot.agenda,
+          captured_at: snapshot.capturedAt
+        }
+      })
+    })
+
+    const bookOpenThreads = nextStory.book.memory.openThreads.map(function (thread) {
+      return {
+        id: thread.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        label: thread.label,
+        detail: thread.detail,
+        source_scene_id: thread.sourceSceneId || null,
+        status: thread.status,
+        priority: thread.priority,
+        payoff_scene_id: thread.payoffSceneId
+      }
+    })
+
+    const bookSceneCards = nextStory.book.memory.sceneCards.map(function (sceneCard) {
+      return {
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        scene_id: sceneCard.sceneId,
+        act_title: sceneCard.actTitle,
+        chapter_title: sceneCard.chapterTitle,
+        scene_title: sceneCard.sceneTitle,
+        summary: sceneCard.summary,
+        excerpt: sceneCard.excerpt,
+        order_label: sceneCard.orderLabel,
+        chapter_goal: sceneCard.chapterGoal,
+        directives: sceneCard.directives,
+        outline: sceneCard.outline
+      }
+    })
+
+    const bookContextPacks = nextStory.book.memory.contextPacks.map(function (pack) {
+      return {
+        id: pack.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        scene_id: pack.sceneId,
+        stable_prefix_signature: pack.stablePrefixSignature,
+        previous_scene_ids: pack.previousSceneIds,
+        next_scene_id: pack.nextSceneId,
+        prepared_at: pack.preparedAt
+      }
+    })
+
+    const bookContextPackCanonFacts = nextStory.book.memory.contextPacks.flatMap(function (pack) {
+      return pack.relevantCanonEntryIds.map(function (canonFactId, index) {
+        return {
+          context_pack_id: pack.id,
+          canon_fact_id: canonFactId,
+          sort_order: index + 1
+        }
+      })
+    })
+
+    const bookContextPackCharacterStates = nextStory.book.memory.contextPacks.flatMap(function (pack) {
+      return pack.relevantCharacterStateIds.map(function (characterStateId, index) {
+        return {
+          context_pack_id: pack.id,
+          character_state_id: characterStateId,
+          sort_order: index + 1
+        }
+      })
+    })
+
+    const bookContextPackThreads = nextStory.book.memory.contextPacks.flatMap(function (pack) {
+      return pack.activeThreadIds.map(function (threadId, index) {
+        return {
+          context_pack_id: pack.id,
+          thread_id: threadId,
+          sort_order: index + 1
+        }
+      })
+    })
+
+    const bookDraftJobs = nextStory.book.draftEngine.jobs.map(function (job) {
+      return {
+        id: job.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        scene_id: job.sceneId,
+        context_pack_id: job.contextSnapshot.contextPackId || null,
+        provider: job.provider,
+        mode: job.mode,
+        model_name: job.modelName,
+        status: job.status,
+        outline: job.outline,
+        draft_text: job.draftText,
+        rewrite_text: job.rewriteText,
+        rewrite_notes: job.rewriteNotes,
+        extracted_state: job.extractedState,
+        stage_runs: job.stages,
+        accepted_at: job.acceptedAt
+      }
+    })
+
+    await insertRows("acts", acts)
+    await insertRows("chapters", chapters)
+    await insertRows("scenes", scenes)
+    await insertRows("scene_blocks", sceneBlocks)
+    await insertRows("story_variables", storyVariables)
+    await insertRows("choices", choices)
+    await insertRows("choice_conditions", choiceConditions)
+    await insertRows("choice_effects", choiceEffects)
+    if (!preserveWorldBible && worldBibleEntries.length > 0) {
+      await upsertRows("world_bible_entries", worldBibleEntries, "id")
     }
-  })
+    if (!preserveWriterRules) {
+      await insertRows("book_writer_rules", bookWriterRules)
+    }
+    if (!preserveCanonFacts) {
+      await upsertRows("book_canon_facts", bookCanonFacts, "id")
+      await insertRows("book_canon_fact_scene_refs", bookCanonFactSceneRefs)
+    }
+    if (!preserveCharacterLedger && bookCharacterStates.length > 0) {
+      await upsertRows("book_character_states", bookCharacterStates, "id")
+      await upsertRows("book_character_state_snapshots", bookCharacterStateSnapshots, "id")
+    }
+    if (!preserveOpenThreads) {
+      await upsertRows("book_open_threads", bookOpenThreads, "id")
+    }
+    if (!preserveSceneCards) {
+      await insertRows("book_scene_cards", bookSceneCards)
+    }
+    if (!preserveContextPacks) {
+      await upsertRows("book_context_packs", bookContextPacks, "id")
+      await insertRows("book_context_pack_canon_facts", bookContextPackCanonFacts)
+      await insertRows("book_context_pack_character_states", bookContextPackCharacterStates)
+      await insertRows("book_context_pack_threads", bookContextPackThreads)
+    }
+    if (!preserveDraftJobs) {
+      await upsertRows("book_draft_jobs", bookDraftJobs, "id")
+    }
 
-  await insertRows("acts", acts)
-  await insertRows("chapters", chapters)
-  await insertRows("scenes", scenes)
-  await insertRows("scene_blocks", sceneBlocks)
-  await insertRows("story_variables", storyVariables)
-  await insertRows("choices", choices)
-  await insertRows("choice_conditions", choiceConditions)
-  await insertRows("choice_effects", choiceEffects)
-  if (!preserveWorldBible && worldBibleEntries.length > 0) {
-    await upsertRows("world_bible_entries", worldBibleEntries, "id")
-  }
-  if (!preserveWriterRules) {
-    await insertRows("book_writer_rules", bookWriterRules)
-  }
-  if (!preserveCanonFacts) {
-    await upsertRows("book_canon_facts", bookCanonFacts, "id")
-    await insertRows("book_canon_fact_scene_refs", bookCanonFactSceneRefs)
-  }
-  if (!preserveCharacterLedger && bookCharacterStates.length > 0) {
-    await upsertRows("book_character_states", bookCharacterStates, "id")
-    await upsertRows("book_character_state_snapshots", bookCharacterStateSnapshots, "id")
-  }
-  if (!preserveOpenThreads) {
-    await upsertRows("book_open_threads", bookOpenThreads, "id")
-  }
-  if (!preserveSceneCards) {
-    await insertRows("book_scene_cards", bookSceneCards)
-  }
-  if (!preserveContextPacks) {
-    await upsertRows("book_context_packs", bookContextPacks, "id")
-    await insertRows("book_context_pack_canon_facts", bookContextPackCanonFacts)
-    await insertRows("book_context_pack_character_states", bookContextPackCharacterStates)
-    await insertRows("book_context_pack_threads", bookContextPackThreads)
-  }
-  if (!preserveDraftJobs) {
-    await upsertRows("book_draft_jobs", bookDraftJobs, "id")
-  }
+    return nextStory
+  } catch (error) {
+    const originalMessage = toErrorMessage(error)
 
-  return nextStory
+    if (rollbackStory) {
+      try {
+        await saveStudioStoryInternal(rollbackStory, {
+          isRollback: true,
+          rollbackStory: null
+        })
+      } catch (rollbackError) {
+        const rollbackMessage = toErrorMessage(rollbackError)
+        throw new Error(`${originalMessage} Rollback failed: ${rollbackMessage}`)
+      }
+
+      throw new Error(`${originalMessage} Existing Supabase state was restored.`)
+    }
+
+    throw error
+  }
 }
 
 async function loadStoryRow(preferredStoryId?: string | null) {
@@ -966,6 +1002,16 @@ async function loadStoryRow(preferredStoryId?: string | null) {
   }
 
   return result.data
+}
+
+async function loadExistingStorySnapshot(storyId: string) {
+  const storyRow = await loadStoryRow(storyId)
+
+  if (!storyRow) {
+    return null
+  }
+
+  return loadStudioStory(storyId)
 }
 
 async function loadWorkspaceOwnerId(workspaceId: string) {
@@ -1354,7 +1400,8 @@ function buildDraftJobs(params: {
     const sceneRow = params.sceneMap.get(sceneId)
     const sceneCard = params.sceneCardMap.get(sceneId)
     const chapterRow = sceneRow ? params.chapterMap.get(sceneRow.chapter_id as string) : null
-    const contextPackId = (row.context_pack_id as string) ?? sceneId
+    const contextPackId = typeof row.context_pack_id === "string" ? (row.context_pack_id as string) : null
+    const contextLookupId = contextPackId ?? sceneId
     const provider = normalizeProvider(row.provider)
     const modelName = typeof row.model_name === "string" ? row.model_name : null
     const updatedAt = (row.updated_at as string) ?? ""
@@ -1389,20 +1436,20 @@ function buildDraftJobs(params: {
         memorySyncedAt: params.memoryLastSyncedAt,
         chapterTitle: (sceneCard?.chapter_title as string) ?? (chapterRow?.title as string) ?? "",
         sceneSummary: (sceneRow?.summary as string) ?? (sceneCard?.summary as string) ?? "",
-        relevantCodexTitles: (params.contextPackCanonFactsByPackId.get(contextPackId) ?? [])
+        relevantCodexTitles: (params.contextPackCanonFactsByPackId.get(contextLookupId) ?? [])
           .map(function (linkRow) {
             return params.canonFactMap.get(linkRow.canon_fact_id as string)?.title as string
           })
           .filter(Boolean),
         relevantCharacterNames: (
-          params.contextPackCharacterStatesByPackId.get(contextPackId) ?? []
+          params.contextPackCharacterStatesByPackId.get(contextLookupId) ?? []
         )
           .map(function (linkRow) {
             return params.characterStateMap.get(linkRow.character_state_id as string)
               ?.character_name as string
           })
           .filter(Boolean),
-        activeThreadLabels: (params.contextPackThreadsByPackId.get(contextPackId) ?? [])
+        activeThreadLabels: (params.contextPackThreadsByPackId.get(contextLookupId) ?? [])
           .map(function (linkRow) {
             return params.threadMap.get(linkRow.thread_id as string)?.label as string
           })
@@ -1783,4 +1830,8 @@ function assertNoError(scope: string, error: { message: string } | null) {
   if (error) {
     throw new Error(`${scope}: ${error.message}`)
   }
+}
+
+function toErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error)
 }

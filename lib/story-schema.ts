@@ -233,7 +233,7 @@ export type BookDraftJob = {
   extractedState: DraftExtractionState;
   stages: BookDraftStageRuns;
   contextSnapshot: {
-    contextPackId: string;
+    contextPackId: string | null;
     memorySyncedAt: string | null;
     chapterTitle: string;
     sceneSummary: string;

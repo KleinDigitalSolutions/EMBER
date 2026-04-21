@@ -104,6 +104,7 @@ export function StudioWorkspace({
     story.acts[0]?.chapters[0]?.scenes[0]?.id ?? ""
   );
   const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const lastPersistedPayloadRef = useRef(JSON.stringify(syncStoryBookArtifacts(story)));
@@ -224,6 +225,7 @@ export function StudioWorkspace({
       setSelectedSceneId(nextStory.acts[0]?.chapters[0]?.scenes[0]?.id ?? "");
       setLastSavedAt(null);
       setSaveState("idle");
+      setSaveError(null);
       setLibraryError(null);
       setAssistantError(null);
       setAssistantSearch("");
@@ -274,6 +276,7 @@ export function StudioWorkspace({
       }
 
       setSaveState("saving");
+      setSaveError(null);
 
       const timeoutId = window.setTimeout(function () {
         enqueuePersist(draftStory, payload);
@@ -438,6 +441,7 @@ export function StudioWorkspace({
         const nextPersist = pendingPersistRef.current;
         pendingPersistRef.current = null;
         setSaveState("saving");
+        setSaveError(null);
 
         try {
           const snapshot = await persistStudioStoryRemote(nextPersist.story);
@@ -446,8 +450,12 @@ export function StudioWorkspace({
             return JSON.stringify(currentStory) === nextPersist.payload ? snapshot.story : currentStory;
           });
           setLastSavedAt(snapshot.savedAt);
+          setSaveError(null);
           setSaveState(pendingPersistRef.current ? "saving" : "saved");
-        } catch {
+        } catch (error) {
+          setSaveError(
+            error instanceof Error ? error.message : "Projekt konnte nicht nach Supabase gespeichert werden."
+          );
           setSaveState("error");
         }
       }
@@ -544,6 +552,7 @@ export function StudioWorkspace({
     }
 
     setSaveState("saving");
+    setSaveError(null);
     pendingPersistRef.current = null;
 
     try {
@@ -553,10 +562,14 @@ export function StudioWorkspace({
         return JSON.stringify(currentStory) === payload ? snapshot.story : currentStory;
       });
       setLastSavedAt(snapshot.savedAt);
+      setSaveError(null);
       setSaveState("saved");
       return true;
     } catch (error) {
       setSaveState("error");
+      setSaveError(
+        error instanceof Error ? error.message : "Projekt konnte nicht nach Supabase gespeichert werden."
+      );
       setLibraryError(
         error instanceof Error ? error.message : "Projekt konnte nicht nach Supabase gespeichert werden."
       );
@@ -661,6 +674,7 @@ export function StudioWorkspace({
     }
 
     setSaveState("saving");
+    setSaveError(null);
     enqueuePersist(normalizedStory, payload);
   }
 
@@ -1722,8 +1736,9 @@ export function StudioWorkspace({
                     ? " save-indicator--error"
                     : "")
               }
+              title={saveError ?? undefined}
             >
-              {formatSaveState(lastSavedAt, saveState)}
+              {formatSaveState(lastSavedAt, saveState, saveError)}
             </span>
             {isBranchingStory(draftStory) ? (
               <Link href="/story" className="flat-button topbar-link">
@@ -1763,7 +1778,7 @@ export function StudioWorkspace({
               story={draftStory}
               sceneContext={selectedSceneContext}
               selectedSceneId={selectedSceneId}
-              saveLabel={formatSaveState(lastSavedAt, saveState)}
+              saveLabel={formatSaveState(lastSavedAt, saveState, saveError)}
               onSelectScene={setSelectedSceneId}
               onManualSave={handleManualSave}
               onCreateFirstScene={handleCreateFirstScene}
@@ -2332,18 +2347,18 @@ async function persistStudioStoryRemote(draftStory: StoryDocument) {
     },
     body: JSON.stringify(draftStory)
   });
-  const payload = await response.json();
+  const payload = await readJsonResponse(response);
 
   if (!response.ok) {
     throw new Error(
-      typeof payload.error === "string" ? payload.error : "Remote saving failed."
+      payload && typeof payload.error === "string" ? payload.error : "Remote saving failed."
     );
   }
 
   return {
-    story: payload.story as StoryDocument,
+    story: payload?.story as StoryDocument,
     savedAt:
-      typeof payload.savedAt === "string" ? payload.savedAt : new Date().toISOString()
+      typeof payload?.savedAt === "string" ? payload.savedAt : new Date().toISOString()
   };
 }
 
@@ -2384,13 +2399,29 @@ async function deleteStudioStoryRemote(storyId: string) {
   }
 }
 
-function formatSaveState(lastSavedAt: string | null, saveState: SaveState) {
+async function readJsonResponse(response: Response) {
+  const raw = await response.text();
+
+  if (!raw.trim()) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return {
+      error: raw.trim()
+    };
+  }
+}
+
+function formatSaveState(lastSavedAt: string | null, saveState: SaveState, saveError?: string | null) {
   if (saveState === "saving") {
     return "Speichert nach Supabase...";
   }
 
   if (saveState === "error") {
-    return "Supabase-Speichern fehlgeschlagen";
+    return saveError ? `Supabase-Fehler: ${saveError}` : "Supabase-Speichern fehlgeschlagen";
   }
 
   if (!lastSavedAt) {
