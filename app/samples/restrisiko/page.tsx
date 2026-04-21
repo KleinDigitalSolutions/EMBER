@@ -80,7 +80,7 @@ const sceneThreeParagraphs = [
   "Fehr holte den Personalausweis aus der Garderobenschale und hielt ihn in das Licht der Flurlampe. Der Kurier verglich, nickte, drehte das Klemmbrett. Unterschrift, Uhrzeit, Datum. Fehr setzte den Strich knapp, wie immer. Der Kurier riss die Durchschrift ab, gab ihm den Umschlag, sagte „Schönen Abend“ und war weg, bevor Fehr die Tür ganz geschlossen hatte.",
   "Der Umschlag war schwer. Büttenähnliches Papier, beige, mit Prägedruck einer Kanzlei, deren Name ihm nichts sagte und gleichzeitig alles. Er trug ihn in die Küche und legte ihn auf den Tisch, neben die halb geschnittene Paprika und die leere Kante des Schneidebretts. Lea war noch im Bad. Er hörte das Wasser, das sehr regelmäßig lief, wie es nur läuft, wenn jemand zuhört.",
   "Er hätte warten können. Er wartete nicht.",
-  "Das Begleitschreiben lag obenauf, zweifach gefaltet, mit dem Schatten einer Büroklammer, die nicht mehr da war. Die Sätze waren glatt geschliffen. Man begrüße die Bestellung eines externen Gutachters. Man lege Wert auf maximale Neutralität. Man gehe davon aus, dass etwaige frühere berufliche Berührungspunkte des Gutachters mit vergleichbaren Fallkonstellationen die gebotene Unbefangenheit nicht berührten. Drei Absätze, keiner überflüssig, keiner angreifbar. Unter der Unterschrift ein zweiter, kürzerer Hinweis: „In der Anlage finden Sie zu Ihrer Orientierung eine Kopie aus Ihrem Gutachten vom 14.06.2006, Az. bekannt.“",
+  "Das Begleitschreiben liegt obenauf, zweifach gefaltet, mit dem Schatten einer Büroklammer, die nicht mehr da war. Die Sätze waren glatt geschliffen. Man begrüße die Bestellung eines externen Gutachters. Man lege Wert auf maximale Neutralität. Man gehe davon aus, dass etwaige frühere berufliche Berührungspunkte des Gutachters mit vergleichbaren Fallkonstellationen die gebotene Unbefangenheit nicht berührten. Drei Absätze, keiner überflüssig, keiner angreifbar. Unter der Unterschrift ein zweiter, kürzerer Hinweis: „In der Anlage finden Sie zu Ihrer Orientierung eine Kopie aus Ihrem Gutachten vom 14.06.2006, Az. bekannt.“",
   "Fehr blätterte.",
   "Seite drei seines alten Gutachtens. Er erkannte die eigene Syntax, bevor er den Text las. Zwei Sätze in der Mitte waren mit einem gelben Textmarker unterstrichen, einmal, sauber, offenbar mit dem Lineal, denn der Strich lief gerade durch. Eine relevante Eskalationsdynamik ist unter den gegenwärtigen Bedingungen nicht zu erwarten. Die diagnostizierten narzisstischen Anteile wirken regulierend im Sinne einer Außenorientierung.",
   "Er las es zweimal. Er spürte das Blut nicht steigen, er spürte es sinken. Eine kleine, kühle Bewegung im Brustraum, die er seit Jahren nicht mehr ernst genommen hatte.",
@@ -125,12 +125,75 @@ const sceneThreeParagraphs = [
   "Sie war es nicht.",
   "Er wusste es, während er den Stift weglegte. Er wusste auch, dass er es nirgends notieren würde. Im Vorbereitungsblatt gab es kein Feld für die Frage, woher ein Impuls stammte. Es gab nur das Feld für den Impuls selbst.",
   "Er schlug das Notizbuch zu, legte es auf das Dossier, darauf den Anwaltsbrief, zuoberst, die Unterschrift nach oben. Die Reihenfolge stimmte. Wenn Lea morgen früh durch die Küche ging, würde sie nur Papier sehen.",
-  "Aus dem Wohnzimmer kam kein Laut mehr. Er stand auf, ging zur Tür, sah hinein. Lea war nicht dort. Er hatte vergessen, dass sie ins Bett gegangen war. Das Buch lag aufgeschlagen auf dem Sofa, Seite nach unten, die Leselampe brannte. Er machte das Licht aus und zog die Tür leise zu.",
+  "Aus dem Wohnzimmer kam kein Laut mehr. Er stand auf, ging zur Tür, sah hinein. Lea war nicht dort. Er hatte vergessen, dass sie ins Bett gegangen war. Das Buch lag aufgeschlagen auf dem Sofa, Seite nach unten, die Leselampe brannte. Er machte das Licht aus und zieht die Tür leise zu.",
   "In der Küche blieb er noch einmal am Tisch stehen.",
   "Er zog den Anwaltsbrief herunter, das Notizbuch herunter, schlug das Dossier auf der Seite mit seinem eigenen alten Satz wieder auf und drehte das Blatt so, dass der gelbe Strich zu ihm zeigte.",
   "Er legte die Hand flach darauf.",
   "Das Papier unter der Hand war kühl, glatt, reagierte nicht. Er zog die Hand nicht weg. Er ließ sie liegen, bis der Raum um ihn herum nur noch aus dem leisen Brummen der Deckenleuchte und dem Ticken der Uhr über der Tür bestand, und dann noch ein paar Sekunden länger, bis er sicher war, dass er nichts anderes tun würde als das, was er bereits entschieden hatte.",
   "Dann nahm er die Hand weg, schloss das Dossier und löschte das Licht."
+];
+
+const sceneFourParagraphs = [
+  "„[SITZUNG 2 — 09:30 Uhr]\"",
+  "Der Gesprächsraum war über Nacht nicht gelüftet worden. Der Chlorreiniger vom Bodenwischen hing noch unter der Deckenplatte, vermischt mit der trockenen, warmen Luft der Neonröhre, die leicht summte. Fehr legte den Aktendeckel auf die Tischmitte, drehte ihn nicht zu sich, sondern ließ ihn in gleicher Distanz zu beiden Stühlen liegen. Er prüfte das Aufnahmegerät. Rote Diode. Datum, Uhrzeit, Raumnummer. Die Stuhllehne drückte zwischen die Schulterblätter, zu gerade, zu hoch.",
+  "Er hatte sich die Prüfhypothese am Morgen im Auto auf einen Zettel geschrieben und den Zettel an der Schranke wieder weggeworfen. Cord spricht auswendig. Die Reihenfolge seiner Sätze ist das Kontrollinstrument, nicht ihr Inhalt. Heute wird ein fremder Name die Reihenfolge stören. Der Name war Meinhardt. Aus einem Fehlfall, den außerhalb zweier Behördenakten niemand kennen sollte. Fehr hatte ihn in keinem der heute mitgebrachten Unterlagen stehen.",
+  "Cord wurde um neun Uhr dreißig hereingeführt. Keine Handfesseln, nur der weiche Gang der Langzeituntergebrachten auf Linoleum, Hausschlappen, keine Hast. Er setzte sich, rückte den Stuhl nicht. Die Hände flach auf den Oberschenkeln, wie gestern, wie in den Protokollen der letzten acht Jahre.",
+  "„Guten Morgen, Herr Cord.\"",
+  "„Guten Morgen, Herr Doktor Fehr.\"",
+  "„Ich würde gern an die gestrige Sitzung anschließen. Wir hatten bei Ihrer Tagesstruktur aufgehört. Schlaf, Medikation, Arbeitsbereich. Hat sich daran seit gestern etwas verändert?\"",
+  "„Nein.\"",
+  "„Keine Auffälligkeiten beim Stationsdienst, keine Schlafunterbrechungen?\"",
+  "„Nein.\"",
+  "Fehr notierte. Er ließ eine Pause, die nicht lang genug war, um unhöflich zu wirken, aber lang genug, um Cords Atmung hörbar zu machen. Gleichmäßig. Nasenatmung. Vier, vier.",
+  "„Ich möchte zwischendurch etwas aus den Stationsakten klären.\" Er blätterte, ohne etwas zu suchen. „Der Pflegedienstleiter hat notiert, dass ein Mitpatient, ein Herr Meinhardt, im Herbst einen Konflikt mit Ihnen hatte.\"",
+  "Er sprach den Namen im selben Tonfall wie den Wochentag. Er sah nicht auf.",
+  "Cord antwortete nicht.",
+  "Fehr hob den Blick. Cord saß wie vorher. Der Blick auf eine Stelle zwischen Fehrs Schlüsselbein und dem oberen Rand der Aktendeckelkante. Sein Gesicht bewegte sich nicht. Kein Blinzeln. Eine Sekunde, vielleicht anderthalb. Dann, sehr leicht, eine Bewegung im rechten Mundwinkel. Keine Regung des Erkennens. Eher das Registrieren, dass etwas ins Wasser gefallen war, ohne die Richtung der Ringe zu beachten.",
+  "„Ich habe dazu keine Wahrnehmung\", sagte Cord.",
+  "„Das ist in Ordnung. Die Notiz ist ohnehin knapp.\" Fehr blätterte weiter. Er spürte, dass er zu schnell blätterte. „Für mich ist eher relevant, wie Sie solche Situationen heute im Vergleich zu früher regulieren. Ob Sie, anders gesagt, in einer Reizsituation Strategien einsetzen, die Sie in der Therapie erarbeitet haben. Das wäre ein Marker, an dem sich die Frage einer Lockerung fachlich festmachen ließe, und zwar einer ersten, kontrollierten Lockerung, im Sinne der Stufenlogik.\"",
+  "Er hörte den Satz, während er noch im Satz war. Zu lang. Zu viel „fachlich“. Das Wort „einer“ angehängt wie eine Korrektur, die keiner verlangt hatte, und danach noch die Stufenlogik, die hier niemand zur Sprache gebracht hatte.",
+  "Cord sah ihn jetzt an.",
+  "„Ich kann Strategien benennen\", sagte er. „Stimuluskontrolle. Distanz. Verzögerung. Wenn Sie das hören wollen.\"",
+  "„Ich möchte, dass Sie beschreiben, nicht aufzählen.\"",
+  "„Dann beschreibe ich. Ich stehe auf, gehe zum Fenster, zähle bis zwanzig, gehe zurück. Ich spreche den Pfleger an, wenn es länger dauert. Ich melde mich zur Einzelstunde, wenn es häufiger vorkommt. Das ist, was ich tue.\"",
+  "„Und in welcher Frequenz kommt das vor?\"",
+  "„Selten.\"",
+  "„Selten ist kein Wert.\"",
+  "„Dreimal in den letzten zwölf Monaten. Dokumentiert.\"",
+  "Fehr schrieb. Seine Hand war ruhig. Seine Sätze nicht. Er merkte, dass er nach der nächsten Frage griff wie nach einem Haltegriff in einem Bus, der zu scharf bremst.",
+  "„Sie wissen, dass ich Ihre Akte nicht vollständig neu bewerte. Ich schließe an Vorbefunde an, ich gleiche ab, ich prüfe, ob die damaligen Einschätzungen heute noch tragen. Das ist das Mandat. Ich sage Ihnen das, damit Sie einordnen können, warum ich bestimmte Fragen wiederhole, obwohl sie schon mehrfach gestellt worden sind. Es geht nicht darum, frühere Kolleginnen und Kollegen zu korrigieren. Es geht darum, dass eine Prognose nur so weit trägt, wie sie selbst neu verantwortet wird.\"",
+  "Er hatte nicht vorgehabt, das zu sagen. Der Satz lag nun offen auf dem Tisch, wie ein Gegenstand, den er aus seiner eigenen Tasche gezogen hatte, ohne sich daran zu erinnern, ihn eingepackt zu haben.",
+  "Cord nickte langsam. Er hielt die Pause. Er atmete einmal tiefer ein als vorher, nicht lauter, nur tiefer. Dann lehnte er sich eine Daumenbreite zurück.",
+  "„Sie prüfen mich\", sagte er, „als hätte jemand anderer Ihre Unterschrift getragen.\"",
+  "Fehr hielt den Stift über dem Blatt. Er notierte nicht. Er notierte auch nicht, dass er nicht notierte.",
+  "Die Neonröhre summte. Draußen, im Flur, zog jemand einen Wagen mit Frühstücksgeschirr vorbei. Räder über Fugen. Glas auf Metall. Der Chlorgeruch hatte sich oben am Fenster gesammelt. Fehr spürte ihn hinten am Gaumen, trocken, leicht metallisch. Seine Augen brannten. Er zählte die Sekunden, bis er sprach. Er wollte nicht zu schnell sprechen, und er wollte nicht zu lange schweigen. Jedes Maß wäre eine Antwort gewesen.",
+  "„Bleiben wir bei der Tagesstruktur\", sagte er. Seine Stimme war wieder kürzer. „Heute Nachmittag. Arbeitsbereich. Wie sieht der vor?\"",
+  "„Wäscherei, vierzehn bis sechzehn Uhr. Danach Einzelstunde bei Frau Kröger, sechzehn Uhr dreißig.\"",
+  "„Welche Maschine?\"",
+  "„Mangel zwei.\"",
+  "„Gleicher Bereich wie letzte Woche?\"",
+  "„Ja.\"",
+  "„Gleicher Partner?\"",
+  "„Ja.\"",
+  "„Danke.\"",
+  "„Bitte.\"",
+  "Fehr sah auf die Uhr über der Tür. Zehn Uhr vier. Er hatte für die Sitzung fünfundvierzig Minuten angesetzt. Er würde sie nicht abbrechen. Er würde sie führen bis zum regulären Ende.",
+  "„Haben Sie Fragen zum weiteren Vorgehen?\"",
+  "„No.\"",
+  "„Wünsche, was die Sitzungsdichte betrifft?\"",
+  "„Ich richte mich nach Ihrem Zeitplan.\"",
+  "„Das ist kein Wunsch.\"",
+  "„Das ist die richtige Antwort.\"",
+  "Fehr legte den Stift flach neben das Blatt. Er ließ die Hand einen Moment darauf liegen.",
+  "„Dann hören wir hier auf.\"",
+  "Cord stand nicht sofort auf. Er wartete, bis Fehr das Aufnahmegerät angehalten hatte. Dann erst schob er den Stuhl, nicht laut, und ließ sich vom Pfleger abholen, der vor der Tür gewartet hatte, ohne anzuklopfen.",
+  "Fehr blieb sitzen. Er hörte die Schritte den Flur hinunter, den kurzen Gruß, das Klicken der Stationstür. Er schrieb das Protokoll zu Ende. Abschlusszeit. Verlauf unauffällig. Kooperationsverhalten formal gegeben. Sprachliches Niveau stabil. Keine Auffälligkeiten im Reaktionsspektrum bezüglich eingeführter Kontrollstimuli. Er schrieb den letzten Satz so, wie er ihn seit achtzehn Jahren schrieb, mit derselben Wortwahl, die in seinen Vorgutachten stand, und unterzeichnete auf der vorgesehenen Linie.",
+  "Er schloss die Akte. Er blieb noch sitzen. Die Neonröhre summte unverändert. Irgendwo zwei Türen weiter lachte jemand kurz, einsilbig, und hörte wieder auf.",
+  "Dann, erst dann, zog er aus der Innentasche seines Sakkos ein kleines, schwarz gebundenes Heft. Nicht dienstlich. Kein Aufdruck. Ein Bleistift im Gummizug. Er schlug eine leere Seite auf. Er schrieb nicht viel. Er schrieb in kleinen, schrägen Buchstaben, die er von seinen eigenen Akten her nicht kannte, die nicht zu seiner Handschrift passten, die eher aus der Zeit vor den Akten stammten, als er Skizzen in Seminarblöcke gemacht hatte.",
+  "Er führt nicht. Er folgt.",
+  "Er sah den Satz an. Er strich ihn nicht durch. Er setzte auch keinen Punkt dahinter, der nicht schon da gewesen wäre. Er schloss das Heft, führte es zurück in die Innentasche, prüfte mit dem Daumen, ob der Stoff sauber über den Rand fiel, und stand auf.",
+  "Der Stuhl ihm gegenüber war leer. Auf der Sitzfläche lag ein feiner, heller Abdruck, wo Cords Handrücken aufgelegen hatte, Staub aus der Wäscherei vermutlich, oder nichts, oder das Licht. Fehr sah einen Moment darauf. Dann nahm er die Akte.",
+  "Auf dem Flur, Richtung Pförtnerloge, ging ihm auf, dass er den Namen Meinhardt in keiner Zeile des Dienstprotokolls vermerkt hatte. Er blieb kurz stehen, die Hand schon an der Innentasche, und ging weiter."
 ];
 
 export default function RestrisikoSamplePage() {
@@ -140,7 +203,7 @@ export default function RestrisikoSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Restrisiko</h1>
-          <p>Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -201,9 +264,25 @@ export default function RestrisikoSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
+          <h2>Sitzung 2 — Der Meinhardt-Stimulus</h2>
+          <p>
+            Fehr versucht, Cord mit dem Namen „Meinhardt“ aus der Reserve zu locken. 
+            Doch Cord reagiert mit einer Stille, die Fehr mehr über seine eigene 
+            Unterschrift verrät, als ihm lieb ist.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFourParagraphs.map(function (paragraph, i) {
+            return <p key={`s4-p-${i}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 4 · Sitzung 2</h3>
+          <h3>Szene 5</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den 
             weiteren Verlauf der Geschichte gestalten.
