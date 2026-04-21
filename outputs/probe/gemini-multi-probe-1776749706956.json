@@ -1,0 +1,51 @@
+{
+  "startedAt": "2026-04-21T05:32:53.888Z",
+  "attempts": 3,
+  "runs": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-04-21T05:32:53.888Z",
+      "provider": "gemini",
+      "mode": "remote",
+      "warning": "State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "modelName": "gemini-2.5-flash",
+      "continuityModelName": "gemini-2.5-flash",
+      "extractStatus": "failed",
+      "extractModelName": "gemini-2.5-flash",
+      "qualityStatus": "completed",
+      "qualityScore": 9.6,
+      "draftWords": 979,
+      "rewriteWords": 1381
+    },
+    {
+      "attempt": 2,
+      "startedAt": "2026-04-21T05:34:36.213Z",
+      "provider": "local",
+      "mode": "local_fallback",
+      "warning": "gemini request failed; local fallback used. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "modelName": null,
+      "continuityModelName": null,
+      "extractStatus": "completed",
+      "extractModelName": null,
+      "qualityStatus": "completed",
+      "qualityScore": null,
+      "draftWords": 317,
+      "rewriteWords": 371
+    },
+    {
+      "attempt": 3,
+      "startedAt": "2026-04-21T05:34:46.940Z",
+      "provider": "local",
+      "mode": "local_fallback",
+      "warning": "gemini request failed; local fallback used. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "modelName": null,
+      "continuityModelName": null,
+      "extractStatus": "completed",
+      "extractModelName": null,
+      "qualityStatus": "completed",
+      "qualityScore": null,
+      "draftWords": 317,
+      "rewriteWords": 371
+    }
+  ]
+}
