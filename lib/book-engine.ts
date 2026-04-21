@@ -523,25 +523,29 @@ export function createStageRun(params: {
 
 function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["memory"] {
   const syncedAt = new Date().toISOString();
-  const canonLedger = deriveCanonLedger(story);
-  const openThreads = deriveOpenThreads(story);
-  const characterLedger = deriveCharacterLedger(story, canonLedger, openThreads, syncedAt);
-  const sceneCards = deriveTimelineBeats(story);
-  const contextPacks = deriveContextPacks(
-    story,
-    syncedAt,
-    sceneCards,
-    canonLedger,
-    characterLedger,
-    openThreads
-  );
-  const continuityNotes = story.book.draftEngine.jobs
-    .flatMap(function (job) {
-      return job.extractedState.continuityRisks.map(function (risk) {
-        return `${job.sceneTitle}: ${risk}`;
-      });
-    })
-    .slice(0, 12);
+  const canonLedger = buildCanonLedger(story);
+  const openThreads = buildOpenThreads(story);
+  const characterLedger = buildCharacterLedger(story);
+  const sceneCards = buildTimelineBeats(story);
+  const contextPacks = story.book.memory.contextPacks.length
+    ? story.book.memory.contextPacks
+    : deriveContextPacks(
+        story,
+        syncedAt,
+        sceneCards,
+        canonLedger,
+        characterLedger,
+        openThreads
+      );
+  const continuityNotes = story.book.memory.continuityNotes.length
+    ? story.book.memory.continuityNotes
+    : story.book.draftEngine.jobs
+        .flatMap(function (job) {
+          return job.extractedState.continuityRisks.map(function (risk) {
+            return `${job.sceneTitle}: ${risk}`;
+          });
+        })
+        .slice(0, 12);
 
   return {
     lastSyncedAt: syncedAt,
