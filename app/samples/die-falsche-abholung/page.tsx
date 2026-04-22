@@ -84,7 +84,7 @@ const sceneTwoParagraphs = [
   "„Sie ist nicht meine.\"",
   "Petra nickte, als hätte sie diesen Satz erwartet. Sie sagte nicht, dass sie Eva glaubte. Sie sagte nichts dagegen. Sie ließ den Satz nur im Raum stehen, und dadurch wurde er dünner, als Eva es sich geleistet hätte.",
   "„Anja hat sie gegengezeichnet\", sagte Petra. „Sie hatte keinen Grund, misstrauisch zu sein. Mila hat die Frau nicht als fremd behandelt. Sie hat ihre Jacke geholt, ihre Schuhe angezogen, ist mitgegangen.\"",
-  "„Mila ist drei. Mila geht mit jedem mit, der freundlich lächelt.\"",
+  "„Mila ist sechs. Mila geht mit jedem mit, der freundlich lächelt.\"",
   "„Das stimmt nicht, Eva. Mila geht nicht mit jedem mit.\"",
   "Es war der erste Satz, in dem Petra eine Grenze zog, und sie zog sie sehr leise.",
   "Eva versuchte zu atmen. „Und die Jacke\", sagte sie, „die rote mit dem Reh. Die ist heute morgen nicht im Schrank gewesen.\"",
