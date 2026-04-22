@@ -192,7 +192,6 @@ export type BookBlueprint = {
     thematicCore: string;
     storyArchitecture: string[];
   };
-  masterBriefRuntime: BookMasterBriefRuntime;
   marketBrief: {
     amazonGoal: string;
     categoryLane: string;
@@ -202,35 +201,9 @@ export type BookBlueprint = {
     publishingGuardrails: string[];
   };
   writerConstitution: string[];
-  writerRulesRuntime: BookWriterRulesRuntime;
-  threatModel: BookThreatModel;
   memory: BookMemoryBackbone;
   draftEngine: BookDraftEngine;
   amazonOps: AmazonOps;
-};
-
-export type BookMasterBriefRuntime = {
-  premise: string;
-  readerPromise: string;
-  endingPromise: string;
-  thematicCore: string;
-  povRule: string;
-  antagonistRule: string;
-};
-
-export type BookWriterRulesRuntime = {
-  globalStyle: string[];
-  sceneMechanics: string[];
-  hardBans: string[];
-};
-
-export type BookThreatModel = {
-  antagonist: string;
-  objective: string;
-  operatingSystems: string[];
-  escalationLogic: string[];
-  forbiddenCapabilities: string[];
-  truthUnderHook: string[];
 };
 
 export type BookDraftEngine = {
@@ -289,9 +262,6 @@ export type BookCanonFact = {
   sceneIds: string[];
   importance: "high" | "medium" | "low";
   status: "active" | "watch" | "resolved";
-  category: "family" | "institution" | "access" | "routine" | "threat" | "history" | "subtext";
-  visibility: "reader_known" | "reader_hidden" | "subtext";
-  enforcement: "hard" | "soft";
 };
 
 export type BookCharacterState = {
@@ -303,19 +273,6 @@ export type BookCharacterState = {
   agenda: string;
   updatedFromSceneId: string;
   updatedAt: string;
-  misreadRisk: {
-    byInstitutions: string;
-    byOtherCharacters: string;
-    byReaderEarly: string;
-  };
-  draftControls: {
-    mustShow: string[];
-    mustAvoid: string[];
-  };
-  pressurePattern: {
-    underStressDoes: string[];
-    underStressShouldNotDo: string[];
-  } | null;
   snapshots: BookCharacterStateSnapshot[];
 };
 
@@ -370,24 +327,6 @@ export type BookSceneCard = {
   chapterGoal: string;
   directives: BookSceneCardDirectives;
   outline: string[];
-  sceneFunction: string[];
-  readerQuestion: string;
-  evidenceDelta: {
-    before: string;
-    after: string;
-  };
-  trustShift: string;
-  accessShift: string;
-  lockedFields: string[];
-  opusTaskMode: {
-    planning: string;
-    draft: string;
-    rewrite: string;
-    expand: string;
-  };
-  escalationLevel: number | null;
-  exitCondition: string;
-  overwriteRisk: string[];
 };
 
 export type BookContextPack = {
@@ -400,39 +339,6 @@ export type BookContextPack = {
   relevantCanonEntryIds: string[];
   relevantCharacterStateIds: string[];
   activeThreadIds: string[];
-  runtimeContext: {
-    masterBriefRuntime: BookMasterBriefRuntime;
-    writerRulesRuntime: BookWriterRulesRuntime;
-    threatModel: BookThreatModel;
-    sceneCard: {
-      sceneFunction: string[];
-      readerQuestion: string;
-      evidenceDelta: {
-        before: string;
-        after: string;
-      };
-      trustShift: string;
-      accessShift: string;
-      lockedFields: string[];
-      escalationLevel: number | null;
-      exitCondition: string;
-      overwriteRisk: string[];
-    };
-    relevantCanonFacts: Array<{
-      entryId: string;
-      title: string;
-      category: BookCanonFact["category"];
-      visibility: BookCanonFact["visibility"];
-      enforcement: BookCanonFact["enforcement"];
-    }>;
-    relevantCharacters: Array<{
-      id: string;
-      characterName: string;
-      misreadRisk: BookCharacterState["misreadRisk"];
-      draftControls: BookCharacterState["draftControls"];
-      pressurePattern: BookCharacterState["pressurePattern"];
-    }>;
-  };
 };
 
 export type DraftExtractionState = {
@@ -695,36 +601,6 @@ export function createDefaultAssistantWorkspace(): AssistantWorkspace {
   };
 }
 
-export function createDefaultBookMasterBriefRuntime(): BookMasterBriefRuntime {
-  return {
-    premise: "",
-    readerPromise: "",
-    endingPromise: "",
-    thematicCore: "",
-    povRule: "",
-    antagonistRule: ""
-  };
-}
-
-export function createDefaultBookWriterRulesRuntime(): BookWriterRulesRuntime {
-  return {
-    globalStyle: [],
-    sceneMechanics: [],
-    hardBans: []
-  };
-}
-
-export function createDefaultBookThreatModel(): BookThreatModel {
-  return {
-    antagonist: "",
-    objective: "",
-    operatingSystems: [],
-    escalationLogic: [],
-    forbiddenCapabilities: [],
-    truthUnderHook: []
-  };
-}
-
 export function createDefaultAssistantModelSelection(): AssistantModelSelection {
   return {
     openai: "",
@@ -785,7 +661,6 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       thematicCore: "",
       storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
     },
-    masterBriefRuntime: createDefaultBookMasterBriefRuntime(),
     marketBrief: {
       amazonGoal: "",
       categoryLane: "",
@@ -795,8 +670,6 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       publishingGuardrails: DEFAULT_BOOK_PUBLISHING_GUARDRAILS.slice()
     },
     writerConstitution: DEFAULT_BOOK_WRITER_CONSTITUTION.slice(),
-    writerRulesRuntime: createDefaultBookWriterRulesRuntime(),
-    threatModel: createDefaultBookThreatModel(),
     memory: createDefaultBookMemoryBackbone(),
     draftEngine: {
       mode: "local",

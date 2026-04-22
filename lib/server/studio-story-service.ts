@@ -305,10 +305,6 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
         targetFormat: normalizeTargetFormat(bookProject.target_format),
         targetLengthWords: toNumber(bookProject.target_length_words, fallbackBook.targetLengthWords),
         masterBrief: normalizeMasterBrief(bookProject.master_brief, fallbackBook.masterBrief),
-        masterBriefRuntime: normalizeMasterBriefRuntime(
-          bookProject.master_brief_runtime,
-          fallbackBook.masterBriefRuntime
-        ),
         marketBrief: normalizeMarketBrief(bookProject.market_brief, fallbackBook.marketBrief),
         writerConstitution:
           normalizeBookRuleList(
@@ -317,15 +313,9 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
             }),
             fallbackBook.writerConstitution
           ),
-        writerRulesRuntime: normalizeWriterRulesRuntime(
-          bookProject.writer_rules_runtime,
-          fallbackBook.writerRulesRuntime
-        ),
-        threatModel: normalizeThreatModel(bookProject.threat_model, fallbackBook.threatModel),
         memory: {
           lastSyncedAt: memoryLastSyncedAt,
           canonLedger: canonFacts.map(function (row) {
-            const pipelineMeta = toRecord(row.pipeline_meta)
             return {
               entryId: row.id as string,
               title: (row.title as string) ?? "",
@@ -336,14 +326,10 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
                 return refRow.scene_id as string
               }),
               importance: normalizeImportance(row.importance),
-              status: normalizeThreadStatus(row.status),
-              category: normalizeCanonCategory(pipelineMeta.category),
-              visibility: normalizeCanonVisibility(pipelineMeta.visibility),
-              enforcement: normalizeCanonEnforcement(pipelineMeta.enforcement)
+              status: normalizeThreadStatus(row.status)
             }
           }),
           characterLedger: (characterStatesResult.data ?? []).map(function (row) {
-            const pipelineMeta = toRecord(row.pipeline_meta)
             return {
               id: row.id as string,
               characterEntryId: (row.world_bible_entry_id as string) ?? "",
@@ -353,9 +339,6 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               agenda: (row.agenda as string) ?? "",
               updatedFromSceneId: (row.updated_from_scene_id as string) ?? "",
               updatedAt: (row.state_updated_at as string) ?? row.updated_at ?? memoryLastSyncedAt ?? "",
-              misreadRisk: normalizeCharacterMisreadRisk(pipelineMeta.misreadRisk),
-              draftControls: normalizeCharacterDraftControls(pipelineMeta.draftControls),
-              pressurePattern: normalizeCharacterPressurePattern(pipelineMeta.pressurePattern),
               snapshots: (characterStateSnapshotsByStateId.get(row.id as string) ?? []).map(function (
                 snapshotRow
               ) {
@@ -393,7 +376,6 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
             }
           }),
           sceneCards: (sceneCardsResult.data ?? []).map(function (row) {
-            const pipelineMeta = toRecord(row.pipeline_meta)
             return {
               sceneId: row.scene_id as string,
               sceneTitle: (row.scene_title as string) ?? "",
@@ -404,17 +386,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               orderLabel: (row.order_label as string) ?? "",
               chapterGoal: (row.chapter_goal as string) ?? "",
               directives: normalizeBookSceneCardDirectives(row.directives),
-              outline: normalizeStringArray(row.outline),
-              sceneFunction: normalizeStringArray(pipelineMeta.sceneFunction),
-              readerQuestion: typeof pipelineMeta.readerQuestion === "string" ? pipelineMeta.readerQuestion : "",
-              evidenceDelta: normalizeEvidenceDelta(pipelineMeta.evidenceDelta),
-              trustShift: typeof pipelineMeta.trustShift === "string" ? pipelineMeta.trustShift : "",
-              accessShift: typeof pipelineMeta.accessShift === "string" ? pipelineMeta.accessShift : "",
-              lockedFields: normalizeStringArray(pipelineMeta.lockedFields),
-              opusTaskMode: normalizeOpusTaskMode(pipelineMeta.opusTaskMode),
-              escalationLevel: normalizeIntegerOrNull(pipelineMeta.escalationLevel, null),
-              exitCondition: typeof pipelineMeta.exitCondition === "string" ? pipelineMeta.exitCondition : "",
-              overwriteRisk: normalizeStringArray(pipelineMeta.overwriteRisk)
+              outline: normalizeStringArray(row.outline)
             }
           }),
           contextPacks: contextPacks.map(function (row) {
@@ -441,13 +413,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
                 .map(function (linkRow) {
                   return threadMap.get(linkRow.thread_id as string)?.id as string
                 })
-                .filter(Boolean),
-              runtimeContext: normalizeContextPackRuntimeContext(
-                row.runtime_context,
-                fallbackBook.masterBriefRuntime,
-                fallbackBook.writerRulesRuntime,
-                fallbackBook.threatModel
-              )
+                .filter(Boolean)
             }
           }),
           continuityNotes: []
@@ -643,10 +609,7 @@ async function saveStudioStoryInternal(
       target_format: nextStory.book.targetFormat || "novel",
       target_length_words: nextStory.book.targetLengthWords || 70000,
       master_brief: nextStory.book.masterBrief,
-      master_brief_runtime: nextStory.book.masterBriefRuntime,
       market_brief: nextStory.book.marketBrief,
-      writer_rules_runtime: nextStory.book.writerRulesRuntime,
-      threat_model: nextStory.book.threatModel,
       amazon_ops: nextStory.book.amazonOps,
       memory_last_synced_at: nextStory.book.memory.lastSyncedAt
     })
@@ -823,12 +786,7 @@ async function saveStudioStoryInternal(
         summary: fact.summary,
         mention_count: fact.mentionCount,
         importance: fact.importance,
-        status: fact.status,
-        pipeline_meta: {
-          category: fact.category,
-          visibility: fact.visibility,
-          enforcement: fact.enforcement
-        }
+        status: fact.status
       }
     })
 
@@ -852,12 +810,7 @@ async function saveStudioStoryInternal(
         inner_shift: state.innerShift,
         agenda: state.agenda,
         updated_from_scene_id: state.updatedFromSceneId || null,
-        state_updated_at: state.updatedAt,
-        pipeline_meta: {
-          misreadRisk: state.misreadRisk,
-          draftControls: state.draftControls,
-          pressurePattern: state.pressurePattern
-        }
+        state_updated_at: state.updatedAt
       }
     })
 
@@ -908,19 +861,7 @@ async function saveStudioStoryInternal(
         order_label: sceneCard.orderLabel,
         chapter_goal: sceneCard.chapterGoal,
         directives: sceneCard.directives,
-        outline: sceneCard.outline,
-        pipeline_meta: {
-          sceneFunction: sceneCard.sceneFunction,
-          readerQuestion: sceneCard.readerQuestion,
-          evidenceDelta: sceneCard.evidenceDelta,
-          trustShift: sceneCard.trustShift,
-          accessShift: sceneCard.accessShift,
-          lockedFields: sceneCard.lockedFields,
-          opusTaskMode: sceneCard.opusTaskMode,
-          escalationLevel: sceneCard.escalationLevel,
-          exitCondition: sceneCard.exitCondition,
-          overwriteRisk: sceneCard.overwriteRisk
-        }
+        outline: sceneCard.outline
       }
     })
 
@@ -933,8 +874,7 @@ async function saveStudioStoryInternal(
         stable_prefix_signature: pack.stablePrefixSignature,
         previous_scene_ids: pack.previousSceneIds,
         next_scene_id: pack.nextSceneId,
-        prepared_at: pack.preparedAt,
-        runtime_context: pack.runtimeContext
+        prepared_at: pack.preparedAt
       }
     })
 
@@ -1630,57 +1570,6 @@ function normalizeMasterBrief(
   }
 }
 
-function normalizeMasterBriefRuntime(
-  value: unknown,
-  fallback: StoryDocument["book"]["masterBriefRuntime"]
-) {
-  const record = toRecord(value)
-
-  return {
-    premise: typeof record.premise === "string" ? record.premise : fallback.premise,
-    readerPromise:
-      typeof record.readerPromise === "string" ? record.readerPromise : fallback.readerPromise,
-    endingPromise:
-      typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
-    thematicCore:
-      typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
-    povRule: typeof record.povRule === "string" ? record.povRule : fallback.povRule,
-    antagonistRule:
-      typeof record.antagonistRule === "string"
-        ? record.antagonistRule
-        : fallback.antagonistRule
-  }
-}
-
-function normalizeWriterRulesRuntime(
-  value: unknown,
-  fallback: StoryDocument["book"]["writerRulesRuntime"]
-) {
-  const record = toRecord(value)
-
-  return {
-    globalStyle: normalizeStringArray(record.globalStyle),
-    sceneMechanics: normalizeStringArray(record.sceneMechanics),
-    hardBans: normalizeStringArray(record.hardBans)
-  }
-}
-
-function normalizeThreatModel(
-  value: unknown,
-  fallback: StoryDocument["book"]["threatModel"]
-) {
-  const record = toRecord(value)
-
-  return {
-    antagonist: typeof record.antagonist === "string" ? record.antagonist : fallback.antagonist,
-    objective: typeof record.objective === "string" ? record.objective : fallback.objective,
-    operatingSystems: normalizeStringArray(record.operatingSystems),
-    escalationLogic: normalizeStringArray(record.escalationLogic),
-    forbiddenCapabilities: normalizeStringArray(record.forbiddenCapabilities),
-    truthUnderHook: normalizeStringArray(record.truthUnderHook)
-  }
-}
-
 function normalizeMarketBrief(
   value: unknown,
   fallback: StoryDocument["book"]["marketBrief"]
@@ -1783,44 +1672,6 @@ function normalizeCanonKind(value: unknown) {
   return "scene_fact"
 }
 
-function normalizeCanonCategory(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["category"] {
-  if (
-    value === "family" ||
-    value === "institution" ||
-    value === "access" ||
-    value === "routine" ||
-    value === "threat" ||
-    value === "history" ||
-    value === "subtext"
-  ) {
-    return value
-  }
-
-  return "subtext"
-}
-
-function normalizeCanonVisibility(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["visibility"] {
-  if (value === "reader_known" || value === "reader_hidden" || value === "subtext") {
-    return value
-  }
-
-  return "reader_known"
-}
-
-function normalizeCanonEnforcement(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["enforcement"] {
-  if (value === "hard" || value === "soft") {
-    return value
-  }
-
-  return "soft"
-}
-
 function normalizeVariableType(value: unknown): StoryVariable["type"] {
   if (value === "boolean" || value === "enum" || value === "number") {
     return value
@@ -1853,139 +1704,6 @@ function normalizeCharacterStateSnapshotScope(
   }
 
   return "scene"
-}
-
-function normalizeCharacterMisreadRisk(value: unknown) {
-  const record = toRecord(value)
-
-  return {
-    byInstitutions:
-      typeof record.byInstitutions === "string" ? record.byInstitutions : "",
-    byOtherCharacters:
-      typeof record.byOtherCharacters === "string" ? record.byOtherCharacters : "",
-    byReaderEarly:
-      typeof record.byReaderEarly === "string" ? record.byReaderEarly : ""
-  }
-}
-
-function normalizeCharacterDraftControls(value: unknown) {
-  const record = toRecord(value)
-
-  return {
-    mustShow: normalizeStringArray(record.mustShow),
-    mustAvoid: normalizeStringArray(record.mustAvoid)
-  }
-}
-
-function normalizeCharacterPressurePattern(value: unknown) {
-  if (value === null) {
-    return null
-  }
-
-  const record = toRecord(value)
-
-  if (!Object.keys(record).length) {
-    return null
-  }
-
-  return {
-    underStressDoes: normalizeStringArray(record.underStressDoes),
-    underStressShouldNotDo: normalizeStringArray(record.underStressShouldNotDo)
-  }
-}
-
-function normalizeEvidenceDelta(value: unknown) {
-  const record = toRecord(value)
-
-  return {
-    before: typeof record.before === "string" ? record.before : "",
-    after: typeof record.after === "string" ? record.after : ""
-  }
-}
-
-function normalizeOpusTaskMode(value: unknown) {
-  const record = toRecord(value)
-
-  return {
-    planning: typeof record.planning === "string" ? record.planning : "",
-    draft: typeof record.draft === "string" ? record.draft : "",
-    rewrite: typeof record.rewrite === "string" ? record.rewrite : "",
-    expand: typeof record.expand === "string" ? record.expand : ""
-  }
-}
-
-function normalizeContextPackRuntimeContext(
-  value: unknown,
-  fallbackMasterBriefRuntime: StoryDocument["book"]["masterBriefRuntime"],
-  fallbackWriterRulesRuntime: StoryDocument["book"]["writerRulesRuntime"],
-  fallbackThreatModel: StoryDocument["book"]["threatModel"]
-) {
-  const record = toRecord(value)
-
-  return {
-    masterBriefRuntime: normalizeMasterBriefRuntime(
-      record.masterBriefRuntime,
-      fallbackMasterBriefRuntime
-    ),
-    writerRulesRuntime: normalizeWriterRulesRuntime(
-      record.writerRulesRuntime,
-      fallbackWriterRulesRuntime
-    ),
-    threatModel: normalizeThreatModel(record.threatModel, fallbackThreatModel),
-    sceneCard: {
-      sceneFunction: normalizeStringArray(toRecord(record.sceneCard).sceneFunction),
-      readerQuestion:
-        typeof toRecord(record.sceneCard).readerQuestion === "string"
-          ? toRecord(record.sceneCard).readerQuestion
-          : "",
-      evidenceDelta: normalizeEvidenceDelta(toRecord(record.sceneCard).evidenceDelta),
-      trustShift:
-        typeof toRecord(record.sceneCard).trustShift === "string"
-          ? toRecord(record.sceneCard).trustShift
-          : "",
-      accessShift:
-        typeof toRecord(record.sceneCard).accessShift === "string"
-          ? toRecord(record.sceneCard).accessShift
-          : "",
-      lockedFields: normalizeStringArray(toRecord(record.sceneCard).lockedFields),
-      escalationLevel: normalizeIntegerOrNull(toRecord(record.sceneCard).escalationLevel, null),
-      exitCondition:
-        typeof toRecord(record.sceneCard).exitCondition === "string"
-          ? toRecord(record.sceneCard).exitCondition
-          : "",
-      overwriteRisk: normalizeStringArray(toRecord(record.sceneCard).overwriteRisk)
-    },
-    relevantCanonFacts: Array.isArray(record.relevantCanonFacts)
-      ? record.relevantCanonFacts
-          .filter(function (entry): entry is Row {
-            return Boolean(entry) && typeof entry === "object" && !Array.isArray(entry)
-          })
-          .map(function (entry) {
-            return {
-              entryId: typeof entry.entryId === "string" ? entry.entryId : "",
-              title: typeof entry.title === "string" ? entry.title : "",
-              category: normalizeCanonCategory(entry.category),
-              visibility: normalizeCanonVisibility(entry.visibility),
-              enforcement: normalizeCanonEnforcement(entry.enforcement)
-            }
-          })
-      : [],
-    relevantCharacters: Array.isArray(record.relevantCharacters)
-      ? record.relevantCharacters
-          .filter(function (entry): entry is Row {
-            return Boolean(entry) && typeof entry === "object" && !Array.isArray(entry)
-          })
-          .map(function (entry) {
-            return {
-              id: typeof entry.id === "string" ? entry.id : "",
-              characterName: typeof entry.characterName === "string" ? entry.characterName : "",
-              misreadRisk: normalizeCharacterMisreadRisk(entry.misreadRisk),
-              draftControls: normalizeCharacterDraftControls(entry.draftControls),
-              pressurePattern: normalizeCharacterPressurePattern(entry.pressurePattern)
-            }
-          })
-      : []
-  }
 }
 
 function normalizeProvider(value: unknown): BookDraftJob["provider"] {

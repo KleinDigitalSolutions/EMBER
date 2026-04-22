@@ -2901,10 +2901,6 @@ function normalizeBookBlueprint(
         fallback.masterBrief.storyArchitecture
       )
     },
-    masterBriefRuntime: normalizeImportedMasterBriefRuntime(
-      candidate.masterBriefRuntime,
-      fallback.masterBriefRuntime
-    ),
     marketBrief: {
       amazonGoal:
         typeof candidate.marketBrief?.amazonGoal === "string"
@@ -2935,11 +2931,6 @@ function normalizeBookBlueprint(
       candidate.writerConstitution,
       fallback.writerConstitution
     ),
-    writerRulesRuntime: normalizeImportedWriterRulesRuntime(
-      candidate.writerRulesRuntime,
-      fallback.writerRulesRuntime
-    ),
-    threatModel: normalizeImportedThreatModel(candidate.threatModel, fallback.threatModel),
     memory: normalizeBookMemoryBackbone(candidate.memory, fallback.memory),
     draftEngine: {
       mode: "local",
@@ -3054,23 +3045,7 @@ function normalizeBookMemoryBackbone(
   return {
     lastSyncedAt:
       typeof candidate.lastSyncedAt === "string" ? candidate.lastSyncedAt : fallback.lastSyncedAt,
-    canonLedger:
-      Array.isArray(candidate.canonLedger)
-        ? candidate.canonLedger.map(function (entry) {
-            if (!entry || typeof entry !== "object") {
-              return entry as StoryDocument["book"]["memory"]["canonLedger"][number];
-            }
-
-            const record = entry as Record<string, unknown>;
-
-            return {
-              ...entry,
-              category: normalizeImportedCanonCategory(record.category),
-              visibility: normalizeImportedCanonVisibility(record.visibility),
-              enforcement: normalizeImportedCanonEnforcement(record.enforcement)
-            };
-          })
-        : fallback.canonLedger,
+    canonLedger: Array.isArray(candidate.canonLedger) ? candidate.canonLedger : fallback.canonLedger,
     characterLedger:
       Array.isArray(candidate.characterLedger)
         ? candidate.characterLedger.map(function (entry) {
@@ -3080,16 +3055,10 @@ function normalizeBookMemoryBackbone(
 
             const record = entry as {
               snapshots?: unknown;
-              misreadRisk?: unknown;
-              draftControls?: unknown;
-              pressurePattern?: unknown;
             };
 
             return {
               ...entry,
-              misreadRisk: normalizeImportedCharacterMisreadRisk(record.misreadRisk),
-              draftControls: normalizeImportedCharacterDraftControls(record.draftControls),
-              pressurePattern: normalizeImportedCharacterPressurePattern(record.pressurePattern),
               snapshots: Array.isArray(record.snapshots) && record.snapshots.length
                 ? record.snapshots
                     .filter(function (snapshot): snapshot is Record<string, unknown> {
@@ -3169,16 +3138,6 @@ function normalizeBookMemoryBackbone(
 
           const record = sceneCard as {
             outline?: unknown;
-            sceneFunction?: unknown;
-            readerQuestion?: unknown;
-            evidenceDelta?: unknown;
-            trustShift?: unknown;
-            accessShift?: unknown;
-            lockedFields?: unknown;
-            opusTaskMode?: unknown;
-            escalationLevel?: unknown;
-            exitCondition?: unknown;
-            overwriteRisk?: unknown;
           };
 
           return {
@@ -3188,299 +3147,15 @@ function normalizeBookMemoryBackbone(
                 return typeof entry === "string";
               })
                 ? record.outline
-                : [],
-            sceneFunction: normalizeImportedStringArray(record.sceneFunction),
-            readerQuestion:
-              typeof record.readerQuestion === "string" ? record.readerQuestion : "",
-            evidenceDelta: normalizeImportedEvidenceDelta(record.evidenceDelta),
-            trustShift: typeof record.trustShift === "string" ? record.trustShift : "",
-            accessShift: typeof record.accessShift === "string" ? record.accessShift : "",
-            lockedFields: normalizeImportedStringArray(record.lockedFields),
-            opusTaskMode: normalizeImportedOpusTaskMode(record.opusTaskMode),
-            escalationLevel:
-              typeof record.escalationLevel === "number" ? record.escalationLevel : null,
-            exitCondition:
-              typeof record.exitCondition === "string" ? record.exitCondition : "",
-            overwriteRisk: normalizeImportedStringArray(record.overwriteRisk)
+                : []
           };
         })
       : fallback.sceneCards,
     contextPacks:
-      Array.isArray(candidate.contextPacks)
-        ? candidate.contextPacks.map(function (entry) {
-            if (!entry || typeof entry !== "object") {
-              return entry as StoryDocument["book"]["memory"]["contextPacks"][number];
-            }
-
-            const record = entry as {
-              runtimeContext?: unknown;
-            };
-
-            return {
-              ...entry,
-              runtimeContext: normalizeImportedContextPackRuntimeContext(
-                record.runtimeContext,
-                {
-                  premise: "",
-                  readerPromise: "",
-                  endingPromise: "",
-                  thematicCore: "",
-                  povRule: "",
-                  antagonistRule: ""
-                },
-                {
-                  globalStyle: [],
-                  sceneMechanics: [],
-                  hardBans: []
-                },
-                {
-                  antagonist: "",
-                  objective: "",
-                  operatingSystems: [],
-                  escalationLogic: [],
-                  forbiddenCapabilities: [],
-                  truthUnderHook: []
-                }
-              )
-            };
-          })
-        : fallback.contextPacks,
+      Array.isArray(candidate.contextPacks) ? candidate.contextPacks : fallback.contextPacks,
     continuityNotes:
       Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes
   };
-}
-
-function normalizeImportedMasterBriefRuntime(
-  value: unknown,
-  fallback: StoryDocument["book"]["masterBriefRuntime"]
-) {
-  const record = toImportedRecord(value);
-
-  return {
-    premise: typeof record.premise === "string" ? record.premise : fallback.premise,
-    readerPromise:
-      typeof record.readerPromise === "string" ? record.readerPromise : fallback.readerPromise,
-    endingPromise:
-      typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
-    thematicCore:
-      typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
-    povRule: typeof record.povRule === "string" ? record.povRule : fallback.povRule,
-    antagonistRule:
-      typeof record.antagonistRule === "string"
-        ? record.antagonistRule
-        : fallback.antagonistRule
-  };
-}
-
-function normalizeImportedWriterRulesRuntime(
-  value: unknown,
-  fallback: StoryDocument["book"]["writerRulesRuntime"]
-) {
-  const record = toImportedRecord(value);
-
-  return {
-    globalStyle: normalizeImportedStringArray(record.globalStyle, fallback.globalStyle),
-    sceneMechanics: normalizeImportedStringArray(record.sceneMechanics, fallback.sceneMechanics),
-    hardBans: normalizeImportedStringArray(record.hardBans, fallback.hardBans)
-  };
-}
-
-function normalizeImportedThreatModel(
-  value: unknown,
-  fallback: StoryDocument["book"]["threatModel"]
-) {
-  const record = toImportedRecord(value);
-
-  return {
-    antagonist: typeof record.antagonist === "string" ? record.antagonist : fallback.antagonist,
-    objective: typeof record.objective === "string" ? record.objective : fallback.objective,
-    operatingSystems: normalizeImportedStringArray(record.operatingSystems, fallback.operatingSystems),
-    escalationLogic: normalizeImportedStringArray(record.escalationLogic, fallback.escalationLogic),
-    forbiddenCapabilities: normalizeImportedStringArray(
-      record.forbiddenCapabilities,
-      fallback.forbiddenCapabilities
-    ),
-    truthUnderHook: normalizeImportedStringArray(record.truthUnderHook, fallback.truthUnderHook)
-  };
-}
-
-function normalizeImportedCanonCategory(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["category"] {
-  if (
-    value === "family" ||
-    value === "institution" ||
-    value === "access" ||
-    value === "routine" ||
-    value === "threat" ||
-    value === "history" ||
-    value === "subtext"
-  ) {
-    return value;
-  }
-
-  return "subtext";
-}
-
-function normalizeImportedCanonVisibility(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["visibility"] {
-  if (value === "reader_known" || value === "reader_hidden" || value === "subtext") {
-    return value;
-  }
-
-  return "reader_known";
-}
-
-function normalizeImportedCanonEnforcement(
-  value: unknown
-): StoryDocument["book"]["memory"]["canonLedger"][number]["enforcement"] {
-  if (value === "hard" || value === "soft") {
-    return value;
-  }
-
-  return "soft";
-}
-
-function normalizeImportedCharacterMisreadRisk(value: unknown) {
-  const record = toImportedRecord(value);
-
-  return {
-    byInstitutions:
-      typeof record.byInstitutions === "string" ? record.byInstitutions : "",
-    byOtherCharacters:
-      typeof record.byOtherCharacters === "string" ? record.byOtherCharacters : "",
-    byReaderEarly:
-      typeof record.byReaderEarly === "string" ? record.byReaderEarly : ""
-  };
-}
-
-function normalizeImportedCharacterDraftControls(value: unknown) {
-  const record = toImportedRecord(value);
-
-  return {
-    mustShow: normalizeImportedStringArray(record.mustShow),
-    mustAvoid: normalizeImportedStringArray(record.mustAvoid)
-  };
-}
-
-function normalizeImportedCharacterPressurePattern(value: unknown) {
-  if (value === null) {
-    return null;
-  }
-
-  const record = toImportedRecord(value);
-
-  if (!Object.keys(record).length) {
-    return null;
-  }
-
-  return {
-    underStressDoes: normalizeImportedStringArray(record.underStressDoes),
-    underStressShouldNotDo: normalizeImportedStringArray(record.underStressShouldNotDo)
-  };
-}
-
-function normalizeImportedEvidenceDelta(value: unknown) {
-  const record = toImportedRecord(value);
-
-  return {
-    before: typeof record.before === "string" ? record.before : "",
-    after: typeof record.after === "string" ? record.after : ""
-  };
-}
-
-function normalizeImportedOpusTaskMode(value: unknown) {
-  const record = toImportedRecord(value);
-
-  return {
-    planning: typeof record.planning === "string" ? record.planning : "",
-    draft: typeof record.draft === "string" ? record.draft : "",
-    rewrite: typeof record.rewrite === "string" ? record.rewrite : "",
-    expand: typeof record.expand === "string" ? record.expand : ""
-  };
-}
-
-function normalizeImportedContextPackRuntimeContext(
-  value: unknown,
-  fallbackMasterBriefRuntime: StoryDocument["book"]["masterBriefRuntime"],
-  fallbackWriterRulesRuntime: StoryDocument["book"]["writerRulesRuntime"],
-  fallbackThreatModel: StoryDocument["book"]["threatModel"]
-) {
-  const record = toImportedRecord(value);
-  const sceneCard = toImportedRecord(record.sceneCard);
-
-  return {
-    masterBriefRuntime: normalizeImportedMasterBriefRuntime(
-      record.masterBriefRuntime,
-      fallbackMasterBriefRuntime
-    ),
-    writerRulesRuntime: normalizeImportedWriterRulesRuntime(
-      record.writerRulesRuntime,
-      fallbackWriterRulesRuntime
-    ),
-    threatModel: normalizeImportedThreatModel(record.threatModel, fallbackThreatModel),
-    sceneCard: {
-      sceneFunction: normalizeImportedStringArray(sceneCard.sceneFunction),
-      readerQuestion:
-        typeof sceneCard.readerQuestion === "string" ? sceneCard.readerQuestion : "",
-      evidenceDelta: normalizeImportedEvidenceDelta(sceneCard.evidenceDelta),
-      trustShift: typeof sceneCard.trustShift === "string" ? sceneCard.trustShift : "",
-      accessShift: typeof sceneCard.accessShift === "string" ? sceneCard.accessShift : "",
-      lockedFields: normalizeImportedStringArray(sceneCard.lockedFields),
-      escalationLevel:
-        typeof sceneCard.escalationLevel === "number" ? sceneCard.escalationLevel : null,
-      exitCondition:
-        typeof sceneCard.exitCondition === "string" ? sceneCard.exitCondition : "",
-      overwriteRisk: normalizeImportedStringArray(sceneCard.overwriteRisk)
-    },
-    relevantCanonFacts: Array.isArray(record.relevantCanonFacts)
-      ? record.relevantCanonFacts
-          .filter(function (entry): entry is Record<string, unknown> {
-            return Boolean(entry) && typeof entry === "object";
-          })
-          .map(function (entry) {
-            return {
-              entryId: typeof entry.entryId === "string" ? entry.entryId : "",
-              title: typeof entry.title === "string" ? entry.title : "",
-              category: normalizeImportedCanonCategory(entry.category),
-              visibility: normalizeImportedCanonVisibility(entry.visibility),
-              enforcement: normalizeImportedCanonEnforcement(entry.enforcement)
-            };
-          })
-      : [],
-    relevantCharacters: Array.isArray(record.relevantCharacters)
-      ? record.relevantCharacters
-          .filter(function (entry): entry is Record<string, unknown> {
-            return Boolean(entry) && typeof entry === "object";
-          })
-          .map(function (entry) {
-            return {
-              id: typeof entry.id === "string" ? entry.id : "",
-              characterName: typeof entry.characterName === "string" ? entry.characterName : "",
-              misreadRisk: normalizeImportedCharacterMisreadRisk(entry.misreadRisk),
-              draftControls: normalizeImportedCharacterDraftControls(entry.draftControls),
-              pressurePattern: normalizeImportedCharacterPressurePattern(entry.pressurePattern)
-            };
-          })
-      : []
-  };
-}
-
-function normalizeImportedStringArray(value: unknown, fallback: string[] = []) {
-  if (!Array.isArray(value)) {
-    return fallback;
-  }
-
-  return value.filter(function (entry): entry is string {
-    return typeof entry === "string";
-  });
-}
-
-function toImportedRecord(value: unknown) {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
 }
 
 function isBookPhase(value: unknown): value is StoryDocument["book"]["activePhase"] {
