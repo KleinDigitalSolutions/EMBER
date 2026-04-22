@@ -294,6 +294,95 @@ const sceneFiveParagraphs = [
   "Eva blieb auf der Stufe stehen, die Kopie der neuen Vereinbarung zwischen den Fingern, und das Papier gab an den Rändern nach."
 ];
 
+const sceneSixParagraphs = [
+  "Die Praxis meldete sich beim dritten Klingeln. Eva stand am Küchentisch, die Hand auf Milas Vorsorgeheft, und zwang ihre Stimme in die alltägliche Lage, die man am Telefon erwartet.",
+  "„Berger, guten Tag. Ich wollte den Termin für Mila morgen bestätigen.\"",
+  "„Einen Moment.\" Tastenklicken. „Frau Berger, der Termin wurde doch verschoben. Auf Donnerstag, elf Uhr.\"",
+  "„Verschoben.\"",
+  "„Sie haben gestern angerufen. Kurz nach vierzehn Uhr, glaube ich. Soll ich nachsehen?\"",
+  "„Ja. Bitte.\"",
+  "Das Klicken wurde länger. Im Hintergrund hustete ein Kind, eine zweite Stimme rief Nummern auf. Eva sah auf ihren eigenen Kalender, auf den Eintrag Mittwoch, zehn Uhr, in ihrer Handschrift, zweimal unterstrichen.",
+  "„Vierzehn Uhr sieben. Donnerstag, elf. Frau Dr. Keller hat das so übernommen.\"",
+  "„Wer hat angerufen?\"",
+  "„Sie.\"",
+  "„Ich war gestern um vierzehn Uhr im Büro.\"",
+  "Die Sprechstundenhilfe machte eine kleine Pause, in der kein Ärger lag, nur die Geduld, die man am Empfang lernt. „Soll ich den Termin wieder auf morgen legen?\"",
+  "„Warten Sie.\" Eva atmete durch. „Das Folgerezept für den Inhalator. Liegt das bei Ihnen?\"",
+  "„Das wurde gestern abgeholt.\"",
+  "„Von wem?\"",
+  "„Moment.\" Wieder Klicken. „Da ist ein Kürzel. EB. Sie haben selbst abgezeichnet, steht hier.\"",
+  "„Ich habe nichts abgezeichnet.\"",
+  "„Frau Berger.\" Der Ton wurde vorsichtig, nicht unfreundlich. „Ich kann Ihnen die Ausgabe gerne zeigen, wenn Sie vorbeikommen.\"",
+  "Eva legte auf, bevor sie höflich sein musste.",
+  "Sie war schon im Mantel, bevor sie wusste, wohin. Am Ende ging sie in den Supermarkt an der Ecke, weil sie etwas brauchte, das normal war, weil in ihrem Kopf gerade kein Satz zu Ende lief und weil Milchpackungen sich ins Regal stellen ließen, ohne dass jemand dazu eine Unterschrift brauchte.",
+  "An der Kasse zog sie die Karte durch, bevor die Kassiererin die letzte Ziffer eingetippt hatte. Die Frau sah kurz auf.",
+  "„Na, heute ohne die Kleine?\"",
+  "„Ja.\"",
+  "„Hat sie sich wieder beruhigt?\"",
+  "Eva hielt die Karte in der Hand.",
+  "„Wie bitte?\"",
+  "„Gestern, an der Süßigkeitenkasse.\" Die Kassiererin lachte, nicht spöttisch, eher kollegial unter Müttern. „Die Jacke mit den Sternen, der Zopf ganz schief. Ich dachte, jetzt kippt sie gleich mit der Kasse um.\"",
+  "„Gestern.\"",
+  "„So gegen halb fünf. Sie haben ihr zwei Riegel versprochen und dann doch nur einen gekauft. Standardtrick.\" Sie zwinkerte. „Soll ich die Tüte selber packen?\"",
+  "„Nein. Danke.\"",
+  "Eva packte die Milch, den Joghurt, das Brot. Die Sterne waren auf Milas Winterjacke. Der Zopf war Evas Zopf, weil Mila am Kopf nicht stillhielt und Nora einmal vor zwei Wochen in der Küche gesagt hatte, man müsse den Scheitel eigentlich etwas tiefer setzen, dann rutsche er nicht.",
+  "Auf der Straße rief sie Simon an.",
+  "„Ich brauche dich kurz.\" Ihre Stimme ging zu schnell. Sie hörte es selbst. „Ruf du in der Praxis an. Sag, du bist Milas Vater, du willst den Termin bestätigen. Nur das.\"",
+  "„Eva.\"",
+  "„Bitte. Nicht reden. Anrufen.\"",
+  "Er schwieg eine Sekunde zu lang, und dann, anders als sonst, sagte er nichts Abwiegelndes.",
+  "„Ich rufe zurück.\"",
+  "Sie ging die vier Straßen nach Hause zu Fuß. Die Tüte schlug gegen ihr Bein. Am Hauseingang blieb sie stehen. Neun Minuten. Sie sah auf die Anzeige, als sein Name kam.",
+  "„Der Termin ist verschoben\", sagte Simon. „Auf Donnerstag, elf.\"",
+  "„Ja.\"",
+  "„Die Frau am Empfang sagt, du hättest gestern angerufen.\"",
+  "„Ich war im Büro, Simon. Ich war in der Besprechung mit Kranz bis fünfzehn Uhr, du kannst ihn anrufen, wenn du willst.\"",
+  "„Und das Rezept?\"",
+  "„Abgeholt. Mit meinem Kürzel.\"",
+  "Er atmete aus. Nicht genervt. Nachdenklich.",
+  "„Eva.\"",
+  "„Nein.\"",
+  "„Ich habe das noch nicht gesagt.\"",
+  "„Ich höre es.\"",
+  "Auf der anderen Seite der Straße schob eine Frau einen Buggy über den Bordstein, das Kind darin schlief mit offenem Mund. Eva sah zu, wie der Buggy um die Ecke verschwand.",
+  "„Ich frage dich das einmal\", sagte Simon. „Und ich frage es nicht, weil ich es will.\"",
+  "„Frag.\"",
+  "„Bist du sicher, dass du dich nicht täuschst?\"",
+  "Sie hörte, wie er die Frage einpackte, während er sie stellte. Wie er versuchte, ihr Platz zu lassen.",
+  "„Ich bin sicher.\"",
+  "„Eva, der Termin ist verschoben. Jemand am Telefon war es. Das Rezept ist abgeholt, mit deinem Kürzel. Die Kita hat ein Video. Ich will nur —\"",
+  "„Ich weiß, was du willst.\"",
+  "„Ich will, dass Mila morgen einen Arzt sieht, wenn sie einen braucht. Ich will wissen, ob du gestern vielleicht —\"",
+  "„Vielleicht was, Simon.\"",
+  "Er sagte es nicht. Er musste es nicht sagen. Das Wort stand zwischen ihnen, ohne dass einer von beiden es aussprach, und es war das erste Mal in diesem Gespräch, dass er leiser wurde statt lauter.",
+  "„Ich hole Mila heute nicht ab\", sagte er dann. „Du hast sie bis Freitag. Das bleibt so. Ich frage nur.\"",
+  "„Du fragst.\"",
+  "„Ja.\"",
+  "Eva stellte die Tüte ab. Die Milch kippte auf die Seite. Sie ließ sie liegen.",
+  "„Dann frag zu Ende.\"",
+  "„Ich habe gefragt.\"",
+  "Sie legte auf, bevor sie etwas sagte, das er später zitieren könnte.",
+  "Oben in der Wohnung stand Milas Rucksack im Flur, wo sie ihn am Morgen abgestellt hatte. Der Inhalator lag in der Seitentasche, halb voll, wie gestern, wie vorgestern. Eva nahm ihn heraus und hielt ihn in der Hand. Das Plastik war kühl. Das Etikett war ihres.",
+  "Sie ging in die Küche, legte den Inhalator auf den Tisch, daneben ihren Kalender, daneben das Handy. Drei Dinge, die ihr gehörten.",
+  "Sie nahm einen Stift und schrieb auf die Rückseite eines Kassenzettels: *14:07 Praxis. 16:30 Supermarkt. Jacke Sterne. Zopf.* Ihre Hand war ruhig.",
+  "Irgendwo in dieser Stadt hatte heute jemand ihren gestrigen Tag gelebt, halb fünf an der Süßigkeitenkasse, vierzehn Uhr sieben am Telefon, mit Milas Jacke und einem schiefen Zopf, und dieser Tag war, während Eva in einer Besprechung saß, sauberer dokumentiert worden als ihr eigener.",
+  "Das Handy lag stumm neben dem Kalender. Simon rief nicht zurück.",
+  "Sie bückte sich noch einmal in den Flur, holte die Tüte, stellte die Milch zurück in den Kühlschrank. Auf der Packung klebte der Bon, den sie beschrieben hatte. Sie zog ihn ab und legte ihn zu den anderen Zetteln, die sie seit heute Morgen sammelte. Der Stapel war schon zu groß für einen einzelnen Tag.",
+  "Im Wohnzimmer klingelte das Festnetz. Sie ließ es dreimal klingeln, bevor sie abnahm.",
+  "„Berger.\"",
+  "„Frau Berger, entschuldigen Sie die Störung, hier ist noch einmal die Praxis.\" Dieselbe Stimme wie vorhin. „Ihr Mann hat angerufen. Ich wollte nur sichergehen, was jetzt mit dem Termin ist. Donnerstag oder morgen.\"",
+  "Eva stand mit dem Hörer in der Hand und sah auf den Kalender auf dem Küchentisch, auf die zweimal unterstrichene Zehn.",
+  "„Lassen Sie ihn auf Donnerstag\", sagte sie. „Bitte markieren Sie in der Akte, dass die Verschiebung nicht von mir kam.\"",
+  "„Frau Berger, das kann ich so nicht —\"",
+  "„Dann schreiben Sie daneben: *Patientin bestreitet den gestrigen Anruf.* Mit Datum.\"",
+  "Schweigen. Dann Tastenklicken, langsamer als vorher.",
+  "„Ich habe es notiert.\"",
+  "„Danke.\"",
+  "Sie legte auf, und die eigene Stimme klang in ihrem Kopf nach, ruhig, sachlich, fremd. Sie hatte gerade aktenkundig gemacht, dass man ihr nicht mehr automatisch glaubte. Sie war es selbst gewesen, die darum gebeten hatte.",
+  "Auf dem Küchentisch lagen der Inhalator, der Kalender, das Handy und vier Zettel. Eva setzte sich, zog den Stift wieder zu sich und schrieb auf einen neuen Bogen, oben, groß: *Mein Tag.* Darunter, in einer zweiten Spalte, die sie mit einem Strich abtrennte: *Ihr Tag.*",
+  "Die zweite Spalte füllte sich schneller als die erste."
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -301,7 +390,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 5 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 6 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -395,9 +484,26 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 6</p>
+          <h2>Zwei Wahrheiten</h2>
+          <p>
+            Ein Anruf in der Praxis und eine Begegnung an der Supermarktkasse
+            bestätigen Evas schlimmsten Verdacht: Jemand führt ihr Leben,
+            während sie selbst an einem anderen Ort ist – und Simon beginnt,
+            an ihrer Wahrnehmung zu zweifeln.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneSixParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s6-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 6</h3>
+          <h3>Szene 7</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
@@ -407,3 +513,4 @@ export default function DieFalscheAbholungSamplePage() {
     </main>
   );
 }
+
