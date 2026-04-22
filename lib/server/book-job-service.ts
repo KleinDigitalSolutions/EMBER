@@ -87,6 +87,13 @@ const EXTRACT_STAGE_MAX_TOKENS = 900;
 const EXTRACT_ARRAY_MAX_ITEMS = 3;
 const EXTRACT_REWRITE_NOTES_MAX_ITEMS = 4;
 const EXTRACT_STRING_MAX_LENGTH = 100;
+const ANTHROPIC_CACHE_TTL = "1h" as const;
+const ANTHROPIC_CACHE_BETAS = ["extended-cache-ttl-2025-04-11"] as const;
+const buildAnthropicCacheRequestOptions = () => ({
+  headers: {
+    "anthropic-beta": ANTHROPIC_CACHE_BETAS.join(",")
+  }
+});
 
 type BeatPlanPayload = z.infer<typeof beatPlanSchema>;
 type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
@@ -428,11 +435,11 @@ async function generateWithAnthropic(
       return requestAnthropicStructured({
         client,
         stageName: "beat_plan",
-        modelName,
+        modelName: continuityModelName,
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: beatPlanSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildBeatPlanPrompt(packet, options)
+        userPrompt: buildAnthropicBeatPlanPrompt(packet, options)
       });
     },
     writeDraft: function (beatPlan) {
@@ -502,7 +509,7 @@ async function generateWithAnthropic(
         maxTokens: EXTRACT_STAGE_MAX_TOKENS,
         schema: stateExtractionSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+        userPrompt: buildAnthropicStateExtractionPrompt(packet, options, beatPlan, rewriteText)
       });
     },
     auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
@@ -513,7 +520,7 @@ async function generateWithAnthropic(
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: continuityAuditSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildContinuityAuditPrompt(
+        userPrompt: buildAnthropicContinuityAuditPrompt(
           packet,
           options,
           beatPlan,
@@ -527,11 +534,11 @@ async function generateWithAnthropic(
       return requestAnthropicStructured({
         client,
         stageName: "quality_eval",
-        modelName,
+        modelName: continuityModelName,
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: qualityEvalSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+        userPrompt: buildAnthropicQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
       });
     }
   });
@@ -1300,6 +1307,7 @@ async function requestAnthropicStructured<T>(params: {
   const startedAt = Date.now();
   try {
     const message = await params.client.messages.parse({
+      betas: [...ANTHROPIC_CACHE_BETAS],
       model: params.modelName,
       max_tokens: params.maxTokens,
       system: params.systemBlocks,
@@ -1345,7 +1353,7 @@ async function requestAnthropicText(params: {
         content: params.userPrompt
       }
     ]
-  });
+  }, buildAnthropicCacheRequestOptions());
   const text = collectAnthropicText(message).trim();
 
   if (!text) {
@@ -1689,9 +1697,24 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
     {
       type: "text" as const,
       text: buildStablePrefixPrompt(packet),
-      cache_control: { type: "ephemeral" as const }
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    },
+    {
+      type: "text" as const,
+      text: buildAnthropicDynamicContextPrompt(packet),
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
     }
   ];
+}
+
+function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {
+  return [
+    "Scene-bound dynamic context for this job:",
+    buildSceneContextPrompt(packet),
+    "",
+    "Continuity focus:",
+    buildContinuityContext(packet)
+  ].join("\n");
 }
 
 function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGenerationOptions) {
@@ -1880,17 +1903,106 @@ function buildAnthropicScenePrompt(params: {
           : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
 
   return [
-    `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
-    `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
-    `<scene_context>${sceneContext}</scene_context>`,
-    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
+    params.options.directorNote
+      ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
+      : "",
     params.draftText ? `<draft_pass>${escapeXml(params.draftText)}</draft_pass>` : "",
     params.rewriteText ? `<current_rewrite>${escapeXml(params.rewriteText)}</current_rewrite>` : "",
     `<output_contract>${escapeXml(`${modeInstruction} Return prose only in German. No headings, no JSON, no commentary.`)}</output_contract>`
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+function buildAnthropicBeatPlanPrompt(
+  _packet: SceneContextPacket,
+  options: DraftGenerationOptions
+) {
+  const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
+
+  return [
+    "Create a compact beat plan for one scene.",
+    "Return only structured output matching the requested schema.",
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred total beat budget: ${totalTarget} words.`,
+    "Requirements:",
+    "- 3 to 5 beats.",
+    "- Each beat must have a functional purpose and a concrete mustLand payoff.",
+    "- targetWords across all beats should roughly sum to the preferred total.",
+    "- Keep beats dramatic, not essayistic.",
+    "- label should stay short.",
+    "- purpose should be one compact sentence.",
+    "- mustLand should be one compact payoff sentence.",
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
+  ].join("\n");
+}
+
+function buildAnthropicStateExtractionPrompt(
+  _packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string
+) {
+  return [
+    "Extract scene state from the finished rewrite.",
+    "Return only structured output matching the requested schema.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Rules:",
+    "- rewriteNotes must describe visible revisions or strengths in plain compact language.",
+    "- rewriteNotes: 1 to 4 items, each under 100 characters.",
+    "- Every extractedState list: 0 to 3 items, each under 100 characters.",
+    "- Every extractedState entry must be a plain string. No objects.",
+    "- extractedState must stay conservative: explicit facts only.",
+    "- Prefer empty arrays over speculative entries.",
+    "- Uncertainty belongs only in continuityRisks.",
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Final rewrite: ${rewriteText}`
+  ].join("\n");
+}
+
+function buildAnthropicContinuityAuditPrompt(
+  _packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  draftText: string,
+  rewriteText: string,
+  extractedState: DraftExtractionState
+) {
+  return [
+    "Audit this scene for continuity and style drift only.",
+    "Return only structured output matching the requested schema.",
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
+    "Keep every listed issue compact.",
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Draft text: ${draftText}`,
+    `Rewrite text: ${rewriteText}`,
+    `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Existing style drift notes: ${extractedState.styleDriftNotes.join(" | ") || "none"}`
+  ].join("\n");
+}
+
+function buildAnthropicQualityEvalPrompt(
+  _packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string,
+  extractedState: DraftExtractionState
+) {
+  return [
+    "Evaluate the final scene quality.",
+    "Return only structured output matching the requested schema.",
+    "Score from 0 to 10.",
+    `wordTargetMin must equal ${options.targetSceneWordsMin}.`,
+    `wordTargetMax must equal ${options.targetSceneWordsMax}.`,
+    `wordActual must equal the actual word count of the scene text.`,
+    "Issues should be short, concrete, and user-facing.",
+    "Keep every issue compact.",
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Final rewrite: ${rewriteText}`
+  ].join("\n");
 }
 
 function buildSceneContextPrompt(packet: SceneContextPacket) {
@@ -2438,7 +2550,7 @@ async function requestAnthropicStructuredFallback<T>(
         content: buildAnthropicStructuredJsonPrompt(params.stageName, params.userPrompt)
       }
     ]
-  });
+  }, buildAnthropicCacheRequestOptions());
   const fallbackText = sanitizeSceneText(collectAnthropicText(fallbackMessage));
 
   try {
@@ -2466,7 +2578,7 @@ async function requestAnthropicStructuredFallback<T>(
           )
         }
       ]
-    });
+    }, buildAnthropicCacheRequestOptions());
     const retryText = sanitizeSceneText(collectAnthropicText(retryMessage));
 
     return {
