@@ -1351,6 +1351,26 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 3. Diese Objekte explizit in `Summary` und `Scene Card` halten.
 4. Nur laufbezogene Feinkorrekturen in `Director Note` setzen.
 
+### Copy-Paste Writer Constitution (geschaerft)
+- Nahe dritte Person auf Eva. Keine allwissende Erklaerstimme.
+- Szenen steigen spaet ein und gehen frueh raus.
+- Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
+- Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits traegt, folgt kein erklaerender Satz.
+- Keine drei Atmosphaerenbeobachtungen vor dem eigentlichen Schlag. Binnenprosa nur unter Zug.
+- Raum, Koerper und Stimmung nur dann ausfuehren, wenn sie Beweislage, Glaubwuerdigkeit, Zugriff oder Routine veraendern.
+- Nora bleibt frueh sozial plausibel, hilfreich lesbar und nie zu perfekt kuratiert bedrohlich.
+- Eva unter Druck praezise, aber leicht ueberladen. Ihre Wahrnehmung darf kurz stolpern, ohne hysterisch zu werden.
+- Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen.
+- Objektspannung vor Reflexion. Dinge muessen zuerst handeln, bevor Gedanken sie ausdeuten.
+- Jede Szene verschiebt mindestens eines: Beweislage, Glaubwuerdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalitaet.
+- Dialog darf nie bloss atmosphaerisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
+- Bedrohung bleibt alltagsnah, institutionell plausibel und ohne Thrillerlaerm.
+- Im letzten Drittel keine Triumphprosa und keine Daemonisierung. Beweise schlagen haerter als Lautstaerke.
+- Kurze bis mittlere Kapitel bevorzugen. 850-1450 Woerter sind Normalbereich; nur Schluesselszenen duerfen darueber druecken.
+
+### Copy-Paste Director Note (globaler Lauf-Block)
+`Straffe die Szene auf Zug statt Vollstaendigkeit. Steige spaet ein, gehe frueh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklaeren. Keine dritte Atmosphaerenbeobachtung vor dem eigentlichen Schlag. Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Eva bleibt praezise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
+
 ### Copy-Paste Regieanweisungen fuer die Writer-UI
 
 #### Kapitel 1 — „Gestern"
