@@ -594,6 +594,39 @@ const sceneTenParagraphs = [
   `Sie war trocken, gebügelt, das Etikett innen glatt. An der linken Kniekehle, in einer Naht, steckte ein einzelnes helles Haar. Nicht Noras Farbe. Mila.`
 ];
 
+const sceneElevenParagraphs = [
+  `Eva setzte die Kopfhörer auf und stellte das Handy mittig auf den Küchentisch, als wäre es etwas, das man in Abstand halten musste. Die Teetasse daneben war längst kalt. Sie öffnete die Voicemailbox und scrollte bis ans Ende, dorthin, wo die ältesten Aufnahmen standen. März, Februar, Januar. Noch weiter. Noch vor Simons Auszug.`,
+  `Sie begann von unten.`,
+  `Die ersten drei Nachrichten waren harmlos. Mila hatte Fieber, sie sagte der Kita ab. Ein Elterngespräch verschoben. Ein Geburtstagsgeschenk besprochen. Eva hörte ihre eigene Stimme, flach, ein bisschen müde, mit dem Sprachduktus einer Frau, die zwischen zwei Terminen telefonierte.`,
+  `Dann eine, die sie nicht mehr im Kopf hatte. Eine Sprachnachricht an Nora, vor fünf Monaten. Im Hintergrund Mila, die sang. Evas Stimme sagte: „Du, kannst du das kurz an die Ursula weitergeben, ich bin heute nicht am Zaun. Sag einfach, Mila kommt morgen wieder, danke dir."`,
+  `Sie spulte zurück. Spielte es noch einmal ab.`,
+  `„Sag einfach, Mila kommt morgen wieder, danke dir."`,
+  `Ihre Finger schlossen sich enger um das Handy. Sie legte es auf den Tisch. Nora war damals reingekommen, hatte Mila einen Apfel mitgebracht, und irgendwann zwischen Apfel und Jacke hatte sie gesagt, sie gehe eh nachher am Zaun vorbei. Eva hatte nur gemurmelt, und Nora hatte gelacht. Sag's nochmal kurz, dann leite ich es weiter.`,
+  `Sie öffnete die Galerie.`,
+  `Hofvideos. Mila auf dem Bobbycar, Mila mit Kreide, Mila beim Seifenblasenmachen. Eva scrollte und hörte nur den Ton mit. Kinderstimmen, Autos von der Straße, das Klingen der Hoftür. In einem Clip sagte sie aus dem Off: „Mila, wir müssen in zehn Minuten los zur Kita." Ein paar Clips weiter, eine andere Situation, anderer Pullover, anderes Wetter: „Ich hol dich heute um drei, okay?" Und noch einmal, Wochen später, am Sandkasten, im Hintergrund Noras ruhiges Lachen: „Dann ist gut, danke. Ich sag morgen Bescheid."`,
+  `Eva blieb am Standbild hängen. Noras Hand am Rand des Bildes, das Handy in der anderen. Aufnahme an. Immer Aufnahme an, wenn es lustig war, wenn Mila etwas Süßes sagte, wenn die Sonne gut stand.`,
+  `Sie suchte weiter. Sechster Hofclip, vorletzter Sommer. Mila im Pool, Plastikblau, der Rasen hinter dem Paketkasten. Noras Stimme, nah am Mikro, fast vertraulich: „Sag's nochmal kurz, dann leite ich es weiter." Und Evas eigene Stimme, fröhlich, mit dem Tonfall einer Frau, die nebenbei telefonierte: „Ich hab Mila schon, alles gut, danke."`,
+  `Eva drückte Pause. Drückte wieder Play.`,
+  `„Ich hab Mila schon, alles gut, danke."`,
+  `Sie stand auf, zog die Kopfhörer heraus, ließ sie baumeln. Die Kühlschrankpumpe lief. Sie griff nach der Strickjacke über der Stuhllehne und ging runter.`,
+  `Der Innenhof lag in diesem fahlen Licht, das die Bewegungsmelder nur gaben, wenn jemand durchging. Eva setzte sich auf die Bank am Fliederstrauch, dort, wo Nora meistens gesessen hatte. Von hier aus sah man die Fenster ihrer Wohnung, den Paketkasten, die Einfahrt.`,
+  `Sie spielte den Clip noch einmal ab, jetzt ohne Kopfhörer, über den Lautsprecher, leise. Die Aufnahme klang im Hof anders als in der Küche. Der Hall zwischen den Backsteinmauern, das leichte Rauschen der Straße dahinter, das entfernte Klacken eines Rolladens zwei Stockwerke höher. Genau so hatten ihre Sätze geklungen, als sie sie aussprach. Genau so würden sie klingen, wenn jemand sie durchs Telefon hörte.`,
+  `Eva hielt das Handy auf Kniehöhe, wie es Nora gehalten hatte. Sie sah sich selbst dort sitzen, an einem der warmen Tage, mit einer Selterflasche und dem Blick in Milas Richtung. Nora mit der Kamera-App offen. Nora, die sagt: Sag's nochmal kurz.`,
+  `Sie sagte's nochmal kurz. Immer.`,
+  `Sie ging die Nachrichten im Kopf durch, die sie Nora über die Monate geschickt hatte. Dutzende. Vielleicht hundert. Absagen, Zusagen, kleine Abstimmungen, kurze Formeln, immer derselbe Tonfall, weil man mit Nora nicht groß erklärte. Nora erledigte. Nora leitete weiter. Nora war der Puffer zwischen Eva und einer Welt, die zu viele Zeitfenster wollte.`,
+  `Sie spulte in der Liste hoch, blieb an einer Nachricht von Ende April hängen. „Nora, du Liebe, Mila ist schon bei mir, alles gut, danke." Mitte Juni: „Ich hab Mila schon, alles gut, danke dir." Anfang September: „Mila hab ich, alles gut, danke."`,
+  `Dreimal fast dasselbe. Einmal im Hof gesprochen, mit Hall. Einmal vom Spielplatz, mit Wind. Einmal aus dem Auto, mit Motor im Hintergrund. Immer der gleiche kurze Schluss, weil Eva so sprach, weil es ihre Formel war, ohne dass sie je daran gedacht hätte, sie zu variieren.`,
+  `Sie ging nach oben. Im Flur zog sie die Schuhe nicht aus. Sie öffnete die Kita-App, Abholprotokoll vom Vortag. Sie kannte es inzwischen auswendig, las es trotzdem noch einmal, Zeile für Zeile. Unten, in der Spalte, die die Erzieherinnen für besondere Bemerkungen nutzten, stand Ursulas Formulierung, in die App getippt:`,
+  `Mutter telefonisch: Ich hab Mila schon, alles gut, danke. Keine Rückfrage nötig.`,
+  `Eva legte das Handy flach auf die Tischplatte. Sie zog die Sprachnachricht aus dem Pool-Sommer wieder hoch und spielte sie ab. Dann las sie Ursulas Zeile noch einmal. Dann spielte sie die Aufnahme ab. Dann las sie.`,
+  `Wort für Wort dieselbe Formel. Dieselbe Reihenfolge. Derselbe kleine, lakonische Schluss, das danke am Ende, das Eva so oft sagte, dass sie es nie als ihres bemerkt hatte.`,
+  `Sie öffnete die Datei, markierte sie, lud sie in die Cloud. Dann lud sie sie noch einmal in einen zweiten Ordner, den sie eigens dafür anlegte. Sie nannte ihn nicht Beweise. Sie nannte ihn gar nicht, ließ das Feld leer.`,
+  `Sie dachte an Ursula am Zaun, an ihr vorsichtiges Lächeln bei der Übergabe, an die Art, wie sie Mutter telefonisch notiert hatte. Nicht Frau Berger telefonisch. Mutter. Als wäre das Wort die Bestätigung. Ursula hatte eine Stimme gehört, die sie kannte. Hall vom Hof, das kurze Rauschen einer Straße, drei Wörter, die sie hundertmal gehört hatte, weil Eva sie hundertmal so sagte. Sie hatte nicht geprüft. Warum sollte sie. Es klang nach Eva.`,
+  `Im Kinderzimmer lag Mila quer. Ein Arm über dem Stoffhasen, der andere aus der Decke. Ihr Atem ging ruhig, in dem gleichmäßigen, leicht pfeifenden Rhythmus, den Eva seit Jahren einschätzen konnte, ohne hinzusehen.`,
+  `Eva setzte sich auf den Teppich, den Rücken ans Bett. Sie legte das Handy mit dem Display nach unten auf den Boden neben sich. Draußen ging jemand durch den Hof. Der Bewegungsmelder sprang an, warf für zwei Sekunden Licht an die Zimmerdecke, ging wieder aus.`,
+  `Sie lauschte, bis die Schritte verklungen waren, und sah auf Milas Hand.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -776,9 +809,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 11</p>
+          <h2>Die Stimme</h2>
+          <p>
+            Eva hört alte Nachrichten, Hofclips und beiläufige Sprachreste ab und
+            begreift, dass Nora nie Technik brauchte. Es genügte, Evas Alltag lange
+            genug zu sammeln, bis ein vertrauter Satz wie eine Bestätigung klang.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneElevenParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s11-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 11</h3>
+          <h3>Szene 12</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
