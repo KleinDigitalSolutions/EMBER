@@ -1336,6 +1336,50 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 3. Diese Objekte explizit in `Summary` und `Scene Card` halten.
 4. Nur laufbezogene Feinkorrekturen in `Director Note` setzen.
 
+### Copy-Paste Regieanweisungen fuer die Writer-UI
+
+#### Kapitel 1 — „Gestern"
+`Schreibe die Szene ohne Vorgeschichte. Kein langsames psychologisches Vorspiel. Der Schock entsteht daraus, wie normal und sicher die Kita in ihrer Behauptung klingt. Keine Hysterie. Alltagsrealismus zuerst.`
+
+#### Kapitel 2 — „Das Bild"
+`Petra darf nicht kalt oder boese wirken. Der Horror entsteht dadurch, dass sie vernuenftig ist und das Material trotzdem gegen Eva arbeitet. Nicht auf Thriller-Hysterie spielen. Der soziale Beweis ist staerker als das Video selbst.`
+
+#### Kapitel 5 — „Schriftlich"
+`Die Szene soll nicht nach Institution gegen Mutter klingen. Zeige, wie formale Vorsicht eine ohnehin geschwaechte Position weiter ausduennt. Petra bleibt professionell, nicht feindselig.`
+
+#### Kapitel 11 — „Die Stimme"
+`Das ist keine Technikszene, sondern eine Naehe-Szene. Nora hat keine Hightech-Maschinerie, sondern Evas Alltag gesammelt. Fokus auf Wiederholung, Stimme, Vertrauen und den Missbrauch frueherer Harmlosigkeit.`
+
+#### Kapitel 12 — „Ein guter Vorschlag"
+`Keine melodramatische Szene zwischen Eva und Simon. Der Schmerz liegt darin, dass der Vorschlag fuer einen Aussenstehenden wirklich gut klingt und dadurch Noras Rolle formalisiert.`
+
+#### Kapitel 15 — „Der falsche Nachmittag"
+`Das ist Kontrollverlust ohne Ausraster. Eva verliert nicht die Tochter, sondern den unmittelbaren Alltagszugriff. Die Szene muss kalt, konkret und sozial nachvollziehbar weh tun.`
+
+#### Kapitel 19 — „Die alte Mutter"
+`Kein Exkurs und kein Sozialdrama-Ausflug. Nur so viel Vergangenheit wie noetig, um Noras Gegenwartslogik schaerfer zu machen. Die Wunde erklaert ihre Logik, nicht ihre Unschuld.`
+
+#### Kapitel 23 — „Ersatzplan"
+`Die Szene soll entschlossen wirken, nicht clever-cool. Eva baut keinen Agentenplan, sondern eine plausible Selbstschutzstrategie aus Alltagsmitteln. Die Falschinformation muss simpel, glaubwuerdig und pruefbar bleiben.`
+
+#### Kapitel 28 — „Die Probe"
+`Keine Genugtuung spielen. Eva gewinnt hier noch nichts zurueck. Sie erzwingt nur, dass Simon die Logik endlich mitsehen muss. Spannung ueber Reaktion, nicht ueber Triumph.`
+
+#### Kapitel 30 — „Nicht unzuverlaessig, sondern ersetzt"
+`Die Szene darf nicht wie ein Fall-Review klingen. Das ist ein Beziehungsmoment unter Beweisdruck. Simon muss emotional spueren, was Eva meint, nicht nur logisch verstehen. Der Satz ueber das Herausschreiben aus dem Alltag ist der Kern.`
+
+#### Kapitel 35 — „Das ruhige Gesicht"
+`Nora darf hier nicht boese schreiben. Ihre Ruhe ist ihre Waffe. Der Leser soll spueren, wie schwer es ist, eine so kontrollierte Person im offenen Raum plausibel zu beschuldigen.`
+
+#### Kapitel 38 — „Noras Wohnung"
+`Schuetze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht daemonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwaessern. Keine ueberfluessige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.`
+
+#### Kapitel 41 — „Rueckholung"
+`Nicht auf grosses Geschrei schreiben. Die Staerke der Szene liegt darin, dass derselbe oeffentliche Raum, der Eva vorher geschwaecht hat, jetzt Nora nicht mehr schuetzt. Mila muss nicht dramatisch Partei ergreifen.`
+
+#### Kapitel 45 — „Gelber Becher"
+`Das Schlusskapitel nicht uebererklaeren. Ruhe ist hier kein Leerlauf, sondern die verdiente Form des Endes. Der letzte Satz bleibt ein Bild und traegt allein.`
+
 ### Director-Note-Leitlinie fuer dieses Buch
 - Nicht "wie Autor X" schreiben.
 - Stattdessen: klare Alltagsspannung, konkrete Folgen, kurze Kapitel, kein atmosphaerisches Treiben ohne Beweisverschiebung.

@@ -54,6 +54,12 @@ type ParsedScene = {
   rawText: string
 }
 
+type ParsedWriterSummary = {
+  chapterTitle: string
+  summary: string
+  directorNote: string | null
+}
+
 type ParsedRegie = {
   title: string
   authorName: string
@@ -639,6 +645,10 @@ function parseRegie(
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
+  const writerSummariesSection = getOptionalTopLevelSection(
+    productionMarkdown,
+    "WRITER-SUMMARIES — KAPITEL 1 BIS 12"
+  )
   const canonFacts = parseJsonBlock<{ canon_facts: Array<{ id: string; fact: string; status: string }> }>(
     getTopLevelSection(productionMarkdown, "CANON FACTS (Initial — Stand: vor Kapitel 1)")
   ).canon_facts.map(function (fact) {
@@ -659,7 +669,8 @@ function parseRegie(
       payoffAct: thread.payoff_act ?? null
     }
   })
-  const scenes = parseScenes(productionMarkdown)
+  const writerSummaries = parseWriterSummaries(writerSummariesSection)
+  const scenes = parseScenes(productionMarkdown, writerSummaries)
   const defaultBook = createDefaultBookBlueprint(titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt")
   const title = titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt"
   const genre = masterBriefRows["Genre"] || ""
@@ -750,9 +761,14 @@ function parseCharacters(section: string): ParsedCharacter[] {
   })
 }
 
-function parseScenes(markdown: string): ParsedScene[] {
+function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): ParsedScene[] {
   const lines = markdown.split(/\r?\n/)
   const scenes: ParsedScene[] = []
+  const writerSummaryByChapterTitle = new Map(
+    writerSummaries.map(function (entry) {
+      return [normalizeText(entry.chapterTitle), entry]
+    })
+  )
   let currentActKey = ""
   let currentActTitle = ""
 
@@ -796,7 +812,10 @@ function parseScenes(markdown: string): ParsedScene[] {
     const parsedBlock = parseSceneCardBlock(lines.slice(blockStart, blockEnd))
     const goal = parsedBlock.directives.objective || chapterTitle
     const coreAction = parsedBlock.directives.coreAction || parsedBlock.directives.dramaticBeat || goal
-    const summary = clampText(`${goal} ${coreAction}`.trim(), 220)
+    const writerSummary = writerSummaryByChapterTitle.get(normalizeText(chapterTitle))
+    const summary = writerSummary?.summary?.trim()
+      ? clampText(writerSummary.summary.trim(), 1200)
+      : clampText(`${goal} ${coreAction}`.trim(), 220)
     const excerpt = clampText(coreAction, 220)
 
     scenes.push({
@@ -915,6 +934,101 @@ function parseSceneCardBlock(lines: string[]) {
     custom,
     setupRefs
   }
+}
+
+function parseWriterSummaries(section: string): ParsedWriterSummary[] {
+  if (!section.trim()) {
+    return []
+  }
+
+  const lines = section.split(/\r?\n/)
+  const summaries: ParsedWriterSummary[] = []
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index].trim()
+
+    if (!line.startsWith("### ")) {
+      continue
+    }
+
+    const chapterTitle = normalizeChapterTitle(line.replace(/^###\s*/, "").trim())
+    let summary = ""
+    let directorNote: string | null = null
+
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const current = lines[cursor].trim()
+
+      if (current.startsWith("### ")) {
+        index = cursor - 1
+        break
+      }
+
+      if (current === "**Writer Summary**") {
+        const collected: string[] = []
+
+        for (let summaryCursor = cursor + 1; summaryCursor < lines.length; summaryCursor += 1) {
+          const summaryLine = lines[summaryCursor].trim()
+
+          if (
+            summaryLine === "**Director Note**" ||
+            summaryLine.startsWith("### ")
+          ) {
+            cursor = summaryCursor - 1
+            break
+          }
+
+          if (summaryLine) {
+            collected.push(summaryLine)
+          }
+
+          if (summaryCursor === lines.length - 1) {
+            cursor = summaryCursor
+          }
+        }
+
+        summary = collected.join(" ").trim()
+        continue
+      }
+
+      if (current === "**Director Note**") {
+        const collected: string[] = []
+
+        for (let noteCursor = cursor + 1; noteCursor < lines.length; noteCursor += 1) {
+          const noteLine = lines[noteCursor].trim()
+
+          if (noteLine.startsWith("### ")) {
+            index = noteCursor - 1
+            break
+          }
+
+          if (noteLine) {
+            collected.push(noteLine)
+          }
+
+          if (noteCursor === lines.length - 1) {
+            index = noteCursor
+          }
+        }
+
+        directorNote = collected.join(" ").trim() || null
+        break
+      }
+
+      if (cursor === lines.length - 1) {
+        index = cursor
+      }
+    }
+
+    if (summary) {
+      summaries.push({
+        chapterTitle,
+        summary,
+        directorNote
+      })
+    }
+  }
+
+  return summaries
 }
 
 function buildWorldBibleEntries(
@@ -1070,6 +1184,24 @@ function getTopLevelSection(markdown: string, heading: string) {
 
   if (startIndex === -1) {
     throw new Error(`Abschnitt nicht gefunden: ${heading}`)
+  }
+
+  const afterHeadingIndex = startIndex + marker.length
+  const nextHeadingIndex = markdown.indexOf("\n## ", afterHeadingIndex)
+  const rawSection =
+    nextHeadingIndex === -1
+      ? markdown.slice(afterHeadingIndex)
+      : markdown.slice(afterHeadingIndex, nextHeadingIndex)
+
+  return rawSection.trim()
+}
+
+function getOptionalTopLevelSection(markdown: string, heading: string) {
+  const marker = `## ${heading}`
+  const startIndex = markdown.indexOf(marker)
+
+  if (startIndex === -1) {
+    return ""
   }
 
   const afterHeadingIndex = startIndex + marker.length
