@@ -675,6 +675,8 @@ function parseRegie(
   const title = titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt"
   const genre = masterBriefRows["Genre"] || ""
   const targetLengthWords = parseTargetWordCount(masterBriefRows["Ziel-Wortanzahl"]) || defaultBook.targetLengthWords
+  const premise = getFirstTableValue(masterBriefRows, ["Prämisse", "Praemisse"])
+  const thematicCore = getFirstTableValue(masterBriefRows, ["Thematischer Kern"])
 
   return {
     title,
@@ -683,10 +685,10 @@ function parseRegie(
     targetLengthWords,
     masterBrief: {
       ...defaultBook.masterBrief,
-      premise: masterBriefRows["Prämisse"] || "",
+      premise,
       readerPromise: masterBriefRows["Reader Promise"] || "",
       endingPromise: masterBriefRows["Ending Promise"] || "",
-      thematicCore: masterBriefRows["Thematischer Kern"] || ""
+      thematicCore
     },
     marketBrief: {
       ...defaultBook.marketBrief,
@@ -700,12 +702,26 @@ function parseRegie(
       )
     },
     writerConstitution: parseBulletLines(writerSection),
-    worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, masterBriefRows["Thematischer Kern"] || ""),
+    worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore),
     canonFacts,
     characters,
     openThreads,
     scenes
   }
+}
+
+function getFirstTableValue(
+  rows: Record<string, string>,
+  keys: string[]
+) {
+  for (const key of keys) {
+    const value = rows[key]
+    if (typeof value === "string" && value.trim()) {
+      return value
+    }
+  }
+
+  return ""
 }
 
 function parseCharacters(section: string): ParsedCharacter[] {

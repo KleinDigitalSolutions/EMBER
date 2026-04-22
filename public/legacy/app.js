@@ -209,6 +209,19 @@
       progressLabel: "Szene 1 online"
     },
     {
+      title: "Die falsche Abholung",
+      subtitle: "Buchprobe",
+      description:
+        "Domestic Suspense über eine Mutter, deren Kita dokumentiert, sie habe ihr Kind selbst abgeholt, obwohl sie sicher weiß, nie dort gewesen zu sein.",
+      tags: ["Domestic Suspense", "Psychothriller", "Alltagsbeweise"],
+      status: "Leseprobe",
+      available: true,
+      action: "open-link",
+      href: "/samples/die-falsche-abholung",
+      buttonLabel: "Lesen",
+      progressLabel: "Szene 2 online"
+    },
+    {
       title: STORY.meta.appTitle,
       subtitle: STORY.meta.storyTitle,
       description: STORY.meta.storyDescription,
