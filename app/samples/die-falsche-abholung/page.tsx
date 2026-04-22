@@ -627,6 +627,115 @@ const sceneElevenParagraphs = [
   `Sie lauschte, bis die Schritte verklungen waren, und sah auf Milas Hand.`
 ];
 
+const sceneTwelveParagraphs = [
+  `Der Anruf kam um sieben Uhr zweiundzwanzig, als Eva den Kaffee noch nicht aufgegossen hatte. Simons Name auf dem Display, nicht Nachricht, sondern Anruf, und das allein hieß, dass er etwas besprechen wollte, bevor er es tat.`,
+  `„Eva, hör mal." Seine Stimme hatte diesen Ton, den sie kannte, sachlich, leicht vorbereitet, als hätte er zwei Sätze schon im Kopf geordnet. „Nora hat mich gestern Abend angerufen."`,
+  `Sie stellte die Kanne zurück auf die Platte.`,
+  `„Sie hat einen Vorschlag gemacht. Ich finde ihn vernünftig, deshalb rufe ich an, bevor irgendwas läuft."`,
+  `„Was für einen Vorschlag."`,
+  `„Solange die Sache mit der Kita nicht geklärt ist, hat sie angeboten, bei Engpässen einzuspringen. Nur Bring- und Holwege. Wenn es bei dir mal knapp wird mit dem Projekt oder bei mir mit der Schicht, ruft man sie an, sie geht kurz rüber."`,
+  `Eva legte die Hand flach auf die Arbeitsplatte.`,
+  `„Simon."`,
+  `„Ich weiß, wie das klingt."`,
+  `„Du weißt nicht, wie das klingt."`,
+  `„Eva." Eine kleine Pause. „Sie ist der eingetragene Notfallkontakt. Sie wohnt im selben Hof. Sie hat Mila seit drei Jahren ab und zu mitgenommen. Das ist nichts Neues."`,
+  `„Das ist jetzt neu."`,
+  `„Warum?"`,
+  `Sie atmete einmal durch die Nase. Jedes Wort, das sie jetzt sagte, würde in seinem Kopf unter „überreagiert" abgelegt werden, wenn sie nicht aufpasste.`,
+  `„Weil die Sache mit der Abholung nicht geklärt ist. Weil ich gerade versuche zu verstehen, wie jemand, der nicht ich war, dort unterschrieben hat. Und weil wir bis dahin nicht ausgerechnet die Person formalisieren, die…"` ,
+  `„Die was, Eva."`,
+  `„Die in der Nähe war. Immer."`,
+  `Er schwieg zwei Sekunden. Dann: „Du sagst, Nora hat damit etwas zu tun?"`,
+  `„Ich sage, ich weiß es nicht. Und solange ich es nicht weiß, kann ich ihr keine Abholrechte geben."`,
+  `„Es sind keine Rechte. Es ist ein Angebot."`,
+  `„Wenn es einmal läuft, ist es eine Routine."`,
+  `Wieder das kurze Schweigen, in dem er überlegte, wie er sie beruhigen sollte, ohne ihr recht zu geben.`,
+  `„Hör zu. Ich habe ihr gesagt, dass sie Mila nirgends allein übernimmt, ohne dass einer von uns das direkt bestätigt hat. Nicht per Nachricht. Direkt. Anruf, Stimme, ja. Dann ist das sauber."`,
+  `Er klang zufrieden mit diesem Satz. Sie hörte es an der Art, wie er danach Luft holte.`,
+  `„Simon."`,
+  `„Das ist doch genau das, was du willst. Klarheit darüber, wann sie wo ist."`,
+  `„Das ist keine Klarheit. Das ist eine Tür, die du halb offen lässt."`,
+  `„Eva, bitte." Jetzt der andere Ton, der, den er beim Paartherapeuten gelernt hatte. „Ich mache das nicht gegen dich. Ich versuche, dass Mila einen normalen Dienstag hat, während wir das hier sortieren. Sie kann nicht auf unsere Krise warten."`,
+  `Sie nahm das Telefon und ging durch die Küchentür in den Hof.`,
+  `Der Morgen war kühl, das Pflaster feucht, die Mülltonnen standen schon an der Einfahrt. Bei Nora brannte kein Licht. Eva stellte sich mit dem Rücken zur Hofmauer, sodass sie die Fenster der gegenüberliegenden Wohnungen im Blick hatte.`,
+  `„Und was sagst du Petra?", fragte sie.`,
+  `„Was soll ich Petra sagen."`,
+  `„Wenn in der Kita jemand fragt, wer Mila heute holt."`,
+  `„Normalerweise du. An meinen Tagen ich. Bei Engpass Nora, nach Anruf."`,
+  `„Du hast das schon gesagt."`,
+  `„Nein." Eine Pause. „Nora meinte, es wäre gut, wenn die Kita weiß, dass sie im Zweifel verfügbar ist. Damit es nicht wieder dieses Durcheinander gibt."`,
+  `Eva schloss kurz die Augen.`,
+  `„Simon. Hör dich selbst an."`,
+  `„Was."`,
+  `„Du planst gerade die nächste Woche um sie herum."`,
+  `„Ich plane um Mila herum."`,
+  `Sie ließ das stehen. Jeder weitere Satz würde sie kleiner machen.`,
+  `Im Hintergrund bei ihm klapperte etwas, eine Schranktür, dann Milas Stimme, zu weit weg für Worte, nur der Tonfall, fragend, erwartungsvoll.`,
+  `„Sie ist schon wach", sagte er, schon weicher. „Willst du sie kurz?"`,
+  `„Ja."`,
+  `Sie hörte, wie er den Hörer weitergab, die kleine Anstrengung, bis Mila das Telefon ans Ohr bekam, das Rauschen an ihrer Wange.`,
+  `„Mama?"`,
+  `„Hallo, Spatz."`,
+  `„Papa macht Grießbrei."`,
+  `„Das ist gut."`,
+  `„Mama." Eine kurze Pause, in der Mila offensichtlich etwas sortierte. „Ist heute Nora-Montag?"`,
+  `Eva hielt die Luft an.`,
+  `„Was?"`,
+  `„Nora-Montag. Wenn du arbeitest lang. Dann holt Nora. Ist heute wieder so?"`,
+  `„Heute ist Dienstag, Spatz."`,
+  `„Ich weiß." Mila klang geduldig, als erklärte sie einer langsamen Erwachsenen den Kalender. „Aber kommt das wieder. Das Nora-Montag."`,
+  `Im Hof bewegte sich etwas hinter Noras Küchenfenster. Nur der Schatten eines Vorhangs, der sich legte.`,
+  `„Wer hat das so genannt", fragte Eva, so ruhig sie konnte.`,
+  `„Nora. Damit ich weiß, wann."`,
+  `„Und an welchen Montagen war das."`,
+  `„Weiß nicht. Wenn du lang arbeitest."`,
+  `Eva hörte Simon im Hintergrund etwas sagen, freundlich, Richtung Mila, etwas mit Löffel und Tisch.`,
+  `„Spatz, gib Papa nochmal."`,
+  `„Tschüss Mama."`,
+  `„Tschüss."`,
+  `Das Rascheln, dann Simons Stimme, wieder nah.`,
+  `„Alles gut?"`,
+  `„Simon. Was ist Nora-Montag."`,
+  `Ein Moment, in dem er wirklich überlegte.`,
+  `„Das weiß ich nicht."`,
+  `„Mila sagt, Nora holt sie manchmal, wenn ich lang arbeite."`,
+  `„Eva, das kann nicht oft sein. Das wüsste ich."`,
+  `„Sie nennt es so, als wäre es ein Wort."`,
+  `„Kinder nennen alles irgendwie."`,
+  `„Nein."`,
+  `Sie hörte, wie er sich setzte. Das leise Ächzen seines Küchenstuhls, das sie immer noch erkannte.`,
+  `„Ich frag sie später nochmal", sagte er. „In Ruhe."`,
+  `„Frag sie nicht. Ich mache das."`,
+  `„Okay."`,
+  `Stille. Nora sah sie immer noch nicht, aber das Fenster war jetzt einen Spalt offen, und vorhin war es zu gewesen.`,
+  `„Simon. Kein Einspringen. Nicht diese Woche. Nicht bevor ich mit Petra fertig bin."`,
+  `„Eva…"` ,
+  `„Kein Einspringen. Sag ihr das heute."`,
+  `Er atmete aus. „Ich sage ihr, dass wir vorerst bei der alten Regelung bleiben."`,
+  `„Sag es klar."`,
+  `„Ich sage es."`,
+  `„Simon."`,
+  `„Ja."`,
+  `„Nicht per Nachricht."`,
+  `Eine kleine Pause.`,
+  `„Anruf, Stimme, ja", sagte er, und sie hörte, dass ihm erst in diesem Moment auffiel, dass er sich seinen eigenen Satz von vorhin zurückgeben ließ.`,
+  `Sie legte auf, bevor er das Gespräch selbst beenden konnte.`,
+  `Auf dem Pflaster vor ihren Füßen lag ein einzelnes Lindenblatt, noch grün, an den Rändern braun. Sie hob es nicht auf. Oben klappte Noras Fenster leise zu.`,
+  `In der Küche piepste die Kaffeemaschine, die sie nie eingeschaltet hatte.`,
+  `Eva ging hinein, zog den Stecker, wickelte das Kabel um den Sockel und stellte das Gerät auf die Anrichte neben der Spüle. Dann holte sie ein Blatt aus dem Drucker und schrieb mit der Hand, weil die Hand sich nicht so leicht überschreiben ließ wie eine App.`,
+  `Dienstag. Sieben Uhr achtundzwanzig.`,
+  `Darunter: Simon schlägt vor, dass Nora bei Engpässen Bring- und Holwege übernimmt. Ich lehne ab. Er sagt zu, diese Woche bei der alten Regelung zu bleiben und es Nora heute direkt zu sagen.`,
+  `Darunter, in einer zweiten Zeile, kleiner: Mila nennt Montage mit Nora „Nora-Montag". Stand mir nicht bekannt.`,
+  `Sie sah auf das Wort, das sie nicht gekannt hatte, und unterstrich es einmal.`,
+  `Oben im ersten Stock, auf der anderen Hofseite, hörte sie eine Tür gehen. Schritte auf Treppenstufen, ruhig, nicht eilig. Die Hoftür unten klickte. Noras Stimme, freundlich, gedämpft, zu einer Nachbarin, die offenbar gerade ihren Hund hinausließ.`,
+  `„Guten Morgen, Frau Kettler. Nein, heute früh raus. Ich hol nachher nur was für Mila aus der Drogerie, die Kleine braucht Pflaster."`,
+  `Eva stand in der Küche, das Blatt in der Hand, und wartete, bis die Stimme weiter weg war.`,
+  `Mila hatte keine offene Stelle. Sie hatte gestern Abend ihre Beine nachgesehen, Knie, Schienbeine, Füße, wie immer nach dem Baden.`,
+  `Sie schrieb eine dritte Zeile auf das Blatt.`,
+  `Sieben Uhr einunddreißig. Nora im Hof. Sagt, sie kauft Pflaster für Mila.`,
+  `Dann legte sie den Stift ordentlich daneben, so, dass er parallel zur Kante lag, und ging zurück zur Tür, um nachzusehen, welchen Weg Nora nahm.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -634,7 +743,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 11 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 12 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -825,9 +934,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 12</p>
+          <h2>Ein guter Vorschlag</h2>
+          <p>
+            Simon bringt einen Vorschlag ins Spiel, der nach Entlastung klingt und
+            Nora in Wahrheit tiefer in den Alltag drueckt. Der schlimmste Satz kommt
+            nicht von ihm, sondern von Mila.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneTwelveParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s12-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 12</h3>
+          <h3>Szene 13</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
