@@ -37,11 +37,14 @@ export type SceneContextPacket = {
     readerPromise: string;
     endingPromise: string;
     thematicCore: string;
+    masterBriefRuntime: StoryDocument["book"]["masterBriefRuntime"];
     storyArchitecture: string[];
     categoryLane: string;
     marketHook: string;
     publishingGuardrails: string[];
     writerConstitution: string[];
+    writerRulesRuntime: StoryDocument["book"]["writerRulesRuntime"];
+    threatModel: StoryDocument["book"]["threatModel"];
   };
   dynamicContext: {
     actTitle: string;
@@ -53,6 +56,16 @@ export type SceneContextPacket = {
     sceneCardLabel: string | null;
     sceneHeaderHints: string[];
     sceneHardConstraints: string[];
+    sceneFunction: string[];
+    readerQuestion: string;
+    evidenceDelta: TimelineBeat["evidenceDelta"];
+    trustShift: string;
+    accessShift: string;
+    lockedFields: string[];
+    opusTaskMode: TimelineBeat["opusTaskMode"];
+    escalationLevel: number | null;
+    exitCondition: string;
+    overwriteRisk: string[];
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -116,7 +129,14 @@ export const BOOK_DRAFT_STAGE_SEQUENCE: BookDraftStageId[] = [
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   if (story.book.memory.canonLedger.length) {
-    return story.book.memory.canonLedger;
+    return story.book.memory.canonLedger.map(function (entry) {
+      return {
+        ...entry,
+        category: entry.category || "subtext",
+        visibility: entry.visibility || "reader_known",
+        enforcement: entry.enforcement || "soft"
+      };
+    });
   }
 
   return deriveCanonLedger(story);
@@ -136,12 +156,29 @@ export function buildCharacterLedger(story: StoryDocument): CharacterStateEntry[
 }
 
 function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterStateEntry {
-  if (entry.snapshots.length) {
-    return entry;
+  const withRuntimeFields = {
+    ...entry,
+    misreadRisk: entry.misreadRisk || {
+      byInstitutions: "",
+      byOtherCharacters: "",
+      byReaderEarly: ""
+    },
+    draftControls: entry.draftControls || {
+      mustShow: [],
+      mustAvoid: []
+    },
+    pressurePattern:
+      typeof entry.pressurePattern === "object" || entry.pressurePattern === null
+        ? entry.pressurePattern
+        : null
+  };
+
+  if (withRuntimeFields.snapshots.length) {
+    return withRuntimeFields;
   }
 
   return {
-    ...entry,
+    ...withRuntimeFields,
     snapshots: [
       {
         id: createLocalId("character_snapshot"),
@@ -161,7 +198,27 @@ function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterSta
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
   if (story.book.memory.sceneCards.length) {
-    return story.book.memory.sceneCards;
+    return story.book.memory.sceneCards.map(function (entry) {
+      return {
+        ...entry,
+        sceneFunction: entry.sceneFunction || [],
+        readerQuestion: entry.readerQuestion || "",
+        evidenceDelta: entry.evidenceDelta || { before: "", after: "" },
+        trustShift: entry.trustShift || "",
+        accessShift: entry.accessShift || "",
+        lockedFields: entry.lockedFields || [],
+        opusTaskMode: entry.opusTaskMode || {
+          planning: "",
+          draft: "",
+          rewrite: "",
+          expand: ""
+        },
+        escalationLevel:
+          typeof entry.escalationLevel === "number" ? entry.escalationLevel : null,
+        exitCondition: entry.exitCondition || "",
+        overwriteRisk: entry.overwriteRisk || []
+      };
+    });
   }
 
   return deriveTimelineBeats(story);
@@ -242,11 +299,14 @@ export function buildSceneContextPacket(
       readerPromise: story.book.masterBrief.readerPromise,
       endingPromise: story.book.masterBrief.endingPromise,
       thematicCore: story.book.masterBrief.thematicCore,
+      masterBriefRuntime: story.book.masterBriefRuntime,
       storyArchitecture: story.book.masterBrief.storyArchitecture,
       categoryLane: story.book.marketBrief.categoryLane,
       marketHook: story.book.marketBrief.hook,
       publishingGuardrails: story.book.marketBrief.publishingGuardrails,
-      writerConstitution: story.book.writerConstitution
+      writerConstitution: story.book.writerConstitution,
+      writerRulesRuntime: story.book.writerRulesRuntime,
+      threatModel: story.book.threatModel
     },
     dynamicContext: {
       actTitle: sceneContext.act.title,
@@ -258,6 +318,43 @@ export function buildSceneContextPacket(
       sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
       sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
       sceneHardConstraints: buildSceneHardConstraints(timeline[sceneIndex] ?? null),
+      sceneFunction: timeline[sceneIndex]?.sceneFunction ?? contextPack?.runtimeContext.sceneCard.sceneFunction ?? [],
+      readerQuestion:
+        timeline[sceneIndex]?.readerQuestion ??
+        contextPack?.runtimeContext.sceneCard.readerQuestion ??
+        "",
+      evidenceDelta:
+        timeline[sceneIndex]?.evidenceDelta ??
+        contextPack?.runtimeContext.sceneCard.evidenceDelta ?? { before: "", after: "" },
+      trustShift:
+        timeline[sceneIndex]?.trustShift ??
+        contextPack?.runtimeContext.sceneCard.trustShift ??
+        "",
+      accessShift:
+        timeline[sceneIndex]?.accessShift ??
+        contextPack?.runtimeContext.sceneCard.accessShift ??
+        "",
+      lockedFields:
+        timeline[sceneIndex]?.lockedFields ??
+        contextPack?.runtimeContext.sceneCard.lockedFields ?? [],
+      opusTaskMode:
+        timeline[sceneIndex]?.opusTaskMode ?? {
+          planning: "",
+          draft: "",
+          rewrite: "",
+          expand: ""
+        },
+      escalationLevel:
+        timeline[sceneIndex]?.escalationLevel ??
+        contextPack?.runtimeContext.sceneCard.escalationLevel ??
+        null,
+      exitCondition:
+        timeline[sceneIndex]?.exitCondition ??
+        contextPack?.runtimeContext.sceneCard.exitCondition ??
+        "",
+      overwriteRisk:
+        timeline[sceneIndex]?.overwriteRisk ??
+        contextPack?.runtimeContext.sceneCard.overwriteRisk ?? [],
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -567,6 +664,17 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
 function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   const scenes = getAllScenes(story);
   const ledger = new Map<string, CanonLedgerEntry>();
+  const existingCanon = story.book.memory.canonLedger;
+  const existingCanonById = new Map(
+    existingCanon.map(function (entry) {
+      return [entry.entryId, entry];
+    })
+  );
+  const existingCanonByTitle = new Map(
+    existingCanon.map(function (entry) {
+      return [normalizeText(entry.title), entry];
+    })
+  );
 
   story.worldBible.forEach(function (entry) {
     const sceneIds = scenes
@@ -577,6 +685,8 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
         return scene.id;
       });
     const mentionCount = sceneIds.length;
+    const existing =
+      existingCanonById.get(entry.id) ?? existingCanonByTitle.get(normalizeText(entry.title)) ?? null;
 
     ledger.set(normalizeText(entry.title), {
       entryId: entry.id,
@@ -586,7 +696,10 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
       mentionCount,
       sceneIds,
       importance: getCanonImportance(mentionCount),
-      status: mentionCount ? "active" : "watch"
+      status: mentionCount ? "active" : "watch",
+      category: existing?.category || "subtext",
+      visibility: existing?.visibility || "reader_known",
+      enforcement: existing?.enforcement || "soft"
     });
   });
 
@@ -598,7 +711,10 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
         sceneIds: [job.sceneId],
         mentionCount: 1,
         importance: "medium",
-        status: job.status === "accepted" ? "active" : "watch"
+        status: job.status === "accepted" ? "active" : "watch",
+        category: "subtext",
+        visibility: "reader_known",
+        enforcement: "soft"
       });
     });
 
@@ -613,7 +729,10 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
         sceneIds: [job.sceneId],
         mentionCount: 1,
         importance: "medium",
-        status: "watch"
+        status: "watch",
+        category: "subtext",
+        visibility: "reader_hidden",
+        enforcement: "soft"
       });
     });
   });
@@ -629,6 +748,17 @@ function deriveCharacterLedger(
   openThreads: OpenThread[],
   syncedAt: string
 ): CharacterStateEntry[] {
+  const existingStates = story.book.memory.characterLedger;
+  const existingStatesByCharacterEntryId = new Map(
+    existingStates.map(function (entry) {
+      return [entry.characterEntryId, entry];
+    })
+  );
+  const existingStatesByName = new Map(
+    existingStates.map(function (entry) {
+      return [normalizeText(entry.characterName), entry];
+    })
+  );
   const orderedScenes = story.acts.flatMap(function (act, actIndex) {
     return act.chapters.flatMap(function (chapter, chapterIndex) {
       return chapter.scenes.map(function (scene, sceneIndex) {
@@ -674,6 +804,10 @@ function deriveCharacterLedger(
       const latestSnapshot = snapshots[snapshots.length - 1] ?? null;
       const latestSceneSnapshot = findLatestCharacterSnapshotByScope(snapshots, "scene");
       const baselineState = entry.summary || "Kein expliziter Status gespeichert.";
+      const existingState =
+        existingStatesByCharacterEntryId.get(entry.entryId) ??
+        existingStatesByName.get(normalizeText(entry.title)) ??
+        null;
       const defaultAgenda =
         openThreads.find(function (thread) {
           return normalizeText(thread.label).includes(normalizeText(entry.title));
@@ -688,6 +822,16 @@ function deriveCharacterLedger(
         agenda: latestSnapshot?.agenda || defaultAgenda,
         updatedFromSceneId: latestSceneSnapshot?.sourceSceneId || entry.sceneIds[0] || "",
         updatedAt: latestSnapshot?.capturedAt || syncedAt,
+        misreadRisk: existingState?.misreadRisk || {
+          byInstitutions: "",
+          byOtherCharacters: "",
+          byReaderEarly: ""
+        },
+        draftControls: existingState?.draftControls || {
+          mustShow: [],
+          mustAvoid: []
+        },
+        pressurePattern: existingState?.pressurePattern || null,
         snapshots
       };
     });
@@ -858,7 +1002,25 @@ function deriveTimelineBeats(story: StoryDocument): TimelineBeat[] {
           orderLabel: `A${actIndex + 1} · C${chapterIndex + 1} · S${sceneIndex + 1}`,
           chapterGoal,
           directives: createEmptyBookSceneCardDirectives(),
-          outline: buildSceneCardOutline(scene, chapterGoal, chapter.scenes[sceneIndex + 1]?.title ?? null)
+          outline: buildSceneCardOutline(scene, chapterGoal, chapter.scenes[sceneIndex + 1]?.title ?? null),
+          sceneFunction: [],
+          readerQuestion: "",
+          evidenceDelta: {
+            before: "",
+            after: ""
+          },
+          trustShift: "",
+          accessShift: "",
+          lockedFields: [],
+          opusTaskMode: {
+            planning: "",
+            draft: "",
+            rewrite: "",
+            expand: ""
+          },
+          escalationLevel: null,
+          exitCondition: "",
+          overwriteRisk: []
         };
       });
     });
@@ -976,7 +1138,41 @@ function deriveContextPacks(
       relevantCharacterStateIds: relevantCharacterStates.map(function (entry) {
         return entry.id;
       }),
-      activeThreadIds
+      activeThreadIds,
+      runtimeContext: {
+        masterBriefRuntime: story.book.masterBriefRuntime,
+        writerRulesRuntime: story.book.writerRulesRuntime,
+        threatModel: story.book.threatModel,
+        sceneCard: {
+          sceneFunction: sceneCard.sceneFunction,
+          readerQuestion: sceneCard.readerQuestion,
+          evidenceDelta: sceneCard.evidenceDelta,
+          trustShift: sceneCard.trustShift,
+          accessShift: sceneCard.accessShift,
+          lockedFields: sceneCard.lockedFields,
+          escalationLevel: sceneCard.escalationLevel,
+          exitCondition: sceneCard.exitCondition,
+          overwriteRisk: sceneCard.overwriteRisk
+        },
+        relevantCanonFacts: relevantCanon.map(function (entry) {
+          return {
+            entryId: entry.entryId,
+            title: entry.title,
+            category: entry.category,
+            visibility: entry.visibility,
+            enforcement: entry.enforcement
+          };
+        }),
+        relevantCharacters: relevantCharacterStates.map(function (entry) {
+          return {
+            id: entry.id,
+            characterName: entry.characterName,
+            misreadRisk: entry.misreadRisk,
+            draftControls: entry.draftControls,
+            pressurePattern: entry.pressurePattern
+          };
+        })
+      }
     };
   });
 }
@@ -1484,7 +1680,10 @@ function mergeCanonFact(
         ? "active"
         : existing.status === "watch" || nextEntry.status === "watch"
           ? "watch"
-          : "resolved"
+          : "resolved",
+    category: existing.category || nextEntry.category,
+    visibility: existing.visibility || nextEntry.visibility,
+    enforcement: existing.enforcement || nextEntry.enforcement
   });
 }
 
@@ -1494,11 +1693,17 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
       story.id,
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
+      story.book.masterBriefRuntime.povRule,
+      story.book.masterBriefRuntime.antagonistRule,
       story.book.masterBrief.storyArchitecture.join("|"),
       story.book.marketBrief.categoryLane,
       story.book.marketBrief.hook,
       chapterGoal,
-      story.book.writerConstitution.join("|")
+      story.book.writerConstitution.join("|"),
+      story.book.writerRulesRuntime.sceneMechanics.join("|"),
+      story.book.writerRulesRuntime.hardBans.join("|"),
+      story.book.threatModel.objective,
+      story.book.threatModel.operatingSystems.join("|")
     ].join(" :: "),
     180
   );
@@ -1512,12 +1717,20 @@ function buildOutlineSteps(packet: SceneContextPacket) {
     ? sceneCardOutline
     : [
     `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "den unmittelbaren Konflikt"}.`,
+    packet.dynamicContext.sceneFunction[0]
+      ? `Systemfunktion: ${packet.dynamicContext.sceneFunction[0]}`
+      : "",
     packet.stablePrefix.storyArchitecture[0]
       ? `Strukturanker: ${packet.stablePrefix.storyArchitecture[0]}`
       : "",
+    packet.dynamicContext.readerQuestion
+      ? `Leserfrage halten: ${packet.dynamicContext.readerQuestion}`
+      : "",
     `Druck aufbauen: ${packet.dynamicContext.activeThreads[0]?.label || "eine offene Frage"} konkretisieren.`,
     `Wendung: ${packet.dynamicContext.relevantCodex[0]?.title || "der Kernkonflikt"} neu rahmen.`,
-    `Nachhall: in ${packet.dynamicContext.nextBeat?.sceneTitle || "den naechsten Plot-Schritt"} ueberleiten.`
+    packet.dynamicContext.exitCondition
+      ? `Ausstieg hart setzen: ${packet.dynamicContext.exitCondition}`
+      : `Nachhall: in ${packet.dynamicContext.nextBeat?.sceneTitle || "den naechsten Plot-Schritt"} ueberleiten.`
   ];
 
   return steps.filter(Boolean);
@@ -1536,6 +1749,9 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
     [
       packet.dynamicContext.sceneTitle,
       packet.dynamicContext.sceneSummary || packet.stablePrefix.premise,
+      packet.stablePrefix.masterBriefRuntime.povRule
+        ? `POV-Regel: ${packet.stablePrefix.masterBriefRuntime.povRule}`
+        : "",
       packet.stablePrefix.marketHook
         ? `Der kommerzielle Zug der Szene bleibt am Hook ausgerichtet: ${packet.stablePrefix.marketHook}`
         : "",
@@ -1556,6 +1772,15 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       previousBeat
         ? `Direkt davor stand ${previousBeat.sceneTitle}: ${previousBeat.summary || previousBeat.excerpt}`
         : "Es gibt keinen langen Rueckblick; die Szene steigt schnell in die aktuelle Lage ein.",
+      packet.dynamicContext.evidenceDelta.after
+        ? `Beweisverschiebung dieser Szene: ${packet.dynamicContext.evidenceDelta.before} -> ${packet.dynamicContext.evidenceDelta.after}`
+        : "",
+      packet.dynamicContext.trustShift
+        ? `Trust shift: ${packet.dynamicContext.trustShift}`
+        : "",
+      packet.dynamicContext.accessShift
+        ? `Access shift: ${packet.dynamicContext.accessShift}`
+        : "",
       packet.stablePrefix.storyArchitecture[1]
         ? `Der Szenendruck bleibt kompatibel mit dem groesseren Strukturziel: ${packet.stablePrefix.storyArchitecture[1]}`
         : "",
@@ -1569,6 +1794,12 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       packet.stablePrefix.thematicCore
         ? `Unter der Aktion arbeitet das Thema: ${packet.stablePrefix.thematicCore}.`
         : "Die Szene soll bereits eine lesbare emotionale Verschiebung erzeugen.",
+      packet.stablePrefix.writerRulesRuntime.sceneMechanics[0]
+        ? `Szenenmechanik: ${packet.stablePrefix.writerRulesRuntime.sceneMechanics[0]}`
+        : "",
+      packet.stablePrefix.threatModel.objective
+        ? `Bedrohungslogik: ${packet.stablePrefix.threatModel.objective}`
+        : "",
       packet.stablePrefix.categoryLane
         ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
         : "",
@@ -1628,6 +1859,10 @@ function buildRewriteNotes(
     "Exposition knapper halten und in die Wahrnehmung der Szene einbetten."
   ];
 
+  if (packet.dynamicContext.readerQuestion) {
+    notes.push(`Die aktive Leserfrage "${packet.dynamicContext.readerQuestion}" sichtbar halten.`);
+  }
+
   if (packet.dynamicContext.activeThreads.length) {
     notes.push(`Den Thread "${packet.dynamicContext.activeThreads[0].label}" klarer zuspitzen.`);
   }
@@ -1665,6 +1900,9 @@ function buildRewriteText(
     `Rewrite-Fokus: ${rewriteNotes.join(" ")}`,
     packet.stablePrefix.publishingGuardrails[0]
       ? `Lesbarkeits-Guardrail: ${packet.stablePrefix.publishingGuardrails[0]}`
+      : "",
+    packet.dynamicContext.exitCondition
+      ? `Exit-Guardrail: ${packet.dynamicContext.exitCondition}`
       : "",
     codexTail,
     ending
@@ -1782,6 +2020,18 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
       hardConstraints.push(`${entry.key}: ${entry.value}`)
     }
   });
+
+  sceneCard.lockedFields.forEach(function (field) {
+    hardConstraints.push(`Locked field: ${field}`);
+  });
+
+  if (sceneCard.readerQuestion) {
+    hardConstraints.push(`Aktive Leserfrage: ${sceneCard.readerQuestion}`);
+  }
+
+  if (sceneCard.exitCondition) {
+    hardConstraints.push(`Ausstiegsbedingung: ${sceneCard.exitCondition}`);
+  }
 
   return hardConstraints.slice(0, 12);
 }
@@ -1965,6 +2215,10 @@ function detectContinuityRisks(packet: SceneContextPacket, draftText: string) {
     risks.push("Es gibt keinen klaren offenen Thread fuer die Szene; Konsequenzfluss pruefen.");
   }
 
+  if (packet.dynamicContext.evidenceDelta.after && !packet.dynamicContext.lockedFields.length) {
+    risks.push("Beweisverschiebung vorhanden, aber keine harten Locked Fields im Packet; Drift pruefen.");
+  }
+
   return risks;
 }
 
@@ -1977,6 +2231,10 @@ function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
 
   if (!packet.stablePrefix.readerPromise) {
     notes.push("Reader Promise ist leer; Stilsteuerung bleibt dadurch allgemein.");
+  }
+
+  if (packet.dynamicContext.overwriteRisk.length) {
+    notes.push(`Overwrite-Risiken beachten: ${packet.dynamicContext.overwriteRisk.slice(0, 2).join(" | ")}.`);
   }
 
   return notes;

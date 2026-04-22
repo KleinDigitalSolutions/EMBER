@@ -1,5 +1,18 @@
 # Repository Guidelines
 
+## Regie And Book Pipeline Rules
+Use these rules for all Regie, Blueprint, Canon, Scene Card, Writer Summary, Director Note, Continuity, and rewrite tasks.
+
+- Do not change plot, ending logic, character function, or story substance without an explicit user instruction.
+- Normalize Regie documents for pipeline use. Do not replot, embellish, or invent new story logic.
+- Treat Scene Cards as the hardest production anchor. Do not silently change their order, purpose, proof logic, or locked fields.
+- Keep names, plot beats, scene order, and figure function stable unless the user explicitly requests a content change.
+- Prefer compact, operative field logic over essayistic explanation.
+- If the source is unclear, produce an audit report with concrete findings instead of creative fill-in.
+- In Act 1, keep Nora plausibly helpful and readable as socially valid. Do not frame her as openly threatening too early.
+- Write Eva under pressure as precise, overloaded, and pressured. Do not write her as hysterical, chaotic-for-effect, or implausibly eloquent under strain.
+- After a strong proof image or decisive evidence turn, exit the scene cleanly. Do not overwrite the beat with extra explanation.
+
 ## Project Structure & Module Organization
 This repository is a Next.js app with the studio under `app/`, shared logic under `lib/`, and UI components under `components/`. The legacy storefront/reader that still powers `/` and `/story` lives in `public/legacy/` with its own `index.html`, `app.js`, `story.js`, `styles.css`, and image assets. Supabase SQL lives in `supabase/migrations/`. Planning material such as `STORY_PLAN.md` and `BOOK_STUDIO_GUIDE.md` is documentation, not runtime code.
 

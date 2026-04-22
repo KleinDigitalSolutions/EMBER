@@ -1698,10 +1698,18 @@ function buildStablePrefixPrompt(packet: SceneContextPacket) {
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
     `Ending promise: ${packet.stablePrefix.endingPromise}`,
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `POV rule: ${packet.stablePrefix.masterBriefRuntime.povRule || "not set"}`,
+    `Antagonist rule: ${packet.stablePrefix.masterBriefRuntime.antagonistRule || "not set"}`,
     `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
     `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
     formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
     formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
+    formatPromptList("Global style", packet.stablePrefix.writerRulesRuntime.globalStyle),
+    formatPromptList("Scene mechanics", packet.stablePrefix.writerRulesRuntime.sceneMechanics),
+    formatPromptList("Hard bans", packet.stablePrefix.writerRulesRuntime.hardBans),
+    formatPromptList("Threat systems", packet.stablePrefix.threatModel.operatingSystems),
+    formatPromptList("Threat escalation", packet.stablePrefix.threatModel.escalationLogic),
+    formatPromptList("Threat capability bans", packet.stablePrefix.threatModel.forbiddenCapabilities),
     formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails)
   ].join("\n");
 }
@@ -2031,6 +2039,16 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene card id: ${packet.dynamicContext.sceneCardLabel || "not set"}`,
     `Scene header hints: ${packet.dynamicContext.sceneHeaderHints.join(" || ") || "none"}`,
     `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" || ") || "none"}`,
+    `Scene function: ${packet.dynamicContext.sceneFunction.join(" || ") || "none"}`,
+    `Reader question: ${packet.dynamicContext.readerQuestion || "none"}`,
+    `Evidence delta: ${packet.dynamicContext.evidenceDelta.before || "none"} -> ${packet.dynamicContext.evidenceDelta.after || "none"}`,
+    `Trust shift: ${packet.dynamicContext.trustShift || "none"}`,
+    `Access shift: ${packet.dynamicContext.accessShift || "none"}`,
+    `Locked fields: ${packet.dynamicContext.lockedFields.join(" || ") || "none"}`,
+    `Opus task mode: planning=${packet.dynamicContext.opusTaskMode.planning || "none"} || draft=${packet.dynamicContext.opusTaskMode.draft || "none"} || rewrite=${packet.dynamicContext.opusTaskMode.rewrite || "none"} || expand=${packet.dynamicContext.opusTaskMode.expand || "none"}`,
+    `Escalation level: ${packet.dynamicContext.escalationLevel ?? "not set"}`,
+    `Exit condition: ${packet.dynamicContext.exitCondition || "none"}`,
+    `Overwrite risk: ${packet.dynamicContext.overwriteRisk.join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
@@ -2043,7 +2061,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Next beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
-        return `${entry.title}: ${entry.summary}`;
+        return `${entry.title}: ${entry.summary} [${entry.category} | ${entry.visibility} | ${entry.enforcement}]`;
       })
       .join(" || ") || "none"}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
@@ -2067,7 +2085,7 @@ function buildContinuityContext(packet: SceneContextPacket) {
   return [
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
-        return `${entry.title}: ${entry.summary}`;
+        return `${entry.title}: ${entry.summary} [${entry.category} | ${entry.visibility} | ${entry.enforcement}]`;
       })
       .join(" | ") || "none"}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
@@ -2079,7 +2097,9 @@ function buildContinuityContext(packet: SceneContextPacket) {
       .map(function (thread) {
         return `${thread.label}: ${thread.detail}`;
       })
-      .join(" | ") || "none"}`
+      .join(" | ") || "none"}`,
+    `Exit condition: ${packet.dynamicContext.exitCondition || "none"}`,
+    `Overwrite risk: ${packet.dynamicContext.overwriteRisk.join(" | ") || "none"}`
   ].join("\n");
 }
 
@@ -2409,6 +2429,21 @@ function formatCharacterStatePrompt(
     `${entry.characterName}: ${entry.currentState}`,
     entry.innerShift ? `inner_shift=${entry.innerShift}` : "",
     entry.agenda ? `agenda=${entry.agenda}` : "",
+    entry.misreadRisk.byInstitutions ? `misread_institutions=${entry.misreadRisk.byInstitutions}` : "",
+    entry.misreadRisk.byOtherCharacters ? `misread_others=${entry.misreadRisk.byOtherCharacters}` : "",
+    entry.misreadRisk.byReaderEarly ? `misread_reader=${entry.misreadRisk.byReaderEarly}` : "",
+    entry.draftControls.mustShow.length
+      ? `must_show=${entry.draftControls.mustShow.join(" | ")}`
+      : "",
+    entry.draftControls.mustAvoid.length
+      ? `must_avoid=${entry.draftControls.mustAvoid.join(" | ")}`
+      : "",
+    entry.pressurePattern?.underStressDoes.length
+      ? `under_stress_does=${entry.pressurePattern.underStressDoes.join(" | ")}`
+      : "",
+    entry.pressurePattern?.underStressShouldNotDo.length
+      ? `under_stress_should_not=${entry.pressurePattern.underStressShouldNotDo.join(" | ")}`
+      : "",
     recentSnapshots.length ? `snapshot_trail=${recentSnapshots.join(" | ")}` : ""
   ]
     .filter(Boolean)
@@ -2421,10 +2456,17 @@ function buildPacketEvidenceTerms(packet: SceneContextPacket) {
       [
         packet.dynamicContext.sceneTitle,
         packet.dynamicContext.sceneSummary,
-        packet.dynamicContext.sceneExcerpt
+        packet.dynamicContext.sceneExcerpt,
+        packet.dynamicContext.readerQuestion,
+        packet.dynamicContext.trustShift,
+        packet.dynamicContext.accessShift,
+        packet.dynamicContext.exitCondition
       ]
         .concat(packet.dynamicContext.sceneHeaderHints)
         .concat(packet.dynamicContext.sceneHardConstraints)
+        .concat(packet.dynamicContext.sceneFunction)
+        .concat(packet.dynamicContext.lockedFields)
+        .concat(packet.dynamicContext.overwriteRisk)
         .concat(packet.dynamicContext.sceneCardOutline)
         .concat(
           packet.dynamicContext.previousBeats.map(function (beat) {
@@ -2433,12 +2475,12 @@ function buildPacketEvidenceTerms(packet: SceneContextPacket) {
         )
         .concat(
           packet.dynamicContext.relevantCodex.map(function (entry) {
-            return `${entry.title} ${entry.summary}`;
+            return `${entry.title} ${entry.summary} ${entry.category} ${entry.visibility} ${entry.enforcement}`;
           })
         )
         .concat(
           packet.dynamicContext.relevantCharacterStates.map(function (entry) {
-            return `${entry.characterName} ${entry.currentState} ${entry.innerShift} ${entry.agenda}`;
+            return `${entry.characterName} ${entry.currentState} ${entry.innerShift} ${entry.agenda} ${entry.misreadRisk.byInstitutions} ${entry.misreadRisk.byOtherCharacters} ${entry.misreadRisk.byReaderEarly} ${entry.draftControls.mustShow.join(" ")} ${entry.draftControls.mustAvoid.join(" ")} ${entry.pressurePattern?.underStressDoes.join(" ") || ""} ${entry.pressurePattern?.underStressShouldNotDo.join(" ") || ""}`;
           })
         )
         .concat(
@@ -2450,7 +2492,13 @@ function buildPacketEvidenceTerms(packet: SceneContextPacket) {
           packet.dynamicContext.nextBeat?.sceneTitle || "",
           packet.stablePrefix.premise,
           packet.stablePrefix.readerPromise,
-          packet.stablePrefix.thematicCore
+          packet.stablePrefix.thematicCore,
+          packet.stablePrefix.masterBriefRuntime.povRule,
+          packet.stablePrefix.masterBriefRuntime.antagonistRule,
+          packet.stablePrefix.writerRulesRuntime.sceneMechanics.join(" "),
+          packet.stablePrefix.writerRulesRuntime.hardBans.join(" "),
+          packet.stablePrefix.threatModel.objective,
+          packet.stablePrefix.threatModel.operatingSystems.join(" ")
         ])
     )
   );

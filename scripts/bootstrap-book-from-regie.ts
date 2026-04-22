@@ -3,6 +3,9 @@ import path from "node:path"
 import { createUuid } from "../lib/id"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
+  createDefaultBookMasterBriefRuntime,
+  createDefaultBookThreatModel,
+  createDefaultBookWriterRulesRuntime,
   createDefaultBookBlueprint,
   createEmptyBookSceneCardDirectives,
   type BookCharacterState,
@@ -23,6 +26,9 @@ type ParsedCharacter = {
   currentState: string
   innerShift: string
   agenda: string
+  misreadRisk: BookCharacterState["misreadRisk"]
+  draftControls: BookCharacterState["draftControls"]
+  pressurePattern: BookCharacterState["pressurePattern"]
 }
 
 type ParsedThread = {
@@ -36,6 +42,9 @@ type ParsedCanonFact = {
   legacyId: string
   fact: string
   status: string
+  category: StoryDocument["book"]["memory"]["canonLedger"][number]["category"]
+  visibility: StoryDocument["book"]["memory"]["canonLedger"][number]["visibility"]
+  enforcement: StoryDocument["book"]["memory"]["canonLedger"][number]["enforcement"]
 }
 
 type ParsedScene = {
@@ -50,6 +59,16 @@ type ParsedScene = {
   chapterGoal: string
   directives: ReturnType<typeof createEmptyBookSceneCardDirectives>
   outline: string[]
+  sceneFunction: string[]
+  readerQuestion: string
+  evidenceDelta: BookSceneCard["evidenceDelta"]
+  trustShift: string
+  accessShift: string
+  lockedFields: string[]
+  opusTaskMode: BookSceneCard["opusTaskMode"]
+  escalationLevel: number | null
+  exitCondition: string
+  overwriteRisk: string[]
   setupRefs: string[]
   rawText: string
 }
@@ -66,8 +85,11 @@ type ParsedRegie = {
   genre: string
   targetLengthWords: number
   masterBrief: StoryDocument["book"]["masterBrief"]
+  masterBriefRuntime: StoryDocument["book"]["masterBriefRuntime"]
   marketBrief: StoryDocument["book"]["marketBrief"]
   writerConstitution: string[]
+  writerRulesRuntime: StoryDocument["book"]["writerRulesRuntime"]
+  threatModel: StoryDocument["book"]["threatModel"]
   worldBibleEntries: WorldBibleEntry[]
   canonFacts: ParsedCanonFact[]
   characters: ParsedCharacter[]
@@ -256,7 +278,10 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       mentionCount: sceneIds.length,
       sceneIds,
       importance: deriveCanonImportance(fact.status),
-      status: deriveCanonStatus(fact.status)
+      status: deriveCanonStatus(fact.status),
+      category: fact.category,
+      visibility: fact.visibility,
+      enforcement: fact.enforcement
     }
   })
 
@@ -274,6 +299,9 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       agenda: character.agenda,
       updatedFromSceneId: firstSceneId,
       updatedAt: now,
+      misreadRisk: character.misreadRisk,
+      draftControls: character.draftControls,
+      pressurePattern: character.pressurePattern,
       snapshots: [
         {
           id: createUuid(),
@@ -332,7 +360,17 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       orderLabel: entry.parsed.orderLabel,
       chapterGoal: entry.parsed.chapterGoal,
       directives: entry.parsed.directives,
-      outline: entry.parsed.outline
+      outline: entry.parsed.outline,
+      sceneFunction: entry.parsed.sceneFunction,
+      readerQuestion: entry.parsed.readerQuestion,
+      evidenceDelta: entry.parsed.evidenceDelta,
+      trustShift: entry.parsed.trustShift,
+      accessShift: entry.parsed.accessShift,
+      lockedFields: entry.parsed.lockedFields,
+      opusTaskMode: entry.parsed.opusTaskMode,
+      escalationLevel: entry.parsed.escalationLevel,
+      exitCondition: entry.parsed.exitCondition,
+      overwriteRisk: entry.parsed.overwriteRisk
     }
   })
 
@@ -384,7 +422,66 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
         .slice(0, 4)
         .map(function (thread) {
           return thread.id
-        }))
+        })),
+      runtimeContext: {
+        masterBriefRuntime: parsed.masterBriefRuntime,
+        writerRulesRuntime: parsed.writerRulesRuntime,
+        threatModel: parsed.threatModel,
+        sceneCard: {
+          sceneFunction: entry.parsed.sceneFunction,
+          readerQuestion: entry.parsed.readerQuestion,
+          evidenceDelta: entry.parsed.evidenceDelta,
+          trustShift: entry.parsed.trustShift,
+          accessShift: entry.parsed.accessShift,
+          lockedFields: entry.parsed.lockedFields,
+          escalationLevel: entry.parsed.escalationLevel,
+          exitCondition: entry.parsed.exitCondition,
+          overwriteRisk: entry.parsed.overwriteRisk
+        },
+        relevantCanonFacts: uniqueStrings(setupCanonIds)
+          .map(function (canonFactId) {
+            const fact = canonLedger.find(function (entry) {
+              return entry.entryId === canonFactId
+            })
+
+            return fact
+              ? {
+                  entryId: fact.entryId,
+                  title: fact.title,
+                  category: fact.category,
+                  visibility: fact.visibility,
+                  enforcement: fact.enforcement
+                }
+              : null
+          })
+          .filter(function (
+            fact
+          ): fact is BookContextPack["runtimeContext"]["relevantCanonFacts"][number] {
+            return Boolean(fact)
+          }),
+        relevantCharacters: relevantCharacterStateIds
+          .slice(0, 4)
+          .map(function (characterStateId) {
+            const state = characterLedger.find(function (entry) {
+              return entry.id === characterStateId
+            })
+
+            return state
+              ? {
+                  id: state.id,
+                  characterName: state.characterName,
+                  misreadRisk: state.misreadRisk,
+                  draftControls: state.draftControls,
+                  pressurePattern: state.pressurePattern
+                }
+              : null
+          })
+          .filter(function (
+            state
+          ): state is BookContextPack["runtimeContext"]["relevantCharacters"][number] {
+            return Boolean(state)
+          })
+      }
     }
   })
 
@@ -393,8 +490,11 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
     activePhase: "phase_2_memory" as const,
     targetLengthWords: parsed.targetLengthWords,
     masterBrief: parsed.masterBrief,
+    masterBriefRuntime: parsed.masterBriefRuntime,
     marketBrief: parsed.marketBrief,
     writerConstitution: parsed.writerConstitution,
+    writerRulesRuntime: parsed.writerRulesRuntime,
+    threatModel: parsed.threatModel,
     memory: {
       lastSyncedAt: now,
       canonLedger,
@@ -465,7 +565,12 @@ async function overwriteBookMemory(story: StoryDocument) {
         summary: fact.summary,
         mention_count: fact.mentionCount,
         importance: fact.importance,
-        status: fact.status
+        status: fact.status,
+        pipeline_meta: {
+          category: fact.category,
+          visibility: fact.visibility,
+          enforcement: fact.enforcement
+        }
       }
     }),
     "id"
@@ -496,7 +601,12 @@ async function overwriteBookMemory(story: StoryDocument) {
         inner_shift: state.innerShift,
         agenda: state.agenda,
         updated_from_scene_id: state.updatedFromSceneId || null,
-        state_updated_at: state.updatedAt
+        state_updated_at: state.updatedAt,
+        pipeline_meta: {
+          misreadRisk: state.misreadRisk,
+          draftControls: state.draftControls,
+          pressurePattern: state.pressurePattern
+        }
       }
     }),
     "id"
@@ -559,7 +669,19 @@ async function overwriteBookMemory(story: StoryDocument) {
         order_label: sceneCard.orderLabel,
         chapter_goal: sceneCard.chapterGoal,
         directives: sceneCard.directives,
-        outline: sceneCard.outline
+        outline: sceneCard.outline,
+        pipeline_meta: {
+          sceneFunction: sceneCard.sceneFunction,
+          readerQuestion: sceneCard.readerQuestion,
+          evidenceDelta: sceneCard.evidenceDelta,
+          trustShift: sceneCard.trustShift,
+          accessShift: sceneCard.accessShift,
+          lockedFields: sceneCard.lockedFields,
+          opusTaskMode: sceneCard.opusTaskMode,
+          escalationLevel: sceneCard.escalationLevel,
+          exitCondition: sceneCard.exitCondition,
+          overwriteRisk: sceneCard.overwriteRisk
+        }
       }
     })
   )
@@ -575,7 +697,8 @@ async function overwriteBookMemory(story: StoryDocument) {
         stable_prefix_signature: pack.stablePrefixSignature,
         previous_scene_ids: pack.previousSceneIds,
         next_scene_id: pack.nextSceneId,
-        prepared_at: pack.preparedAt
+        prepared_at: pack.preparedAt,
+        runtime_context: pack.runtimeContext
       }
     }),
     "id"
@@ -623,7 +746,10 @@ async function overwriteBookMemory(story: StoryDocument) {
   const bookProjectUpdate = await supabaseAdmin
     .from("book_projects")
     .update({
-      memory_last_synced_at: story.book.memory.lastSyncedAt
+      memory_last_synced_at: story.book.memory.lastSyncedAt,
+      master_brief_runtime: story.book.masterBriefRuntime,
+      writer_rules_runtime: story.book.writerRulesRuntime,
+      threat_model: story.book.threatModel
     })
     .eq("story_id", story.id)
 
@@ -641,21 +767,42 @@ function parseRegie(
   const headerTitle = matchSingle(productionMarkdown, /^# EMBER Story Document — „(.+?)[”"]/m)
   const authorName = authorOverride || matchSingle(productionMarkdown, /^> Autor: (.+)$/m) || ""
   const masterBriefRows = parseMarkdownTable(getTopLevelSection(productionMarkdown, "MASTER BRIEF"))
+  const masterBriefRuntime = parseMasterBriefRuntime(
+    getOptionalTopLevelSection(productionMarkdown, "MASTER BRIEF RUNTIME")
+  )
   const marketBriefSection = getTopLevelSection(productionMarkdown, "MARKET BRIEF")
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
+  const writerRulesRuntime = parseWriterRulesRuntime(
+    getOptionalTopLevelSection(productionMarkdown, "WRITER RULES RUNTIME")
+  )
+  const threatModel = parseThreatModel(
+    getOptionalTopLevelSection(productionMarkdown, "THREAT MODEL")
+  )
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
   const writerSummariesSection = getOptionalTopLevelSection(
     productionMarkdown,
     "WRITER-SUMMARIES — KAPITEL 1 BIS 12"
   )
-  const canonFacts = parseJsonBlock<{ canon_facts: Array<{ id: string; fact: string; status: string }> }>(
+  const canonFacts = parseJsonBlock<{
+    canon_facts: Array<{
+      id: string
+      fact: string
+      status: string
+      category?: StoryDocument["book"]["memory"]["canonLedger"][number]["category"]
+      visibility?: StoryDocument["book"]["memory"]["canonLedger"][number]["visibility"]
+      enforcement?: StoryDocument["book"]["memory"]["canonLedger"][number]["enforcement"]
+    }>
+  }>(
     getTopLevelSection(productionMarkdown, "CANON FACTS (Initial — Stand: vor Kapitel 1)")
   ).canon_facts.map(function (fact) {
     return {
       legacyId: fact.id,
       fact: fact.fact,
-      status: fact.status
+      status: fact.status,
+      category: normalizeCanonCategory(fact.category),
+      visibility: normalizeCanonVisibility(fact.visibility),
+      enforcement: normalizeCanonEnforcement(fact.enforcement)
     }
   })
   const characters = parseCharacters(getTopLevelSection(productionMarkdown, "CHARACTER STATE LEDGER"))
@@ -690,6 +837,15 @@ function parseRegie(
       endingPromise: masterBriefRows["Ending Promise"] || "",
       thematicCore
     },
+    masterBriefRuntime: {
+      ...createDefaultBookMasterBriefRuntime(),
+      premise: masterBriefRuntime.premise || premise,
+      readerPromise: masterBriefRuntime.readerPromise || masterBriefRows["Reader Promise"] || "",
+      endingPromise: masterBriefRuntime.endingPromise || masterBriefRows["Ending Promise"] || "",
+      thematicCore: masterBriefRuntime.thematicCore || thematicCore,
+      povRule: masterBriefRuntime.povRule || masterBriefRows["POV-Strategie"] || "",
+      antagonistRule: masterBriefRuntime.antagonistRule
+    },
     marketBrief: {
       ...defaultBook.marketBrief,
       amazonGoal: marketBriefRows["Amazon Goal"] || "",
@@ -702,6 +858,8 @@ function parseRegie(
       )
     },
     writerConstitution: parseBulletLines(writerSection),
+    writerRulesRuntime,
+    threatModel,
     worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore),
     canonFacts,
     characters,
@@ -722,6 +880,45 @@ function getFirstTableValue(
   }
 
   return ""
+}
+
+function parseMasterBriefRuntime(section: string): StoryDocument["book"]["masterBriefRuntime"] {
+  const record = parseYamlFenceBlock(section)
+
+  return {
+    ...createDefaultBookMasterBriefRuntime(),
+    premise: typeof record.premise === "string" ? record.premise : "",
+    readerPromise: typeof record.reader_promise === "string" ? record.reader_promise : "",
+    endingPromise: typeof record.ending_promise === "string" ? record.ending_promise : "",
+    thematicCore: typeof record.thematic_core === "string" ? record.thematic_core : "",
+    povRule: typeof record.pov_rule === "string" ? record.pov_rule : "",
+    antagonistRule: typeof record.antagonist_rule === "string" ? record.antagonist_rule : ""
+  }
+}
+
+function parseWriterRulesRuntime(section: string): StoryDocument["book"]["writerRulesRuntime"] {
+  const record = parseYamlFenceBlock(section)
+
+  return {
+    ...createDefaultBookWriterRulesRuntime(),
+    globalStyle: normalizeStringArrayLoose(record.global_style),
+    sceneMechanics: normalizeStringArrayLoose(record.scene_mechanics),
+    hardBans: normalizeStringArrayLoose(record.hard_bans)
+  }
+}
+
+function parseThreatModel(section: string): StoryDocument["book"]["threatModel"] {
+  const record = parseYamlFenceBlock(section)
+
+  return {
+    ...createDefaultBookThreatModel(),
+    antagonist: typeof record.antagonist === "string" ? record.antagonist : "",
+    objective: typeof record.objective === "string" ? record.objective : "",
+    operatingSystems: normalizeStringArrayLoose(record.operating_systems),
+    escalationLogic: normalizeStringArrayLoose(record.escalation_logic),
+    forbiddenCapabilities: normalizeStringArrayLoose(record.forbidden_capabilities),
+    truthUnderHook: normalizeStringArrayLoose(record.truth_under_hook)
+  }
 }
 
 function parseCharacters(section: string): ParsedCharacter[] {
@@ -772,7 +969,22 @@ function parseCharacters(section: string): ParsedCharacter[] {
             "Noch keine explizite Agenda."
         ),
         240
-      )
+      ),
+      misreadRisk: {
+        byInstitutions: getNestedString(record, ["misread_risk", "by_institutions"]) || "",
+        byOtherCharacters: getNestedString(record, ["misread_risk", "by_other_characters"]) || "",
+        byReaderEarly: getNestedString(record, ["misread_risk", "by_reader_early"]) || ""
+      },
+      draftControls: {
+        mustShow: getNestedStringArray(record, ["draft_controls", "must_show"]),
+        mustAvoid: getNestedStringArray(record, ["draft_controls", "must_avoid"])
+      },
+      pressurePattern: record.pressure_pattern && typeof record.pressure_pattern === "object"
+        ? {
+            underStressDoes: getNestedStringArray(record, ["pressure_pattern", "under_stress_does"]),
+            underStressShouldNotDo: getNestedStringArray(record, ["pressure_pattern", "under_stress_should_not_do"])
+          }
+        : null
     }
   })
 }
@@ -846,6 +1058,16 @@ function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): 
       chapterGoal: goal,
       directives: parsedBlock.directives,
       outline: buildOutlineLines(parsedBlock.directives, parsedBlock.custom),
+      sceneFunction: parsedBlock.sceneFunction,
+      readerQuestion: parsedBlock.readerQuestion,
+      evidenceDelta: parsedBlock.evidenceDelta,
+      trustShift: parsedBlock.trustShift,
+      accessShift: parsedBlock.accessShift,
+      lockedFields: parsedBlock.lockedFields,
+      opusTaskMode: parsedBlock.opusTaskMode,
+      escalationLevel: parsedBlock.escalationLevel,
+      exitCondition: parsedBlock.exitCondition,
+      overwriteRisk: parsedBlock.overwriteRisk,
       setupRefs: parsedBlock.setupRefs,
       rawText: lines.slice(index, blockEnd + 1).join("\n")
     })
@@ -859,38 +1081,47 @@ function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): 
 function parseSceneCardBlock(lines: string[]) {
   const directives = createEmptyBookSceneCardDirectives()
   const custom: Array<{ key: string; value: string }> = []
-  let legacyId = createUuid()
-  let setupRefs: string[] = []
+  const record = parseIndentedYamlObject(
+    lines.filter(function (line) {
+      return line.trim() !== "Scene Card"
+    })
+  )
+  let legacyId = typeof record.id === "string" ? record.id : createUuid()
+  let setupRefs = normalizeCommaList(record.setup)
 
-  lines.forEach(function (line) {
-    const trimmed = line.trim()
-
-    if (!trimmed || trimmed === "Scene Card" || !trimmed.includes(":")) {
-      return
-    }
-
-    const separatorIndex = trimmed.indexOf(":")
-    const rawKey = trimmed.slice(0, separatorIndex).trim()
-    const value = trimmed.slice(separatorIndex + 1).trim()
+  Object.entries(record).forEach(function ([rawKey, rawValue]) {
     const normalized = normalizeKey(rawKey)
+    const value = stringifyYamlScalar(rawValue)
 
-    if (!value) {
+    if (!value && !Array.isArray(rawValue)) {
       return
     }
 
     if (normalized === "id") {
-      legacyId = value
+      legacyId = value || legacyId
+      return
+    }
+
+    if (
+      normalized === "scene_function" ||
+      normalized === "reader_question" ||
+      normalized === "evidence_delta" ||
+      normalized === "trust_shift" ||
+      normalized === "access_shift" ||
+      normalized === "locked_fields" ||
+      normalized === "opus_task_mode" ||
+      normalized === "escalation_level" ||
+      normalized === "exit_condition" ||
+      normalized === "overwrite_risk"
+    ) {
       return
     }
 
     if (normalized === "setup") {
-      setupRefs = value
-        .split(",")
-        .map(function (entry) {
-          return entry.trim()
-        })
-        .filter(Boolean)
-      custom.push({ key: "setup", value })
+      setupRefs = normalizeCommaList(rawValue)
+      if (value) {
+        custom.push({ key: "setup", value })
+      }
       return
     }
 
@@ -939,7 +1170,19 @@ function parseSceneCardBlock(lines: string[]) {
       return
     }
 
-    custom.push({ key: rawKey, value })
+    if (Array.isArray(rawValue)) {
+      rawValue.forEach(function (entry) {
+        const item = stringifyYamlScalar(entry)
+        if (item) {
+          custom.push({ key: rawKey, value: item })
+        }
+      })
+      return
+    }
+
+    if (value) {
+      custom.push({ key: rawKey, value })
+    }
   })
 
   directives.custom = custom
@@ -948,7 +1191,25 @@ function parseSceneCardBlock(lines: string[]) {
     legacyId,
     directives,
     custom,
-    setupRefs
+    setupRefs,
+    sceneFunction: normalizeStringArrayLoose(record.scene_function),
+    readerQuestion: typeof record.reader_question === "string" ? record.reader_question : "",
+    evidenceDelta: {
+      before: getObjectString(record.evidence_delta, "before"),
+      after: getObjectString(record.evidence_delta, "after")
+    },
+    trustShift: typeof record.trust_shift === "string" ? record.trust_shift : "",
+    accessShift: typeof record.access_shift === "string" ? record.access_shift : "",
+    lockedFields: normalizeStringArrayLoose(record.locked_fields),
+    opusTaskMode: {
+      planning: getObjectString(record.opus_task_mode, "planning"),
+      draft: getObjectString(record.opus_task_mode, "draft"),
+      rewrite: getObjectString(record.opus_task_mode, "rewrite"),
+      expand: getObjectString(record.opus_task_mode, "expand")
+    },
+    escalationLevel: normalizeNullableInteger(record.escalation_level),
+    exitCondition: typeof record.exit_condition === "string" ? record.exit_condition : "",
+    overwriteRisk: normalizeStringArrayLoose(record.overwrite_risk)
   }
 }
 
@@ -1169,6 +1430,261 @@ function pickRelevantCharacterStateIds(
   relevantIds.push.apply(relevantIds, names)
 
   return uniqueStrings(relevantIds)
+}
+
+function parseYamlFenceBlock(section: string) {
+  if (!section.trim()) {
+    return {}
+  }
+
+  const match = section.match(/```ya?ml\n([\s\S]*?)\n```/)
+
+  if (!match) {
+    return {}
+  }
+
+  return parseIndentedYamlObject(match[1].split(/\r?\n/))
+}
+
+function parseIndentedYamlObject(lines: string[]) {
+  const filtered = lines
+    .map(function (line) {
+      return line.replace(/\t/g, "  ")
+    })
+    .filter(function (line) {
+      return Boolean(line.trim())
+    })
+
+  if (!filtered.length) {
+    return {}
+  }
+
+  const minIndent = filtered.reduce(function (lowest, line) {
+    const indent = countIndent(line)
+    return lowest === null || indent < lowest ? indent : lowest
+  }, null as number | null) ?? 0
+
+  return parseYamlObjectAtIndent(filtered, 0, minIndent).value
+}
+
+function parseYamlObjectAtIndent(lines: string[], startIndex: number, indent: number): {
+  value: Record<string, unknown>
+  nextIndex: number
+} {
+  const value: Record<string, unknown> = {}
+  let index = startIndex
+
+  while (index < lines.length) {
+    const line = lines[index]
+    const currentIndent = countIndent(line)
+
+    if (currentIndent < indent) {
+      break
+    }
+
+    if (currentIndent > indent) {
+      index += 1
+      continue
+    }
+
+    const trimmed = line.trim()
+
+    if (trimmed.startsWith("- ")) {
+      break
+    }
+
+    const separatorIndex = trimmed.indexOf(":")
+
+    if (separatorIndex === -1) {
+      index += 1
+      continue
+    }
+
+    const rawKey = trimmed.slice(0, separatorIndex).trim()
+    const rawValue = trimmed.slice(separatorIndex + 1).trim()
+
+    if (rawValue) {
+      value[rawKey] = parseYamlScalar(rawValue)
+      index += 1
+      continue
+    }
+
+    const nextIndex = findNextMeaningfulLine(lines, index + 1)
+
+    if (nextIndex === -1) {
+      value[rawKey] = ""
+      index += 1
+      continue
+    }
+
+    const nextIndent = countIndent(lines[nextIndex])
+
+    if (nextIndent <= currentIndent) {
+      value[rawKey] = ""
+      index += 1
+      continue
+    }
+
+    if (lines[nextIndex].trim().startsWith("- ")) {
+      const parsedArray = parseYamlArrayAtIndent(lines, nextIndex, nextIndent)
+      value[rawKey] = parsedArray.value
+      index = parsedArray.nextIndex
+      continue
+    }
+
+    const parsedObject = parseYamlObjectAtIndent(lines, nextIndex, nextIndent)
+    value[rawKey] = parsedObject.value
+    index = parsedObject.nextIndex
+  }
+
+  return { value, nextIndex: index }
+}
+
+function parseYamlArrayAtIndent(lines: string[], startIndex: number, indent: number): {
+  value: unknown[]
+  nextIndex: number
+} {
+  const value: unknown[] = []
+  let index = startIndex
+
+  while (index < lines.length) {
+    const line = lines[index]
+    const currentIndent = countIndent(line)
+
+    if (currentIndent < indent) {
+      break
+    }
+
+    if (currentIndent !== indent || !line.trim().startsWith("- ")) {
+      index += 1
+      continue
+    }
+
+    value.push(parseYamlScalar(line.trim().replace(/^- /, "").trim()))
+    index += 1
+  }
+
+  return { value, nextIndex: index }
+}
+
+function findNextMeaningfulLine(lines: string[], startIndex: number) {
+  for (let index = startIndex; index < lines.length; index += 1) {
+    if (lines[index].trim()) {
+      return index
+    }
+  }
+
+  return -1
+}
+
+function countIndent(line: string) {
+  const match = line.match(/^ */)
+  return match ? match[0].length : 0
+}
+
+function parseYamlScalar(value: string) {
+  const trimmed = value.trim()
+
+  if (!trimmed) {
+    return ""
+  }
+
+  if (
+    (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1)
+  }
+
+  if (/^-?\d+$/.test(trimmed)) {
+    return Number.parseInt(trimmed, 10)
+  }
+
+  return trimmed
+}
+
+function stringifyYamlScalar(value: unknown) {
+  if (typeof value === "string") {
+    return value.trim()
+  }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value)
+  }
+
+  return ""
+}
+
+function normalizeStringArrayLoose(value: unknown) {
+  return Array.isArray(value)
+    ? value
+        .map(function (entry) {
+          return stringifyYamlScalar(entry)
+        })
+        .filter(Boolean)
+    : []
+}
+
+function normalizeCommaList(value: unknown) {
+  if (Array.isArray(value)) {
+    return normalizeStringArrayLoose(value)
+  }
+
+  if (typeof value !== "string") {
+    return []
+  }
+
+  return value
+    .split(",")
+    .map(function (entry) {
+      return entry.trim()
+    })
+    .filter(Boolean)
+}
+
+function getObjectString(value: unknown, key: string) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return ""
+  }
+
+  const record = value as Record<string, unknown>
+  return typeof record[key] === "string" ? record[key] : ""
+}
+
+function normalizeNullableInteger(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? Math.round(value) : null
+}
+
+function normalizeCanonCategory(value: unknown): StoryDocument["book"]["memory"]["canonLedger"][number]["category"] {
+  if (
+    value === "family" ||
+    value === "institution" ||
+    value === "access" ||
+    value === "routine" ||
+    value === "threat" ||
+    value === "history" ||
+    value === "subtext"
+  ) {
+    return value
+  }
+
+  return "subtext"
+}
+
+function normalizeCanonVisibility(value: unknown): StoryDocument["book"]["memory"]["canonLedger"][number]["visibility"] {
+  if (value === "reader_known" || value === "reader_hidden" || value === "subtext") {
+    return value
+  }
+
+  return "reader_known"
+}
+
+function normalizeCanonEnforcement(value: unknown): StoryDocument["book"]["memory"]["canonLedger"][number]["enforcement"] {
+  if (value === "hard" || value === "soft") {
+    return value
+  }
+
+  return "soft"
 }
 
 function parseMarkdownTable(section: string) {
@@ -1506,6 +2022,24 @@ function getNestedString(record: Record<string, any>, pathSegments: string[]) {
   }
 
   return typeof current === "string" ? current : ""
+}
+
+function getNestedStringArray(record: Record<string, any>, pathSegments: string[]) {
+  let current: any = record
+
+  for (const segment of pathSegments) {
+    if (!current || typeof current !== "object") {
+      return []
+    }
+
+    current = current[segment]
+  }
+
+  return Array.isArray(current)
+    ? current.filter(function (entry): entry is string {
+        return typeof entry === "string" && entry.trim().length > 0
+      })
+    : []
 }
 
 function escapeRegex(value: string) {
