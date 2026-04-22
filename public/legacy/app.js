@@ -219,7 +219,7 @@
       action: "open-link",
       href: "/samples/die-falsche-abholung",
       buttonLabel: "Lesen",
-      progressLabel: "Szene 7 online"
+      progressLabel: "Szene 8 online"
     },
     {
       title: STORY.meta.appTitle,

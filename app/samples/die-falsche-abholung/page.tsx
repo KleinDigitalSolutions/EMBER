@@ -449,6 +449,78 @@ const sceneSevenParagraphs = [
   `Eva steckte das Handy in die Tasche, stand auf und holte den Haargummi aus dem Sand. Er war noch warm. Sie rollte ihn zwischen Daumen und Zeigefinger und ging zum Ausgang des Hofs, an dem Becher vorbei, ohne ihn aufzuheben.`
 ];
 
+const sceneEightParagraphs = [
+  `Kathrin saß schon, als Eva das Café betrat, zwei Tassen auf dem kleinen Tisch, die Hände um ihre Tasse gelegt, als wäre sie kalt geworden beim Warten. Sie hatte sich nicht viel verändert. Derselbe gerade Pony, derselbe Blick, der einen Satz früher ankam als die Stimme.`,
+  `„Ich kann dir keine Akte zeigen", sagte Kathrin, bevor Eva sich richtig gesetzt hatte. „Das weißt du."`,
+  `„Ich will keine Akte." Eva zog die Jacke aus, legte sie über die Stuhllehne. „Ich will wissen, ob ich mir etwas einbilde."`,
+  `Kathrin schob ihre Tasse einen Zentimeter zur Seite.`,
+  `„Nora Seidel", sagte Eva.`,
+  `„Hab ich mir gedacht, als du geschrieben hast." Kathrin sah eine Sekunde zum Fenster. Draußen fuhr ein Bus vorbei, Werbung auf der Seite, irgendein Versicherungsslogan. „Es gab mal was. Ich war nicht zuständig, ich hab nur mitbekommen, was mitbekommen wurde. Ein Sorgekonflikt. Eine andere Mutter, ein Kind, keine Verwandtschaft, lange Geschichte."`,
+  `„Wer hat gewonnen?"`,
+  `„Es hat niemand gewonnen." Kathrin zog die Schultern hoch. „Aber am Ende hatte die eine Seite Listen, Ordner, Notizen mit Uhrzeiten. Und die andere hatte Tränen und eine zu laute Stimme auf dem Flur."`,
+  `„Nora hatte die Ordner."`,
+  `Kathrin antwortete nicht. Sie rührte in einem Kaffee, der schon lange keine Bewegung mehr brauchte.`,
+  `„Hat sie das Kind genommen?"`,
+  `„Es ging nicht um Nehmen. Es ging um die Frage, wer zuverlässig wirkt. Wer Kontakt zum Kinderarzt hat, wer die Impftermine kennt, wer die Schuhgröße weiß." Kathrin sah auf. „Eva, ich sage dir nichts, was in einer Akte steht. Ich sage dir nur, wie es gewirkt hat."`,
+  `„Und wie hat es gewirkt?"`,
+  `Kathrin zögerte. Dann, mit einer Ruhe, die zwischen ihnen stehen blieb wie ein drittes Möbelstück:`,
+  `„Bei ihr wirkte immer alles sauberer als auf der anderen Seite."`,
+  `Eva legte die Hände flach auf den Tisch.`,
+  `„Danke", sagte sie.`,
+  `„Ich hab dir nichts gesagt."`,
+  `„Ich weiß."`,
+  `Kathrin sah sie an, kurz und konzentriert. „Wenn du was tust, tu es mit Papier. Nicht mit Wut."`,
+  `Eva nickte. Sie wartete nicht auf die Rechnung. Sie legte einen Fünfer unter den Unterteller, zog die Jacke wieder an und stand auf, bevor Kathrin noch etwas sagen konnte, das weniger sitzen würde als der Satz davor.`,
+  `Die Dienststelle lag zehn Minuten zu Fuß. Eva ging sie schneller, als sie musste. Drinnen roch es nach Kaffeemaschine und Kopierer. Eine Frau mittleren Alters hinter der Scheibe, Namensschild, freundliche Müdigkeit, ein halb gegessenes Brötchen auf einer Serviette neben der Tastatur.`,
+  `„Ich möchte keine Anzeige erstatten", sagte Eva. „Ich möchte verstehen, wie so etwas läuft."`,
+  `„So etwas?"`,
+  `„Wenn jemand behauptet, ein Kind abgeholt zu haben, obwohl das nicht stimmt. Wenn eine Unterschrift da ist. Wenn eine Vollmacht vorliegt, die nicht mehr gelten sollte."`,
+  `Die Beamtin lehnte sich einen halben Zentimeter zurück. „Sie reden von Ihrem eigenen Kind."`,
+  `„Ja."`,
+  `„Und Ihrem eigenen Kita-Konto."`,
+  `„Ja."`,
+  `„Wer hat Zugriff auf das Konto?"`,
+  `„Ich. Der Vater. Eine dritte Person, die als Notfallkontakt hinterlegt war."`,
+  `„War."`,
+  `„Ich habe sie rausnehmen lassen. Glaube ich."`,
+  `Die Beamtin schrieb nichts. Sie sah Eva an, mit der Art von Geduld, die Papier ersetzt.`,
+  `„Frau Berger, wenn die Kita eine Unterschrift hat und eine Person, die auf einer Liste stand, und das Kind erscheint am nächsten Tag wohlbehalten, dann ist das verwaltungstechnisch kein Fall. Es ist ein Missverständnis. Solange Sie keine harte Abweichung nachweisen können."`,
+  `„Was wäre eine harte Abweichung?"`,
+  `„Eine Unterschrift, die nachweislich gefälscht ist. Ein Zeitpunkt, an dem Sie belegbar woanders waren. Ein Video, das eine andere Person zeigt, nicht Sie. Eine widerrufene Vollmacht, die dokumentiert ist, mit Eingangsstempel, schriftlicher Bestätigung der Einrichtung, Datum."`,
+  `„Und wenn nichts davon klar ist?"`,
+  `„Dann ist es Ihre Aussage gegen eine Liste."`,
+  `Eva hörte zu. Die Frau erklärte ihr nicht, was möglich war. Sie erklärte ihr, was jemand wissen musste, der es nicht treffen sollte. Zeitfenster. Unterschriftsprüfung. Dokumentationspflicht. Schriftliche Widerrufe mit Zugangsnachweis. Kameraaufzeichnungen, deren Löschfristen man kannte, wenn man auf der anderen Seite dieses Tresens gestanden hatte. Nora hatte gestanden. Nicht an diesem Tresen, aber an einem ähnlichen, lange genug, um die Dünnstellen zu sehen.`,
+  `„Darf ich noch fragen", sagte Eva, „wie lange ein Kita-Träger so eine Unterschrift aufbewahrt?"`,
+  `„Kommt auf den Träger an. Mindestens drei Jahre."`,
+  `„Und die Videoaufzeichnungen vom Eingang?"`,
+  `„Meist deutlich kürzer. Zwei Wochen, manchmal weniger."`,
+  `„Weniger."`,
+  `„Je nach System." Die Beamtin sah Eva länger an, als sie es getan hatte, seit Eva hereingekommen war. „Kommen Sie wieder, wenn Sie etwas Schriftliches haben. Mit Datum. Möglichst bald."`,
+  `Eva nickte.`,
+  `Sie lief nach Hause, die Hände tief in den Jackentaschen. Der Satz ging mit. *Sauberer als auf der anderen Seite.* Keine Metapher, keine Anklage. Eine Beobachtung, wie man sie über ein gebügeltes Hemd macht. Sie zählte, während sie lief. Zwei Wochen bei den Videos. Drei Jahre bei den Unterschriften. Sie zählte, was sie heute schon hätte anfordern sollen und nicht angefordert hatte, weil ihr niemand gesagt hatte, wie schmal die Fenster sind.`,
+  `Das Treppenhaus roch nach dem Essen der Nachbarn, etwas mit Zwiebeln. Sie schloss auf, ohne hinzusehen, Jacke an den Haken, Schlüssel in die Schale. Im Flur brannte noch das kleine Licht, das sie morgens angelassen hatte, weil Mila sich davor nicht fürchtete. Mila war heute nicht hier. Mila war seit dem Frühstück bei Simon.`,
+  `Sie ging in die Küche, um ein Glas Wasser zu trinken.`,
+  `Auf der Ablage, zwischen Brettchen und Wasserkocher, stand Milas rosa Brotdose. Der Deckel offen, leicht schräg. Die Dose ausgespült, noch feucht an den Rändern. Ein Tropfen lief innen die Wand hinunter und sammelte sich in der Ecke, wo sonst die Apfelschnitze lagen.`,
+  `Eva stand sehr still.`,
+  `Sie hatte die Dose heute früh eingepackt. Simon hatte sie mitgenommen. Mila hatte sie mitgenommen. Die Dose war den ganzen Tag nicht in dieser Wohnung gewesen.`,
+  `Sie fasste den Deckel nicht an. Dann doch, mit zwei Fingern, an einer Stelle, an der niemand einen Finger hinlegt, der spült. Das Plastik war kühl. Das Wasser war nicht alt.`,
+  `Sie zog die Hand zurück.`,
+  `Im Ausguss lag ein einzelner Apfelkern.`,
+  `Eva sah von der Dose zum Ausguss und zurück. Dann zu den Haken im Flur, an denen ihre Jacke hing, sonst nichts. Zur Tür. Die Kette hing lose am Rahmen, so wie sie immer hing, wenn Eva morgens aus dem Haus ging und am Abend zurückkam.`,
+  `Sie holte ihr Handy heraus. Die Finger wussten, was sie tun sollten, bevor der Kopf es sortiert hatte. Sie öffnete die Kamera. Sie fotografierte die Brotdose von drei Seiten, den offenen Deckel, den Tropfen an der Innenwand, den Apfelkern im Ausguss. Sie fotografierte die Ablage aus dem Winkel, in dem das Licht auf die Feuchtigkeit traf. Sie sah auf den Zeitstempel. Sie machte noch ein Foto, auf dem die Dose neben der heutigen Zeitung lag, die sie am Morgen aus dem Briefkasten geholt und ungelesen auf den Tisch geworfen hatte.`,
+  `Dann schrieb sie Simon.`,
+  `*Hast du Milas Brotdose heute mitgegeben?*`,
+  `Sie schickte die Nachricht, bevor sie sie umformulieren konnte.`,
+  `Die drei Punkte erschienen schnell. Verschwanden. Erschienen wieder.`,
+  `*Ja. Die rosa. Warum?*`,
+  `Eva sah die Nachricht an. Sie sah die Dose an. Sie sah das kleine Licht im Flur, das für Mila brannte, die heute nicht hier war.`,
+  `Sie tippte nichts zurück. Nicht sofort.`,
+  `Sie ging in den Flur, schloss die Tür zweimal ab, legte die Kette vor. Sie ging zurück in die Küche und ließ die Dose stehen, wo sie stand. Sie würde sie nicht wegräumen. Sie würde sie nicht abwaschen. Sie würde nichts an diesem Bild verändern, bis sie wusste, was es zeigte.`,
+  `Sie setzte sich an den Küchentisch, das Handy vor sich, und schrieb auf die Rückseite der Quittung vom Café mit einem Kugelschreiber, der schlecht lief: *Dose, 19:40, Deckel offen, feucht, Kern im Ausguss.* Sie schrieb das Datum daneben. Sie schrieb die Uhrzeit zweimal, weil sie sich beim ersten Mal verschrieben hatte.`,
+  `Papier. Nicht Wut.`,
+  `Sie legte den Stift hin und sah die Dose an, und die Dose blieb, wo sie war, rosa, offen, still.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -456,7 +528,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 7 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 8 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -583,9 +655,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 8</p>
+          <h2>Papier</h2>
+          <p>
+            Ein Gespräch und ein Gang zur Dienststelle verschieben Evas Verdacht in
+            eine neue Richtung: Nicht nur das Kind, auch die Dokumentation selbst
+            kann zur Waffe werden. Zuhause wartet bereits der nächste Beweis.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneEightParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s8-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 8</h3>
+          <h3>Szene 9</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
