@@ -521,6 +521,41 @@ const sceneEightParagraphs = [
   `Sie legte den Stift hin und sah die Dose an, und die Dose blieb, wo sie war, rosa, offen, still.`
 ];
 
+const sceneNineParagraphs = [
+  `Das Schlüsselbrett hing neben der Garderobe, fünf Haken, beschriftet in Evas eigener Handschrift. Wohnung, Briefkasten, Keller, Fahrrad, Ersatz. Am Haken Ersatz hing nichts. Sie starrte auf den leeren Messingstift, als könnte er nachliefern, was er nicht hatte.`,
+  `Sie holte die Notfallmappe aus dem Regal. Plastikhülle, Register, Reiter in Farben, die sie selbst angelegt hatte. Versicherung. Impfpass. Vollmacht. Kita. Im hinteren Fach, wo sie Kopien aufbewahrte, lag ein Schlüssel. Kleiner Anhänger aus Leder, mit Filzstift beschriftet: Ersatz Wohnung. Ihre Schrift. Nur hatte sie diesen Schlüssel nie dort abgelegt.`,
+  `Sie hielt ihn in der Hand und versuchte, sich zu erinnern, ihn je vom Haken in die Mappe gelegt zu haben. Sie kam bis zu dem Tag, an dem Nora ihn offiziell zurückgebracht hatte. Kaffee, Küchentisch, ein kleines Gespräch darüber, wie gut es sei, wieder getrennte Dinge zu haben. Nora hatte den Schlüssel auf den Tisch gelegt. Eva hatte ihn an den Haken gehängt. Sie war sich sicher gewesen. Jetzt war sie es nicht mehr.`,
+  `Sie legte die Mappe auf den Küchentisch und blätterte weiter, Reiter für Reiter. Unter Vollmacht lagen zwei Blätter, die sie kannte. Unter Kita lag eine Kopie der Abholberechtigung, zweifach gelocht, sauber abgeheftet. Sie hatte nur eine Kopie gemacht. Sie zog das Blatt heraus und hielt es gegen das Licht. Kein Wasserzeichen, kein Unterschied. Nur dass es doppelt da war.`,
+  `Im Keller roch es nach altem Karton und feuchter Wand. Das Licht im Gang sprang mit Verzögerung an. Evas Abteil war der dritte Verschlag rechts. Sie schloss auf und zog die Kiste mit der Aufschrift Umzug 4 aus dem Stapel. Darin lag das Säckchen. Hellblauer Stoffbeutel, Kordelzug, mit Textstift beschriftet: Reserve. Sie hatte ihn in der Trennungszeit so angelegt, falls etwas mit der Wohnung wäre, falls Mila etwas, falls Nora. Falls Nora.`,
+  `Eva kniete auf dem Betonboden und betrachtete den Knoten. Sie machte ihre Knoten immer nach rechts, das wusste sie so sicher, wie sie wusste, auf welcher Seite Mila im Bett schlief. Der Knoten saß links. Ein sauberer, fest gezogener Knoten, nicht hastig, nicht heimlich, einfach auf der falschen Seite.`,
+  `Sie öffnete ihn. Der Schlüssel lag im Beutel, das Leder am Anhänger leicht abgegriffen. Sie hielt ihn unter die nackte Glühbirne. Am Bart, an der feinsten Kante, ein heller Streifen, wo Metall auf Metall gelaufen war. Eine dünne, stumpfe Spur, wie sie entsteht, wenn ein Schlüssel in eine Fräsmaschine eingespannt wird. Sie hatte es schon einmal gesehen, an einem Autoschlüssel ihres Vaters, nach einem Schlüsseldienst.`,
+  `Sie drehte den Schlüssel, langsam, als ob die Drehung ihn in einen anderen verwandeln könnte. Ein Kratzer am Kopf, an den sie sich nicht erinnerte. Der Lederanhänger ein bisschen dunkler an den Rändern, als hätte ihn jemand länger in der Hand gehalten. In dem Karton darunter lag eine Postkarte, die Mila vor einem Jahr bemalt hatte, ein Haus, ein Baum, eine Sonne. Eva starrte darauf, bis die Linien verschwammen, dann legte sie den Schlüssel zurück, verknotete den Beutel, diesmal nach rechts, und blieb einen Moment auf den Knien. Irgendwo in einem anderen Abteil fiel etwas um, ein kleines Scheppern, dann Stille. Sie stand auf, nahm den Beutel mit und schloss das Abteil ab. Beim Rauslaufen zählte sie die Verschläge, weil sie etwas zählen musste. Acht bis zur Tür.`,
+  `Oben rief sie den Notdienst an. Ein Mann mit ruhiger Stimme sagte, er könne in vierzig Minuten da sein, Nachtzuschlag. Sie sagte ja. Sie stellte den Wasserkocher an und ließ ihn wieder ausgehen. Auf der Küchenuhr war es kurz nach elf.`,
+  `Der Schlüsseldienst kam um halb zwölf. Ein älterer Mann mit einer Werkzeugtasche, der nicht viel redete und die Tür einmal öffnete, einmal schloss, dann nickte. Er baute den alten Zylinder aus, legte ihn auf ein Stofftuch, setzte den neuen ein. Das Geräusch, als der neue Bart in die Stifte griff, war sauberer, härter. Er gab ihr drei neue Schlüssel, zeigte ihr die Nummer, ließ sie unterschreiben. Sie zahlte bar.`,
+  `„Klemmt bei Ihnen was?" fragte er im Gehen, fast beiläufig.`,
+  `„Nein", sagte Eva. „Warum?"`,
+  `Er zuckte die Schultern. „Die Kollegin unten hat gesagt, im Haus klemmt seit Tagen was. Hat mich eine Nachbarin gefragt, hat sie gemeint. Ist nicht unser Auftrag, aber man hört sowas."`,
+  `„Welche Nachbarin?"`,
+  `„Keine Ahnung. Ich bin nicht der, der das annimmt." Er tippte kurz an die Mütze. „Gute Nacht."`,
+  `Als er weg war, legte sie die alten Schlüssel auf den Küchentisch. Vier Stück. Der vom Haken, zwei aus der Mappe, der aus dem Keller. Sie lagen nebeneinander wie kleine, stumpfe Gegenstände. Nora wusste, in welchem Fach Milas Wechselkleidung lag. Nora wusste den Code vom Fahrradkeller. Nora wusste, wie lange das Wasser im Bad brauchte, bis es warm war, und dass Mila beim Zähneputzen immer am Fenster stand. Ein neuer Zylinder hielt nichts davon auf.`,
+  `Sie packte die alten Schlüssel in eine Tüte, den Beutel dazu, und stellte die Tüte neben die Tür. Dann nahm sie den Müllsack aus der Küche, weil irgendetwas getan werden musste, das einfach war.`,
+  `Im Treppenhaus brannte nur das Notlicht. Sie drückte den Sack gegen die Hüfte und zog die Wohnungstür ins Schloss. Das neue Schloss klickte trocken.`,
+  `Nora stand vor ihrer eigenen Tür, zwei Meter weiter. Barfuß, graue Leggings, ein langes T-Shirt, einen Hausschlüssel in der Hand. Ihr Haar lag hinten platt, als wäre sie vom Sofa aufgestanden.`,
+  `„Oh", sagte Nora leise, „du bist auch noch wach."`,
+  `Eva blieb stehen. Der Müllsack war plötzlich sehr leicht.`,
+  `„Ich krieg meine Tür nicht auf." Nora lachte kurz, tonlos. „Seit Tagen klemmt das. Ich muss immer zweimal drehen." Sie deutete mit dem Schlüssel auf ihr Schloss, ohne hinzusehen. Ihr Blick war bei Eva. Dann, kurz, an Evas Türklinke. Dann wieder bei Eva. „Klemmt bei dir auch?"`,
+  `„Nein", sagte Eva.`,
+  `„Nicht?" Nora zog die Augenbrauen hoch, freundlich, beinahe erleichtert. „Vielleicht ist es nur unsere Seite. Die Haustür war ja letzte Woche auch komisch."`,
+  `Sie lächelte. Es war das Lächeln, das Mila auf dem Spielplatz erwidert hatte.`,
+  `„Hattest du Besuch?" fragte Nora. „So spät noch. Ich hab jemanden gehört auf dem Gang."`,
+  `„Geh schlafen", sagte Eva. „Ist spät."`,
+  `„Ja." Nora sah an Evas Tür vorbei, zur Klinke, zum neuen, noch glänzenden Schild um das Schlüsselloch. Eine Viertelsekunde, nicht länger. „Gute Nacht, Eva."`,
+  `Nora drehte sich um, steckte den Schlüssel in ihr eigenes Schloss und drehte. Einmal. Zweimal. Die Tür ging auf.`,
+  `Eva trug den Müllsack bis zum Schacht, warf ihn hinein und ging zurück. Im Vorbeigehen an Noras Tür hörte sie drinnen kein Geräusch, kein Licht unter dem Türspalt, keinen Schritt. Nur die Tür, die von innen leise ins Schloss fiel, als sie schon drei Schritte weiter war.`,
+  `In ihrer Wohnung lehnte sie sich von innen gegen die Tür und hörte, wie im Nachbarflur ein Riegel geschoben wurde.`,
+  `Auf dem Küchentisch lagen die alten Schlüssel. Daneben das Säckchen mit dem Knoten, den sie neu gemacht hatte, nach rechts.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -528,7 +563,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 8 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 9 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -671,9 +706,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 9</p>
+          <h2>Ersatz</h2>
+          <p>
+            Eva prüft Schlüssel, Kopien und Kellerbeutel und stößt auf Spuren, die
+            sich nicht mehr als Zufall lesen lassen. Als Nora nachts im Treppenhaus
+            auftaucht, kippt der Verdacht endgültig in konkrete Bedrohung.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneNineParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s9-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 9</h3>
+          <h3>Szene 10</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
