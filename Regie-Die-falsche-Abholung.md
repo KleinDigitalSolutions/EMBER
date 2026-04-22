@@ -10,13 +10,13 @@
 
 | Feld | Inhalt |
 |---|---|
-| **Praemisse** | Eine getrennt lebende Mutter bekommt aus der Kita den Anruf, sie habe ihre Tochter bereits gestern abgeholt. Die Videoaufnahme, eine Unterschrift und mehrere alltaegliche Routinen sprechen gegen ihre Erinnerung. Je genauer sie prueft, desto klarer wird, dass niemand einfach ihr Kind entfuehren will, sondern ihre Zurechnungsfaehigkeit, ihre Glaubwuerdigkeit und am Ende ihre Rolle als Mutter ersetzt. |
-| **Reader Promise** | Ein psychologischer Thriller mit domestic-suspense-Zug: Kita, App, Abholcode, Ex-Partner, Nachbarschaft, Notfallkontakte und die banalen Wege eines Elternalltags werden zur Waffe. Der Leser soll sich permanent fragen, ob hier ein Identitaetsdiebstahl, eine sorgfaeltig gebaute Rufzerstoerung oder eine persoenliche Uebernahme laeuft. |
+| **Praemisse** | Eine getrennt lebende Mutter sieht in der Kita-App den Vermerk, sie habe ihre Tochter bereits gestern abgeholt. Die Videoaufnahme, eine Unterschrift und mehrere alltaegliche Routinen sprechen gegen ihre Erinnerung. Je genauer sie prueft, desto klarer wird, dass niemand einfach ihr Kind entfuehren will, sondern ihre Zurechnungsfaehigkeit, ihre Glaubwuerdigkeit und am Ende ihre Rolle als Mutter ersetzt. |
+| **Reader Promise** | Ein psychologischer Thriller mit domestic-suspense-Zug: Kita, App, Ex-Partner, Nachbarschaft, Notfallkontakte und die banalen Wege eines Elternalltags werden zur Waffe. Der Leser soll sich permanent fragen, ob hier ein dokumentierter Identitaetsangriff, eine sorgfaeltig gebaute Rufzerstoerung oder eine persoenliche Uebernahme laeuft. |
 | **Ending Promise** | Kein Wahn-Twist, keine gespaltene Persoenlichkeit, kein billiger Technikzauber. Die Wahrheit ist real, geplant und menschlich nah. Die Bedrohung kommt nicht von einem fremden Monster, sondern von einer Frau, die zu nah in den Alltag hineingelassen wurde und aus Fuerseorge Besitz gemacht hat. |
 | **Thematischer Kern** | Elternschaft ist nicht nur Liebe, sondern auch Deutungshoheit. Wer einer Mutter ihre Erinnerung, ihre Zuverlaessigkeit und ihre Alltagsbeweise nimmt, greift nicht ein Kind an, sondern die Person, die dieses Kind vor der Welt vertreten darf. |
 | **Arbeitstitel** | Die falsche Abholung |
 | **Genre** | Psychological Thriller / Domestic Suspense |
-| **Ziel-Wortanzahl** | 78.000-88.000 Woerter |
+| **Ziel-Wortanzahl** | 60.000-68.000 Woerter |
 | **POV-Strategie** | Nahe, kontrollierte dritte Person auf Eva. Kein Taeter-POV. Keine Mila-Kapitel. Keine Rueckblicke aus Noras Perspektive. |
 
 ---
@@ -38,6 +38,7 @@
 - Kein Ermittlerroman. Kein Polizeiverfahrensbuch. Der Sog kommt aus Alltagsbeweisen, nicht aus Spurensicherungshandwerk.
 - Das Kind ist emotionaler Kern, aber nie sentimentales Plotwerkzeug.
 - Die Aufloesung muss rueckwirkend alle kleinen Alltagsdetails erklaeren koennen.
+- Die Spannung liegt frueh nicht primaer im Taeterraetsel, sondern im Beweis- und Machtkampf um Glaubwuerdigkeit.
 
 ---
 
@@ -45,7 +46,7 @@
 
 ### Stilregeln (Positiv)
 - Nahe dritte Person auf Eva. Keine allwissende Erklaerstimme.
-- Kurze bis mittlere Kapitel: 900-1.400 Woerter.
+- Kurze bis mittlere Kapitel: meist 1.100-1.500 Woerter, einzelne Schluesselszenen bis etwa 1.700 Woerter.
 - Jedes Kapitel endet mit einer konkreten offenen Konsequenz, nicht bloss mit Unruhe.
 - Bedrohung entsteht aus normalen Dingen: App, Klingeln, Wechselkleidung, Trinkflasche, Vollmacht, Unterschrift, Nachricht, Stimme, Blick einer Erzieherin.
 - Exposition darf nur unter Druck vorkommen.
@@ -72,6 +73,7 @@
 ### Hook-Regel
 - Kapitel 1 beginnt mit der realen Behauptung der Kita, nicht mit Vorgeschichte.
 - Die erste Leitfrage lautet nicht: "Wurde Mila entfuehrt?" sondern: "Wie kann es Beweise dafuer geben, dass Eva etwas getan hat, was sie sicher nicht getan hat?"
+- Der Stoff ist frueh kein klassisches Whodunit, sondern ein Suspense-Roman ueber Beweisbarkeit, Alltagsmacht und die ruhigere, glaubwuerdigere Frau.
 
 ### Ende-Regel
 - Die Wahrheit muss materiell belegbar werden: Kontaktlisten, App-Logik, Gewohnheiten, Handschrift, Zeitpunkt, Beobachtung.
@@ -109,11 +111,24 @@
 - Nora ist ueber den Hof, spaeter ueber Mila, in Evas Alltag gerutscht.
 - Die engsten Bedrohungen kommen aus Hilfe, Entlastung und Verfuegbarkeit.
 
+### Noras drei Zugriffssysteme
+- **Fruehere legitime Naehe:** Mila-Wissen, Kleidung, Sprachmuster, Wohnung, Schluessel, Routinen.
+- **Administrativer Restzugriff:** alte Listen, Vollmachten, Helferdienste, offene Mappen, Drucker, Kontaktwege.
+- **Sozialer Vertrauensvorschuss:** Simon, Kita-Kultur, Arztpraxis, Nachbarschaft, ruhiges Auftreten.
+- Jeder spaetere Zugriff muss aus mindestens einer dieser drei Linien ableitbar sein; Nora darf nichts koennen, das nicht daraus logisch folgt.
+
 ### Die Wahrheit unter dem Hook
 - Es gibt keinen Doppelgaenger im fantastischen Sinn.
 - Nora hat Evas Routinen ueber Monate studiert und an entscheidenden Punkten mit legal wirkenden Hilfsrollen kombiniert.
 - Ihr Ziel ist nicht der einmalige Zugriff, sondern der schrittweise Beweis, dass Eva unzuverlaessig, ueberfordert oder instabil wirkt.
 - Die "falsche Abholung" ist Auftakt und Testlauf eines groesseren Ersetzungsmusters.
+
+### Eroeffnungsmechanik fuer Kapitel 1
+- Eva sieht am spaeten Nachmittag in der Kita-App einen verspaetet synchronisierten Abschlussvermerk vom Vortag: Mila sei um 15:42 Uhr von ihr abgeholt worden.
+- Mila ist zu diesem Zeitpunkt physisch bei Simon im regulaeren Umgang; deshalb entsteht kein akuter Vermisstenfall, sondern zunaechst ein dokumentierter Identitaetsangriff.
+- Eva ruft die Kita an, weil sie den Vorgang fuer einen falschen Eintrag oder eine Verwechslung haelt.
+- Erst im Gespraech und vor Ort wird klar, dass nicht bloss ein App-Fehler vorliegt, sondern ein real protokollierter Abholvorgang mit Wiedererkennen, Garderobenszene und Unterschrift.
+- Genau deshalb eskaliert die Lage zuerst als Glaubwuerdigkeits- und Beweisproblem, nicht als sofortiger Polizeialarm.
 
 ---
 
@@ -361,9 +376,9 @@ Scene Card
   ort: Buero / Auto / Kita-Eingang
   uhrzeit: 16:18 Uhr
   ziel: Den Hook ohne Vorlauf real machen.
-  opening: Das Handy klingelt, waehrend Eva noch in einem Meeting sitzt. Die Kita fragt sachlich, warum sie wegen der gestrigen Abholung noch einmal anrufe.
+  opening: Zwischen zwei Meetingfenstern sieht Eva in der Kita-App einen spaet synchronisierten Abschlussvermerk vom Vortag: Mila sei um 15:42 Uhr von ihr abgeholt worden.
   objective: Eva will den offensichtlichen Irrtum sofort korrigieren.
-  coreAction: In der Kita erfaehrt sie, dass Mila gestern offiziell abgeholt wurde. App-Eintrag, Uhrzeit und Tonlage der Erzieherin machen aus dem Missverstaendnis sofort eine konkrete Gefahr.
+  coreAction: Eva haelt den Eintrag erst fuer einen App-Fehler, ruft in der Kita an und faehrt dann selbst hin. Dort erfaehrt sie, dass hinter dem Vermerk ein real protokollierter Abholvorgang steht.
   dramaticBeat: Petra Loewen sagt nicht "Vielleicht irren wir uns", sondern zeigt Eva den Eintrag mit ihrem Namen.
   ending: Eva sieht auf dem stillstehenden Kamerabild eine Frau im gleichen Mantel wie sie und erkennt im ersten Schock sich selbst.
   beweisobjekt: App-Eintrag 15:42 Uhr
@@ -448,7 +463,7 @@ Scene Card
   ziel: Zeigen, dass der Eingriff nicht nur die Kita betrifft.
   objective: Eva will pruefen, ob auch andere Alltagsstellen bereits beruehrt sind.
   coreAction: Ein Arzttermin ist ohne ihr Wissen verschoben, ein Rezept schon abgeholt, und an der Kasse spricht eine Kassiererin Eva auf etwas an, das "gestern mit Mila" passiert sei.
-  dramaticBeat: Jedes einzelne Detail waere fuer sich banal, gemeinsam aber ergibt sich ein zweites Profil ihres Tages.
+  dramaticBeat: Jedes einzelne Detail waere fuer sich banal, gemeinsam aber ergibt sich ein zweites Profil ihres Tages. Simon ruft auf Evas Bitte selbst in der Praxis an und bestaetigt wenigstens die Terminverschiebung.
   ending: Simon sagt nicht, sie solle sich beruhigen, sondern fragt zum ersten Mal, ob sie sicher sei, sich nicht zu taeuschen.
   beweisobjekt: Verschobener Arzttermin und abgeholtes Rezept
   ersetzungsmoment: Ein zweiter Tageslauf existiert neben Evas eigenem
@@ -481,10 +496,10 @@ Scene Card
   uhrzeit: Abend
   ziel: Nora als moegliche Taeterin konkret machen, ohne alles schon zu loesen.
   objective: Eva will endlich eine harte Linie finden, die ihren Verdacht legitimiert.
-  coreAction: Ueber eine alte Bekannte erfaehrt Eva von Noras frueherem Sorgekonflikt. Auf der Dienststelle bekommt sie keine grosse Hilfe, aber genug, um zu begreifen, wie gut Nora Verwaltungslogiken kennt.
-  dramaticBeat: Ein alter Schriftsatz zeigt denselben ruhigen, sauber zugespitzten Ton, den Nora heute in jeder Hilfenachricht benutzt.
+  coreAction: Ueber eine fruehere Bekannte aus dem Beratungsumfeld erfaehrt Eva keine Akteneinsicht, sondern nur Bruchstuecke: Nora hatte bereits einmal einen Sorgekonflikt, in dem Listen, Nachweise und ruhiges Auftreten gegen eine andere Mutter arbeiteten. Auf der Dienststelle bekommt Eva keine grosse Hilfe, aber genug, um zu begreifen, wie gut Nora Verwaltungslogiken kennt.
+  dramaticBeat: Nicht ein offizielles Dokument, sondern ein fast beilaufiger Satz der Bekannten trifft Eva: "Bei ihr wirkte immer alles sauberer als auf der anderen Seite."
   ending: Zuhause steht Milas rosa Brotdose gespuelt und geoeffnet auf Evas Kuechenablage, obwohl Mila seit dem Morgen bei Simon ist.
-  beweisobjekt: Alter Schriftsatz aus Sorgekonflikt
+  beweisobjekt: Indirekter Hinweis auf frueheren Sorgekonflikt
   ersetzungsmoment: Nora hat nicht nur Zugang, sondern Nachverwertung der Abwesenheit
   setup: CF007, OT002, OT004, OT005
 ```
@@ -498,8 +513,8 @@ Scene Card
   uhrzeit: spaeter Abend
   ziel: Den physischen Zugriff auf Evas Alltag plausibel machen.
   objective: Eva will pruefen, ob Nora noch mehr Zugang hatte, als sie sich eingestehen wollte.
-  coreAction: Eva durchsucht Schluesselbrett, Notfallmappe und alte Umzugskisten. Sie erinnert sich, dass Nora waehrend der Trennung zeitweise einen Ersatzschluessel hatte.
-  dramaticBeat: Der Schluessel ist offiziell zurueckgegeben worden, aber das beschriftete Reservesaeckchen im Keller wurde einmal geoeffnet und neu verknotet.
+  coreAction: Eva durchsucht Schluesselbrett, Notfallmappe und alte Umzugskisten. Sie erinnert sich, dass Nora waehrend der Trennung zeitweise einen Ersatzschluessel hatte, und wechselt noch in derselben Nacht den Schliesszylinder ihrer Wohnung.
+  dramaticBeat: Der Schluessel ist offiziell zurueckgegeben worden, aber das beschriftete Reservesaeckchen im Keller wurde einmal geoeffnet und neu verknotet. Der Schlosswechsel beruhigt Eva nicht, weil er nur kuenftigen Zutritt stoppt, nicht das, was Nora laengst kopiert hat.
   ending: Im Hausflur steht Nora barfuss vor ihrer Tuer und fragt freundlich, ob bei Eva auch seit Tagen das Schloss klemmt.
   beweisobjekt: Reservesaeckchen mit Ersatzschluessel
   alltagswaffe: Hilfe beim Praktischen erzeugt Zutritt
@@ -530,11 +545,11 @@ Scene Card
   pov: EVA
   ort: Wohnung / Handy / Innenhofbank
   uhrzeit: Nacht
-  ziel: Die Moeglichkeit einer nachgebauten Eva-Stimme anlegen.
+  ziel: Die stimmliche Plausibilitaet der falschen Abholung alltagsrealistisch erklaeren.
   objective: Eva will verstehen, warum die Erzieherinnen sich so sicher mit dem Wiedererkennen waren.
-  coreAction: Eva hoert alte Voicemails, Familienvideos und Sprachnachrichten ab. Dabei erkennt sie, wie oft Nora sie in entspannten Momenten zum Wiederholen kleiner Formulierungen gebracht hat.
-  dramaticBeat: In einer alten Hofaufnahme hoert Eva, wie Nora sie bittet, "Schick mir kurz denselben Satz fuer die Kita" zu sagen, damit eine Absage glaubwuerdig klingt.
-  ending: Genau dieser Satz taucht in gekuerzter Form im Abholprotokoll der Erzieherin auf.
+  coreAction: Eva hoert alte Voicemails, Familienvideos und Sprachnachrichten ab. Dabei erkennt sie, wie oft Nora sie in entspannten Momenten kurze Kita-Saetze, Absagen und Alltagsformeln wiederholen liess.
+  dramaticBeat: In einer alten Hofaufnahme hoert Eva, wie Nora sie bittet, "Sag's nochmal kurz, dann leite ich es weiter" zu sagen. In verrauschten Situationen und mit vertrauter Erwartung reicht genau so ein Satz, um stimmlich plausibel zu wirken.
+  ending: Im Abholprotokoll der Erzieherin steht dieselbe kurze Formel, die Eva in mehreren alten Nachrichten fast wortgleich benutzt hat.
   beweisobjekt: Alte Sprachnachricht mit Originalsatz
   alltagswaffe: Vertrautheit wird zur Stimmvorlage
   setup: CF004, CF006, OT001, OT002
@@ -549,8 +564,8 @@ Scene Card
   uhrzeit: naechster Morgen
   ziel: Nora tiefer in die offizielle Loesung druecken.
   objective: Eva will verhindern, dass Hilfe zur Standardmassnahme wird.
-  coreAction: Simon sagt, Nora habe einen vernuenftigen Vorschlag gemacht: Bis zur Klaerung koenne sie bei Engpaessen fuer Bring- und Holwege einspringen.
-  dramaticBeat: Simon meint es pragmatisch, merkt aber nicht, dass Nora damit genau die Rolle formalisiert, die Eva zurueckdrueckt.
+  coreAction: Simon sagt, Nora habe einen vernuenftigen Vorschlag gemacht: Bis zur Klaerung koenne sie bei Engpaessen fuer Bring- und Holwege einspringen. Gleichzeitig zieht er selbst eine erste Grenze und sagt, ohne direkte Bestaetigung von ihm oder Eva solle Nora Mila nirgends allein uebernehmen.
+  dramaticBeat: Simon meint es pragmatisch und nicht boeswillig, merkt aber nicht, dass Nora damit genau die Rolle formalisiert, die Eva zurueckdrueckt.
   ending: Mila fragt am Telefon, ob "Nora-Montag" jetzt wieder gilt.
   alltagswaffe: Vorschlaege klingen unschuldig, sobald sie organisatorisch sauber sind
   setup: CF004, CF005, CF008, OT003, OT004
@@ -700,10 +715,10 @@ Scene Card
   uhrzeit: Abend
   ziel: Nora erstmals objektiv stolpern lassen, ohne schon aufzufliegen.
   objective: Eva will Simon einen harten, kleinen Beweis geben.
-  coreAction: Nora bringt Mila Essen vorbei und kommentiert beilaufig deren angebliche Vorliebe fuer Erdbeerjoghurt. Eva weiss, dass Mila seit Monaten keine Erdbeere vertraegt.
-  dramaticBeat: Simon zuckt zusammen, relativiert dann aber, Nora habe sich einfach vertan.
+  coreAction: Nora bringt Mila Essen vorbei und stellt selbstverstaendlich Erdbeerjoghurt auf den Tisch. Eva weiss, dass Mila seit Monaten keine Erdbeere vertraegt. Als Mila schon den Kopf wegdreht, schiebt Nora sofort einen neutralen Becher nach und behauptet, sie habe natuerlich beide Optionen dabeigehabt.
+  dramaticBeat: Simon zuckt nicht nur wegen des Fehlers zusammen, sondern auch wegen der zu schnellen Korrektur. Er relativiert trotzdem noch, Nora habe sich eben vertan und den Fehler sofort aufgefangen.
   ending: Spaeter schreibt Simon Eva: "Es war nur ein Fehler." Eva antwortet nicht.
-  beweisobjekt: Falscher Essensbezug bei bekannter Unvertraeglichkeit
+  beweisobjekt: Falscher Essensbezug plus hastige Korrektur
   setup: CF002, CF004, CF005, OT003
 ```
 
@@ -898,10 +913,10 @@ Scene Card
   uhrzeit: Mittag
   ziel: Eva technisch und sozial weiter aus der Mutterrolle draengen.
   objective: Eva will ihre Zugriffe auf die Kita selbst sichern.
-  coreAction: Ohne Vorwarnung wird Eva aus der Kita-App ausgeloggt. Die Ruecksetzungsmail ist bereits verbraucht worden.
-  dramaticBeat: Petra bestaetigt, dass die Aenderung ueber einen formal plausiblen Wunsch mit Sicherheitsantwort lief.
-  ending: Die Sicherheitsfrage bezog sich auf Milas erstes Kuscheltier, und nur drei Personen kennen die richtige Antwort.
-  beweisobjekt: Verbrauchte Passwort-Ruecksetzung
+  coreAction: Ohne Vorwarnung wird Eva aus der Kita-App ausgeloggt. Eine manuelle Ruecksetzung ist bereits ueber die Verwaltung angestossen worden, nachdem jemand telefonisch einen plausiblen Wechsel wegen eines angeblich defekten Handys gemeldet hat.
+  dramaticBeat: Petra bestaetigt, dass die Bestaetigung an ein altes Postfach ging, das noch in einer Reserve-Liste stand. Im Gespraech fiel ein intimes Alltagsdetail zu Milas Kuscheltierfach, das die Rueckfrage glaubhaft genug machte.
+  ending: Eva starrt auf die alte Mailadresse, die sie seit zwei Jahren nicht mehr nutzt und die Nora nur aus frueheren Formularen kennen kann.
+  beweisobjekt: Manuelle App-Ruecksetzung ueber altes Postfach
   setup: CF003, CF004, CF006, OT001, OT002
 ```
 
@@ -978,10 +993,10 @@ Scene Card
   uhrzeit: Abend
   ziel: Die Fallhoehe maximal personalisieren und den nahen Verrat voll sichtbar machen.
   objective: Eva will Nora nicht ueberfuehren, sondern zum ersten Mal ohne Schutzhilfe, Dankbarkeit oder Hofnaehe direkt sehen.
-  coreAction: Eva konfrontiert Nora in deren perfekt geordneter Wohnung. Dort stehen Milas bekannte Dinge nicht offen als Trophäen, sondern eingeordnet in eine fast plausible Ersatznormalitaet: Wechselshirt, Foto aus dem Hof, ein zweites Set Haarspangen, ausgedruckte Kita-Mails, sauber abgeheftete Routinen.
+  coreAction: Eva konfrontiert Nora in deren perfekt geordneter Wohnung. Dort stehen Milas bekannte Dinge nicht offen als Trophaeen, sondern eingeordnet in eine fast plausible Ersatznormalitaet: Wechselshirt, Foto aus dem Hof, ein zweites Set Haarspangen, ausgedruckte Kita-Mails, sauber abgeheftete Routinen.
   dramaticBeat: Nora sagt nicht "Ich wollte sie wegnehmen", sondern "Jemand musste anfangen, fuer sie verlässlich zu sein." Damit kippt der ganze Roman rueckwirkend von Entfuehrungsangst zu geplanter Mutterersetzung.
-  ending: Als Eva gehen will, sieht sie auf Noras Tisch eine unterschriebene Einverstaendniserklaerung fuer den Kita-Ausflug — mit Evas Namen, aber fuer einen Termin, der erst morgen offiziell kommuniziert wird.
-  beweisobjekt: Vorab-Ausflugserklaerung und abgeheftete Routinen
+  ending: Als Eva gehen will, sieht sie auf Noras Tisch eine vorab ausgefuellte, aber noch nicht abgegebene Einverstaendniserklaerung fuer den Kita-Ausflug — mit Evas Daten fuer einen Termin, der erst morgen offiziell kommuniziert wird.
+  beweisobjekt: Vorab ausgefuellte Ausflugserklaerung und abgeheftete Routinen
   closing_line: Eva nimmt das Blatt nicht mit. Sie fotografiert es, ohne dass ihre Hand zittert.
   setup: CF004, CF007, OT002, OT004, OT005
 ```
@@ -1011,10 +1026,10 @@ Scene Card
   uhrzeit: frueher Morgen
   ziel: Den harten aktuellen Beweis fuer Petra liefern.
   objective: Eva will zeigen, dass Nora an den Ausflug gelangte, bevor Eltern informiert wurden.
-  coreAction: Petra prueft Mailversand, Druckhistorie und Helferlisten. Alles fuehrt zu einem Ausdrucksfenster am Vorabend mit Noras Zugriff ueber einen harmlosen Schluessel fuer den Materialraum.
-  dramaticBeat: Das Foto der vorab unterschriebenen Erklaerung ist nicht nur verdächtig, sondern zeitlich mit dem Druckjob belegbar.
+  coreAction: Petra prueft Mailversand, Druckhistorie, Helferlisten und den Zugang zum Materialraum. Alles fuehrt zu einem Ausdrucksfenster am Vorabend, einem fruehen Entwurfsversand und Noras Zugriff ueber einen harmlosen Schluessel fuer den Materialraum.
+  dramaticBeat: Das Foto der vorab ausgefuellten Erklaerung wird erst durch Druckjob, Entwurfszeit und Raumzugang zum harten aktuellen Beweis.
   ending: Petra sagt: "Wenn sie heute auftaucht, hole ich sie nicht als Hilfe dazu."
-  beweisobjekt: Druckjob plus Foto der Vorab-Erklaerung
+  beweisobjekt: Druckjob, Entwurfsmail und Foto der Vorab-Erklaerung
   setup: CF003, CF004, OT001, OT002
 ```
 
@@ -1093,7 +1108,7 @@ Scene Card
   coreAction: Mila ist vorsichtig, aber da. Simon bringt sie zurueck. Eva antwortet langsam, klar und ohne Hektik auf die kleinen Anforderungen des Morgens.
   dramaticBeat: Nichts Grosses passiert. Gerade das macht sichtbar, was der Roman verteidigt hat: die unaufgeregte Autoritaet des echten Alltags.
   ending: Mila ruft aus dem Bad nach ihrem gelben Becher, und Eva weiss sofort, wo er steht.
-  closing_line: Eva stellt ihn auf den Rand des Waschbeckens, genau dorthin, wo nur einer hingehört.
+  closing_line: Eva stellt ihn auf den Rand des Waschbeckens.
   payoff: OT001, OT002, OT003, OT004, OT005
   setup: CF001, CF002, CF005, CF006
 ```
@@ -1106,7 +1121,7 @@ Diese Sektion ist fuer den operativen Ember-Writer gedacht. Die Scene Cards blei
 
 ### Kapitel 1 — „Gestern"
 **Writer Summary**
-Eva sitzt im Buero, als die Kita anruft und sachlich fragt, warum sie wegen einer gestrigen Abholung noch einmal nachhake. Eva geht zunaechst von einem simplen Verwaltungsfehler aus und faehrt gereizt, aber kontrolliert zur Kita. Dort merkt sie schnell, dass nicht Verwirrung im Raum steht, sondern ein dokumentierter Vorgang mit Uhrzeit und Namen. Die Szene muss den Leser von normalem Arbeitsalltag in konkrete Mutterpanik kippen lassen. Sie endet nicht mit allgemeinem Schock, sondern mit dem stillstehenden Bild einer Frau, die wie Eva aussieht.
+Eva sitzt im Buero, als in der Kita-App ein verspätet synchronisierter Abschlussvermerk vom Vortag auftaucht: Mila sei um 15:42 Uhr von ihr abgeholt worden. Eva geht zunaechst von einem simplen Verwaltungsfehler aus, ruft an und faehrt gereizt, aber kontrolliert zur Kita. Dort merkt sie schnell, dass nicht Verwirrung im Raum steht, sondern ein dokumentierter Vorgang mit Uhrzeit und Namen. Die Szene muss den Leser von normalem Arbeitsalltag in konkrete Mutterpanik kippen lassen. Sie endet nicht mit allgemeinem Schock, sondern mit dem stillstehenden Bild einer Frau, die wie Eva aussieht.
 
 **Director Note**
 Schreibe die Szene ohne Vorgeschichte. Kein langsames psychologisches Vorspiel. Der Schock entsteht daraus, wie normal und sicher die Kita in ihrer Behauptung klingt.
@@ -1135,7 +1150,7 @@ Die Szene soll nicht nach "Institution gegen Mutter" klingen. Sie soll zeigen, w
 
 ### Kapitel 6 — „Verlegt"
 **Writer Summary**
-Eva testet, ob der Eingriff nur die Kita betrifft oder schon tiefer in ihren Alltag reicht. Kinderarzttermin, Rezept und Supermarktbeobachtung zeigen, dass neben ihrem eigenen Tageslauf ein zweiter alltagsnaher Lauf existiert. Jedes Detail ist fuer sich klein, gemeinsam aber verstörend. Simon beginnt hier erstmals nicht nur besorgt, sondern wirklich skeptisch zu reagieren. Die Szene endet mit seiner Frage, ob Eva sicher sei, sich nicht zu taeuschen.
+Eva testet, ob der Eingriff nur die Kita betrifft oder schon tiefer in ihren Alltag reicht. Kinderarzttermin, Rezept und Supermarktbeobachtung zeigen, dass neben ihrem eigenen Tageslauf ein zweiter alltagsnaher Lauf existiert. Jedes Detail ist fuer sich klein, gemeinsam aber verstoerend. Wichtig ist, dass Simon hier erstmals selbst einen Fakt prueft und in der Praxis anruft, bevor er wieder in Vorsicht ausweicht. Die Szene endet mit seiner Frage, ob Eva sicher sei, sich nicht zu taeuschen.
 
 ### Kapitel 7 — „Stabil"
 **Writer Summary**
@@ -1143,11 +1158,11 @@ Eva sucht Simon persoenlich auf und will ihn auf ihre Seite ziehen. Statt offen 
 
 ### Kapitel 8 — „Die Akte ueber Nora"
 **Writer Summary**
-Eva sammelt erstmals Material ueber Nora und findet einen frueheren Sorgekonflikt, in dem nicht Lautstaerke, sondern administrative Glaubwuerdigkeit entscheidend war. Sie versteht, dass Nora Strukturen lesen und nutzen kann. Gleichzeitig soll die Szene nicht alles erklaeren, sondern nur die Bedrohung plausibilisieren. Zuhause wartet bereits das naechste kleine Zeichen nachtraeglicher Alltagsbesetzung: Milas Brotdose steht gespuelt in Evas Kueche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzueberschreitung.
+Eva sammelt erstmals Material ueber Nora, bekommt aber bewusst keine bequeme Akteneinsicht. Stattdessen erfaehrt sie nur indirekt von einem frueheren Sorgekonflikt, in dem nicht Lautstaerke, sondern administrative Glaubwuerdigkeit entscheidend war. Genau dadurch wird klar, dass Nora Strukturen lesen und nutzen kann, ohne dass der Roman seinen Alltagsrealismus verliert. Zuhause wartet bereits das naechste kleine Zeichen nachtraeglicher Alltagsbesetzung: Milas Brotdose steht gespuelt in Evas Kueche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzueberschreitung.
 
 ### Kapitel 9 — „Der Ersatzschluessel"
 **Writer Summary**
-Eva beginnt, nicht nur digitale und soziale, sondern physische Zutritte zu pruefen. Dabei erinnert sie sich an die Zeit der Trennung, als Nora legitimen Zugang zur Wohnung hatte. Der Reservezugang ist offiziell beendet, aber Spuren am Saeckchen im Keller deuten auf spaeteren Kontakt. Wichtig ist hier nicht Einbruchsspannung, sondern das schleichende Gefuehl, dass Hilfe frueher einmal real und spaeter missbraucht wurde. Die Szene endet mit Noras beiläufiger Bemerkung ueber das klemmende Schloss.
+Eva beginnt, nicht nur digitale und soziale, sondern physische Zutritte zu pruefen. Dabei erinnert sie sich an die Zeit der Trennung, als Nora legitimen Zugang zur Wohnung hatte. Der Reservezugang ist offiziell beendet, aber Spuren am Saeckchen im Keller deuten auf spaeteren Kontakt. Wichtig ist hier, dass Eva nicht passiv bleibt: Sie wechselt den Schliesszylinder noch in derselben Nacht und merkt trotzdem, dass der eigentliche Schaden laengst in kopierten Routinen und alten Zutritten liegt. Die Szene endet mit Noras beiläufiger Bemerkung ueber das klemmende Schloss.
 
 ### Kapitel 10 — „Elternabend"
 **Writer Summary**
@@ -1155,14 +1170,14 @@ Eva geht zum Elternabend, weil normale Sichtbarkeit ihre Position stabilisieren 
 
 ### Kapitel 11 — „Die Stimme"
 **Writer Summary**
-Eva untersucht, warum die Erzieherinnen die angebliche Abholung nicht nur gesehen, sondern offenbar auch stimmlich fuer plausibel hielten. Alte Voicemails, Hofvideos und beiläufige Aufnahmen zeigen, wie oft Nora ueber normale Naehe an Evas Formulierungen gekommen ist. Der Schrecken liegt darin, dass nichts davon wie Vorbereitung wirkte, als es passierte. Eva erkennt, dass Vertrautheit selbst zur Vorlage geworden ist. Die Szene endet mit dem Wiederauftauchen eines genau passenden Satzes im Abholprotokoll.
+Eva untersucht, warum die Erzieherinnen die angebliche Abholung nicht nur gesehen, sondern auch stimmlich fuer plausibel hielten. Alte Voicemails, Hofvideos und beiläufige Aufnahmen zeigen, wie oft Nora ueber normale Naehe an Evas Formulierungen gekommen ist. Der Schrecken liegt darin, dass nichts davon wie Vorbereitung wirkte, als es passierte. Es geht hier nicht um technische Stimmfälschung, sondern um vertraute kurze Saetze, eine verrauschte Situation und die Bereitschaft der Umgebung, das Vertraute fuer echt zu halten. Die Szene endet mit dem Wiederauftauchen eines genau passenden Satzes im Abholprotokoll.
 
 **Director Note**
 Die Szene ist keine Technikszene, sondern eine Naehe-Szene. Nora hat keine Hightech-Maschinerie, sondern Evas Alltag gesammelt. Der Fokus liegt auf Wiederholung, Stimme, Vertrauen und dem Missbrauch frueherer Harmlosigkeit.
 
 ### Kapitel 12 — „Ein guter Vorschlag"
 **Writer Summary**
-Simon meldet sich mit einem organisatorisch vernuenftigen Vorschlag, der in Wahrheit Noras Position formalisiert. Eva merkt, dass sie nun nicht mehr nur gegen einen Vorfall kaempft, sondern gegen die schleichende Normalisierung von Nora als zustaendiger Person. Die Szene muss zeigen, wie gefaehrlich vernünftige Sprache wird, wenn sie einen verdeckten Plan stuetzt. Mila selbst macht die Lage emotional real, indem sie "Nora-Montag" als etwas Geuebtes behandelt. Das Ende soll klein sein, aber brutal: ein Kind nennt eine Routine, die Eva nie eingefuehrt hat.
+Simon meldet sich mit einem organisatorisch vernuenftigen Vorschlag, der in Wahrheit Noras Position formalisiert. Wichtig ist, dass er hier nicht nur wegrelativiert, sondern selbst eine erste kleine Grenze ziehen will: ohne direkte Bestaetigung der Eltern soll Nora Mila nirgends allein uebernehmen. Genau diese halb kluge, halb zu spaete Vorsicht macht ihn glaubhaft. Eva merkt trotzdem, dass sie nun nicht mehr nur gegen einen Vorfall kaempft, sondern gegen die schleichende Normalisierung von Nora als zustaendiger Person. Mila selbst macht die Lage emotional real, indem sie "Nora-Montag" als etwas Geuebtes behandelt. Das Ende soll klein sein, aber brutal: ein Kind nennt eine Routine, die Eva nie eingefuehrt hat.
 
 **Director Note**
 Keine melodramatische Szene zwischen Eva und Simon. Der Schmerz liegt darin, dass der Vorschlag fuer einen Aussenstehenden wirklich gut klingt.
@@ -1207,7 +1222,7 @@ Eva spricht mit Petra nicht mehr ueber Gefuehle, sondern ueber Prozesse, Helferd
 
 ### Kapitel 21 — „Der erste Fehler"
 **Writer Summary**
-Nora macht zum ersten Mal einen objektiv greifbaren Fehler, aber noch keinen grossen. Das ist wichtig: Der Roman darf sie nicht plötzlich dumm machen. Der falsche Bezug auf Milas Unvertraeglichkeit zeigt, dass selbst eine minutiös vorbereitete Ersatzmutter nie vollkommen identisch sein kann. Simon spuert den Riss, weicht aber noch in Vernunft aus. Ende auf seiner Relativierung, weil genau diese Weigerung die Bedrohung weiter am Leben haelt.
+Nora macht zum ersten Mal einen objektiv greifbaren Fehler, aber noch keinen grossen. Das ist wichtig: Der Roman darf sie nicht ploetzlich dumm machen. Der falsche Bezug auf Milas Unvertraeglichkeit zeigt, dass selbst eine minutiös vorbereitete Ersatzmutter nie vollkommen identisch sein kann. Noch wichtiger ist die hastige Korrektur direkt danach: Nora will den Fehler sofort wieder in Souveraenitaet verwandeln. Simon spuert den Riss, weicht aber noch in Vernunft aus. Ende auf seiner Relativierung, weil genau diese Weigerung die Bedrohung weiter am Leben haelt.
 
 ### Kapitel 22 — „Nicht jetzt"
 **Writer Summary**
@@ -1264,7 +1279,7 @@ Diese Szene zeigt den Preis der Ersetzung direkt im Kind, ohne Mila zu instrumen
 
 ### Kapitel 33 — „Abgemeldet"
 **Writer Summary**
-Die Ausloggung aus der Kita-App ist ein sauberer, harter Eingriff in Evas Mutterrolle. Nicht weil eine App an sich wichtig wäre, sondern weil sie Information, Organisation und Legitimation bündelt. Die Sicherheitsfrage mit dem Kuscheltier zieht das Technische sofort zurück ins Intime. Drei Menschen kennen die Antwort, und dadurch wird der Täterkreis enger und persönlicher. Die Szene endet nicht mit Technikfrust, sondern mit verletzter Nähe.
+Die Ausloggung aus der Kita-App ist ein sauberer, harter Eingriff in Evas Mutterrolle. Nicht weil eine App an sich wichtig waere, sondern weil sie Information, Organisation und Legitimation buendelt. Wichtig ist hier kein altmodischer Hackermechanismus, sondern ein menschlicher Verwaltungsprozess: ein plausibler Telefonanruf, ein altes Postfach, ein intimes Alltagsdetail, das bei der Rueckfrage Vertrauen erzeugt. Die Szene endet nicht mit Technikfrust, sondern mit verletzter Naehe.
 
 ### Kapitel 34 — „Petra"
 **Writer Summary**
@@ -1287,10 +1302,10 @@ Eva und Simon bereiten den Gegenschlag so vor, dass er institutionell belastbar 
 
 ### Kapitel 38 — „Noras Wohnung"
 **Writer Summary**
-Das ist der stärkste Konfrontationsmoment des Buches und muss die Logik des ganzen Romans offenlegen, ohne sie totzuerklären. Eva geht nicht zu Nora, um einen Thriller-Showdown zu führen, sondern um den Kern endlich direkt zu sehen. In Noras Wohnung sind Milas Dinge nicht als Trophäen ausgestellt, sondern als plausible Parallelordnung einsortiert. Genau darin liegt der Horror. Der Schlüsselsatz ist, dass Nora nicht von Wegnahme spricht, sondern von Verlässlichkeit. Der ganze Roman kippt hier von Entführungsangst zu moralisch legitimierter Mutterersetzung. Das Ende auf der vorab unterschriebenen Ausflugserklärung muss wie ein letzter kalter Beweis sitzen.
+Das ist der stärkste Konfrontationsmoment des Buches und muss die Logik des ganzen Romans offenlegen, ohne sie totzuerklaeren. Eva geht nicht zu Nora, um einen Thriller-Showdown zu fuehren, sondern um den Kern endlich direkt zu sehen. In Noras Wohnung sind Milas Dinge nicht als Trophaeen ausgestellt, sondern als plausible Parallelordnung einsortiert. Genau darin liegt der Horror. Der Schluesselsatz ist, dass Nora nicht von Wegnahme spricht, sondern von Verlaesslichkeit. Der ganze Roman kippt hier von Entfuehrungsangst zu moralisch legitimierter Mutterersetzung. Das Ende liefert noch keinen Vollbeweis, sondern einen halbharten Fund: eine vorab ausgefuellte Ausflugserklaerung, die erst durch Kapitel 40 institutionell belastbar wird.
 
 **Director Note**
-Schütze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht dämonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwässern. Keine überflüssige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.
+Schuetze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht daemonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwaessern. Kapitel 38 liefert Motiv und halbharten Fund, aber noch nicht den institutionellen Vollbeweis. Keine ueberfluessige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.
 
 ### Kapitel 39 — „Keine Gestik"
 **Writer Summary**
@@ -1298,7 +1313,7 @@ Nach Kapitel 38 darf Eva nicht in bloße Panik kippen. Diese Szene ist ihre Här
 
 ### Kapitel 40 — „Die Vorabmail"
 **Writer Summary**
-Eva und Petra ziehen jetzt den harten aktuellen Beweis aus dem Vorabwissen um den Ausflug. Die Szene muss zeigen, wie aus Verdacht prüfbare Struktur wird: Druckjob, Materialraum, Helferschlüssel, Zeitfenster, Foto. Petra wird hier endgültig vom vorsichtigen Gegenüber zur professionellen Verbündeten. Wichtig ist, dass der Beweis nicht aus Geständnis, sondern aus einer Kette kleiner Verwaltungsrealitäten entsteht. Ende auf Petras klarer Linie für den kommenden Morgen.
+Eva und Petra ziehen jetzt den harten aktuellen Beweis aus dem Vorabwissen um den Ausflug. Die Szene muss zeigen, wie aus Verdacht pruefbare Struktur wird: Druckjob, Entwurfsmail, Materialraum, Helferschluessel, Zeitfenster, Foto. Petra wird hier endgueltig vom vorsichtigen Gegenueber zur professionellen Verbuendeten. Wichtig ist, dass der Beweis nicht aus Gestaendnis, sondern aus einer Kette kleiner Verwaltungsrealitaeten entsteht. Ende auf Petras klarer Linie fuer den kommenden Morgen.
 
 ### Kapitel 41 — „Rueckholung"
 **Writer Summary**
@@ -1372,13 +1387,13 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Nora darf hier nicht boese schreiben. Ihre Ruhe ist ihre Waffe. Der Leser soll spueren, wie schwer es ist, eine so kontrollierte Person im offenen Raum plausibel zu beschuldigen.`
 
 #### Kapitel 38 — „Noras Wohnung"
-`Schuetze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht daemonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwaessern. Keine ueberfluessige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.`
+`Schuetze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht daemonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwaessern. Kapitel 38 liefert Motiv und halbharten Fund, aber noch nicht den institutionellen Vollbeweis. Keine ueberfluessige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.`
 
 #### Kapitel 41 — „Rueckholung"
 `Nicht auf grosses Geschrei schreiben. Die Staerke der Szene liegt darin, dass derselbe oeffentliche Raum, der Eva vorher geschwaecht hat, jetzt Nora nicht mehr schuetzt. Mila muss nicht dramatisch Partei ergreifen.`
 
 #### Kapitel 45 — „Gelber Becher"
-`Das Schlusskapitel nicht uebererklaeren. Ruhe ist hier kein Leerlauf, sondern die verdiente Form des Endes. Der letzte Satz bleibt ein Bild und traegt allein.`
+`Das Schlusskapitel nicht uebererklaeren. Ruhe ist hier kein Leerlauf, sondern die verdiente Form des Endes. Der letzte Satz bleibt ein Bild und traegt allein, ohne ihn kommentierend zu deuten.`
 
 ### Director-Note-Leitlinie fuer dieses Buch
 - Nicht "wie Autor X" schreiben.
