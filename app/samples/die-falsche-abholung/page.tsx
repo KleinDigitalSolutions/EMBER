@@ -122,6 +122,81 @@ const sceneTwoParagraphs = [
   "Sie drückte auf Noras Namen, weil das schneller ging, und erst als das Freizeichen lief, merkte sie, dass sie gar nicht wusste, was sie sagen wollte."
 ];
 
+const sceneThreeParagraphs = [
+  "Eva saß im Wagen, die Tür einen Spalt offen, den Schlüssel in der Hand, ohne ihn ins Schloss zu stecken. Auf dem Display stand Simon, bevor sie ihn gewählt hatte. Sie hatte seinen Namen nur angetippt.",
+  "„Eva.\"",
+  "„Bei Mila ist nichts passiert\", sagte sie zuerst. Der Satz rutschte ihr heraus, bevor sie ihn geplant hatte.",
+  "Eine Pause. „Warum rufst du dann so an?\"",
+  "„Es gibt einen Eintrag in der App. Von gestern. Dass ich sie um 15:42 abgeholt hätte.\"",
+  "„Hast du?\"",
+  "„Nein.\"",
+  "Sie wartete auf Luft, auf Einwand, auf irgendetwas Weiches. Simon atmete einmal durch.",
+  "„Okay\", sagte er. „Okay. Wo bist du?\"",
+  "„Parkplatz. Kita. Ich fahre gleich.\"",
+  "„Haben die das schriftlich?\"",
+  "„Video. Unterschrift. Garderobe.\"",
+  "„Wessen Unterschrift?\"",
+  "„Sieht aus wie meine.\"",
+  "Sie hörte, wie er aufstand. Das Knarren seines Bürostuhls kannte sie noch.",
+  "„Eva, hör zu. Fahr nicht allein irgendwohin und mach nichts Impulsives. Ich rufe Markwald an. Wir brauchen das dokumentiert, bevor irgendwer sonst damit arbeitet. Fotografier die Unterschrift, bevor du wegfährst. Lass dir den Videoausschnitt nicht bloß erzählen, lass ihn dir zeigen und notier dir Uhrzeit und Namen der Person, die ihn dir zeigt.\"",
+  "„Ich war drin, Simon. Ich hab es gesehen.\"",
+  "„Dann nochmal. Mit Notiz.\"",
+  "Sie lehnte den Kopf gegen die Nackenstütze. Er war nicht kalt. Er war genau der Simon, den sie gewählt hatte, als es um Verträge ging, und genau der, den sie nicht hatte wollen, wenn es um sie ging.",
+  "„Ich beruhige mich nicht damit, dass du Markwald anrufst.\"",
+  "„Ich versuche nicht, dich zu beruhigen. Ich versuche, das nicht auseinanderlaufen zu lassen.\"",
+  "„Es ist noch keine Sache, die auseinanderläuft.\"",
+  "„Es ist schon eine.\"",
+  "Sie schluckte das. Draußen lief eine Erzieherin mit einem Müllsack zum Container, sah kurz zum Auto, sah weg. Eva drehte das Gesicht zur Seitenscheibe.",
+  "„Ich melde mich, wenn ich zuhause bin.\"",
+  "„Eva. Fahr heute Abend nicht allein nochmal hin. Wenn dir was einfällt, schreib's auf. Anrufen kannst du mich immer.\"",
+  "„Und wenn die Kita dich anruft?\"",
+  "„Dann weiß ich, was ich sage.\"",
+  "„Was sagst du?\"",
+  "„Dass wir das prüfen. Nicht mehr.\"",
+  "Sie legte auf, bevor sie Ja sagen musste.",
+  "Das Handy vibrierte in der Hand, noch warm. Nora.",
+  "Sie nahm ab, weil sie nicht nachdachte.",
+  "„Evi, Schatz, ich hab grad das blödeste Gefühl. Ist bei Mila alles in Ordnung?\"",
+  "„Warum fragst du?\"",
+  "„Ich hab dich vorhin aus dem Hof fahren sehen, und du hattest so ein Gesicht. Ich hab mir gedacht, ich frag lieber einmal zu oft.\"",
+  "„Es ist nichts Schlimmes passiert.\"",
+  "„Aber was?\"",
+  "Eva schloss die Augen. Sie wollte den Namen der Sache nicht aussprechen.",
+  "„Ein Verwaltungsding in der Kita. Kläre ich.\"",
+  "„Ach Gott.\" Noras Stimme wurde sofort weicher, dichter, eine Umarmung durch die Leitung. „Eva, das klingt nach diesem falschen Abholvermerk, den die manchmal haben. Um 15:42, oder? Ist das bei euch aufgetaucht? *Abgeholt durch Kindsmutter um 15:42 Uhr*, so steht das dann da, und du kriegst 'nen halben Herzinfarkt.\"",
+  "Eva hörte das Wort. Abgeholt. Durch Kindsmutter. 15:42. Der Satz stand so in der App. Wortwörtlich. Sie hatte Nora nichts davon gesagt.",
+  "„Woher weißt du das?\"",
+  "„Was?\"",
+  "„Den Wortlaut.\"",
+  "Nora lachte kurz, warm, überrascht. „Evi, das ist der Standardsatz. Den gibt das System so aus. Frag Petra, die lacht dich aus.\"",
+  "„Die Uhrzeit auch?\"",
+  "„Was?\"",
+  "„Du hast eine Uhrzeit gesagt.\"",
+  "„Hab ich?\" Eine winzige Pause. „Hast du die nicht vorhin erwähnt? Ich dachte, du hättest. Egal. Hör mal, wenn du willst, hol ich Mila die Tage mal, dann hast du Luft. Ich bin eh zuhause, du weißt. Ich hab ihre Gummibärchen da. Ich kann auch heute Abend noch kurz rüber, wenn du willst, bring Suppe mit. Du musst nichts. Sag einfach.\"",
+  "„Ich muss fahren.\"",
+  "„Evi, nur dass du das weißt. Ich bin da. Du musst nicht alles allein. Simon ist Simon, der macht Termine. Ich mach dir einen Tee.\"",
+  "„Danke, Nora.\"",
+  "„Ruf mich an, wenn du magst. Auch um elf. Ich mein das ernst.\"",
+  "„Ja.\"",
+  "Sie legte auf und saß. Die Hand lag noch am Schlüssel, als gehöre sie zu jemand anderem. Standardsatz. Vielleicht. Sie hatte die genaue Formulierung nie bewusst gelesen, auch heute nicht, das Hirn hatte nur das Wesentliche erfasst, Uhrzeit, Name. Vielleicht stand es wirklich überall so. Vielleicht hatte Nora so einen Vermerk aus ihrer Zeit mit dem Neffen gesehen. Vielleicht hatte Eva selbst die Uhrzeit beim Wegfahren gesagt und erinnerte sich nicht mehr. Sie war so in ihrem Kopf gewesen, als sie aus dem Hof fuhr, dass sie sich nicht einmal daran erinnerte, ob sie das Tor hinter sich geschlossen hatte.",
+  "Sie drehte den Schlüssel.",
+  "Auf der Landstraße zurück kam Simons Ton wieder, nicht seine Worte, sondern der Takt, in dem er Sätze baute, wenn etwas begann, groß zu werden. Sie zählte die Ampeln und beschloss zwischen der zweiten und dritten, niemandem mehr etwas zu erzählen, bevor sie nicht selbst etwas in der Hand hatte. Nicht Simon. Nicht Nora. Nicht ihrer Mutter, wenn die anrief. Keine Details, keine Uhrzeit, kein Wortlaut. Details, einmal draußen, gehörten ihr nicht mehr.",
+  "An der vierten Ampel schrieb Simon. *Markwald Mittwoch 9. Ich komme mit.* Sie antwortete nicht.",
+  "Zuhause drückte sie nicht den Lichtschalter im Flur, sondern ging gleich zum Garderobenhaken, an dem Milas kleiner Rucksack hing. Sie hatte ihn heute früh selbst hochgezogen. Sie öffnete den Reißverschluss, griff ins Seitenfach, zog die Wechselhose heraus, die Socken, den angebissenen Reiskeks in Folie. Sie wusste, was drin war. Sie hatte es gestern Abend gepackt. Die Hose lag gefaltet, wie sie sie gefaltet hatte. Die Socken mit den Punkten, nicht die Streifen. Alles stimmten.",
+  "Ihre Finger fuhren an die innere Naht, wo sie den Ersatzgummi immer in ein kleines Stoffsäckchen steckte, damit er nicht im Futter verschwand.",
+  "Der rote Haargummi, den sie eingewickelt hatte, lag da. Sie hatte ihn morgens selbst um Milas Zopf gelegt und dann den Ersatz reingesteckt. Mila verlor sie zu oft.",
+  "Daneben lag ein zweiter.",
+  "Dunkelgrün, mit einem kleinen Stoffstern, an der Knotenstelle etwas abgegriffen. Nicht ihrer. Nicht aus Milas Schublade. Sie zog ihn heraus und hielt ihn gegen das Licht im Flur. Der Stern war aus Filz, unsauber umnäht, an einer Ecke offen. Sie kannte den Stern. Sie hatte ihn an einem Schlüsselband gesehen, das über einer Garderobe hing, die nicht ihre war. Nora hatte solche Sterne genäht, im Winter, als sie sich mal wieder zu viel Projekte gleichzeitig vorgenommen hatte.",
+  "Eva hielt den Gummi in der Hand. Er war warm von ihrer Faust.",
+  "Sie legte ihn auf die Kommode, nicht in die Schale, in der Milas Gummis lagen, sondern daneben, einzeln, mit Abstand zu allem anderen.",
+  "Dann griff sie nach ihrem Handy und öffnete die Kontakte, suchte nach Nora, und legte den Daumen nicht auf Anrufen.",
+  "Sie ging in die Küche, stellte Wasser auf, ohne zu wissen, wofür, und kehrte zurück zum Flur.",
+  "Er lag noch da.",
+  "Sie machte ein Foto. Von oben, mit dem roten daneben, mit einem Streichholz als Maßstab, weil sie nicht wusste, wie man so etwas richtig macht und irgendetwas tun musste, das später nicht lächerlich aussah. Dann zog sie eine Tüte aus der Küchenschublade, eine von den Gefrierbeuteln, schob den grünen Gummi hinein und schrieb das Datum drauf, ohne Namen.",
+  "Die Tüte legte sie nicht in die Schublade, sondern oben auf den Schrank, hinter den Karton mit den alten Fotos, dorthin, wo sie morgens nicht hinsah, wenn sie schnell los musste.",
+  "Dann ging sie Mila holen."
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -129,7 +204,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 2 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -175,9 +250,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
+          <h2>Der Verdacht</h2>
+          <p>
+            Nach einem Telefonat mit Simon und einer irritierenden Begegnung mit Nora
+            macht Eva zu Hause eine Entdeckung in Milas Rucksack, die den Fall in ein
+            völlig neues Licht rückt.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneThreeParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s3-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 3</h3>
+          <h3>Szene 4</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
