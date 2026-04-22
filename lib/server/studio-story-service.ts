@@ -6,6 +6,7 @@ import {
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
   normalizeAssistantWorkspace,
+  withDraftMemorySync,
   type BookDraftJob,
   type BookDraftStageRun,
   type BookDraftStageRuns,
@@ -1406,7 +1407,10 @@ function buildDraftJobs(params: {
     const modelName = typeof row.model_name === "string" ? row.model_name : null
     const updatedAt = (row.updated_at as string) ?? ""
     const rewriteNotes = normalizeStringArray(row.rewrite_notes)
-    const extractedState = normalizeExtractedState(row.extracted_state)
+    const extractedState = normalizeExtractedState(row.extracted_state, {
+      status: row.status,
+      fallbackCreatedAt: updatedAt || ((row.created_at as string) ?? "")
+    })
 
     return {
       id: row.id as string,
@@ -1716,10 +1720,16 @@ function normalizeProvider(value: unknown): BookDraftJob["provider"] {
   return "local"
 }
 
-function normalizeExtractedState(value: unknown): BookDraftJob["extractedState"] {
+function normalizeExtractedState(
+  value: unknown,
+  options: {
+    status: unknown
+    fallbackCreatedAt: string
+  }
+): BookDraftJob["extractedState"] {
   const record = toRecord(value)
 
-  return {
+  return withDraftMemorySync({
     newCanonFacts: normalizeStringArray(record.newCanonFacts),
     characterStateUpdates: normalizeStringArray(record.characterStateUpdates),
     openThreadsCreated: normalizeStringArray(record.openThreadsCreated),
@@ -1727,7 +1737,15 @@ function normalizeExtractedState(value: unknown): BookDraftJob["extractedState"]
     foreshadowingAdded: normalizeStringArray(record.foreshadowingAdded),
     continuityRisks: normalizeStringArray(record.continuityRisks),
     styleDriftNotes: normalizeStringArray(record.styleDriftNotes)
-  }
+  }, {
+    fallbackCreatedAt: options.fallbackCreatedAt,
+    defaultStatus:
+      options.status === "accepted"
+        ? "approved"
+        : options.status === "rejected"
+          ? "rejected"
+          : "pending"
+  })
 }
 
 function normalizeStageRuns(

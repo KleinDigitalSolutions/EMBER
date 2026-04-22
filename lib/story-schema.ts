@@ -349,6 +349,23 @@ export type DraftExtractionState = {
   foreshadowingAdded: string[];
   continuityRisks: string[];
   styleDriftNotes: string[];
+  memorySync: DraftMemorySyncState;
+};
+
+export type DraftMemorySyncStatus = "pending" | "approved" | "rejected";
+export type DraftMemorySyncItemKind = "canon_fact" | "character_state" | "foreshadowing";
+
+export type DraftMemorySyncItem = {
+  id: string;
+  kind: DraftMemorySyncItemKind;
+  value: string;
+  status: DraftMemorySyncStatus;
+  createdAt: string;
+  reviewedAt: string | null;
+};
+
+export type DraftMemorySyncState = {
+  items: DraftMemorySyncItem[];
 };
 
 export type AmazonOps = {
@@ -707,6 +724,172 @@ export function countSceneWords(scene: Pick<StoryScene, "summary" | "blocks">) {
       )
       .join(" ")
   );
+}
+
+export function withDraftMemorySync(
+  extractedState: Omit<DraftExtractionState, "memorySync"> | DraftExtractionState,
+  options?: {
+    fallbackCreatedAt?: string | null;
+    defaultStatus?: DraftMemorySyncStatus;
+  }
+): DraftExtractionState {
+  const fallbackCreatedAt = options?.fallbackCreatedAt || new Date().toISOString();
+  const defaultStatus = options?.defaultStatus || "pending";
+  const base = {
+    newCanonFacts: normalizeDraftExtractArray(extractedState.newCanonFacts),
+    characterStateUpdates: normalizeDraftExtractArray(extractedState.characterStateUpdates),
+    openThreadsCreated: normalizeDraftExtractArray(extractedState.openThreadsCreated),
+    openThreadsResolved: normalizeDraftExtractArray(extractedState.openThreadsResolved),
+    foreshadowingAdded: normalizeDraftExtractArray(extractedState.foreshadowingAdded),
+    continuityRisks: normalizeDraftExtractArray(extractedState.continuityRisks),
+    styleDriftNotes: normalizeDraftExtractArray(extractedState.styleDriftNotes)
+  };
+
+  return {
+    ...base,
+    memorySync: normalizeDraftMemorySyncState(
+      "memorySync" in extractedState ? extractedState.memorySync : null,
+      base,
+      {
+        fallbackCreatedAt,
+        defaultStatus
+      }
+    )
+  };
+}
+
+function normalizeDraftMemorySyncState(
+  value: DraftMemorySyncState | null,
+  extractedState: Omit<DraftExtractionState, "memorySync">,
+  options: {
+    fallbackCreatedAt: string;
+    defaultStatus: DraftMemorySyncStatus;
+  }
+): DraftMemorySyncState {
+  const existingItems = Array.isArray(value?.items)
+    ? value.items
+        .filter(function (item): item is DraftMemorySyncItem {
+          return Boolean(item) && typeof item === "object";
+        })
+        .map(function (item) {
+          return normalizeDraftMemorySyncItem(item, options.fallbackCreatedAt, options.defaultStatus);
+        })
+    : [];
+  const existingByKey = new Map<string, DraftMemorySyncItem>();
+
+  existingItems.forEach(function (item) {
+    existingByKey.set(createDraftMemorySyncKey(item.kind, item.value), item);
+  });
+
+  const seededItems = createDraftMemorySyncSeedItems(extractedState, options).map(function (item) {
+    return existingByKey.get(createDraftMemorySyncKey(item.kind, item.value)) ?? item;
+  });
+
+  return {
+    items: seededItems
+  };
+}
+
+function createDraftMemorySyncSeedItems(
+  extractedState: Omit<DraftExtractionState, "memorySync">,
+  options: {
+    fallbackCreatedAt: string;
+    defaultStatus: DraftMemorySyncStatus;
+  }
+): DraftMemorySyncItem[] {
+  return [
+    createDraftMemorySyncItemsForKind(
+      extractedState.newCanonFacts,
+      "canon_fact",
+      options
+    ),
+    createDraftMemorySyncItemsForKind(
+      extractedState.characterStateUpdates,
+      "character_state",
+      options
+    ),
+    createDraftMemorySyncItemsForKind(
+      extractedState.foreshadowingAdded,
+      "foreshadowing",
+      options
+    )
+  ].flat();
+}
+
+function createDraftMemorySyncItemsForKind(
+  values: string[],
+  kind: DraftMemorySyncItemKind,
+  options: {
+    fallbackCreatedAt: string;
+    defaultStatus: DraftMemorySyncStatus;
+  }
+): DraftMemorySyncItem[] {
+  return values.map(function (value) {
+    return {
+      id: createUuid(),
+      kind,
+      value,
+      status: options.defaultStatus,
+      createdAt: options.fallbackCreatedAt,
+      reviewedAt: options.defaultStatus === "pending" ? null : options.fallbackCreatedAt
+    };
+  });
+}
+
+function normalizeDraftMemorySyncItem(
+  value: DraftMemorySyncItem,
+  fallbackCreatedAt: string,
+  defaultStatus: DraftMemorySyncStatus
+): DraftMemorySyncItem {
+  return {
+    id: typeof value.id === "string" && value.id.trim() ? value.id : createUuid(),
+    kind: normalizeDraftMemorySyncKind(value.kind),
+    value: typeof value.value === "string" ? value.value.trim() : "",
+    status: normalizeDraftMemorySyncStatus(value.status, defaultStatus),
+    createdAt:
+      typeof value.createdAt === "string" && value.createdAt.trim()
+        ? value.createdAt
+        : fallbackCreatedAt,
+    reviewedAt:
+      typeof value.reviewedAt === "string" && value.reviewedAt.trim()
+        ? value.reviewedAt
+        : normalizeDraftMemorySyncStatus(value.status, defaultStatus) === "pending"
+          ? null
+          : fallbackCreatedAt
+  };
+}
+
+function normalizeDraftMemorySyncKind(value: unknown): DraftMemorySyncItemKind {
+  if (value === "canon_fact" || value === "character_state" || value === "foreshadowing") {
+    return value;
+  }
+
+  return "canon_fact";
+}
+
+function normalizeDraftMemorySyncStatus(
+  value: unknown,
+  fallback: DraftMemorySyncStatus
+): DraftMemorySyncStatus {
+  if (value === "pending" || value === "approved" || value === "rejected") {
+    return value;
+  }
+
+  return fallback;
+}
+
+function normalizeDraftExtractArray(value: string[] | undefined) {
+  return Array.isArray(value)
+    ? value
+        .map(function (entry) {
+          return typeof entry === "string" ? entry.trim() : "";
+        })
+        .filter(Boolean)
+    : [];
+}
+
+function createDraftMemorySyncKey(kind: DraftMemorySyncItemKind, value: string) {
+  return `${kind}::${value.trim().toLowerCase()}`;
 }
 
 export function normalizeStoryWordCounts(story: StoryDocument): StoryDocument {

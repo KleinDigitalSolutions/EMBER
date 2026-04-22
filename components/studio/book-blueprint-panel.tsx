@@ -13,6 +13,8 @@ import {
   buildSceneContextPacket,
   buildTimelineBeats,
   getDraftJobsForScene,
+  updateDraftJobMemorySyncKindStatus,
+  updateDraftJobMemorySyncStatus,
   upsertDraftJob
 } from "@/lib/book-engine";
 import {
@@ -30,6 +32,8 @@ import {
   countStoryStats,
   isBranchingStory,
   normalizeBookDraftTargets,
+  type DraftMemorySyncItem,
+  type DraftMemorySyncItemKind,
   type BookDraftJob,
   type StoryChapter,
   type StoryDocument
@@ -98,6 +102,29 @@ export function BookBlueprintPanel({
   const draftJobs = useMemo(function () {
     return selectedSceneId ? getDraftJobsForScene(story, selectedSceneId) : [];
   }, [selectedSceneId, story]);
+  const memorySyncJobs = useMemo(function () {
+    return story.book.draftEngine.jobs.filter(function (job) {
+      return job.extractedState.memorySync.items.length > 0;
+    });
+  }, [story]);
+  const memorySyncCounts = useMemo(function () {
+    return story.book.draftEngine.jobs.reduce(
+      function (acc, job) {
+        job.extractedState.memorySync.items.forEach(function (item) {
+          acc.total += 1;
+          acc[item.status] += 1;
+        });
+
+        return acc;
+      },
+      {
+        total: 0,
+        pending: 0,
+        approved: 0,
+        rejected: 0
+      }
+    );
+  }, [story]);
   const draftAudit = useMemo(function () {
     return analyzeBookDraftReadiness(story);
   }, [story]);
@@ -493,6 +520,44 @@ export function BookBlueprintPanel({
               });
             }}
           />
+        </section>
+
+        <section className="book-card">
+          <div className="book-card__head">
+            <div>
+              <span className="book-card__label">Memory Sync Queue</span>
+              <h4>Extrahierte Facts und Character-Shifts bewusst freigeben</h4>
+            </div>
+          </div>
+
+          <div className="book-metrics">
+            <Metric label="Pending" value={memorySyncCounts.pending} />
+            <Metric label="Approved" value={memorySyncCounts.approved} />
+            <Metric label="Rejected" value={memorySyncCounts.rejected} />
+            <Metric label="Total Extracts" value={memorySyncCounts.total} />
+          </div>
+
+          {memorySyncJobs.length ? (
+            <div className="book-job-list">
+              {memorySyncJobs.map(function (job) {
+                return (
+                  <MemorySyncJobCard
+                    key={`memory_sync_${job.id}`}
+                    job={job}
+                    onUpdateStory={onUpdateStory}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <article className="book-thread-card book-thread-card--empty">
+              <strong>Keine Memory-Sync-Items vorhanden</strong>
+              <p>
+                Neue Canon-Facts, Foreshadowing-Hinweise und Character-Shifts landen hier,
+                sobald ein Draft-Job Extract-Daten liefert.
+              </p>
+            </article>
+          )}
         </section>
 
         <section className="book-card">
@@ -1509,6 +1574,161 @@ function DraftJobCard({
   );
 }
 
+function MemorySyncJobCard({
+  job,
+  onUpdateStory
+}: {
+  job: BookDraftJob;
+  onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
+}) {
+  const counts = countMemorySyncStatuses(job.extractedState.memorySync.items);
+
+  return (
+    <article className="book-job-card">
+      <div className="book-job-card__head">
+        <div>
+          <span className="book-card__label">Memory Sync</span>
+          <h4>{job.sceneTitle}</h4>
+          <p>
+            {job.contextSnapshot.chapterTitle} · {formatTimestamp(job.updatedAt)}
+          </p>
+        </div>
+        <div className="book-card__meta">
+          <span>{counts.pending} pending</span>
+          <span>{counts.approved} approved</span>
+          <span>{counts.rejected} rejected</span>
+        </div>
+      </div>
+
+      <div className="book-context-grid">
+        {MEMORY_SYNC_KIND_SEQUENCE.map(function (kind) {
+          const items = job.extractedState.memorySync.items.filter(function (item) {
+            return item.kind === kind;
+          });
+          const pendingItems = items.filter(function (item) {
+            return item.status === "pending";
+          });
+
+          if (!items.length) {
+            return null;
+          }
+
+          return (
+            <div key={`${job.id}_${kind}`} className="book-context-stack">
+              <div className="book-card__head">
+                <div>
+                  <strong>{formatMemorySyncKindLabel(kind)}</strong>
+                  <p>{pendingItems.length} pending</p>
+                </div>
+                <div className="book-card__actions">
+                  <button
+                    className="flat-button"
+                    type="button"
+                    disabled={pendingItems.length === 0}
+                    onClick={function () {
+                      onUpdateStory(function (currentStory) {
+                        return updateDraftJobMemorySyncKindStatus(currentStory, {
+                          jobId: job.id,
+                          kind,
+                          status: "approved",
+                          onlyPending: true
+                        });
+                      });
+                    }}
+                  >
+                    Pending annehmen
+                  </button>
+                  <button
+                    className="flat-button"
+                    type="button"
+                    disabled={pendingItems.length === 0}
+                    onClick={function () {
+                      onUpdateStory(function (currentStory) {
+                        return updateDraftJobMemorySyncKindStatus(currentStory, {
+                          jobId: job.id,
+                          kind,
+                          status: "rejected",
+                          onlyPending: true
+                        });
+                      });
+                    }}
+                  >
+                    Pending ablehnen
+                  </button>
+                </div>
+              </div>
+
+              <div className="book-mini-list">
+                {items.map(function (item) {
+                  return (
+                    <article key={item.id} className="book-mini-card">
+                      <strong>{item.value}</strong>
+                      <p>
+                        Status: {formatMemorySyncStatusLabel(item.status)}
+                        {item.reviewedAt ? ` · ${formatTimestamp(item.reviewedAt)}` : ""}
+                      </p>
+                      <div className="book-card__actions">
+                        <button
+                          className="flat-button"
+                          type="button"
+                          disabled={item.status === "approved"}
+                          onClick={function () {
+                            onUpdateStory(function (currentStory) {
+                              return updateDraftJobMemorySyncStatus(currentStory, {
+                                jobId: job.id,
+                                itemId: item.id,
+                                status: "approved"
+                              });
+                            });
+                          }}
+                        >
+                          Annehmen
+                        </button>
+                        <button
+                          className="flat-button"
+                          type="button"
+                          disabled={item.status === "rejected"}
+                          onClick={function () {
+                            onUpdateStory(function (currentStory) {
+                              return updateDraftJobMemorySyncStatus(currentStory, {
+                                jobId: job.id,
+                                itemId: item.id,
+                                status: "rejected"
+                              });
+                            });
+                          }}
+                        >
+                          Ablehnen
+                        </button>
+                        <button
+                          className="flat-button"
+                          type="button"
+                          disabled={item.status === "pending"}
+                          onClick={function () {
+                            onUpdateStory(function (currentStory) {
+                              return updateDraftJobMemorySyncStatus(currentStory, {
+                                jobId: job.id,
+                                itemId: item.id,
+                                status: "pending"
+                              });
+                            });
+                          }}
+                        >
+                          Zurueckstellen
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </article>
+  );
+}
+
 function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
   if (stageId === "context") {
     return "Context";
@@ -1704,6 +1924,12 @@ const PHASES: Array<{ id: StoryDocument["book"]["activePhase"]; label: string }>
   { id: "phase_5_market", label: "Phase 5" }
 ];
 
+const MEMORY_SYNC_KIND_SEQUENCE: DraftMemorySyncItemKind[] = [
+  "canon_fact",
+  "character_state",
+  "foreshadowing"
+];
+
 function formatPhaseLabel(phase: StoryDocument["book"]["activePhase"]) {
   if (phase === "phase_2_memory") {
     return "Phase 2 · Memory Backbone";
@@ -1722,6 +1948,44 @@ function formatPhaseLabel(phase: StoryDocument["book"]["activePhase"]) {
   }
 
   return "Phase 1 · Foundation";
+}
+
+function countMemorySyncStatuses(items: DraftMemorySyncItem[]) {
+  return items.reduce(
+    function (acc, item) {
+      acc[item.status] += 1;
+      return acc;
+    },
+    {
+      pending: 0,
+      approved: 0,
+      rejected: 0
+    }
+  );
+}
+
+function formatMemorySyncKindLabel(kind: DraftMemorySyncItemKind) {
+  if (kind === "character_state") {
+    return "Character Shifts";
+  }
+
+  if (kind === "foreshadowing") {
+    return "Foreshadowing";
+  }
+
+  return "Canon Facts";
+}
+
+function formatMemorySyncStatusLabel(status: DraftMemorySyncItem["status"]) {
+  if (status === "approved") {
+    return "approved";
+  }
+
+  if (status === "rejected") {
+    return "rejected";
+  }
+
+  return "pending";
 }
 
 function formatTimestamp(value: string | null) {

@@ -10,10 +10,13 @@ import {
   type BookDraftStageRun,
   type BookDraftStageRuns,
   type BookJobProvider,
+  type DraftMemorySyncItemKind,
+  type DraftMemorySyncStatus,
   type DraftExtractionState,
   type StoryDocument,
   type StoryScene,
-  type WorldBibleEntry
+  type WorldBibleEntry,
+  withDraftMemorySync
 } from "@/lib/story-schema";
 import { createUuid, isUuid } from "@/lib/id";
 
@@ -321,10 +324,13 @@ export function createDraftJobFromPacket(
 ): BookDraftJob {
   const outline = buildOutlineSteps(packet);
   const draftText = buildDraftText(packet, targetSceneWordsMin);
-  const extractedState = extractDraftState(packet, draftText);
+  const now = new Date().toISOString();
+  const extractedState = withDraftMemorySync(extractDraftState(packet, draftText), {
+    fallbackCreatedAt: now,
+    defaultStatus: "pending"
+  });
   const rewriteNotes = buildRewriteNotes(packet, draftText, extractedState);
   const rewriteText = buildRewriteText(packet, draftText, rewriteNotes);
-  const now = new Date().toISOString();
   const actualWords = countWords(rewriteText);
 
   return {
@@ -523,20 +529,20 @@ export function createStageRun(params: {
 
 function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["memory"] {
   const syncedAt = new Date().toISOString();
-  const canonLedger = buildCanonLedger(story);
-  const openThreads = buildOpenThreads(story);
-  const characterLedger = buildCharacterLedger(story);
-  const sceneCards = buildTimelineBeats(story);
-  const contextPacks = story.book.memory.contextPacks.length
-    ? story.book.memory.contextPacks
-    : deriveContextPacks(
-        story,
-        syncedAt,
-        sceneCards,
-        canonLedger,
-        characterLedger,
-        openThreads
-      );
+  const canonLedger = deriveCanonLedger(story);
+  const openThreads = deriveOpenThreads(story);
+  const characterLedger = deriveCharacterLedger(story, canonLedger, openThreads, syncedAt);
+  const sceneCards = story.book.memory.sceneCards.length
+    ? story.book.memory.sceneCards
+    : deriveTimelineBeats(story);
+  const contextPacks = deriveContextPacks(
+    story,
+    syncedAt,
+    sceneCards,
+    canonLedger,
+    characterLedger,
+    openThreads
+  );
   const continuityNotes = story.book.memory.continuityNotes.length
     ? story.book.memory.continuityNotes
     : story.book.draftEngine.jobs
@@ -585,7 +591,7 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   });
 
   story.book.draftEngine.jobs.forEach(function (job) {
-    job.extractedState.newCanonFacts.forEach(function (fact) {
+    getApprovedMemorySyncValues(job, "canon_fact").forEach(function (fact) {
       const parsed = parseLedgerFact(fact, createLocalId("scene_fact"), "scene_fact");
       mergeCanonFact(ledger, {
         ...parsed,
@@ -596,7 +602,7 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
       });
     });
 
-    job.extractedState.foreshadowingAdded.forEach(function (fact) {
+    getApprovedMemorySyncValues(job, "foreshadowing").forEach(function (fact) {
       const parsed = parseLedgerFact(
         fact,
         createLocalId("foreshadow"),
@@ -717,7 +723,7 @@ function buildCharacterStateSnapshots(params: {
         return [];
       }
 
-      const updates = job.extractedState.characterStateUpdates.filter(function (update) {
+      const updates = getApprovedMemorySyncValues(job, "character_state").filter(function (update) {
         return normalizeText(update).includes(normalizeText(params.characterEntry.title));
       });
 
@@ -1057,6 +1063,107 @@ export function upsertDraftJob(story: StoryDocument, job: BookDraftJob): StoryDo
   });
 }
 
+export function updateDraftJobMemorySyncStatus(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    itemId: string;
+    status: DraftMemorySyncStatus;
+  }
+): StoryDocument {
+  const now = new Date().toISOString();
+
+  return syncStoryBookArtifacts({
+    ...story,
+    book: {
+      ...story.book,
+      activePhase: "phase_2_memory",
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: story.book.draftEngine.jobs.map(function (job) {
+          if (job.id !== params.jobId) {
+            return job;
+          }
+
+          return {
+            ...job,
+            updatedAt: now,
+            extractedState: {
+              ...job.extractedState,
+              memorySync: {
+                items: job.extractedState.memorySync.items.map(function (item) {
+                  if (item.id !== params.itemId) {
+                    return item;
+                  }
+
+                  return {
+                    ...item,
+                    status: params.status,
+                    reviewedAt: params.status === "pending" ? null : now
+                  };
+                })
+              }
+            }
+          };
+        })
+      }
+    }
+  });
+}
+
+export function updateDraftJobMemorySyncKindStatus(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    kind: DraftMemorySyncItemKind;
+    status: DraftMemorySyncStatus;
+    onlyPending?: boolean;
+  }
+): StoryDocument {
+  const now = new Date().toISOString();
+
+  return syncStoryBookArtifacts({
+    ...story,
+    book: {
+      ...story.book,
+      activePhase: "phase_2_memory",
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: story.book.draftEngine.jobs.map(function (job) {
+          if (job.id !== params.jobId) {
+            return job;
+          }
+
+          return {
+            ...job,
+            updatedAt: now,
+            extractedState: {
+              ...job.extractedState,
+              memorySync: {
+                items: job.extractedState.memorySync.items.map(function (item) {
+                  if (item.kind !== params.kind) {
+                    return item;
+                  }
+
+                  if (params.onlyPending && item.status !== "pending") {
+                    return item;
+                  }
+
+                  return {
+                    ...item,
+                    status: params.status,
+                    reviewedAt: params.status === "pending" ? null : now
+                  };
+                })
+              }
+            }
+          };
+        })
+      }
+    }
+  });
+}
+
 export function acceptDraftJobToScene(
   story: StoryDocument,
   jobId: string
@@ -1114,6 +1221,19 @@ export function acceptDraftJobToScene(
   };
 }
 
+function getApprovedMemorySyncValues(
+  job: BookDraftJob,
+  kind: DraftMemorySyncItemKind
+): string[] {
+  return job.extractedState.memorySync.items
+    .filter(function (item) {
+      return item.kind === kind && item.status === "approved";
+    })
+    .map(function (item) {
+      return item.value;
+    });
+}
+
 export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit {
   const scenes = getAllScenes(story);
   const jobs = story.book.draftEngine.jobs;
@@ -1121,6 +1241,14 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
     return job.status === "accepted";
   });
   const pendingJobs = jobs.length - acceptedJobs.length;
+  const pendingMemorySyncCount = jobs.reduce(function (sum, job) {
+    return (
+      sum +
+      job.extractedState.memorySync.items.filter(function (item) {
+        return item.status === "pending";
+      }).length
+    );
+  }, 0);
   const continuityBlockers: string[] = [];
   const qualityWarnings: string[] = [];
   const marketWarnings: string[] = [];
@@ -1150,6 +1278,12 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
   if (uncoveredSceneCount) {
     continuityBlockers.push(
       `${uncoveredSceneCount} Szene(n) haben noch keinen Draft-Job und bleiben ausserhalb der Pipeline.`
+    );
+  }
+
+  if (pendingMemorySyncCount) {
+    continuityBlockers.push(
+      `${pendingMemorySyncCount} Memory-Sync-Extract(s) sind noch nicht bestaetigt.`
     );
   }
 
@@ -1452,7 +1586,7 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
 function extractDraftState(
   packet: SceneContextPacket,
   draftText: string
-): DraftExtractionState {
+): Omit<DraftExtractionState, "memorySync"> {
   const canonFacts = packet.dynamicContext.relevantCodex.map(function (entry) {
     return `${entry.title}: ${entry.summary || "Relevanter Kanon fuer diese Szene."}`;
   });

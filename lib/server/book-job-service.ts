@@ -23,7 +23,8 @@ import {
   type BookDraftJob,
   type BookDraftStageRuns,
   type DraftExtractionState,
-  type StoryDocument
+  type StoryDocument,
+  withDraftMemorySync
 } from "@/lib/story-schema";
 import { createUuid } from "@/lib/id";
 
@@ -834,11 +835,17 @@ async function runScenePipeline(
     warnings.push(lengthControl.warning);
   }
   let rewriteNotes: string[] = [];
-  let extractedState: DraftExtractionState = buildFallbackStateExtraction(
-    packet,
-    lengthControl.text,
-    beatPlan
-  ).extractedState;
+  let extractedState: DraftExtractionState = withDraftMemorySync(
+    buildFallbackStateExtraction(
+      packet,
+      lengthControl.text,
+      beatPlan
+    ).extractedState,
+    {
+      fallbackCreatedAt: new Date().toISOString(),
+      defaultStatus: "pending"
+    }
+  );
   let extractStage = createStageRun({
     status: "skipped",
     provider: adapter.provider,
@@ -852,7 +859,10 @@ async function runScenePipeline(
     const extractionResult = await adapter.extractSceneState(beatPlan, lengthControl.text);
     const normalizedExtraction = normalizeStateExtractionPayload(extractionResult.payload);
     const sanitizedExtraction = sanitizeSceneStateExtraction(packet, normalizedExtraction);
-    extractedState = sanitizedExtraction.payload.extractedState;
+    extractedState = withDraftMemorySync(sanitizedExtraction.payload.extractedState, {
+      fallbackCreatedAt: new Date().toISOString(),
+      defaultStatus: "pending"
+    });
     rewriteNotes = normalizeRewriteNotes(
       sanitizedExtraction.payload.rewriteNotes,
       lengthControl.text,
@@ -880,7 +890,10 @@ async function runScenePipeline(
     const message = error instanceof Error ? error.message : "unknown error";
     const fallbackNote = `State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. ${message}`;
     rewriteNotes = normalizeRewriteNotes(fallbackExtraction.rewriteNotes, lengthControl.text, beatPlan);
-    extractedState = fallbackExtraction.extractedState;
+    extractedState = withDraftMemorySync(fallbackExtraction.extractedState, {
+      fallbackCreatedAt: new Date().toISOString(),
+      defaultStatus: "pending"
+    });
     warnings.push(fallbackNote);
     extractStage = createStageRun({
       status: "failed",
@@ -1205,7 +1218,10 @@ function hydrateDraftJob(
     draftText: payload.draftText,
     rewriteText: payload.rewriteText,
     rewriteNotes: payload.rewriteNotes,
-    extractedState: payload.extractedState,
+    extractedState: withDraftMemorySync(payload.extractedState, {
+      fallbackCreatedAt: now,
+      defaultStatus: "pending"
+    }),
     stages: payload.stages,
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || null,
@@ -2794,7 +2810,7 @@ function buildFallbackStateExtraction(
 ): StateExtractionPayload["extractedState"] extends infer _Unused
   ? {
       rewriteNotes: string[];
-      extractedState: DraftExtractionState;
+      extractedState: Omit<DraftExtractionState, "memorySync">;
     }
   : never {
   return {
