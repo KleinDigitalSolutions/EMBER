@@ -10,7 +10,7 @@ export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
 export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
   openai: "gpt-5.4-pro",
   anthropic: "claude-opus-4-7",
-  anthropicContinuity: "claude-haiku-4-5-20251001",
+  anthropicContinuity: "claude-opus-4-7",
   gemini: "gemini-2.5-flash",
   groq: "llama-3.1-8b-instant"
 };
@@ -56,7 +56,12 @@ export function parseBookJobModelSelection(value: string | null): BookJobModelSe
     return {
       openai: typeof parsed.openai === "string" ? parsed.openai : "",
       anthropic: typeof parsed.anthropic === "string" ? parsed.anthropic : "",
-      anthropicContinuity: typeof parsed.anthropicContinuity === "string" ? parsed.anthropicContinuity : "",
+      anthropicContinuity:
+        parsed.anthropicContinuity === "claude-haiku-4-5-20251001"
+          ? "claude-opus-4-7"
+          : typeof parsed.anthropicContinuity === "string"
+            ? parsed.anthropicContinuity
+            : "",
       gemini: sanitizeGeminiModelId(typeof parsed.gemini === "string" ? parsed.gemini : ""),
       groq: typeof parsed.groq === "string" ? parsed.groq : ""
     };
