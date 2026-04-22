@@ -980,6 +980,7 @@ export function BookBlueprintPanel({
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
                 <option value="gemini">Gemini</option>
+                <option value="groq">Groq</option>
                 <option value="local">Local</option>
               </select>
               <button
@@ -1747,6 +1748,10 @@ function formatProviderLabel(provider: BookDraftJob["provider"]) {
 
   if (provider === "gemini") {
     return "Gemini";
+  }
+
+  if (provider === "groq") {
+    return "Groq";
   }
 
   return "Local";

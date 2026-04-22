@@ -9,7 +9,8 @@ import { z } from "zod";
 import { buildSceneContextPacket } from "@/lib/book-engine";
 import {
   DEFAULT_BOOK_JOB_MODELS,
-  resolveBookJobModelValue
+  resolveBookJobModelValue,
+  sanitizeGeminiModelId
 } from "@/lib/book-job-models";
 import type {
   AssistantArtifactKind,
@@ -270,10 +271,12 @@ async function generateWithGemini(
     throw new Error("Missing Gemini API key.");
   }
 
-  const modelName = resolveBookJobModelValue(
-    modelSelection?.gemini,
-    process.env.GEMINI_STORY_CHAT_MODEL || process.env.GOOGLE_GEMINI_STORY_CHAT_MODEL,
-    DEFAULT_BOOK_JOB_MODELS.gemini
+  const modelName = sanitizeGeminiModelId(
+    resolveBookJobModelValue(
+      modelSelection?.gemini,
+      process.env.GEMINI_STORY_CHAT_MODEL || process.env.GOOGLE_GEMINI_STORY_CHAT_MODEL,
+      DEFAULT_BOOK_JOB_MODELS.gemini
+    )
   );
   const client = new GoogleGenAI({
     apiKey

@@ -298,6 +298,69 @@ Diese Sektion ist nicht fuer Dramaturgie da, sondern gegen Drift in der Produkti
 
 ---
 
+## EMBER UI UEBERSETZUNG (wichtig fuer Produktion)
+
+> Kommentar: Diese Regie-Datei ist die strategische Quelle. Der Book-Job in EMBER liest sie nicht automatisch vollstaendig mit. Was in der UI nicht sauber verankert ist, driftet spaeter leichter.
+
+### Was in EMBER dauerhaft gepflegt werden muss
+- Persistente Namen, Orte, Fachbegriffe, Trigger-Namen und wiederkehrende Referenzen gehoeren als eigene Eintraege in den `Codex` / die `World Bible`.
+- Die `Summary` eines Codex-Eintrags soll nicht nur beschreiben, sondern binden: Rolle, Funktion, Ton, Benennung, Nicht-Umbenennen.
+- Kleine Nebenfiguren sind kein Beiwerk. Gerade sie muessen frueh in den Codex, weil sie sonst zuerst driften.
+
+### Was nicht manuell in der UI gepflegt wird
+- `Character States` werden in EMBER nicht als primaere Eingabe gepflegt, sondern aus `Codex`, Szenen, Jobs und Extraktionen abgeleitet.
+- `Continuity Notes` sind Kontrollspur, nicht Hauptspeicher.
+- `Director Note` / `Regieanweisung` ist nur fuer den einzelnen Lauf gedacht, nicht als dauerhafte Kanon-Quelle.
+
+### Operative Regel fuer die UI
+- Wenn ein Detail in mehreren Szenen konsistent bleiben muss, zuerst als `Codex`-Eintrag anlegen.
+- Wenn ein Detail fuer die aktuelle Szene wirklich im Prompt landen soll, den exakten Namen zusaetzlich in der `Scene Summary` nennen.
+- Wenn eine Feinsteuerung nur fuer einen einzelnen Draft gilt, in `Regieanweisung` schreiben.
+
+### Kommentar zu Relevanz im Prompt
+- Ein Codex-Eintrag ist nur dann nuetzlich, wenn EMBER ihn fuer die aktuelle Szene als relevant einstuft.
+- Deshalb muessen kritische Namen oft doppelt verankert werden: im `Codex` und in der `Scene Summary`.
+- Beispiel: `Weidmann` darf nicht nur global existieren, sondern muss in der Summary der betreffenden Szene explizit auftauchen.
+
+### Empfohlene Codex-Typen fuer dieses Buch
+- `character`: Fehr, Cord, Rausch, Lea, Judith Winter, Frau Ulrich, Weidmann
+- `location`: Hohenhort, Rheinstadt
+- `object` oder `theme`: Prognosegutachten, Anwaltsdossier
+- `theme`: Unbegleitete Lockerung, Objektivitaet und Schuld, alter Fehlfall
+
+### Produktionsform fuer Codex-Summaries
+> Kommentar: Nicht poetisch. Nicht werblich. Kurz, hart, bindend.
+
+- Gute Summary-Bausteine:
+  - Wer oder was ist es?
+  - Welche Funktion hat es im Roman?
+  - Wie muss es sprachlich behandelt werden?
+  - Wie muss es benannt werden?
+  - Was darf nicht variieren?
+- Gute Formulierungen:
+  - `Immer exakt so benennen.`
+  - `Nicht umbenennen.`
+  - `Kontinuitaetsanker fuer spaetere Szenen.`
+  - `Kein neue Hauptfigur, sondern Triggername.`
+
+### Beispielhafte Produktionsregeln fuer Restrisiko
+- `Frau Ulrich` ist frueher Kanzlei-Anker und darf nicht spaeter stillschweigend verschwinden oder umbenannt werden.
+- `Weidmann` ist der aktuelle Trigger-Name aus dem Fehlfall und darf nicht zu `Meinhardt` oder einer anderen Variante driften.
+- `Rausch` bleibt institutionell praezise und kontrolliert; sie ist kein Schurkenhebel.
+- `Lea` greift Begriffe an, nicht bloss Stimmungen.
+- `Cord` wirkt gefaehrlich ueber Sprachhandeln und Strukturlesen, nicht ueber uebernatuerliche Allwissenheit.
+
+### Praktische Reihenfolge vor jedem Szenen-Draft
+1. Passende `Scene Card` pruefen.
+2. Relevante Namen und Trigger im `Codex` pruefen.
+3. Diese Namen explizit in die `Scene Summary` schreiben.
+4. Nur laufbezogene Feinkorrekturen in `Regieanweisung` setzen.
+
+### Merksatz fuer EMBER
+> Kanon in den `Codex`. Szenenrelevanz in die `Summary`. Einmalige Steuerung in die `Regieanweisung`.
+
+---
+
 ## OPEN THREADS (Initial)
 
 ```json

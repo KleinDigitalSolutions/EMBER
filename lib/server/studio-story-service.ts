@@ -1703,7 +1703,13 @@ function normalizeCharacterStateSnapshotScope(
 }
 
 function normalizeProvider(value: unknown): BookDraftJob["provider"] {
-  if (value === "openai" || value === "anthropic" || value === "gemini" || value === "local") {
+  if (
+    value === "openai" ||
+    value === "anthropic" ||
+    value === "gemini" ||
+    value === "groq" ||
+    value === "local"
+  ) {
     return value
   }
 
