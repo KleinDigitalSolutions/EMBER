@@ -5,7 +5,7 @@ const sceneOneParagraphs = [
   "Er legte die Hand flach auf das Papier, als müsste er es festhalten. Draußen, hinter dem Kanzleifenster, zog jemand einen Rollkoffer über das Kopfsteinpflaster, und das Geräusch kam verzögert an, als wäre das Glas dicker als gestern. Fehr rückte den Stapel gerade. Dann noch einmal. Er merkte es beim zweiten Mal und ließ die Hand sinken.",
   "Er blieb an seinem Schreibtisch stehen, ohne sich zu setzen. Auf dem Flur klapperte Frau Ulrich mit der Kaffeedose. Der Kalender zeigte Dienstag, 07:40 Uhr, und unter dem Datumsfeld klebte noch der gelbe Zettel mit Lenas Zahnarzttermin, den er vor zwei Wochen versprochen hatte zu übernehmen. Er hatte ihn nicht übernommen. Er zog den Zettel ab, legte ihn in die obere Schublade und schob sie zu, bevor er das Deckblatt umschlug.",
   "Externes Sachverständigengutachten. Legalprognose gemäß § 67d StGB. Frage nach unbegleiteten Lockerungen. Fehr las den Paragrafen, als stünde er zum ersten Mal darin. Er las die Besetzung der Kammer. Er las den Namen darunter noch einmal. Cord, Elias, geboren 1966. Achtzehn Jahre. Fünf Taten. Eine Nummer, unter der das Land in den Neunzigern aufgehört hatte, bei Fernsehbildern wegzuschauen.",
-  "Er bemerkte, dass er den Atem seit einer halben Minute flacher führte. Er bemerkte es, weil er den Kaffee, den Frau Ulrich vor einer Stunde gebracht hatte, jetzt kalt im Glas sah und ihn trotzdem nicht anfasste. Der Name war keine Überraschung. Rausch hatte vor vier Tagen eine Mail geschrieben, zwei Zeilen, Wäre ein Mandat denkbar, Details folgen schriftlich. Er hatte ja geantwortet, ohne zu fragen, worum es ging. Er hatte es damals für Routine gehalten. Er hielt es auch jetzt dafür, solange er den Satz innen wiederholte.",
+  "Er bemerkte, dass er den Atem seit einer halben Minute flacher führte. Er bemerkte es, weil er den Kaffee, den Frau Ulrich vor einer Stunde gebracht hatte, jetzt kalt im Glas sah und ihn trotzdem nicht anfasste. Der Name war keine Überraschung. Rausch hatte vor vier Tagen eine Mail geschrieben, zwei Zeilen: Wäre ein Mandat denkbar? Details folgen schriftlich. Er hatte ja geantwortet, ohne zu fragen, worum es ging. Er hatte es damals für Routine gehalten. Er hielt es auch jetzt dafür, solange er den Satz innerlich wiederholte.",
   "Das Telefon klingelte, bevor er die zweite Seite erreicht hatte.",
   "Rausch ließ ihm keine Anlaufzeit. Anhörung in elf Tagen. Presse und Ministerium saßen dem Verfahren im Nacken. Fehr sollte kein schönes Gutachten schreiben, sondern eines, das jede Zeile trägt. Er sagte zu, bevor die Akte ganz gelesen war, und merkte es erst, als der Hörer schon wieder in seiner Hand lag.",
   "Im Vorzimmer sagte er Frau Ulrich, sie müsse die Termine verschieben. Dann fuhr er los. Auf der A4 sortierte er den Fall in fachliche Arbeitsschritte, bis sich zwischen den Formulierungen ein älterer Satz dazwischenschob, einer aus einem Gutachten von 2011, den er nie ganz losgeworden war. Er dachte den Namen nicht aus. Er erkannte nur, dass der alte Fall schon im Auto mitfuhr.",
@@ -53,7 +53,7 @@ const sceneTwoParagraphs = [
   "„Wir sprechen über Sie.\"",
   "„Wir sprechen über Risikoeinschätzung. Da sitzen immer zwei im Raum.\"",
   "Fehr ließ eine Sekunde verstreichen. Dann zwei. Er hätte die Frage zurückgeben können, mit dem Standardsatz, den er seit Jahren benutzte. Er tat es nicht. Er spürte, dass er es nicht tat, und setzte den Stift wieder an, ohne etwas zu schreiben.",
-  "„Herr Cord, ich stelle Ihnen jetzt eine Frage, bei der die Antwort weniger zählt als das, was davor passiert. Stellen Sie sich die zweite Frau vor, Name in der Akte. Sie liegt auf dem Boden. Sie leben noch. Was tun Sie in den folgenden neunzig Sekunden?\"",
+  "„Herr Cord, ich stelle Ihnen jetzt eine Frage, bei der die Antwort weniger zählt als das, was davor passiert. Stellen Sie sich die zweite Frau vor, Name in der Akte. Sie liegt auf dem Boden. Sie lebt noch. Was tun Sie in den folgenden neunzig Sekunden?\"",
   "Cord atmete ein, hielt die Luft an, atmete aus. Sauber, zählbar, ohne Vorführcharakter.",
   "„Ich beantworte das nicht, ohne Sie vorher darauf hinzuweisen, dass die Frage so konstruiert ist, dass jede konkrete Antwort mich belastet und jede vage Antwort Sie bestätigt. Ich sage es nicht, um auszuweichen. Ich sage es, damit Sie wissen, dass ich es weiß.\" Er machte eine kleine Pause. „In den folgenden neunzig Sekunden habe ich weitergemacht. Ich werde das nicht ausschmücken. Ich werde Ihnen auch nicht erklären, was in mir vorging, weil ich es nicht mehr rekonstruieren kann, ohne zu lügen.\"",
   "Fehr schrieb: Keine affektive Dekompensation. Keine Ausweichstruktur. Meta-Markierung der Fragelogik vor inhaltlicher Antwort. Seine Handschrift wurde kleiner.",
@@ -80,7 +80,7 @@ const sceneThreeParagraphs = [
   "Fehr holte den Personalausweis aus der Garderobenschale und hielt ihn in das Licht der Flurlampe. Der Kurier verglich, nickte, drehte das Klemmbrett. Unterschrift, Uhrzeit, Datum. Fehr setzte den Strich knapp, wie immer. Der Kurier riss die Durchschrift ab, gab ihm den Umschlag, sagte „Schönen Abend“ und war weg, bevor Fehr die Tür ganz geschlossen hatte.",
   "Der Umschlag war schwer. Büttenähnliches Papier, beige, mit Prägedruck einer Kanzlei, deren Name ihm nichts sagte und gleichzeitig alles. Er trug ihn in die Küche und legte ihn auf den Tisch, neben die halb geschnittene Paprika und die leere Kante des Schneidebretts. Lea war noch im Bad. Er hörte das Wasser, das sehr regelmäßig lief, wie es nur läuft, wenn jemand zuhört.",
   "Er hätte warten können. Er wartete nicht.",
-  "Das Begleitschreiben liegt obenauf, zweifach gefaltet, mit dem Schatten einer Büroklammer, die nicht mehr da war. Die Sätze waren glatt geschliffen. Man begrüße die Bestellung eines externen Gutachters. Man lege Wert auf maximale Neutralität. Man gehe davon aus, dass etwaige frühere berufliche Berührungspunkte des Gutachters mit vergleichbaren Fallkonstellationen die gebotene Unbefangenheit nicht berührten. Drei Absätze, keiner überflüssig, keiner angreifbar. Unter der Unterschrift ein zweiter, kürzerer Hinweis: „In der Anlage finden Sie zu Ihrer Orientierung eine Kopie aus Ihrem Gutachten vom 14.06.2006, Az. bekannt.“",
+  "Das Begleitschreiben lag obenauf, zweifach gefaltet, mit dem Schatten einer Büroklammer, die nicht mehr da war. Die Sätze waren glatt geschliffen. Man begrüße die Bestellung eines externen Gutachters. Man lege Wert auf maximale Neutralität. Man gehe davon aus, dass etwaige frühere berufliche Berührungspunkte des Gutachters mit vergleichbaren Fallkonstellationen die gebotene Unbefangenheit nicht berührten. Drei Absätze, keiner überflüssig, keiner angreifbar. Unter der Unterschrift ein zweiter, kürzerer Hinweis: „In der Anlage finden Sie zu Ihrer Orientierung eine Kopie aus Ihrem Gutachten vom 14.06.2006, Az. bekannt.“",
   "Fehr blätterte.",
   "Seite drei seines alten Gutachtens. Er erkannte die eigene Syntax, bevor er den Text las. Zwei Sätze in der Mitte waren mit einem gelben Textmarker unterstrichen, einmal, sauber, offenbar mit dem Lineal, denn der Strich lief gerade durch. Eine relevante Eskalationsdynamik ist unter den gegenwärtigen Bedingungen nicht zu erwarten. Die diagnostizierten narzisstischen Anteile wirken regulierend im Sinne einer Außenorientierung.",
   "Er las es zweimal. Er spürte das Blut nicht steigen, er spürte es sinken. Eine kleine, kühle Bewegung im Brustraum, die er seit Jahren nicht mehr ernst genommen hatte.",
@@ -114,7 +114,7 @@ const sceneThreeParagraphs = [
   "„Schlaf gut.“",
   "„Du auch.“",
   "Sie nahm das Buch aus dem Wohnzimmer mit. Die Wohnzimmertür ließ sie angelehnt, nicht zu.",
-  "Fehr räumte das letzte Glas selbst, wischte die Arbeitsplatte ab, zweimal, obwohl einmal gereicht hätte. Dann setzte sich wieder an den Küchentisch, unter das Neonlicht der Deckenleuchte, das hier oben nicht passte und an dem er nie etwas geändert hatte.",
+  "Fehr räumte das letzte Glas selbst, wischte die Arbeitsplatte ab, zweimal, obwohl einmal gereicht hätte. Dann setzte er sich wieder an den Küchentisch, unter das Neonlicht der Deckenleuchte, das hier oben nicht passte und an dem er nie etwas geändert hatte.",
   "Er las den Anwaltsbrief noch einmal. Dann die markierten Sätze. Dann die Anlagen, die darunter lagen: Auszüge aus Cords Vollzugsakte, Vermerke, Therapieverlauf, eine Liste der im Verfahren damals vernommenen Zeugen. Die Liste war zu ordentlich, um zufällig zu sein. Drei Namen waren eingerückt. Keine Markierung, keine Fettung, kein Sternchen. Nur die Einrückung, zwei Zeichen weiter nach rechts als die übrigen.",
   "Einer davon war Weidmann.",
   "Fehr hatte den Namen achtzehn Jahre nicht laut gesagt. Er hatte ihn in seinem damaligen Gutachten in einem Halbsatz erwähnt und in keinem Satz danach. Weidmann war der, auf den er hätte hören müssen. Weidmann war der, dessen Einschätzung er im Rahmen der Befundintegration als anekdotisch eingeordnet hatte. Das Wort stand noch in der Akte. Er wusste, auf welcher Seite.",
@@ -125,7 +125,7 @@ const sceneThreeParagraphs = [
   "Sie war es nicht.",
   "Er wusste es, während er den Stift weglegte. Er wusste auch, dass er es nirgends notieren würde. Im Vorbereitungsblatt gab es kein Feld für die Frage, woher ein Impuls stammte. Es gab nur das Feld für den Impuls selbst.",
   "Er schlug das Notizbuch zu, legte es auf das Dossier, darauf den Anwaltsbrief, zuoberst, die Unterschrift nach oben. Die Reihenfolge stimmte. Wenn Lea morgen früh durch die Küche ging, würde sie nur Papier sehen.",
-  "Aus dem Wohnzimmer kam kein Laut mehr. Er stand auf, ging zur Tür, sah hinein. Lea war nicht dort. Er hatte vergessen, dass sie ins Bett gegangen war. Das Buch lag aufgeschlagen auf dem Sofa, Seite nach unten, die Leselampe brannte. Er machte das Licht aus und zieht die Tür leise zu.",
+  "Aus dem Wohnzimmer kam kein Laut mehr. Er stand auf, ging zur Tür, sah hinein. Lea war nicht dort. Er hatte vergessen, dass sie ins Bett gegangen war. Das Buch lag aufgeschlagen auf dem Sofa, Seite nach unten, die Leselampe brannte. Er machte das Licht aus und zog die Tür leise zu.",
   "In der Küche blieb er noch einmal am Tisch stehen.",
   "Er zog den Anwaltsbrief herunter, das Notizbuch herunter, schlug das Dossier auf der Seite mit seinem eigenen alten Satz wieder auf und drehte das Blatt so, dass der gelbe Strich zu ihm zeigte.",
   "Er legte die Hand flach darauf.",
@@ -134,9 +134,9 @@ const sceneThreeParagraphs = [
 ];
 
 const sceneFourParagraphs = [
-  "„[SITZUNG 2 — 09:30 Uhr]\"",
+  "Sitzung 2 — 09:30 Uhr",
   "Der Gesprächsraum war über Nacht nicht gelüftet worden. Der Chlorreiniger vom Bodenwischen hing noch unter der Deckenplatte, vermischt mit der trockenen, warmen Luft der Neonröhre, die leicht summte. Fehr legte den Aktendeckel auf die Tischmitte, drehte ihn nicht zu sich, sondern ließ ihn in gleicher Distanz zu beiden Stühlen liegen. Er prüfte das Aufnahmegerät. Rote Diode. Datum, Uhrzeit, Raumnummer. Die Stuhllehne drückte zwischen die Schulterblätter, zu gerade, zu hoch.",
-  "Er hatte sich die Prüfhypothese am Morgen im Auto auf einen Zettel geschrieben und den Zettel an der Schranke wieder weggeworfen. Cord spricht auswendig. Die Reihenfolge seiner Sätze ist das Kontrollinstrument, nicht ihr Inhalt. Heute wird ein fremder Name die Reihenfolge stören. Der Name war Meinhardt. Aus einem Fehlfall, den außerhalb zweier Behördenakten niemand kennen sollte. Fehr hatte ihn in keinem der heute mitgebrachten Unterlagen stehen.",
+  "Er hatte sich die Prüfhypothese am Morgen im Auto auf einen Zettel geschrieben und den Zettel an der Schranke wieder weggeworfen. Cord spricht auswendig. Die Reihenfolge seiner Sätze ist das Kontrollinstrument, nicht ihr Inhalt. Heute wird ein fremder Name die Reihenfolge stören. Der Name war Weidmann. Aus einem Fehlfall, den außerhalb zweier Behördenakten niemand kennen sollte. Fehr hatte ihn in keinem der heute mitgebrachten Unterlagen stehen.",
   "Cord wurde um neun Uhr dreißig hereingeführt. Keine Handfesseln, nur der weiche Gang der Langzeituntergebrachten auf Linoleum, Hausschlappen, keine Hast. Er setzte sich, rückte den Stuhl nicht. Die Hände flach auf den Oberschenkeln, wie gestern, wie in den Protokollen der letzten acht Jahre.",
   "„Guten Morgen, Herr Cord.\"",
   "„Guten Morgen, Herr Doktor Fehr.\"",
@@ -145,7 +145,7 @@ const sceneFourParagraphs = [
   "„Keine Auffälligkeiten beim Stationsdienst, keine Schlafunterbrechungen?\"",
   "„Nein.\"",
   "Fehr notierte. Er ließ eine Pause, die nicht lang genug war, um unhöflich zu wirken, aber lang genug, um Cords Atmung hörbar zu machen. Gleichmäßig. Nasenatmung. Vier, vier.",
-  "„Ich möchte zwischendurch etwas aus den Stationsakten klären.\" Er blätterte, ohne etwas zu suchen. „Der Pflegedienstleiter hat notiert, dass ein Mitpatient, ein Herr Meinhardt, im Herbst einen Konflikt mit Ihnen hatte.\"",
+  "„Ich möchte zwischendurch etwas aus den Stationsakten klären.\" Er blätterte, ohne etwas zu suchen. „Der Pflegedienstleiter hat notiert, dass ein Mitpatient, ein Herr Weidmann, im Herbst einen Konflikt mit Ihnen hatte.\"",
   "Er sprach den Namen im selben Tonfall wie den Wochentag. Er sah nicht auf.",
   "Cord antwortete nicht.",
   "Fehr hob den Blick. Cord saß wie vorher. Der Blick auf eine Stelle zwischen Fehrs Schlüsselbein und dem oberen Rand der Aktendeckelkante. Sein Gesicht bewegte sich nicht. Kein Blinzeln. Eine Sekunde, vielleicht anderthalb. Dann, sehr leicht, eine Bewegung im rechten Mundwinkel. Keine Regung des Erkennens. Eher das Registrieren, dass etwas ins Wasser gefallen war, ohne die Richtung der Ringe zu beachten.",
@@ -164,7 +164,7 @@ const sceneFourParagraphs = [
   "„Sie wissen, dass ich Ihre Akte nicht vollständig neu bewerte. Ich schließe an Vorbefunde an, ich gleiche ab, ich prüfe, ob die damaligen Einschätzungen heute noch tragen. Das ist das Mandat. Ich sage Ihnen das, damit Sie einordnen können, warum ich bestimmte Fragen wiederhole, obwohl sie schon mehrfach gestellt worden sind. Es geht nicht darum, frühere Kolleginnen und Kollegen zu korrigieren. Es geht darum, dass eine Prognose nur so weit trägt, wie sie selbst neu verantwortet wird.\"",
   "Er hatte nicht vorgehabt, das zu sagen. Der Satz lag nun offen auf dem Tisch, wie ein Gegenstand, den er aus seiner eigenen Tasche gezogen hatte, ohne sich daran zu erinnern, ihn eingepackt zu haben.",
   "Cord nickte langsam. Er hielt die Pause. Er atmete einmal tiefer ein als vorher, nicht lauter, nur tiefer. Dann lehnte er sich eine Daumenbreite zurück.",
-  "„Sie prüfen mich\", sagte er, „als hätte jemand anderer Ihre Unterschrift getragen.\"",
+  "„Sie prüfen mich\", sagte er, „als hätte jemand anderes Ihre Unterschrift getragen.\"",
   "Fehr hielt den Stift über dem Blatt. Er notierte nicht. Er notierte auch nicht, dass er nicht notierte.",
   "Die Neonröhre summte. Draußen, im Flur, zog jemand einen Wagen mit Frühstücksgeschirr vorbei. Räder über Fugen. Glas auf Metall. Der Chlorgeruch hatte sich oben am Fenster gesammelt. Fehr spürte ihn hinten am Gaumen, trocken, leicht metallisch. Seine Augen brannten. Er zählte die Sekunden, bis er sprach. Er wollte nicht zu schnell sprechen, und er wollte nicht zu lange schweigen. Jedes Maß wäre eine Antwort gewesen.",
   "„Bleiben wir bei der Tagesstruktur\", sagte er. Seine Stimme war wieder kürzer. „Heute Nachmittag. Arbeitsbereich. Wie sieht der vor?\"",
@@ -179,7 +179,7 @@ const sceneFourParagraphs = [
   "„Bitte.\"",
   "Fehr sah auf die Uhr über der Tür. Zehn Uhr vier. Er hatte für die Sitzung fünfundvierzig Minuten angesetzt. Er würde sie nicht abbrechen. Er würde sie führen bis zum regulären Ende.",
   "„Haben Sie Fragen zum weiteren Vorgehen?\"",
-  "„No.\"",
+  "„Nein.\"",
   "„Wünsche, was die Sitzungsdichte betrifft?\"",
   "„Ich richte mich nach Ihrem Zeitplan.\"",
   "„Das ist kein Wunsch.\"",
@@ -193,7 +193,7 @@ const sceneFourParagraphs = [
   "Er führt nicht. Er folgt.",
   "Er sah den Satz an. Er strich ihn nicht durch. Er setzte auch keinen Punkt dahinter, der nicht schon da gewesen wäre. Er schloss das Heft, führte es zurück in die Innentasche, prüfte mit dem Daumen, ob der Stoff sauber über den Rand fiel, und stand auf.",
   "Der Stuhl ihm gegenüber war leer. Auf der Sitzfläche lag ein feiner, heller Abdruck, wo Cords Handrücken aufgelegen hatte, Staub aus der Wäscherei vermutlich, oder nichts, oder das Licht. Fehr sah einen Moment darauf. Dann nahm er die Akte.",
-  "Auf dem Flur, Richtung Pförtnerloge, ging ihm auf, dass er den Namen Meinhardt in keiner Zeile des Dienstprotokolls vermerkt hatte. Er blieb kurz stehen, die Hand schon an der Innentasche, und ging weiter."
+  "Auf dem Flur, Richtung Pförtnerloge, ging ihm auf, dass er den Namen Weidmann in keiner Zeile des Dienstprotokolls vermerkt hatte. Er blieb kurz stehen, die Hand schon an der Innentasche, und ging weiter."
 ];
 
 export default function RestrisikoSamplePage() {
@@ -266,9 +266,9 @@ export default function RestrisikoSamplePage() {
 
         <div className="sample-reader__hero">
           <p className="reader-eyebrow">Buchprobe · Szene 4</p>
-          <h2>Sitzung 2 — Der Meinhardt-Stimulus</h2>
+          <h2>Sitzung 2 — Der Weidmann-Stimulus</h2>
           <p>
-            Fehr versucht, Cord mit dem Namen „Meinhardt“ aus der Reserve zu locken. 
+            Fehr versucht, Cord mit dem Namen „Weidmann“ aus der Reserve zu locken. 
             Doch Cord reagiert mit einer Stille, die Fehr mehr über seine eigene 
             Unterschrift verrät, als ihm lieb ist.
           </p>
