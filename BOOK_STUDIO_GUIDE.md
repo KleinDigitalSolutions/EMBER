@@ -2,6 +2,19 @@
 
 EMBER ist im Book-Modus kein normaler Editor, sondern ein Arbeitsraum für geplantes, szenenbasiertes Schreiben mit Modell-Orchestrierung. Gute Ergebnisse entstehen hier nicht durch einen einzigen Prompt, sondern durch saubere Vorbereitung im Blueprint, klare Szenenführung im Writer und anschließende Kontrolle der Job-Ergebnisse.
 
+So gehst du in Ember vor
+
+  1. Setze im Blueprint den Markt sauber: Premise, Reader Promise, Hook, Category Lane, Ending Promise. Verkäufe kommen
+     nicht nur aus Prosa, sondern aus Verpackung und klarem Versprechen.
+  2. Schreibe 8 bis 12 harte Regeln in die Writer Constitution. Keine Adjektive wie „literarisch“, sondern prüfbare
+     Regeln.
+  3. Plane nicht in „300 Seiten“, sondern in Szenen. Für 300 Taschenbuchseiten bist du grob bei 75.000–90.000 Wörtern.
+     In Ember heißt das meist 45–65 Szenen mit etwa 1.100–1.700 Wörtern.
+  4. Gib jeder Szene eine belastbare Summary: Ziel, Widerstand, Wendung, Enddruck.
+  5. Setze pro Szene harte Regie: POV, objective, opening, dramaticBeat, ending.
+  6. Nutze Director Note nur für den aktuellen Eingriff, nicht für die gesamte Poetik.
+  7. Erzeuge Jobs szenenweise, übernimm nur starke Rewrites, prüfe dann Review, offene Fäden und Kontinuität.
+
 ## 1. Wofür der Book-Bereich da ist
 
 Der Book-Bereich ist für lineares Erzählen gedacht:
