@@ -1396,13 +1396,13 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Keine stille Gruebel-Szene. Eva wird hier handlungsfaehig, indem sie ordnet. Das Protokoll muss Struktur sichtbar machen, nicht bloss Fleiss. Der Druckerfund am Ende soll klein und unanstaendig wirken, als waere selbst ihr Gegenschreiben schon in Noras Naehe.`
 
 #### Kapitel 15 — „Der falsche Nachmittag"
-`Das ist Kontrollverlust ohne Ausraster. Eva verliert nicht die Tochter, sondern den unmittelbaren Alltagszugriff. Die Szene muss kalt, konkret und sozial nachvollziehbar weh tun.`
+`Das ist Kontrollverlust ohne Ausraster. Eva verliert nicht die Tochter, sondern den unmittelbaren Alltagszugriff. Die Szene muss kalt, konkret und sozial nachvollziehbar weh tun. Show, don't explain. Wenn ein Bild, eine Geste oder eine Handlung bereits eine Bedeutung trägt, folgt kein erklärender Satz. Keine Kommentare zur Wirkung einer Szene auf die Figur. Kein Benennen von Emotionen, die der Text bereits zeigt.`
 
 #### Kapitel 16 — „Die Woche bei Simon"
-`Die Szene lebt von Leere und Vermittlung. Eva verliert Mila nicht dramatisch, sondern wird aus dem direkten Informationskreislauf gedrueckt. Nora darf hier nicht aufdringlich agieren; ein hilfreiches Foto reicht. Der Schmerz ist gefilterte Naehe.`
+`Die Szene lebt von Leere und Vermittlung. Eva verliert Mila nicht dramatisch, sondern wird aus dem direkten Informationskreislauf gedrueckt. Nora darf hier nicht aufdringlich agieren; ein hilfreiches Foto reicht. Der Schmerz ist gefilterte Naehe. Show, don't explain. Wenn ein Bild, eine Geste oder eine Handlung bereits eine Bedeutung trägt, folgt kein erklärender Satz. Keine Kommentare zur Wirkung einer Szene auf die Figur. Kein Benennen von Emotionen, die der Text bereits zeigt.`
 
 #### Kapitel 17 — „Hofblick"
-`Keine Beobachtungsparanoia. Eva sieht hier Nutzwert, nicht nur Atmosphaere. Jeder Blick auf Nora muss zeigen, wie fruehere Hilfe spaeteren Zugriff vorbereitet hat. Die Szene bleibt still, aber nicht vage.`
+`Keine Beobachtungsparanoia. Eva sieht hier Nutzwert, nicht nur Atmosphaere. Jeder Blick auf Nora muss zeigen, wie fruehere Hilfe spaeteren Zugriff vorbereitet hat. Die Szene bleibt still, aber nicht vage.Show, don't explain. Wenn ein Bild, eine Geste oder eine Handlung bereits eine Bedeutung trägt, folgt kein erklärender Satz. Keine Kommentare zur Wirkung einer Szene auf die Figur. Kein Benennen von Emotionen, die der Text bereits zeigt.`
 
 #### Kapitel 18 — „Das Familienalbum"
 `Kein Hackerkino. Nora hat nichts spektakulaer gebrochen, sondern alte legale Freigaben zu lange behalten. Der Schock entsteht aus Nachlaessigkeit, nicht aus Tech-Genie. Zeige, wie private Reste zu Rohmaterial fuer Ersetzung werden.`

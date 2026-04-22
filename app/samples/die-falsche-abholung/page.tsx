@@ -786,6 +786,43 @@ const sceneThirteenParagraphs = [
   `Auf der letzten Stufe hielt sie kurz an. Der Rucksack war leicht. Sie hatte ihn unten schon wieder genauso gepackt wie Nora.`
 ];
 
+const sceneFourteenParagraphs = [
+  `Eva schob den Brotkorb, die Wachsmalstifte und Milas halb ausgemalten Regenbogen an den Tischrand. Der Apfelrest ging in den Müll, das klebrige Messer in die Spüle. Sie wischte die Platte zweimal, einmal feucht, einmal trocken, bis das Holz wieder matt wurde.`,
+  `Dann der Laptop. Daneben ein Stapel unbeschriebenes Papier, den sie seit Wochen nicht angerührt hatte. Vier Stifte aus Milas Mäppchen: rot, gelb, grün, blau. Block, Lineal, die Kita-App auf dem Handy, offen auf dem Benachrichtigungsverlauf. Draußen kein Geräusch mehr, nur der Kühlschrank, der sich alle paar Minuten räusperte. Im Nebenzimmer atmete Mila flach durch den leicht offenen Türspalt, ein Rhythmus, an dem Eva sich seit sechs Jahren die Uhrzeit ersetzte.`,
+  `Sie öffnete ein leeres Dokument. Fünf Spalten. Uhrzeit. Ort. Objekt. Nachricht. Zeuge. Sie zog die Linien nicht freihändig, sie setzte Tabstopps. Schriftgröße zehn, einheitlicher Abstand, kein Kursiv, keine Farben im Fließtext. Was sie morgen auf Petras Schreibtisch legte, sollte aussehen wie ein Projektplan, nicht wie der Brief einer aufgelösten Mutter.`,
+  `Erster Eintrag, oben.`,
+  `Mittwoch, 15:42. Kita. App-Vermerk „bereits abgeholt durch berechtigte Person, Unterschrift vorhanden". Nachricht an Simon 15:47. Zeugin: Frau Kessler, Erzieherin Gruppe Bären.`,
+  `Sie schrieb weiter, ohne aufzusehen. Dienstag davor, 07:12, Hof. Nora am Briefkasten, Mila habe ihr „schon Tschüss gesagt", bevor Eva aus der Tür trat. Objekt: Milas rote Mütze, die Eva noch in der Hand hielt. Nachricht: keine. Zeugen: keine, außer Nora selbst.`,
+  `Montag, 16:55, Spielplatz Grünstraße. Nora mit einem Becher Tee, den Eva nicht bestellt hatte, und der Bemerkung, Mila sei seit zehn Minuten da. Objekt: Tee in Evas eigenem Thermobecher, der am Morgen in Evas Küche gestanden hatte. Nachricht: eine Sprachnachricht Nora, 16:31, „ich geh schon mal vor". Zeugin: eine Mutter vom Schwimmkurs, Name offen.`,
+  `Freitag, 14:05, Kinderarzt Dr. Halm. Nora im Wartezimmer, „nur zufällig", mit Milas Impfpass, den Eva im Flur liegen gelassen hatte. Objekt: Impfpass. Nachricht: keine. Zeugin: Arzthelferin am Tresen.`,
+  `Samstag, 09:20, Treppenhaus. Nora mit einem warmen Brot in der Hand, eine Minute bevor die Paketbotin klingelte, für ein Paket, das auf Evas Namen lief. Objekt: Paket, Brot. Nachricht: Klingel. Zeugin: Paketbotin.`,
+  `Sie tippte, bis die Liste vierzehn Zeilen hatte. Die App-Benachrichtigung über die angebliche Abholung gestern. Das Notizzettelchen in Milas Dienstagstasche, in Noras Sprache, aber Evas Strichführung. Simons Vorschlag am Nachmittag, Nora solle Mila nie mehr allein übernehmen, formuliert, als wäre das ein Zugeständnis, nicht eine Grenze. Milas Satz am Abend, „Nora-Montag ist, wenn wir Pfannkuchen machen", ausgesprochen wie eine Regel, die es in diesem Haus nie gegeben hatte.`,
+  `Unter jede Zeile setzte sie ein Kürzel für das Belegobjekt. Screenshot. Foto. Zettel im Umschlag. Sprachnachricht gesichert. Zeuge ansprechbar. Wo nichts stand, ließ sie die Spalte leer. Die leeren Felder waren die, in denen nur Nora selbst als Quelle übrig blieb.`,
+  `Dann sortierte sie nach Uhrzeit.`,
+  `Sie griff nach dem roten Stift und markierte in der Spalte Uhrzeit alles, was innerhalb von zehn Minuten vor oder nach einem formalen Übergang lag. Kita-Tor. Arzttür. Spielplatzbank, an der die Schwimmmütter übergaben. Treppenabsatz vor Evas Wohnungstür. Das Klingeln des Telefons, wenn die Schule anrief.`,
+  `Der rote Stift ging durch fast jede Zeile.`,
+  `07:12, eine Minute bevor die Kita-Gruppe offen war. 15:42, zwei Minuten vor dem offiziellen Abholfenster. 16:55, fünf Minuten nachdem Eva Mila abgegeben und sich umgedreht hatte. 14:05, genau in dem Fenster, in dem Evas Name aufgerufen wurde. 09:20, eine Minute vor der Klingel.`,
+  `Sie nahm den grünen Stift und umkreiste die Objekte, die aus ihrer eigenen Wohnung kamen. Thermobecher. Impfpass. Mütze. Notizzettel mit ihrer Strichführung. Vier grüne Kreise auf der ersten Seite, drei auf der zweiten. Sie zählte sie, weil Zählen half, nicht weil die Zahl etwas bedeutete.`,
+  `Gelb für alles, was Nora in der Hand hatte, ohne dass Eva es ihr gegeben hatte.`,
+  `Blau für Zeugen, die sich erinnern würden, wenn man sie fragte, bevor Nora es tat.`,
+  `Die Stiftkappen lagen in einer Reihe am oberen Rand des Papiers, als wäre das ein Bastelnachmittag. Eva drückte den roten Stift an, bevor sie ihn weglegte. Er rollte zwei Zentimeter und stoppte an der Laptopkante.`,
+  `Die Seite sah aus wie ein Stundenplan, in dem jemand anderes die Stunden gesetzt hatte. Eva lehnte sich zurück, die Hand noch um den roten Stift, und las die Spalte Ort von oben nach unten. Kita. Hof. Arzt. Spielplatz. Treppenhaus. Telefon. Kita. An jeder Schnittstelle, an der das System von ihr zu einer anderen Zuständigkeit überging, stand Nora schon da oder kam Sekunden danach.`,
+  `Sie fügte eine sechste Spalte ein. Abstand zur Schnittstelle, in Minuten. Zwei. Eins. Fünf. Eins. Drei. Zwei. Null.`,
+  `Die Null war Samstag, Treppenhaus. Nora im selben Atemzug wie die Klingel.`,
+  `Eva speicherte. Sie nannte die Datei nicht nach Nora. Sie nannte sie nach dem Datum und „Chronologie". Sie legte eine Kopie auf einen USB-Stick, zog ihn ab, steckte ihn in die Innentasche ihrer Jacke, die über der Stuhllehne hing. Den Stick hatte sie einmal für ein Arbeitsprojekt gekauft, grün mit weißer Kappe, und nie richtig benutzt. Jetzt lag er neben ihrem Wohnungsschlüssel, zwei kleine Dinge, von denen niemand sonst wusste, wo sie steckten.`,
+  `Sie öffnete das Deckblatt, schrieb Petras Namen hin, Datum, Uhrzeit dieser Nacht, ihre eigene Unterschrift in Druckbuchstaben darunter, damit niemand später behaupten konnte, die Handschrift sei nicht ihre. Darunter, kleiner: *Anlage für persönliches Gespräch. Nicht weitergeben.*`,
+  `Drucken. Beidseitig. Farbe.`,
+  `Der Drucker im Flur setzte sich in Gang, dieses kleine Einatmen, bevor das erste Blatt einzog. Eva hörte die Walzen. Sie ging hinüber, die Socken leise auf den Dielen, und blieb vor dem Gerät stehen, während Seite für Seite in das Fach fiel.`,
+  `Im Fach lag etwas.`,
+  `Sie dachte zuerst, eines ihrer Blätter sei vorzeitig durchgelaufen. Sie zog es heraus, bevor der Drucker die nächste Seite obendrauf schob.`,
+  `Es war nicht ihre Chronologie.`,
+  `Es war eine Einkaufsliste. A4, einspaltig, Handschrift oben, darunter sauber getippt. Milch, Haferflocken, Bananen, Toastbrot vollkorn, Apfelmus ohne Zucker, Frischkäse, Gurken, die kleinen, Joghurt, der mit dem Bären. Kinderzahnpasta Erdbeere. Pflaster, bunt.`,
+  `An den Rändern Markierungen. Rot für Dinge, die heute dringend waren. Gelb für Dinge, die Mila mochte. Grün für Bio. Blau für „über Eva besorgen lassen".`,
+  `Dieselben Farben. Dieselbe Logik. Dieselbe Spaltenordnung wie das Blatt, das gerade hinter ihr in den Drucker fiel.`,
+  `Unten rechts ein kleiner Vermerk in derselben sauberen Handschrift. *N., Donnerstag.*`,
+  `Eva hielt das Blatt am Rand, damit sie es nicht zerknüllte. Hinter ihr fiel die letzte Seite ihrer Chronologie ins Fach, genau auf Noras Liste.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -793,7 +830,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 13 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 14 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -1016,9 +1053,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 14</p>
+          <h2>Protokoll</h2>
+          <p>
+            Eva baut aus Uhrzeiten, Objekten und Zeugen erstmals eine belastbare
+            Chronologie. Als der Drucker anspringt, liegt im Fach schon etwas, das
+            dort nicht liegen duerfte.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFourteenParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s14-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 14</h3>
+          <h3>Szene 15</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
