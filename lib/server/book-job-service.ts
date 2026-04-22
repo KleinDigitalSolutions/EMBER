@@ -1670,7 +1670,9 @@ function buildCoreSystemPrompt() {
     "Never reuse literal timestamps, locations, headers, or props from examples unless they appear in the current scene constraints.",
     "Do not imitate real authors or copyrighted prose.",
     "Favor commercial readability, tension, subtext, concrete observation, and clean scene movement.",
-    "If context is insufficient, flag risk explicitly instead of inventing hidden facts."
+    "If context is insufficient, flag risk explicitly instead of inventing hidden facts.",
+    "Show, don't explain. If an image, gesture, or action already carries meaning, no explanatory sentence follows.",
+    "Forbidden patterns: 'Sie merkte, dass', 'Sie spürte, wie', 'Das war es, was', 'nicht X, sondern Y' as explanation. End the sentence where the action ends."
   ].join("\n");
 }
 
