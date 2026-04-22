@@ -15,7 +15,7 @@ const sceneOneParagraphs = [
   "„Frau Loewen, ich war gestern in Frankfurt. Ich war gestern nicht in Ihrem Haus.\"",
   "„Dann klären wir das, wenn Sie da sind. Haben Sie jetzt Zeit?\"",
   "Eva sah auf den Kalender. Das interne Review begann in sieben Minuten. Sie schrieb Anita eine Zeile, *muss raus, Kita, bitte übernimm*, griff Mantel und Schlüssel und war unten an der Schranke, bevor der Aufzug wieder oben angekommen war.",
-  "Im Auto ging sie den Mittwoch durch. Um neun die Präsentation. Um elf der Zug. Um vierzehn Uhr zehn Ankunft Frankfurt, Taxi, Vier-Augen mit Grau. Um sechzehn Uhr zwanzig Rückzug ins Hotel. Sie hatte um 15:42 Uhr nicht an einer Kita gestanden, die vierhundertzwanzig Kilometer entfernt lag. Sie hatte um 15:42 Uhr in einem Konferenzraum im siebten Stock Zahlen verteidigt. Es gab Zeugen. Es gab ihre Bahncard-Abrechnung. Es gab Fotos vom Hotelschlüssel, die sie Mila am Abend geschickt hatte.",
+  "Im Auto ging sie den Mittwoch durch. Um neun die Präsentation. Um elf der Zug. Um vierzehn Uhr zehn Ankunft Frankfurt, Taxi, Vier-Augen mit Grau. Um sechzehn Uhr zwanzig Rückzug ins Hotel. Sie had um 15:42 Uhr nicht an einer Kita gestanden, die vierhundertzwanzig Kilometer entfernt lag. Sie had um 15:42 Uhr in einem Konferenzraum im siebten Stock Zahlen verteidigt. Es gab Zeugen. Es gab ihre Bahncard-Abrechnung. Es gab Fotos vom Hotelschlüssel, die sie Mila am Abend geschickt hatte.",
   "Sie fuhr zu schnell. Sie wusste es und bremste nicht.",
   "An einer roten Ampel sagte sie laut in den leeren Beifahrerraum: „Das ist ein Datenbankfehler.\" Ihre Stimme klang vernünftig. Das beruhigte sie für zwei Kreuzungen.",
   "Der Sonnengarten lag in einer ruhigen Seitenstraße hinter der alten Brauerei, ein umgebauter Altbau mit einem sauber gefegten Vorhof und einem Holztor, das um halb vier noch offen stand und um Viertel vor fünf verschlossen war. Eva stellte den Wagen halb auf den Bordstein, ließ den Warnblinker laufen und ging zwei Stufen auf einmal.",
@@ -37,7 +37,7 @@ const sceneOneParagraphs = [
   "Eva spürte, wie sich etwas in ihrem Nacken zusammenschob. Ihre Hand lag neben dem Tablet, und sie hob sie nicht. Sie sagte: „Ich will die Kamera sehen.\"",
   "„Deshalb habe ich Sie hergebeten.\"",
   "Petra führte sie einen Gang weiter, in einen kleinen fensterlosen Raum, in dem ein Monitor stand und ein Rechner, der leise summte. An der Wand ein Putzplan, ein Feuerlöscher, ein Stapel sauber gefalteter Wechselhosen in einem offenen Karton. Auf dem Monitor war ein Standbild eingefroren: die Eingangstür von innen, der Garderobenbereich, die Reihe mit den Haken, an denen die kleinen Regenjacken hingen. Im Vordergrund eine Frau, halb abgewandt, die Hand auf Milas Schulter. Mila in ihrer gelben Mütze. Die Mütze saß schief, so wie Mila sie aufsetzte, wenn es schnell gehen sollte.",
-  "Die Frau trug einen dunkelblauen Wollmantel, Kaschmirmischung, Gürtel hinten mit Schlaufe, der Schnitt vom letzten Winter bei Hoss, innen eine Stelle am Ärmel, an der Eva einmal Kaffee verschüttet hatte. Die Haare lagen in derselben Länge auf dem Mantelkragen. Die Schulter hatte den leichten Fall nach links, den Eva an sich selbst auf Fotos zuerst sah, bevor sie etwas anderes sah.",
+  "Die Frau trug einen dunkelblauen Wollmantel, Kaschmirmischung, Gürtel hinten mit Schlaufe, der Schnitt vom letzten Winter bei Hoss, innen eine Stelle am Ärmel, an der Eva einmal Kaffee verschüttet hatte. Die Haare lagen in derselben Länge auf dem Mantelkragen. Die Schulter had den leichten Fall nach links, den Eva an sich selbst auf Fotos zuerst sah, bevor sie etwas anderes sah.",
   "Eva hörte sich selbst ausatmen.",
   "Sie dachte, bevor sie es dachte: *Das bin ich.*",
   "Sie trat einen halben Schritt näher an den Monitor. Der Raum wurde enger, nicht weil sich die Wände bewegten, sondern weil sie aufhörte, ihn wahrzunehmen. Die Frau auf dem Bild beugte sich zu Mila herunter, in der Geste, die Eva hundertmal am Tag machte, wenn sie Mila etwas am Reißverschluss richtete. Derselbe Bogen im Rücken. Dieselbe Hand auf derselben Schulter.",
@@ -186,15 +186,56 @@ const sceneThreeParagraphs = [
   "Ihre Finger fuhren an die innere Naht, wo sie den Ersatzgummi immer in ein kleines Stoffsäckchen steckte, damit er nicht im Futter verschwand.",
   "Der rote Haargummi, den sie eingewickelt hatte, lag da. Sie hatte ihn morgens selbst um Milas Zopf gelegt und dann den Ersatz reingesteckt. Mila verlor sie zu oft.",
   "Daneben lag ein zweiter.",
-  "Dunkelgrün, mit einem kleinen Stoffstern, an der Knotenstelle etwas abgegriffen. Nicht ihrer. Nicht aus Milas Schublade. Sie zog ihn heraus und hielt ihn gegen das Licht im Flur. Der Stern war aus Filz, unsauber umnäht, an einer Ecke offen. Sie kannte den Stern. Sie hatte ihn an einem Schlüsselband gesehen, das über einer Garderobe hing, die nicht ihre war. Nora hatte solche Sterne genäht, im Winter, als sie sich mal wieder zu viel Projekte gleichzeitig vorgenommen hatte.",
+  "Dunkelgrün, mit einem kleinen Stoffstern, an der Knotenstelle etwas abgegriffen. Nicht ihrer. Nicht aus Milas Schublade. Sie zog ihn heraus und hielt ihn gegen das Licht im Flur. Der Stern war aus Filz, unsauber umnäht, an einer Ecke offen. Sie kannte den Stern. Sie hatte ihn an einem Schlüsselband gesehen, das über einer Garderobe hing, die nicht ihre war. Nora hatte solche Sterne genäht, im Winter, als sie sie mal wieder zu viel Projekte gleichzeitig vorgenommen hatte.",
   "Eva hielt den Gummi in der Hand. Er war warm von ihrer Faust.",
   "Sie legte ihn auf die Kommode, nicht in die Schale, in der Milas Gummis lagen, sondern daneben, einzeln, mit Abstand zu allem anderen.",
-  "Dann griff sie nach ihrem Handy und öffnete die Kontakte, suchte nach Nora, und legte den Daumen nicht auf Anrufen.",
+  "Dann griff nach ihrem Handy und öffnete die Kontakte, suchte nach Nora, und legte den Daumen nicht auf Anrufen.",
   "Sie ging in die Küche, stellte Wasser auf, ohne zu wissen, wofür, und kehrte zurück zum Flur.",
   "Er lag noch da.",
-  "Sie machte ein Foto. Von oben, mit dem roten daneben, mit einem Streichholz als Maßstab, weil sie nicht wusste, wie man so etwas richtig macht und irgendetwas tun musste, das später nicht lächerlich aussah. Dann zog sie eine Tüte aus der Küchenschublade, eine von den Gefrierbeuteln, schob den grünen Gummi hinein und schrieb das Datum drauf, ohne Namen.",
+  "Sie machten ein Foto. Von oben, mit dem roten daneben, mit einem Streichholz als Maßstab, weil sie nicht wusste, wie man so etwas richtig macht und irgendetwas tun musste, das später nicht lächerlich aussah. Dann zog sie eine Tüte aus der Küchenschublade, eine von den Gefrierbeuteln, schob den grünen Gummi hinein und schrieb das Datum drauf, ohne Namen.",
   "Die Tüte legte sie nicht in die Schublade, sondern oben auf den Schrank, hinter den Karton mit den alten Fotos, dorthin, wo sie morgens nicht hinsah, wenn sie schnell los musste.",
   "Dann ging sie Mila holen."
+];
+
+const sceneFourParagraphs = [
+  "Der Küchentisch trug alles, was Eva besaß, um sich selbst zu beweisen. Das Handy mit offener Kita-App, daneben der Papierkalender, die schwarze Kladde mit den Wochenplänen, ein Stapel Ausdrucke aus dem Drucker im Flur, noch warm vom Toner. Mila schlief seit einer halben Stunde. Durch die angelehnte Zimmertür kam das gleichmäßige Atmen, das Eva sonst beruhigte.",
+  "Sie begann mit dem Gestern. Kalender: Besprechung bis siebzehn Uhr, danach Einkauf, Abholung Mila sechzehn Uhr fünfzehn durch sie selbst, handschriftlich eingetragen, Kugelschreiber, keine Korrektur. App: Abholung bestätigt, sechzehn Uhr zwölf, Unterschrift Eva Berger. Sie legte den Finger auf die Zahl im Kalender, dann auf die Zahl im Display. Drei Minuten Abweichung. In der Welt der Kita war das nichts. In ihrer eigenen Erinnerung war sie gestern um sechzehn Uhr zwölf in der Redaktion am Schreibtisch gesessen, zweites Glas Wasser, Kopfhörer auf.",
+  "Sie öffnete die Wochenhistorie. Montag, Dienstag, Mittwoch. Alles in Reihe, alles ihre Unterschrift, alles ihre übliche Zeit. Kein verrutschter Eintrag, kein technischer Schluckauf, keine doppelte Bestätigung, die sie hätte anfechten können. Das System war zu sauber, um kaputt zu sein.",
+  "Eva stand auf und holte den alten Ordner aus dem Schrank, den mit dem grünen Rücken, Kita-Unterlagen seit Milas Aufnahme. Sie blätterte rückwärts. Impfpass-Kopie, Elternbeitragsbescheid, die erste Eingewöhnungsnotiz mit Milas Namen in Petras Handschrift. Dahinter, in einer Klarsichthülle, die Reserve-Notfallliste. Ausgedruckt, abgezeichnet, Datum vor zwei Jahren.",
+  "Sie zog das Blatt heraus.",
+  "Oben stand ihr eigener Name, dann Simon. Darunter, handschriftlich ergänzt, mit ihrem eigenen blauen Kuli, die Zeile, die sie zu suchen vergessen hatte: Nora Seidel, Hofnachbarin, jederzeit erreichbar. Die Telefonnummer war Noras alte Festnetznummer, die sie längst nicht mehr benutzte. Daneben Evas Unterschrift, klein, eilig, die Schleife am E etwas zu weit ausgeholt, weil sie damals das Formular zwischen Tür und Angel ausgefüllt hatte.",
+  "Sie hatte Nora gestrichen. Sie war sich sicher. Letztes Jahr, als Simon auszog, hatte sie alle Listen neu gemacht, die digitale in der App und die Papierfassung. Sie hatte Nora drin gelassen als menschliche Geste, aber sie hatte es nie offiziell gemacht. Sie hatte es gemeint. Sie hatte es sich vorgenommen.",
+  "Das Blatt in ihrer Hand widersprach ihr.",
+  "Eva drehte es um. Rückseite leer. Sie suchte nach einem Stempel, einem Ungültig-Vermerk, irgendetwas, das zeigte, dass dieses Exemplar überholt war. Nichts. Nur ein kleiner Knick in der oberen Ecke, als hätte es jemand eingesteckt und wieder zurückgelegt.",
+  "Sie legte das Blatt neben die App. Zwei Listen, zwei Wahrheiten. Auf dem Display stand oben, in der aktuellen Fassung, nur Eva und Simon. Auf Papier stand Nora immer noch, mit ihrer eigenen Hand eingetragen, mit ihrer eigenen Unterschrift beglaubigt. Eine davon war das, was die Kita im Notfall in die Hand nahm. Eva wusste nicht mehr, welche.",
+  "Unten klingelte es kurz am Hoftor. Dann Schritte auf dem Kopfsteinpflaster, die sie ohne hinzusehen erkannt hätte.",
+  "Sie trat ans Küchenfenster. Nora stand im Innenhof, einen Topf in beiden Händen, den Griff des Deckels mit einem Küchenhandtuch gesichert. Sie sah hoch, lächelte, hob den Topf ein Stück, eine Frage ohne Worte.",
+  "Eva ging runter.",
+  "„Hab zu viel gekocht\", sagte Nora. „Karottensuppe. Mila mag die doch. Nimmst du mir einen Teil ab.\"",
+  "Es war keine Frage. Eva nahm den Topf. Er war noch warm.",
+  "„Du bist ein Schatz.\"",
+  "„Ach was.\" Nora schob die Hände in die Ärmel ihres Cardigans. „Wie geht's ihr? Heute Nachmittag war sie doch so aufgedreht, da kriegt sie abends schwer Ruhe.\"",
+  "Eva stand mit dem Topf zwischen den Händen, als hätte jemand ihr ein Tablett mit Gläsern gereicht, das sie nicht absetzen konnte.",
+  "„Sie schläft.\"",
+  "„Gut.\" Nora nickte. „Sie hatte ja diese kleine Stelle am Knie, auf der hellgrauen Strumpfhose. Von der Rutsche, nehme ich an.\"",
+  "Eva lächelte. Ein halber Zug der Mundwinkel, reflexhaft, bevor der Satz unten ankam.",
+  "Die hellgraue Strumpfhose hatte sie Mila heute Morgen angezogen. Mila war heute nicht draußen gewesen. Mila war heute überhaupt nicht aus der Wohnung gekommen, weil Eva sie nach dem Anruf aus der Kita nicht aus den Augen gelassen hatte. Nora hatte Mila nicht gesehen. Nora konnte das Knie nicht gesehen haben.",
+  "„Ich schau nachher nach der Stelle\", sagte Eva. Ihre Stimme lief eine Sekunde nach, als käme sie aus einem anderen Raum.",
+  "„Mach das.\" Nora legte ihr kurz die Hand auf den Unterarm, eine alte Geste, die Eva vor zwei Wochen noch gern gehabt hätte. „Und ruf an, wenn irgendwas ist. Egal wann.\"",
+  "„Mach ich.\"",
+  "Nora wartete einen Moment zu lang. Sie sah an Eva vorbei, die Hauswand hoch, zum Küchenfenster, dann wieder zurück. „Und iss was. Du bist ganz schmal im Gesicht heute.\"",
+  "„Ja.\"",
+  "„Versprich mir.\"",
+  "„Ja.\"",
+  "Nora drehte sich und ging zu ihrer Tür auf der anderen Hofseite. Eva blieb stehen, bis sie dort drüben das Licht angehen sah. Dann noch eine Sekunde. Dann noch eine.",
+  "Oben in der Wohnung stellte sie den Topf auf dem Herd ab, ohne den Deckel abzunehmen. Der Flur lag halb dunkel, nur die Lampe über dem Schuhregal brannte. Sie zog die Wohnungstür hinter sich zu, den kleinen Zug, bis der Riegel einrastete, und legte die Kette vor. Sie legte nie die Kette vor.",
+  "Sie drehte sich um.",
+  "An den Haken im Flur, dem unteren, auf Kinderhöhe, hing Milas Ersatzjacke. Die blaue mit dem ausgefransten Reißverschluss, die seit Wochen in der Kita im Fach lag, falls die andere nass würde. Sie hing am rechten Haken, nicht am mittleren, den Mila sonst benutzte. Am rechten, weil Eva morgens den mittleren für ihren eigenen Schal brauchte. Das war eine stille Abmachung zwischen ihr und einer Dreijährigen, die immer dort hinlangte, wo die Mutter gerade nicht war.",
+  "Das wusste niemand außer ihr.",
+  "Eva stand mit der Hand noch am Türknauf und rührte sich nicht. Aus der Wohnung kam Milas Atem, gleichmäßig, unversehrt. Aus dem Hof kam nichts. Aus dem Flur kam der schwache Geruch nach Karottensuppe, der sich an der Tür vorbeigeschoben haben musste, als sie zugezogen hatte.",
+  "Sie streckte langsam die Hand aus und berührte den Stoff der Jacke. Kühl. Nicht frisch von draußen, nicht warm aus einem Auto. Irgendwo zwischendurch gewesen. Auf einem Tisch gelegen. Über einer Stuhllehne gehangen. An einem anderen Haken, bevor sie an diesen gekommen war.",
+  "Eva ließ die Jacke hängen. Sie rührte sie nicht an, außer mit den Fingerspitzen, als könnte sie etwas verwischen, wenn sie mehr nähme. Sie ging zurück in die Küche, zum Kalender, zur Reserveliste, zur App. Sie setzte sich nicht. Sie blieb vor dem Tisch stehen und sah auf ihre eigene Unterschrift von vor zwei Jahren, und auf ihre Unterschrift von gestern um sechzehn Uhr zwölf, und versuchte, den Unterschied zu finden, der ihr gehören würde.",
+  "Im Flur, hinter ihr, hing die Jacke am falschen richtigen Haken."
 ];
 
 export default function DieFalscheAbholungSamplePage() {
@@ -204,7 +245,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -266,9 +307,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
+          <h2>Die Listen</h2>
+          <p>
+            Eva vergleicht Kalender, App und alte Papierformulare. Ein Fund im
+            Kita-Ordner und eine nächtliche Begegnung im Hof verstärken das Gefühl,
+            dass jemand ihre Identität bis in die kleinsten Details kennt.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFourParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s4-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 4</h3>
+          <h3>Szene 5</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
