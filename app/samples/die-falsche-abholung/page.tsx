@@ -736,6 +736,56 @@ const sceneTwelveParagraphs = [
   `Dann legte sie den Stift ordentlich daneben, so, dass er parallel zur Kante lag, und ging zurück zur Tür, um nachzusehen, welchen Weg Nora nahm.`
 ];
 
+const sceneThirteenParagraphs = [
+  `Milas Zimmer bei Simon roch nach dem neuen Weichspüler, den Eva nicht ausgesucht hatte. Auf dem Bett lag die Dienstagstasche, der blaue Stoffrucksack mit dem Bärenanhänger, zugeschnürt, die Kordeln in einer ordentlichen Schleife.`,
+  `„Ist alles drin", sagte Simon aus dem Flur. Er lehnte im Türrahmen, ein Geschirrtuch über der Schulter. „Brotdose, Wechselsachen, Turnbeutel. Ich hab's heute Nachmittag gemacht."`,
+  `„Ich schau trotzdem."`,
+  `„Eva."`,
+  `Sie setzte sich auf die Bettkante und zog die Schleife auf. Simon blieb noch einen Moment stehen, dann hörte sie ihn in der Küche mit dem Wasserhahn hantieren.`,
+  `Sie kippte die Tasche nicht aus. Sie holte einzeln heraus, was darin war, und legte es neben sich auf die Decke, in der Reihenfolge, in der sie es selbst gepackt hätte. Ganz oben der dünne Regenanorak, gefaltet mit den Ärmeln nach innen. Darunter die Brotdose, die grüne mit dem Klickverschluss, auf dem Deckel das weiße Pflaster mit „Mila B., Gr. 1" in ihrer eigenen Druckschrift, das sie vor Wochen aufgeklebt hatte. Sie zog den Deckel ab. Apfelschnitze, bereits mit Zitrone benetzt. Ein halbes Dinkelbrötchen, Butter, Käse. Gurkensticks. Keine Tomate, weil Mila seit dem Sommer keine Tomaten mehr im Brot aß.`,
+  `Eva legte den Deckel zurück.`,
+  `Darunter die Trinkflasche, gefüllt, fingerbreit unter dem Rand. Ein Paar Ersatzsocken, die grauen mit dem roten Punkt an der Ferse, gerollt, nicht zusammengelegt. Sie rollte Socken immer. Ein kleines Etui mit drei Pflasterstreifen, zwei Kinderpflaster mit Sternen, ein neutrales. Zwei plus eins, weil sich Mila in der Gruppe manchmal mit einem anderen Kind teilte und dann eins zu wenig übrig war.`,
+  `In der Seitentasche das Päckchen Papiertaschentücher. Im Reißverschlussfach der Sporthosen-Beutel für Donnerstag, schon vorbereitet.`,
+  `Jedes Teil, das sie herausgezogen hatte, lag genau dort, wo sie es hingelegt hätte. Nicht ungefähr. Exakt.`,
+  `„Und?", rief Simon aus der Küche. „Fehlt was?"`,
+  `„Nein."`,
+  `Sie griff noch einmal in die Haupttasche, tastete am Boden. Papier. Ein gefaltetes Stück, kariert, aus einem Küchenblock. Sie faltete es auf.`,
+  `*Di: Turnbtl Do nicht vergessen. Apfel m. Zitr. Socken grau. Pfl. 2+1. Wenn Regen: Gummis extra. Kuscheli nur wenn nötig.*`,
+  `Ihre Handschrift. Die eckigen Ds, die sie als Kind geübt hatte. Die Abkürzungen, die sie seit Jahren auf Einkaufszettel schrieb. Pfl. 2+1 war ein Kürzel, das sie nur für sich selbst benutzte. Sie hatte es niemandem erklärt.`,
+  `Sie las den Zettel zweimal. Beim dritten Mal blieb sie am vorletzten Wort hängen.`,
+  `*Kuscheli.*`,
+  `Sie sagte Kuscheltier. Mila sagte Kuscheltier. Simon sagte, wenn überhaupt, der Bär. Niemand in diesem Haushalt sagte Kuscheli.`,
+  `Nora sagte Kuscheli. Nora sagte es seit Mila zwei war, mit diesem weichen i am Ende, das alles klein machte. Nora sagte Pulli, Jäckchen, Füßchen, und sie sagte Kuscheli, wenn sie nach Mila im Hof rief und das Stofftier vom Sandkastenrand mitnehmen sollte.`,
+  `Eva legte den Zettel flach auf ihr Knie.`,
+  `„Simon."`,
+  `Er kam barfuß durch den Flur, das Geschirrtuch jetzt in der Hand. „Was."`,
+  `Sie reichte ihm den Zettel, ohne etwas zu sagen.`,
+  `Er las. Hob die Augenbrauen. „Ja. Das ist doch deine Schrift."`,
+  `„Ich habe den nicht geschrieben."`,
+  `Er las noch einmal. Sein Blick ging das Papier entlang wie eine Einkaufsliste, die man abhakt. „Das ist deine Schrift, Eva. Das sind deine Abkürzungen. Pfl. 2+1. Wer soll das sonst schreiben."`,
+  `„Lies das vorletzte Wort."`,
+  `„Kuscheli." Er zuckte die Schultern. „Ja."`,
+  `„Ich sage das nie."`,
+  `Er sah sie an. Nicht böse. Geduldig.`,
+  `„Vielleicht hast du's mal geschrieben, weil Mila das so sagt."`,
+  `„Mila sagt Kuscheltier."`,
+  `„Eva." Er gab ihr den Zettel zurück. „Das ist ein Zettel. Im Rucksack. Mit deiner Schrift. Mit allem, was du eh machst." Er strich sich mit der Hand über den Nacken. „Ich weiß nicht, ob das wirklich reicht, um den Abend damit zu füllen."`,
+  `„Ich habe die Tasche nicht gepackt."`,
+  `„Ich hab sie gepackt. Heute Nachmittag. Ich hab die Sachen reingetan, die im Schrank lagen. Vielleicht lag der Zettel schon in der Seitentasche von letzter Woche."`,
+  `„Die Äpfel sind mit Zitrone."`,
+  `„Ja, das mache ich jetzt auch so. Hast du mir gezeigt." Er sah auf die aufgereihten Dinge neben ihr. „Eva. Es ist alles da. Es ist alles richtig. Kannst du das nicht einfach als Entlastung nehmen."`,
+  `Sie faltete den Zettel wieder zusammen, entlang der ursprünglichen Kanten. Steckte ihn zurück in das Innenfach, aus dem sie ihn geholt hatte. Legte die Socken zurück, die Pflaster, die Flasche, die Brotdose, den Anorak. In ihrer Reihenfolge. In seiner Reihenfolge. Sie konnte die beiden nicht mehr voneinander trennen.`,
+  `Sie zog die Kordeln fest und knotete die Schleife.`,
+  `„Ich nehm sie mit."`,
+  `„Warum."`,
+  `„Ich pack morgen früh neu."`,
+  `Er öffnete den Mund, schloss ihn wieder. „Okay."`,
+  `Sie hängte sich den Rucksack über eine Schulter. Mila schlief im Nebenzimmer, das Nachtlicht warf einen gelben Streifen auf den Flurboden. Eva ging an der Tür vorbei, ohne sie zu öffnen. An der Wohnungstür drehte sie sich nicht um. Simon sagte nichts, also sagte sie auch nichts.`,
+  `Im Treppenhaus roch es nach dem Putzmittel der Hausmeisterin. Der Bewegungsmelder sprang an, als sie auf den ersten Absatz trat. Oben stand Simon noch im Türrahmen, sie hörte es an der Art, wie seine Tür nicht zufiel. Sie ging weiter, Stufe für Stufe, den Rucksack vor dem Bauch, eine Hand am Geländer.`,
+  `Auf dem zweiten Absatz hörte sie seine Tür ins Schloss gehen. Leise. Höflich. Die Tür von jemandem, der zurück zu seinem Geschirrtuch ging, zum Wasserhahn, zu dem Abend, den er sich vorgestellt hatte, bevor sie geklingelt hatte. Die Tür von jemandem, der mit einer vernünftigen Frau geredet hatte und mit einer, die aus einem Wort auf einem Zettel einen Abend machte.`,
+  `Auf der letzten Stufe hielt sie kurz an. Der Rucksack war leicht. Sie hatte ihn unten schon wieder genauso gepackt wie Nora.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -743,7 +793,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 12 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 13 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -950,9 +1000,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 13</p>
+          <h2>Dienstagstasche</h2>
+          <p>
+            Eva prueft Milas gepackte Tasche und findet darin eine fast perfekte
+            Imitation ihrer eigenen Mutterroutine. Verraten wird sie nicht durch die
+            Dinge, sondern durch ein einziges Wort.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneThirteenParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s13-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 13</h3>
+          <h3>Szene 14</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
