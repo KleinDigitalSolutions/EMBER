@@ -1359,8 +1359,29 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 #### Kapitel 2 — „Das Bild"
 `Petra darf nicht kalt oder boese wirken. Der Horror entsteht dadurch, dass sie vernuenftig ist und das Material trotzdem gegen Eva arbeitet. Nicht auf Thriller-Hysterie spielen. Der soziale Beweis ist staerker als das Video selbst.`
 
+#### Kapitel 3 — „Bitte fahr nicht allein"
+`Nora darf hier noch nicht offen verdaechtig wirken. Simon und Nora sind zwei Formen von Hilfe: Simon verfahrensnah, Nora warm und zu schnell im Raum. Der eigentliche Stich ist, dass Nora bereits zu viel weiss. Ende auf kleinem Alltagsdetail, nicht auf grosser Beschuldigung.`
+
+#### Kapitel 4 — „Die Liste"
+`Kein Detektivfilm am Kuechentisch. Eva sucht einen Fehler und findet stattdessen ein Muster aus Restzugriff und ungefragter Hilfe. Nora muss plausibel fuersorglich bleiben, nicht offen unheimlich werden. Der Schock liegt in der Selbstverstaendlichkeit des Zutritts.`
+
 #### Kapitel 5 — „Schriftlich"
 `Die Szene soll nicht nach Institution gegen Mutter klingen. Zeige, wie formale Vorsicht eine ohnehin geschwaechte Position weiter ausduennt. Petra bleibt professionell, nicht feindselig.`
+
+#### Kapitel 6 — „Verlegt"
+`Die Szene lebt von mehreren kleinen realistischen Verschiebungen, die zusammen eine zweite Version von Evas Tag ergeben. Kein Einzelpunkt darf schon nach Masterplan klingen. Simon soll hier erstmals einen Fakt mitpruefen, aber noch nicht kippen. Der Horror ist kumulativ, nicht theatralisch.`
+
+#### Kapitel 7 — „Stabil"
+`Keine juristische Eskalationsszene daraus machen. Simon handelt aus Schutzlogik, nicht gegen Eva. Nora taucht sozial glaubwuerdig auf und Mila begruesst sie mit Wiederholungs-Selbstverstaendlichkeit, nicht mit Ersatzmutter-Pathos. Das Ende muss nach Stabilitaet aussehen und sich fuer Eva wie Entzug anfuehlen.`
+
+#### Kapitel 8 — „Die Akte ueber Nora"
+`Kein Enthuellungskapitel mit bequemer Akte. Eva bekommt nur Bruchstuecke, gerade genug, um Noras Gegenwartslogik zu schaerfen. Polizei und Bekannte liefern keine Plotabkuerzung, sondern nur Massstab fuer Beweisbarkeit. Die Brotdose am Ende ist staerker als jede Information davor.`
+
+#### Kapitel 9 — „Der Ersatzschluessel"
+`Die Szene ist kein Einbruchs-Thriller, sondern ein Nachweis frueherer legitimer Naehe. Eva soll aktiv handeln und den Zylinder wechseln, aber die Massnahme darf nicht wie Sieg wirken. Der eigentliche Schrecken ist, dass Zutritt nur der Anfang war und die kopierten Routinen bleiben. Nora am Ende freundlich, nicht triumphierend.`
+
+#### Kapitel 10 — „Elternabend"
+`Der Elternabend darf sozial kalt werden, aber nicht mobbig. Andere Eltern reagieren vorsichtig, nicht boshaft. Nora bleibt aus dem Raum heraus praesent und wirkt ueber praktische Entlastung maechtiger als ueber offenen Druck. Der Schlag ist Vorabwissen, nicht grosses Drama.`
 
 #### Kapitel 11 — „Die Stimme"
 `Das ist keine Technikszene, sondern eine Naehe-Szene. Nora hat keine Hightech-Maschinerie, sondern Evas Alltag gesammelt. Fokus auf Wiederholung, Stimme, Vertrauen und den Missbrauch frueherer Harmlosigkeit.`
@@ -1368,29 +1389,101 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 #### Kapitel 12 — „Ein guter Vorschlag"
 `Keine melodramatische Szene zwischen Eva und Simon. Der Schmerz liegt darin, dass der Vorschlag fuer einen Aussenstehenden wirklich gut klingt und dadurch Noras Rolle formalisiert.`
 
+#### Kapitel 13 — „Dienstagstasche"
+`Kein Fetischisieren der Dinge. Die Tasche soll zeigen, wie praezise Ersetzung ueber banale Fuersorge laeuft. Wichtig ist die fast perfekte Imitation mit einer kleinen sprachlichen Verrutschung, die nur Eva spuert. Der Schmerz liegt darin, dass selbst richtige Mutterhandlungen jetzt doppelt existieren.`
+
+#### Kapitel 14 — „Protokoll"
+`Keine stille Gruebel-Szene. Eva wird hier handlungsfaehig, indem sie ordnet. Das Protokoll muss Struktur sichtbar machen, nicht bloss Fleiss. Der Druckerfund am Ende soll klein und unanstaendig wirken, als waere selbst ihr Gegenschreiben schon in Noras Naehe.`
+
 #### Kapitel 15 — „Der falsche Nachmittag"
 `Das ist Kontrollverlust ohne Ausraster. Eva verliert nicht die Tochter, sondern den unmittelbaren Alltagszugriff. Die Szene muss kalt, konkret und sozial nachvollziehbar weh tun.`
+
+#### Kapitel 16 — „Die Woche bei Simon"
+`Die Szene lebt von Leere und Vermittlung. Eva verliert Mila nicht dramatisch, sondern wird aus dem direkten Informationskreislauf gedrueckt. Nora darf hier nicht aufdringlich agieren; ein hilfreiches Foto reicht. Der Schmerz ist gefilterte Naehe.`
+
+#### Kapitel 17 — „Hofblick"
+`Keine Beobachtungsparanoia. Eva sieht hier Nutzwert, nicht nur Atmosphaere. Jeder Blick auf Nora muss zeigen, wie fruehere Hilfe spaeteren Zugriff vorbereitet hat. Die Szene bleibt still, aber nicht vage.`
+
+#### Kapitel 18 — „Das Familienalbum"
+`Kein Hackerkino. Nora hat nichts spektakulaer gebrochen, sondern alte legale Freigaben zu lange behalten. Der Schock entsteht aus Nachlaessigkeit, nicht aus Tech-Genie. Zeige, wie private Reste zu Rohmaterial fuer Ersetzung werden.`
 
 #### Kapitel 19 — „Die alte Mutter"
 `Kein Exkurs und kein Sozialdrama-Ausflug. Nur so viel Vergangenheit wie noetig, um Noras Gegenwartslogik schaerfer zu machen. Die Wunde erklaert ihre Logik, nicht ihre Unschuld.`
 
+#### Kapitel 20 — „Zugang"
+`Die Szene soll Prozesse entzaubern, nicht dramatisieren. Petra merkt hier selbst, dass freundliche Elternkultur ein Einfallstor war. Kein Schuldzuweisungsduell zwischen Petra und Eva. Der geloeschte Scanlauf ist nur ein halbharter Marker, aber einer, der erstmals institutionell nach Metall klingt.`
+
+#### Kapitel 21 — „Der erste Fehler"
+`Nora darf hier nicht ploetzlich dumm werden. Der Fehler muss klein, menschlich und sofort ueberspielt sein. Entscheidend ist Simons kurzer Riss, nicht ein offenes Auffliegen. Spannung ueber Korrektur, nicht ueber Entlarvung.`
+
+#### Kapitel 22 — „Nicht jetzt"
+`Die Polizei bleibt glaubhaft und begrenzt, nicht laecherlich. Eva hat mehr Material als zuvor, aber noch nicht das richtige Format fuer Intervention. Der bittere Punkt ist, dass institutionelle Vorsicht wieder Nora hilft. Der Kinderaufkleber am Ende zieht die Szene aus dem Amtlichen zurueck in den Koerperraum.`
+
 #### Kapitel 23 — „Ersatzplan"
 `Die Szene soll entschlossen wirken, nicht clever-cool. Eva baut keinen Agentenplan, sondern eine plausible Selbstschutzstrategie aus Alltagsmitteln. Die Falschinformation muss simpel, glaubwuerdig und pruefbar bleiben.`
+
+#### Kapitel 24 — „Kinderarzt"
+`Auch das Gesundheitssetting bleibt alltaeglich, nicht sinister. Die ruhige Stimme und plausible Rolle sind hier gefaehrlicher als jedes Gesicht. Keine Medizinexposition; es geht um Vertrauen, nicht Fachlichkeit. Die Notiz am Ende macht den Zugriff formal greifbar.`
+
+#### Kapitel 25 — „Die zweite Jacke"
+`Keine grosse Enthuellung aus einem Kleidungsstueck machen. Der Horror liegt im plausiblen Duplikat. Mila greift nicht gegen Eva zur falschen Jacke, sondern folgt Gewohnheit. Der Zettel im Futter ist der stille Besitzmarker.`
+
+#### Kapitel 26 — „Die Nacht vor Freitag"
+`Kein Home-Invasion-Thriller. Die Nacht lebt von Schlafmangel, Vorbereitung und zu viel Synchronisation. Die Schlafhose ist intim genug; mehr braucht die Szene nicht. Eva soll nicht ausrasten, sondern wach bleiben.`
+
+#### Kapitel 27 — „Die Unterschrift"
+`Nicht als Forensikshow schreiben. Der Punkt ist nicht Expertenzauber, sondern dass Routine Spuren verraet. Eva erkennt hier, dass Nora mit archivierten Versionen von ihr arbeitet. Das macht die Ersetzung tiefer, nicht cooler.`
 
 #### Kapitel 28 — „Die Probe"
 `Keine Genugtuung spielen. Eva gewinnt hier noch nichts zurueck. Sie erzwingt nur, dass Simon die Logik endlich mitsehen muss. Spannung ueber Reaktion, nicht ueber Triumph.`
 
+#### Kapitel 29 — „Das Archiv der Hilfe"
+`Die Szene darf rueckwirkend ordnen, aber nicht moralisieren. Hilfe war damals real und sinnvoll; genau das macht sie jetzt so gefaehrlich. Kein Chat-Exkurs ohne Funktion. Die erste Nachricht mit "uebernehme ich kurz" ist der stille Nullpunkt des Romans.`
+
 #### Kapitel 30 — „Nicht unzuverlaessig, sondern ersetzt"
 `Die Szene darf nicht wie ein Fall-Review klingen. Das ist ein Beziehungsmoment unter Beweisdruck. Simon muss emotional spueren, was Eva meint, nicht nur logisch verstehen. Der Satz ueber das Herausschreiben aus dem Alltag ist der Kern.`
+
+#### Kapitel 31 — „Die Generalprobe"
+`Nicht wie ein missglueckter Entfuehrungsversuch schreiben. Nora probt Wiederholung, nicht Spektakel. Der Morgen muss weich unterlaufen werden, damit Eva wie die stoerende Variable wirkt. Mila bleibt Kind, keine Partei.`
+
+#### Kapitel 32 — „Das Wochenende danach"
+`Mila nicht als Beweismittel benutzen. Die Szene muss still zeigen, dass sich Sprachmuster und Beruhigungsrhythmen verschoben haben. Kein melodramatischer Loyalitaetskonflikt. Der Schmerz liegt in harmlosen Saetzen.`
+
+#### Kapitel 33 — „Abgemeldet"
+`Kein Tech-Thriller und kein Wunderhack. Ein plausibler Verwaltungsprozess reicht. Wichtig ist, dass Information, Organisation und Legitimation zugleich wegrutschen. Der Eingriff muss persoenlich wirken, nicht digital-abstrakt.`
+
+#### Kapitel 34 — „Petra"
+`Petra kippt hier nicht sentimental, sondern strukturell. Eva ueberzeugt sie mit Muster, nicht mit Lautstaerke. Die Szene soll professionell bleiben; gerade das macht die neue Allianz belastbar. Ohne frischen Vorfall darf Petra noch nicht alles loesen.`
 
 #### Kapitel 35 — „Das ruhige Gesicht"
 `Nora darf hier nicht boese schreiben. Ihre Ruhe ist ihre Waffe. Der Leser soll spueren, wie schwer es ist, eine so kontrollierte Person im offenen Raum plausibel zu beschuldigen.`
 
+#### Kapitel 36 — „Simon sieht es"
+`Kein grosser Versoehnungsmoment. Simon kippt ueber ein kleines Unmoeglichkeitsfenster, nicht ueber Pathos. Der Satz ueber das Wissen muss nuechtern sitzen. Entscheidend ist, dass er danach handelt.`
+
+#### Kapitel 37 — „Vor dem Ausflug"
+`Nicht wie Heist-Planung schreiben. Eva und Simon ordnen pruefbare Dinge fuer einen belastbaren Morgen. Die Spannung liegt in Disziplin und Zeitdruck, nicht in Cleverness. Der Blick auf Noras Kalender ist stiller Absichtsnachweis.`
+
 #### Kapitel 38 — „Noras Wohnung"
 `Schuetze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht daemonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, fuer sie verlaesslich zu sein." Die Szene darf diesen Gedanken nicht verwaessern. Kapitel 38 liefert Motiv und halbharten Fund, aber noch nicht den institutionellen Vollbeweis. Keine ueberfluessige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.`
 
+#### Kapitel 39 — „Keine Gestik"
+`Eva darf nach Kapitel 38 nicht zerfallen. Diese Szene ist Disziplin unter Schock. Sie sichert, ordnet, informiert und verweigert Nora das Bild der unkontrollierten Mutter. Die Staerke kommt aus Nuechternheit.`
+
+#### Kapitel 40 — „Die Vorabmail"
+`Der harte Beweis entsteht aus Kette, nicht aus Wunderfund. Druckjob, Entwurf, Raumzugang und Foto muessen zusammenklicken. Petra wird hier zur Verbuendeten, bleibt aber im Ton professionell. Kein Gestandnisersatz.`
+
 #### Kapitel 41 — „Rueckholung"
 `Nicht auf grosses Geschrei schreiben. Die Staerke der Szene liegt darin, dass derselbe oeffentliche Raum, der Eva vorher geschwaecht hat, jetzt Nora nicht mehr schuetzt. Mila muss nicht dramatisch Partei ergreifen.`
+
+#### Kapitel 42 — „Aussage"
+`Nach dem Zugriff braucht das Buch Schwere, keinen Epilogbetrieb. Keine Triumphszene. Aussagen und Protokolle sollen zeigen, wie oft Ruhe mit Glaubwuerdigkeit verwechselt wurde. Nora bleibt auch hier kontrolliert.`
+
+#### Kapitel 43 — „Der Hof"
+`Nicht zu schnell heilen. Der Hof ist derselbe Ort und gerade deshalb noch nicht unschuldig. Die Leerstelle von Nora muss sozial spuerbar sein. Der ungesendete Entwurf ist ein letzter Rest ihrer fremden Mutterstimme.`
+
+#### Kapitel 44 — „Keine Dopplung"
+`Das ist kein Aufraeum-Montagefinale, sondern Rueckgewinnung durch kleine Ordnungsakte. Jeder Gegenstand steht fuer reale Infiltration, nicht Symbolik allein. Eva darf ihre Blindheit sehen, aber nicht in Selbstanklage versinken. Das Bild mit der einen Jacke muss tragen.`
 
 #### Kapitel 45 — „Gelber Becher"
 `Das Schlusskapitel nicht uebererklaeren. Ruhe ist hier kein Leerlauf, sondern die verdiente Form des Endes. Der letzte Satz bleibt ein Bild und traegt allein, ohne ihn kommentierend zu deuten.`
