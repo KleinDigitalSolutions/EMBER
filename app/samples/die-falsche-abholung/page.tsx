@@ -556,6 +556,51 @@ const sceneNineParagraphs = [
   `Auf dem Küchentisch lagen die alten Schlüssel. Daneben das Säckchen mit dem Knoten, den sie neu gemacht hatte, nach rechts.`
 ];
 
+const sceneTenParagraphs = [
+  `Der Raum roch nach dem Apfelsaft, den die Kinder tagsüber getrunken hatten, und nach dem Bodenreiniger, der danach gekommen war. Eva zog sich einen der Erwachsenenstühle heran, die in einem unregelmäßigen Kreis um den Teppich standen, und setzte sich so, dass sie weder allein noch mittendrin saß. Frau Kehler, einen Platz weiter, rückte ihre Tasche auf den Schoß und lächelte kurz, ohne die Schultern zu drehen. Der Stuhl zwischen ihnen blieb leer. Niemand kommentierte es.`,
+  `„Schön, dass alle da sind", sagte Petra und klatschte einmal in die Hände, wie sie es auch bei den Kindern tat. „Wir machen es kurz heute, versprochen."`,
+  `Eva legte das Handy mit dem Display nach unten auf ihren Oberschenkel. Sie nickte, als Petra die Schließtage im Dezember ansprach, nickte bei der Bitte um neue Hausschuhe in Größe 29 bis 32, nickte bei der Frage nach einem Vertreter für den Sommerfestausschuss. Zwei Väter lachten über einen Witz, den sie nicht mitbekommen hatte. Frau Kehler schrieb etwas in ein kleines Heft. Der Stift kratzte leise.`,
+  `Eine Mutter gegenüber, die Eva nur vom Sehen kannte, suchte ihren Blick und ließ ihn wieder los, bevor er richtig angekommen war.`,
+  `„Und dann", sagte Petra und tippte mit dem Filzstift an die Tafel hinter sich, „haben wir in vierzehn Tagen unseren ersten richtigen Waldtag für die Vorschulgruppe. Das ist neu in dem Format. Wir gehen früh los, wir bleiben bis zum späten Mittag draußen. Bitte denken Sie an feste Schuhe und vor allem an eine regenfeste Hose. Gummistiefel sind gut, reichen aber nicht, wenn es wirklich durchnässt."`,
+  `Auf Evas Oberschenkel vibrierte das Handy.`,
+  `Sie ließ es liegen. Petra erklärte den Sammelort, die Uhrzeit, die Telefonkette für den Fall eines Sturms. Ein Vater fragte nach dem Rucksackgewicht. Eine Mutter wollte wissen, ob Lunchpakete gestellt würden. Petra antwortete ruhig, methodisch, punktweise. Hinter ihr stand in blauer Kreide **Waldtag** an der Tafel, und darunter, frisch geschrieben, *regenfest!* mit Ausrufezeichen.`,
+  `Eva drehte das Handy um.`,
+  `*Hey, ich hab dir zufällig schon eine regenfeste Hose für Mila mitgebracht. Größe stimmt, hab ich letzte Woche anprobiert. Liegt bereit, wenn du sie brauchst. N.*`,
+  `Der Zeitstempel stand bei 19:42.`,
+  `Eva las die Nachricht zweimal. Beim zweiten Mal hatte Petra hinten den Satz neu begonnen. Beim dritten Mal zitterte die Hand nicht mehr, mit der sie das Handy hielt.`,
+  `„Frau Berger?" Petra sah zu ihr herüber, freundlich, als hätte sie gerade eine Frage gestellt. „Bekommen wir Sie für den Sammelpunkt um acht?"`,
+  `„Ja", sagte Eva. „Ja, acht geht."`,
+  `Ihre Stimme klang normal. Das half nicht.`,
+  `Sie schrieb nichts zurück. Sie schaltete den Bildschirm aus und sah zu Petra, die jetzt über das Schuhregal im Flur sprach, das umgebaut werden sollte, damit die Vorschulkinder ihre Sachen selbst erreichten. Eva hörte die Worte. Sie hörte nicht zu.`,
+  `Vierzehn Tage. Petra hatte gerade gesagt, der Waldtag sei in vierzehn Tagen. Die Nachricht war eine Minute später gekommen. Letzte Woche, stand darin. Letzte Woche hatte Nora eine regenfeste Hose in Milas Größe anprobiert, für einen Tag, von dem die Eltern heute zum ersten Mal hörten.`,
+  `Neben ihr raschelte Frau Kehler mit ihrem Mantel, legte ihn sich über die Knie, strich ihn glatt. Eva sah den Stoff und den Faltenwurf und versuchte, den Blick dort zu halten.`,
+  `„Fragen?" sagte Petra. „Sonst lassen wir Sie gehen."`,
+  `Ein paar höfliche Fragen noch, Stühle schoben, Taschen raschelten. Eva stand auf, strich ihren Mantel glatt, der noch über der Lehne hing, und ging zu Frau Kehler, weil sie irgendwohin gehen musste, um nicht als Erste nach draußen zu treten.`,
+  `„Schön, dass Sie da waren", sagte Frau Kehler.`,
+  `„Mila freut sich auf den Waldtag", sagte Eva, obwohl Mila noch nichts davon wusste.`,
+  `„Ja." Frau Kehler lächelte. „Und? Übernimmt Nora morgen wieder die Abholung, oder kommen Sie selbst?"`,
+  `Eva brauchte einen Moment.`,
+  `„Ich komme selbst."`,
+  `„Ach so." Frau Kehler nickte zu schnell. „Dann habe ich das missverstanden. Sie macht das ja oft so schön."`,
+  `„Ja", sagte Eva, „das tut sie."`,
+  `Sie ging, bevor Frau Kehler noch etwas sagen konnte. Im Flur hingen die Jacken an den kleinen Haken, und an Milas Haken hing eine dünne Strickjacke, hellgrau, mit Holzknöpfen, die Eva nicht gekauft hatte. Sie blieb kurz davor stehen, ließ die Jacke hängen, ging weiter.`,
+  `Draußen war die Luft kühler, als Eva erwartet hatte. Zwei Mütter unterhielten sich neben dem Tor, sie verstummten, als Eva vorbeikam, und nahmen das Gespräch einen Satz zu spät wieder auf. Eva ging zu Fuß, obwohl sie mit dem Fahrrad gekommen war. Das Rad konnte sie morgen holen. Sie brauchte den Weg.`,
+  `In der Jackentasche lag das Handy schwer. Zweimal hob sie die Hand, zweimal ließ sie sie wieder sinken. Sie wusste nicht, was sie Nora schreiben sollte, ohne ihr den Waldtag zu bestätigen. Sie wusste auch nicht, was sie schreiben sollte, ohne ihn zu bestätigen.`,
+  `An der Haustür suchte sie den Schlüssel. Der neue Zylinder saß noch stramm, sie musste zweimal ansetzen. Im Treppenhaus roch es nach dem Essen, das die Nachbarn von oben gekocht hatten, etwas mit Zwiebeln, etwas Warmes. Ihre Wohnungstür lag im Halbdunkel des Zwischengeschosses, weil der Bewegungsmelder sich immer erst zündete, wenn man schon fast davor stand.`,
+  `Das Licht ging an.`,
+  `Vor der Tür, auf der Fußmatte, genau in der Mitte, lag ein gefaltetes Bündel. Dunkelgrün, mit hellen Nähten. Eine Kinderregenhose in Milas Größe, einmal längs, einmal quer gelegt, die Träger ordentlich darübergeschlagen. Kein Zettel. Keine Tüte. Nichts, was sich im Treppenhaus verhakt hatte.`,
+  `Eva blieb stehen, die Schlüssel in der Hand.`,
+  `Im Hof unten fiel eine Tür ins Schloss. Irgendwo klapperte jemand mit einem Mülldeckel. Eva bückte sich nicht sofort. Sie sah auf die Hose, auf die saubere, symmetrische Faltung, auf den schmalen Schmutzstreifen, den der Stoff an der rechten Kante abbekommen hatte, weil er mit der Kante die Matte berührte.`,
+  `Sie zog das Handy aus der Manteltasche. Die Nachricht von Nora stand noch offen. 19:42.`,
+  `Eva machte ein Foto von der Hose, wie sie lag. Eins von oben, eins schräg. Sie fotografierte die Matte, den Türrahmen, den leeren Briefkastenschlitz, die Treppenstufen nach oben und nach unten. Dann erst hob sie die Hose auf, trug sie mit den Fingerspitzen in die Wohnung, legte sie auf den Küchentisch, ohne sie auseinanderzufalten.`,
+  `Auf dem Etikett innen stand in Filzstift, in einer ruhigen, leicht nach links geneigten Schrift: **Mila B.**`,
+  `Eva setzte sich nicht. Sie stand am Tisch, die Hände flach auf der Arbeitsplatte daneben, und sah die Hose an, bis das Licht im Treppenhaus draußen wieder ausging.`,
+  `Dann nahm sie das Handy, öffnete den Chat, schrieb *Danke* und löschte es wieder. Sie schrieb *Woher wusstest du das mit dem Wald* und löschte es auch. Am Ende legte sie das Telefon mit dem Display nach unten neben die Hose, holte sich ein Glas Wasser, trank es nicht aus und stellte es neben die Spüle.`,
+  `Im Kalender an der Kühlschranktür war der morgige Tag leer. Sie nahm den Stift, der am Magneten hing, und schrieb in das Feld von morgen, in Großbuchstaben, *ICH HOLE MILA*, und setzte einen Punkt darunter, der zu fest geriet und einen kleinen Krater in das Papier drückte.`,
+  `Dann erst faltete sie die Hose auseinander.`,
+  `Sie war trocken, gebügelt, das Etikett innen glatt. An der linken Kniekehle, in einer Naht, steckte ein einzelnes helles Haar. Nicht Noras Farbe. Mila.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -563,7 +608,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 9 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 10 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -722,9 +767,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 10</p>
+          <h2>Waldtag</h2>
+          <p>
+            Beim Elternabend erfährt Eva, dass Nora Informationen über Mila besitzt,
+            bevor die Eltern sie offiziell bekommen. Vor der Wohnungstür liegt kurz
+            darauf bereits der nächste Beweis.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneTenParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s10-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 10</h3>
+          <h3>Szene 11</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
