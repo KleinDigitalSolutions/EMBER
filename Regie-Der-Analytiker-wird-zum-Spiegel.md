@@ -255,6 +255,49 @@
 
 ---
 
+## CONTINUITY GUARDRAILS (Arbeitsstand Entwurf)
+
+Diese Sektion ist nicht fuer Dramaturgie da, sondern gegen Drift in der Produktion. Solange keine globale Umbenennung beschlossen wird, gelten die folgenden Angaben als gesperrter Arbeitsstand.
+
+### Freeze-Regeln
+- Ein einmal in geschriebenen Szenen verwendeter Name wird nicht stillschweigend variiert.
+- Umbenennungen passieren nur global und bewusst, nie szenenweise.
+- Nebenfiguren mit Sprechrolle oder Funktionsgewicht werden nach Erstnennung hier eingetragen.
+- Wenn eine Szene auf einen frueheren Fall verweist, muessen Name, Funktion und Relevanz vor dem Schreiben hier fixiert sein.
+- Regie, Buchprobe und spaetere Scene Cards muessen bei Namen, Orten, Uhrzeiten und fachlichen Begriffen denselben Arbeitsstand verwenden.
+
+### Aktuell gesperrte Namen und Rollen
+| ID | Name | Funktion | Status |
+|---|---|---|---|
+| CL001 | Dr. Hannes Fehr | externer forensischer Gutachter | gesperrt |
+| CL002 | Elias Cord | Untergebrachter / Proband | gesperrt |
+| CL003 | Dr. Ina Rausch | Aerztliche Direktorin Hohenhort | gesperrt |
+| CL004 | Lea Fehr | Tochter | gesperrt |
+| CL005 | Frau Ulrich | Kanzlei / Vorzimmer / Organisation | gesperrt |
+| CL006 | Weidmann | Name aus altem Fehlfall; Trigger in Sitzung 2 | gesperrt |
+| CL007 | Judith Winter | Schwester des spaeteren Opfers aus dem Fehlfall | gesperrt |
+
+### Aktuell gesperrte Orte und Referenzen
+| ID | Element | Bedeutung | Status |
+|---|---|---|---|
+| CR001 | Hohenhort | forensische Klinik | gesperrt |
+| CR002 | Rheinstadt | fiktive Grossstadt | gesperrt |
+| CR003 | Lockerung / unbegleitete Lockerung | konkrete Verfahrensfrage | gesperrt |
+| CR004 | Fehlfall / alte Fehlprognose | biografische Wunde Fehrs | gesperrt |
+
+### Szenische Kontinuitaetsanker fuer Kapitel 1 bis 4
+- Kapitel 1: Rausch setzt Frist und Druck; Fehr nimmt den Auftrag an, bevor er die Akte ganz gelesen hat.
+- Kapitel 2: Cord liest nicht Gedanken, sondern Fragestrukturen, Pausen und professionelle Routinen.
+- Kapitel 3: Ausloeser fuer Sitzung 2 ist das Anwaltsdossier; Lea greift Fehrs Begriffe an, nicht nur seinen Ton.
+- Kapitel 4: Der eingefuehrte Trigger-Name aus dem Fehlfall ist im aktuellen Entwurf `Weidmann`.
+
+### Produktionsregel fuer Codex / Writers
+- Vor jeder neuen Szene zuerst diese Sektionen lesen: `CANON FACTS`, `CHARACTER STATE LEDGER`, `CONTINUITY GUARDRAILS`, passende `SCENE CARD`.
+- Nach jeder neuen benannten Figur oder jedem neuen Schluesseldetail diese Sektion sofort erweitern.
+- Wenn ein Name absichtlich ersetzt werden soll, zuerst hier aendern, dann alle Szenen konsistent nachziehen.
+
+---
+
 ## OPEN THREADS (Initial)
 
 ```json
