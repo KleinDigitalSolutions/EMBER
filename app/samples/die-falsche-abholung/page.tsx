@@ -823,6 +823,75 @@ const sceneFourteenParagraphs = [
   `Eva hielt das Blatt am Rand, damit sie es nicht zerknüllte. Hinter ihr fiel die letzte Seite ihrer Chronologie ins Fach, genau auf Noras Liste.`
 ];
 
+const sceneFifteenParagraphs = [
+  `Petra las die Chronologie zweimal. Eva sah es an der Art, wie ihr Finger an den Zeitangaben hängen blieb, bei vierzehn Uhr sieben, bei vierzehn Uhr zweiundzwanzig, bei der Zeile, in der Eva notiert hatte, dass sie an der Ampel in der Rheinuferstraße gestanden hatte, als die App den Abholeintrag gesetzt haben soll.`,
+  `„Das ist sauber aufgeschrieben", sagte Petra. Ihre Stimme war leiser als sonst. Sie legte die beiden Blätter nebeneinander auf den Schreibtisch, das Original und Evas Kopie. „Ich sehe die Differenz."`,
+  `„Dann ändern Sie etwas."`,
+  `„Ich kann nichts ändern, Frau Berger. Nicht heute. Nicht ohne den Träger." Petra zog die Schultern hoch, nicht abwehrend, eher wie jemand, der ein Paket trägt, das zu schwer ist. „Ich kann die Liste weitergeben. Ich kann schreiben, dass wir den Eintrag prüfen. Mehr nicht. Heute nicht mehr."`,
+  `„Heute ist Freitag."`,
+  `„Ich weiß."`,
+  `„Das heißt, bis Montag steht der Eintrag so im System, wie er steht."`,
+  `„Ja."`,
+  `„Und wer darf Mila am Montag abholen?"`,
+  `Petra sah auf die Liste. Sie antwortete nicht gleich. „Das ist der Punkt, an dem ich den Träger brauche."`,
+  `Eva hörte den Schritt im Flur, bevor sie ihn einordnete. Simon trug seine dunkle Jacke, die Schlüssel noch in der Hand, und blieb in der offenen Tür stehen, als hätte er geklopft, obwohl er nicht geklopft hatte.`,
+  `„Petra", sagte er. „Danke für den Anruf."`,
+  `Eva drehte sich halb auf dem Stuhl. „Du hast sie angerufen."`,
+  `„Sie hat mich angerufen." Simon sah nicht sie an, sondern die Blätter auf dem Tisch. „Können wir draußen reden."`,
+  `„Ich rede hier."`,
+  `„Eva. Draußen."`,
+  `Petra sammelte die Chronologie ein, faltete sie an der Mittellinie und hielt sie einen Moment fest, bevor sie sie Eva zurückreichte. Ihre Hand zitterte nicht, aber sie ließ das Blatt zu früh los.`,
+  `Auf dem Parkplatz stand Simons Wagen quer, als wäre er in Eile eingeparkt. Mila saß schon auf der Rückbank. Eva sah den Schopf über der Kopfstütze, den Ärmel, der gegen das Fenster gedrückt war.`,
+  `„Wann hast du sie geholt."`,
+  `„Vor zehn Minuten. Bevor ich mit dir geredet habe." Simon stützte sich mit der Hand auf das Dach. „Sie bleibt das Wochenende bei mir."`,
+  `„Nein."`,
+  `„Und die Woche."`,
+  `„Simon."`,
+  `„Hör mir zu." Er sprach nicht lauter. „Du schläfst schlecht. Du läufst mit Listen durch die Kita. Petra ruft mich an, weil sie nicht weiß, wie sie mit dir umgehen soll. Ich sage nicht, dass du lügst. Ich sage, dass du gerade nicht in einem Zustand bist, in dem Mila ihren Alltag bei dir hat."`,
+  `„Es geht nicht um meinen Zustand. Es geht um Nora."`,
+  `„Das ist genau, was ich meine."`,
+  `Sie sah ihn an. Er hatte nicht den Blick, den sie erwartet hatte. Kein Triumph. Nur diese ruhige Art, mit der er früher Verträge gelesen hatte, bevor er etwas unterzeichnete.`,
+  `„Ich unterschreibe nichts."`,
+  `„Du musst nichts unterschreiben. Ich nehme sie einfach mit. Am Montag bringe ich sie in die Kita, am Dienstag auch, den Rest besprechen wir." Er öffnete die Fahrertür, ließ sie offen, ging einen halben Schritt zurück. „Wir fahren gleich bei dir vorbei. Sie braucht Sachen."`,
+  `„Du kannst sie nicht einfach –"`,
+  `„Eva." Er senkte die Stimme noch eine Stufe. „Ich will kein Verfahren. Du willst auch keins. Dann machen wir das jetzt so."`,
+  `Mila winkte, als Eva sich zum Fenster beugte. „Papa sagt, wir machen Pfannkuchen."`,
+  `„Schön", sagte Eva.`,
+  `„Mit Apfel?"`,
+  `„Mit Apfel."`,
+  `Sie fuhren hintereinander her, Simon voraus, Eva in ihrem eigenen Wagen, und auf den fünf Minuten zwischen Kita und Wohnung hörte sie, wie sie selbst das Lenkrad zu fest hielt. Sie zwang die Finger, nacheinander loszulassen, und hielt es wieder zu fest.`,
+  `In der Einfahrt blieb Simon unten am Auto stehen. Er ging nicht mit hinein. Das war vielleicht das Einzige, was er ihr an diesem Nachmittag ließ, dieser halbe Raum oben, in den er ihr nicht folgte.`,
+  `Mila lief vor ihr die Treppe hoch. In der Wohnung stellte sie sich in die Küchentür und sah zu, wie Eva den kleinen Koffer aus dem Schrank zog, den sie seit der Trennung bereithielt, für die Wochenenden, die geplant waren.`,
+  `„Die Schlafhose mit den Sternen", sagte Eva.`,
+  `„Hab ich schon zwei."`,
+  `„Dann die mit den Sternen und eine andere."`,
+  `Sie packte, was ihr einfiel. Zwei Pullover. Die Zahnbürste im Plastiketui. Das Buch mit dem Fuchs. Unterwäsche für fünf Tage. Sie zählte beim zweiten Paar Socken und hörte, dass sie zählte, und hörte wieder auf.`,
+  `„Nimm den Becher mit", sagte sie.`,
+  `„Den gelben?"`,
+  `„Ja."`,
+  `Mila stellte sich auf die Zehenspitzen und holte den gelben Plastikbecher aus dem unteren Fach. Sie hielt ihn mit beiden Händen, wie sie ihn immer hielt, am Henkel und am Boden. Die abgebrochene Ecke am Rand zeigte nach innen.`,
+  `In der Garderobe hing die Ersatzjacke, die Nora vorgestern hergebracht hatte. Eva nahm sie vom Haken, legte sie auf den Koffer, hob sie wieder ab, legte sie zurück auf den Haken.`,
+  `„Die nicht?", fragte Mila.`,
+  `„Die nicht."`,
+  `Sie schloss den Koffer. Er war nicht voll. Er war weniger voll, als er für eine Woche hätte sein müssen. Sie öffnete ihn noch einmal, legte die dicken Strümpfe oben drauf, schloss ihn wieder.`,
+  `Unten kurbelte Simon das Fenster auf der Beifahrerseite herunter, als sie herunterkamen. „Alles?"`,
+  `„Alles."`,
+  `Er nahm ihr den Koffer ab, ohne ihn anzuheben, wie man jemandem ein Glas aus der Hand nimmt. Er stellte ihn in den Kofferraum, ordnete ihn neben einer Einkaufstasche, die schon dort lag, und schloss die Klappe.`,
+  `Dann schnallte er Mila an. Er tat es schnell und geübt, mit der linken Hand am Gurt, der rechten am Schloss, und Eva sah, dass er das in den letzten Monaten oft getan hatte, öfter, als sie gedacht hatte.`,
+  `„Ich rufe dich morgen an", sagte er.`,
+  `„Simon."`,
+  `„Morgen."`,
+  `Er schloss die Tür. Der Motor sprang an.`,
+  `Mila drehte sich auf der Rückbank um. Sie hob den gelben Becher ans Seitenfenster, presste den Boden gegen die Scheibe, und Eva sah für einen Moment die ausgefranste Unterseite, die kleine abgebrochene Ecke am Rand, die sie seit einem halben Jahr kannte.`,
+  `Der Wagen rollte aus der Einfahrt. An der Hofausfahrt blinkte er kurz nach links, dann bog er ab.`,
+  `Eva blieb auf dem Pflaster stehen. Der Wind schlug gegen ihren Ärmel, bevor sie ihn bemerkte.`,
+  `Auf der anderen Hofseite, zwischen Mülltonnen und Fahrradständer, stand Nora. Sie hatte eine Papiertüte vom Bäcker in der Hand, oben zweimal umgeschlagen. Sie blickte nicht zu Eva. Sie blickte dem Auto hinterher, bis es um die Ecke gebogen war, und erst dann wandte sie den Kopf, langsam, als wäre sie gerade erst aus dem Seiteneingang getreten.`,
+  `„Oh", sagte Nora. „Ist Mila bei Simon?"`,
+  `Eva antwortete nicht.`,
+  `Nora hob die Tüte, als wollte sie etwas zeigen, Brötchen, Hefeteilchen, irgendetwas Warmes. „Ich hab zu viel geholt. Ich dachte, vielleicht magst du –"`,
+  `Eva ging an ihr vorbei ins Haus. Im Flur hing nur noch die Ersatzjacke am Haken, leicht, leer, in der richtigen Größe.`
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -830,7 +899,7 @@ export default function DieFalscheAbholungSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 14 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Szenen 1 bis 15 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -1069,9 +1138,25 @@ export default function DieFalscheAbholungSamplePage() {
           })}
         </section>
 
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 15</p>
+          <h2>Der falsche Nachmittag</h2>
+          <p>
+            Eva bringt Petra ihre Chronologie und hofft auf eine klare Linie. Statt einer
+            Entscheidung bekommt Simon den Alltag an sich gezogen, und genau darin liegt
+            der eigentliche Verlust.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFifteenParagraphs.map(function (paragraph, index) {
+            return <p key={`dfa-s15-p-${index}`}>{paragraph}</p>;
+          })}
+        </section>
+
         <section className="sample-reader__divider">
           <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 15</h3>
+          <h3>Szene 16</h3>
           <p>
             Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
             Verlauf der Geschichte entwickeln.
