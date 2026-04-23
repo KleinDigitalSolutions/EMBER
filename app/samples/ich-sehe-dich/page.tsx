@@ -151,7 +151,7 @@ const sceneFourParagraphs = [
   "Er ließ den Mantel los und nahm die Papiertüte, zu breit für seine Hände. Die Henkel der Stofftaschen schnitten in ihre Handflächen. Milch, zwei Flaschen Wasser, Kartoffeln, der Käse. Der linke Henkel rutschte. Sie zog die Schulter hoch, um ihn zu halten.",
   "\"Laura, warte mal.\"",
   "Sabine kam die drei Stufen herunter, eine Strickjacke über den Schultern, in Hausschuhen. Hinter ihr, einen halben Schritt versetzt, ein Mann in einem dunklen Pullover, die Hände in den Jackentaschen.",
-  "\"Du bist ja losgestürmt, als würde es brennen\", sagte Sabine. \"Das ist Cem. Der ist übers Wochenende hier. Ich hab dir doch von ihm erzählt, aus meinem Kurs damals.\"",
+  "\"Du bist ja losgestürmt, als würde es brennen\", sagte Sabine. \"Das ist Cem. Der ist übers Wochenende hier. Ich hab dir doch von ihm erzählt, wir haben uns über eine App kennengelernt.\"",
   "\"Hi\", sagte Cem.",
   "\"Hallo.\" Laura nickte, beide Hände voll, und hoffte, dass das als Gruß reichte.",
   "Henri zog an ihrem Mantel. \"Guck mal, das Blatt, da sind so Streifen drin.\"",
