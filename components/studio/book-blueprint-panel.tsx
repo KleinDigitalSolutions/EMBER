@@ -39,6 +39,8 @@ import {
   type StoryDocument
 } from "@/lib/story-schema";
 
+const STUDIO_DISPLAY_TIME_ZONE = "Europe/Berlin";
+
 export function BookBlueprintPanel({
   story,
   selectedSceneId,
@@ -1997,7 +1999,8 @@ function formatTimestamp(value: string | null) {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    timeZone: STUDIO_DISPLAY_TIME_ZONE
   }).format(new Date(value));
 }
 

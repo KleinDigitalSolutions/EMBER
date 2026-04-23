@@ -62,6 +62,7 @@ type StoryUpdateGuardMode = "none" | "book";
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
 const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "patch", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
+const STUDIO_DISPLAY_TIME_ZONE = "Europe/Berlin";
 
 export function StudioWorkspace({
   story,
@@ -2480,7 +2481,8 @@ function formatSaveState(lastSavedAt: string | null, saveState: SaveState, saveE
 
   const formatter = new Intl.DateTimeFormat("de-DE", {
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    timeZone: STUDIO_DISPLAY_TIME_ZONE
   });
 
   return `Gespeichert ${formatter.format(new Date(lastSavedAt))}`;
@@ -2525,7 +2527,8 @@ function formatLibraryTimestamp(value: string) {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    timeZone: STUDIO_DISPLAY_TIME_ZONE
   }).format(timestamp);
 }
 
