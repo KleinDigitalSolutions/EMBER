@@ -677,6 +677,10 @@ function parseRegie(
   const targetLengthWords = parseTargetWordCount(masterBriefRows["Ziel-Wortanzahl"]) || defaultBook.targetLengthWords
   const premise = getFirstTableValue(masterBriefRows, ["Prämisse", "Praemisse"])
   const thematicCore = getFirstTableValue(masterBriefRows, ["Thematischer Kern"])
+  const storyArchitecture = parseStoryArchitecture(
+    worldBibleSection,
+    defaultBook.masterBrief.storyArchitecture
+  )
 
   return {
     title,
@@ -688,7 +692,8 @@ function parseRegie(
       premise,
       readerPromise: masterBriefRows["Reader Promise"] || "",
       endingPromise: masterBriefRows["Ending Promise"] || "",
-      thematicCore
+      thematicCore,
+      storyArchitecture
     },
     marketBrief: {
       ...defaultBook.marketBrief,
@@ -1228,6 +1233,132 @@ function getOptionalTopLevelSection(markdown: string, heading: string) {
       : markdown.slice(afterHeadingIndex, nextHeadingIndex)
 
   return rawSection.trim()
+}
+
+function getOptionalSubsection(section: string, headings: string[]) {
+  for (const heading of headings) {
+    const marker = `### ${heading}`
+    const startIndex = section.indexOf(marker)
+
+    if (startIndex === -1) {
+      continue
+    }
+
+    const afterHeadingIndex = startIndex + marker.length
+    const nextHeadingIndex = section.indexOf("\n### ", afterHeadingIndex)
+    const rawSection =
+      nextHeadingIndex === -1
+        ? section.slice(afterHeadingIndex)
+        : section.slice(afterHeadingIndex, nextHeadingIndex)
+
+    return rawSection.trim()
+  }
+
+  return ""
+}
+
+function parseStoryArchitecture(
+  worldBibleSection: string,
+  fallback: readonly string[]
+) {
+  const subsection = getOptionalSubsection(worldBibleSection, [
+    "Jahreszeiten-Mechanik",
+    "Jahreszeiten-Struktur",
+    "Story Architecture",
+    "Struktur"
+  ])
+
+  if (!subsection) {
+    return fallback.slice()
+  }
+
+  const bulletArchitecture = parseBulletLines(subsection)
+
+  if (bulletArchitecture.length) {
+    return bulletArchitecture
+  }
+
+  const tableArchitecture = parseStoryArchitectureTable(subsection)
+
+  if (tableArchitecture.length) {
+    return tableArchitecture
+  }
+
+  return fallback.slice()
+}
+
+function parseStoryArchitectureTable(section: string) {
+  const tableLines = section
+    .split(/\r?\n/)
+    .map(function (line) {
+      return line.trim()
+    })
+    .filter(function (line) {
+      return line.startsWith("|")
+    })
+
+  if (tableLines.length < 3) {
+    return []
+  }
+
+  const rows = tableLines
+    .filter(function (line) {
+      return !/^\|[\s\-:|]+\|?$/.test(line)
+    })
+    .map(parseMarkdownRowCells)
+    .filter(function (cells) {
+      return cells.length >= 2
+    })
+
+  if (rows.length < 2) {
+    return []
+  }
+
+  const header = rows[0].map(normalizeText)
+  const body = rows.slice(1)
+  const phaseIndex = header.findIndex(function (cell) {
+    return cell.includes("jahreszeit") || cell.includes("phase") || cell.includes("akt")
+  })
+  const chapterIndex = header.findIndex(function (cell) {
+    return cell.includes("kapitel")
+  })
+  const arcIndex = header.findIndex(function (cell) {
+    return (
+      cell.includes("bogen") ||
+      cell.includes("funktion") ||
+      cell.includes("ziel") ||
+      cell.includes("emotion")
+    )
+  })
+
+  return body
+    .map(function (cells) {
+      if (phaseIndex === -1 || !cells[phaseIndex]) {
+        return cells.join(" - ")
+      }
+
+      const parts = [cells[phaseIndex]]
+
+      if (chapterIndex !== -1 && cells[chapterIndex]) {
+        parts.push(`Kapitel ${cells[chapterIndex]}`)
+      }
+
+      if (arcIndex !== -1 && cells[arcIndex]) {
+        parts.push(cells[arcIndex])
+      }
+
+      return parts.join(" - ")
+    })
+    .filter(Boolean)
+}
+
+function parseMarkdownRowCells(line: string) {
+  return line
+    .split("|")
+    .map(function (cell) {
+      return cell.trim()
+    })
+    .filter(Boolean)
 }
 
 function parseJsonBlock<T>(section: string): T {

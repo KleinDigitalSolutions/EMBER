@@ -100,6 +100,9 @@
 - Tobias spricht in tastenden Versuchen von Verantwortung. Er klingt oft wie jemand, der schon weiss, dass er wieder zu spaet ist.
 - Sabine spricht liebevoll, aber nicht allwissend. Ihre guten Saetze duerfen ein bisschen zu direkt sein.
 - Dialog muss in diesem Buch Naehe, Ausweichen, Ueberforderung oder Entlastung verschieben. Kein neutraler Smalltalk ohne Funktion.
+- Henri-Regel: `Guck mal`. Henri unterbricht Situationen immer wieder mit `Guck mal`, zeigt, was er baut, malt, findet oder macht. Nicht aus Stolz, sondern aus Bindungsbeduerfnis. Er braucht bestaetigt, dass er gesehen wird. Ueber den Tag verteilt wird das fuer Laura zur still erschoepfenden Last. Opus schreibt dieses Verhalten nie als nervig oder niedlich, sondern als das, was es ist: ein Kind, das fragt, ob es noch existiert.
+- Henri-Regel: Wenn Henri-Momente Ekel und Liebe gleichzeitig ausloesen, weicht der Text nicht aus. Genau dort lebt die Wahrheit dieses Buches.
+- Liebesentzug durch Erschoepfung — Regel: Mindestens drei Szenen im Buch zeigen Laura in einem Zustand, in dem die Liebe zu Henri nicht fuehlbar ist — nicht weg, aber eingefroren. Diese Szenen werden nie kommentiert oder entschuldigt. Kein erklaerender Satz danach. Der Leser haelt das aus. Laura muss es auch.
 
 ---
 
@@ -125,6 +128,7 @@
 - Arbeit ist nicht Flucht, sondern Pflicht plus Selbstwert.
 - Geld ist kein permanenter Krisenplot, aber oft ein enger Rahmen.
 - Jeder Ausfall von Tobias erzeugt nicht nur Schmerz, sondern Mehrorganisation.
+- Zu diesem Alltag gehoert auch eine von Laura auf Ibiza gerettete Katze, die in der kleinen Wohnung einen weiteren Pflegepunkt bildet und fuer Henri zeitweise zum Eifersuchtsobjekt wird.
 
 ### Henris Regulationslogik
 - Henri braucht Vorhersehbarkeit, Naehe und Wiederholung.
@@ -219,6 +223,31 @@
       "id": "CF011",
       "fact": "Lauras Eltern Ingrid und Werner Schroeder leben in Hannover, lieben ihre Tochter und ihren Enkel aufrichtig, koennen ihre Naehe aber meist nur ueber Anrufe, Ratschlaege und kleine Hilfen auf Distanz ausdruecken.",
       "status": "aktiv — verdeckter Emotionsanker"
+    },
+    {
+      "id": "CF012",
+      "fact": "Laura kauft sich seit ueber einem Jahr keine neuen Klamotten, ihre Alltagsshirts haben Loecher unter den Armen, Tobias hat monatelang keinen Unterhalt gezahlt, und Henri zeigt dissoziativen Rueckzug durch hyperaktive Selbststimulation: Er beschaeftigt sich pausenlos, um der Realitaet zu entfliehen. Die groesste Einsamkeit im Buch bleibt, dass Laura alles gibt und Henri trotzdem oft irgendwie woanders ist.",
+      "status": "Kern-Anker"
+    },
+    {
+      "id": "CF013",
+      "fact": "Henris haeufiges `Guck mal` ist kein Trotz, sondern Bindungsregulierung. Laura darf die Erschoepfung darueber fuehlen, ohne dass der Roman sie dafuer zur schlechten Mutter macht.",
+      "status": "Kern-Anker"
+    },
+    {
+      "id": "CF014",
+      "fact": "Henri naesst nicht nur ein, sondern kotet sich gelegentlich ein. Laura reinigt die Unterwaesche danach jedes Mal von Hand in der Badewanne. Es ist eine der unsichtbaren Arbeiten, die niemand sieht und fuer die es kein Lob gibt. Lauras Ekel und ihre Liebe existieren in diesem Moment gleichzeitig. Beides ist wahr. Beides darf sein.",
+      "status": "Kern-Anker"
+    },
+    {
+      "id": "CF015",
+      "fact": "Es gibt Tage, an denen Laura keine Kraft mehr hat, ihre Liebe zu Henri zu zeigen. Nicht weil sie ihn nicht liebt, sondern weil Erschoepfung die Liebe einfriert. Sie geht durch die Bewegungen: Essen machen, Bad, Schlaflied. Aber der Blick ist leer. Henri spuert es. Laura spuert, dass er es spuert. Das ist die schuldigste Stille im Buch.",
+      "status": "Kern-Anker"
+    },
+    {
+      "id": "CF016",
+      "fact": "Laura hat eine Katze aus Ibiza gerettet und aufgenommen. Fuer Henri sieht es zeitweise so aus, als wuerde Laura der Katze weichere, unmittelbarere Zuneigung schenken als ihm selbst. Seine Eifersucht darauf ist kein Trotz, sondern ein Bindungstest: Bekommt das Tier etwas, das ihm fehlt, wenn Lauras Liebe zu muede geworden ist, um sich zu zeigen?",
+      "status": "Kern-Anker"
     }
   ]
 }
@@ -277,6 +306,7 @@
   "name": "Henri Mertens",
   "role": "Lauras Sohn, sechs Jahre alt",
   "background": "Henri ist ein sensibles Kind mit grossem Bindungsbeduerfnis. Er reagiert auf Unsicherheit koerperlich und emotional intensiver als andere Kinder und braucht feste Rituale, Vorhersehbarkeit und Naehe.",
+  "verhalten": "Henri flieht nicht in Fantasie, sondern in Beschaeftigung. Er ist jede Sekunde aktiv — nicht aus Energie, sondern um nicht im Hier und Jetzt sein zu muessen. Entwicklungspsychologisch: Hyperarousal mit Vermeidungsverhalten als Regulationsstrategie nach fruehem Bindungsverlust. Er ist nicht gleichgueltig gegenueber Laura — er liebt sie. Aber Stille bedeutet fuer ihn: Gefuehle kommen hoch. Also bleibt er nie still.",
   "wunde": {
     "was_passiert_ist": "Henri ist frueh mit der Unstabilitaet seines Vaters aufgewachsen und hat diese Unsicherheit nie in Worten, sondern ueber Koerper und Stimmung verarbeitet.",
     "was_es_heute_macht": "Er weint schneller, klammert staerker, naeßt ein und prueft unbewusst, ob Verfuegbarkeit bleibt, wenn er viel braucht.",
