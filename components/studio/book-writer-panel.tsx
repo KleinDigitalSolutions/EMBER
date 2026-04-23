@@ -5,6 +5,7 @@ import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
+  buildTimelineBeats,
   buildSceneContextPacket,
   getDraftJobsForScene,
   upsertDraftJob
@@ -99,7 +100,6 @@ export function BookWriterPanel({
   const [jobModels, setJobModels] = useState(createEmptyBookJobModelSelection);
   const [jobStatus, setJobStatus] = useState("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
-  const [directorNote, setDirectorNote] = useState("");
   const [activePanelView, setActivePanelView] = useState<AiPanelView>("rewrite");
 
   useEffect(function () {
@@ -190,6 +190,22 @@ export function BookWriterPanel({
   const firstSceneId = useMemo(function () {
     return findFirstSceneId(story);
   }, [story.acts]);
+
+  const directorNote = useMemo(function () {
+    if (!sceneContext) {
+      return "";
+    }
+
+    const sceneCard = story.book.memory.sceneCards.find(function (entry) {
+      return entry.sceneId === sceneContext.scene.id;
+    });
+
+    const directorEntry = sceneCard?.directives.custom.find(function (entry) {
+      return entry.key === "director_note";
+    });
+
+    return directorEntry?.value ?? "";
+  }, [sceneContext, story.book.memory.sceneCards]);
 
   if (!sceneContext) {
     return (
@@ -692,7 +708,11 @@ export function BookWriterPanel({
               value={directorNote}
               placeholder="Mehr Spannung, dichterer Stil, klarere Raumwahrnehmung."
               onChange={function (event) {
-                setDirectorNote(event.target.value);
+                const nextDirectorNote = event.target.value;
+
+                onUpdateStory(function (currentStory) {
+                  return updateSceneCardDirectorNote(currentStory, scene.id, nextDirectorNote);
+                });
               }}
             />
           </label>
@@ -705,7 +725,9 @@ export function BookWriterPanel({
                   className="book-writer-preset"
                   type="button"
                   onClick={function () {
-                    setDirectorNote(preset);
+                    onUpdateStory(function (currentStory) {
+                      return updateSceneCardDirectorNote(currentStory, scene.id, preset);
+                    });
                   }}
                 >
                   {preset}
@@ -913,6 +935,57 @@ export function BookWriterPanel({
       </div>
     </section>
   );
+}
+
+function updateSceneCardDirectorNote(
+  story: StoryDocument,
+  sceneId: string,
+  directorNote: string
+) {
+  const trimmedDirectorNote = directorNote.trim();
+  const nextSceneCards = (story.book.memory.sceneCards.length
+    ? story.book.memory.sceneCards
+    : buildTimelineBeats(story)
+  ).map(function (sceneCard) {
+    if (sceneCard.sceneId !== sceneId) {
+      return sceneCard;
+    }
+
+    const custom = sceneCard.directives.custom.filter(function (entry) {
+      return entry.key !== "director_note";
+    });
+    const outline = sceneCard.outline.filter(function (line) {
+      return !line.startsWith("director_note:");
+    });
+
+    if (trimmedDirectorNote) {
+      custom.push({
+        key: "director_note",
+        value: trimmedDirectorNote
+      });
+      outline.push(`director_note: ${trimmedDirectorNote}`);
+    }
+
+    return {
+      ...sceneCard,
+      directives: {
+        ...sceneCard.directives,
+        custom
+      },
+      outline
+    };
+  });
+
+  return {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        sceneCards: nextSceneCards
+      }
+    }
+  };
 }
 
 function BookActNav({

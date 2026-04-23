@@ -56,7 +56,7 @@ type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "book" | "write" | "playtest" | "patch" | "review";
 type SidebarMode = "library" | "chat" | "codex";
 type PlanLayoutMode = "split" | "focus";
-type SaveState = "idle" | "saving" | "saved" | "error";
+type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
 type StoryUpdateGuardMode = "none" | "book";
 
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
@@ -277,7 +277,7 @@ export function StudioWorkspace({
         return;
       }
 
-      setSaveState("saving");
+      setSaveState(isPersistingRef.current ? "saving" : "dirty");
       setSaveError(null);
 
       const timeoutId = window.setTimeout(function () {
@@ -2461,6 +2461,10 @@ async function readJsonResponse(response: Response) {
 }
 
 function formatSaveState(lastSavedAt: string | null, saveState: SaveState, saveError?: string | null) {
+  if (saveState === "dirty") {
+    return "Ungespeicherte Änderungen";
+  }
+
   if (saveState === "saving") {
     return "Speichert nach Supabase...";
   }
