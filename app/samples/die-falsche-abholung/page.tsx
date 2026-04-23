@@ -3,11 +3,11 @@ import Link from "next/link";
 const sceneOneParagraphs = [
   "Um 16:18 Uhr hatte Eva elf Minuten zwischen dem Gespräch mit der Kanzlei Hoffmann und der internen Besprechung. Sie trank einen Schluck aus der Flasche auf dem Schreibtisch, schob die Kopfhörer in den Nacken und tippte im Vorbeigehen auf die Kita-App. Grüner Status. Mila abgeholt. Dann, eine Zeile tiefer, ein nachsynchronisiertes Ereignis von gestern, grau hinterlegt, mit dem kleinen Wolkensymbol für verspäteten Abgleich.",
   "*Abholung Mila Berger, 15:42 Uhr, durch Eva Berger.*",
-  "Sie lachte kurz, einmal, ohne Ton. Ein App-Fehler. Irgendein Serverabgleich, der zwei Tage durcheinanderwarf. Gestern war Simons Tag gewesen, das wusste sie so sicher wie ihren eigenen Kalender. Mittwoch. Übergabe vierzehn Uhr, Simon holt, Eva arbeitet bis neunzehn und ruft danach zum Gutenachtgespräch an. Sie hatte um 19:04 Uhr mit Mila telefoniert, das Protokoll lag in ihrem Anrufverlauf, Simon hat zwischendurch etwas über Nudeln gesagt.",
+  "Sie lachte kurz, einmal, ohne Ton. Ein App-Fehler. Irgendein Serverabgleich, der zwei Tage durcheinanderwarf. Gestern war Simons Tag gewesen, das wusste sie so sicher wie ihren eigenen Kalender. Mittwoch. Übergabe 14:00 Uhr, Simon holt, Eva arbeitet bis 19:00 Uhr und ruft danach zum Gutenachtgespräch an. Sie hatte um 19:04 Uhr mit Mila telefoniert, das Protokoll lag in ihrem Anrufverlauf, Simon hat zwischendurch etwas über Nudeln gesagt.",
   "Eva wischte den Bildschirm nach unten, ließ ihn neu laden. Der Eintrag blieb. Sie tippte auf die Zeile, bekam die Detailansicht, eine kleine Signaturvorschau, einen Haken, einen Zeitstempel, ihre Unterschrift, stilisiert, aber in der Form, die sie seit Jahren in diese App kritzelte.",
   "Sie rief nicht Simon an. Sie rief die Kita an.",
   "„Sonnengarten, Löwen.\"",
-  "„Frau Löwen, Eva Berger. Es gibt einen Abgleichfehler in Ihrer App. Gestern steht bei mir ein Abholeintrag von mir um fünfzehn Uhr zweiundvierzig. Das kann nicht stimmen, Mila war bei ihrem Vater.\"",
+  "„Frau Löwen, Eva Berger. Es gibt einen Abgleichfehler in Ihrer App. Gestern steht bei mir ein Abholeintrag von mir um 15:42 Uhr. Das kann nicht stimmen, Mila war bei ihrem Vater.\"",
   "Am anderen Ende blieb es einen Moment still. Kein überraschtes Einatmen, kein Blätterrascheln. Nur die gleichmäßige Ruhe von Petra Löwen.",
   "„Frau Berger, der Eintrag ist bei uns nicht grau. Der ist bei uns regulär gebucht.\"",
   "„Das ist unmöglich.\"",
@@ -15,7 +15,7 @@ const sceneOneParagraphs = [
   "„Frau Löwen, ich war gestern in Frankfurt. Ich war gestern nicht in Ihrem Haus.\"",
   "„Dann klären wir das, wenn Sie da sind. Haben Sie jetzt Zeit?\"",
   "Eva sah auf den Kalender. Die interne Besprechung begann in sieben Minuten. Sie schrieb Anita eine Zeile, *muss raus, Kita, bitte übernimm*, griff Mantel und Schlüssel und war unten an der Schranke, bevor der Aufzug wieder oben angekommen war.",
-  "Im Auto ging sie den Mittwoch durch. Um neun die Präsentation. Um elf der Zug. Um vierzehn Uhr zehn Ankunft Frankfurt, Taxi, Vier-Augen mit Grau. Um sechzehn Uhr zwanzig Rückzug ins Hotel. Sie hat um 15:42 Uhr nicht an einer Kita gestanden, die vierhundertzwanzig Kilometer entfernt lag. Sie hat um 15:42 Uhr in einem Konferenzraum im siebten Stock Zahlen verteidigt. Es gab Zeugen. Es gab ihre BahnCard-Abrechnung. Es gab Fotos vom Hotelschlüssel, die sie Mila am Abend geschickt hatte.",
+  "Im Auto ging sie den Mittwoch durch. Um 09:00 Uhr die Präsentation. Um 11:00 Uhr der Zug. Um 14:10 Uhr Ankunft Frankfurt, Taxi, Vier-Augen mit Grau. Um 16:20 Uhr Rückzug ins Hotel. Sie hat um 15:42 Uhr nicht an einer Kita gestanden, die vierhundertzwanzig Kilometer entfernt lag. Sie hat um 15:42 Uhr in einem Konferenzraum im siebten Stock Zahlen verteidigt. Es gab Zeugen. Es gab ihre BahnCard-Abrechnung. Es gab Fotos vom Hotelschlüssel, die sie Mila am Abend geschickt hatte.",
   "Sie fuhr zu schnell. Sie wusste es und bremste nicht.",
   "An einer roten Ampel sagte sie laut in den leeren Beifahrerraum: „Das ist ein Datenbankfehler.\" Sie umfasste das Lenkrad fester, bis die Knöchel weiß wurden.",
   "Der Sonnengarten lag in einer ruhigen Seitenstraße hinter der alten Brauerei, ein umgebauter Altbau mit einem sauber gefegten Vorhof und einem Holztor, das um halb vier noch offen stand und um Viertel vor fünf verschlossen war. Eva stellte den Wagen halb auf den Bordstein, ließ den Warnblinker laufen und ging zwei Stufen auf einmal.",
@@ -54,7 +54,7 @@ const sceneOneParagraphs = [
 ];
 
 const sceneTwoParagraphs = [
-  "Das Leitungsbüro roch nach kaltem Kaffee und dem Klebstoff der Kinderplakate an den Wänden. Petra Löwen schloss die Tür, nicht hart, nur bestimmt, und deutete auf den Stuhl vor dem Schreibtisch. Sechzehn Uhr zweiundvierzig auf der Wanduhr. Der Sekundenzeiger lief gleichmäßig weiter, als gäbe es nichts zu klären.",
+  "Das Leitungsbüro roch nach kaltem Kaffee und dem Klebstoff der Kinderplakate an den Wänden. Petra Löwen schloss die Tür, nicht hart, nur bestimmt, und deutete auf den Stuhl vor dem Schreibtisch. 16:42 Uhr auf der Wanduhr. Der Sekundenzeiger lief gleichmäßig weiter, als gäbe es nichts zu klären.",
   "Eva blieb stehen.",
   "\"Zeigen Sie es mir bitte.\"",
   "\"Setz dich erst, Eva.\"",
@@ -107,7 +107,7 @@ const sceneThreeParagraphs = [
   "„Bei Mila ist alles gut.\" Sie hörte sich zu ruhig sagen und korrigierte. „Sie ist drin, sie spielt. Aber in der App steht, ich hätte sie gestern abgeholt.\"",
   "Stille. Kein Einatmen, kein Ach was. Simon sortierte.",
   "„Um wie viel Uhr?\"",
-  "„Fünfzehn Uhr zweiundvierzig.\"",
+  "„15:42 Uhr.\"",
   "„Und du warst wo?\"",
   "„Im Büro. Bis halb sechs. Das kann ich belegen.\"",
   "„Hast du das schon.\"",
@@ -177,7 +177,7 @@ const sceneThreeParagraphs = [
 
 const sceneFourParagraphs = [
   "Auf dem Küchentisch lagen Dinge, die sonst nicht nebeneinander lagen: das Handy mit offener Kita-App, der Papierkalender, die schwarze Kladde mit den Wochenplänen, zwei Ausdrucke, schief übereinandergelegt. Mila schlief seit einer halben Stunde. Durch die angelehnte Zimmertür kam ihr Atem, klein und gleichmäßig, und jedes Mal, wenn Eva ihn hörte, dachte sie für einen Moment, dass noch alles an seinem Platz war.",
-  "Sie zog den Kalender heran. Mittwoch: Besprechung bis siebzehn Uhr, danach Einkauf, Mila sechzehn Uhr fünfzehn. Ihre Schrift, ihr Kugelschreiber, kein gestrichener Eintrag, kein Pfeil, keine hastige Korrektur. Daneben auf dem Display: Abholung bestätigt, sechzehn Uhr zwölf, Unterschrift Eva Berger. Drei Minuten. In der Kita nichts. In ihrem Kopf ein Riss.",
+  "Sie zog den Kalender heran. Mittwoch: Besprechung bis 17:00 Uhr, danach Einkauf, Mila 16:15 Uhr. Ihre Schrift, ihr Kugelschreiber, kein gestrichener Eintrag, kein Pfeil, keine hastige Korrektur. Daneben auf dem Display: Abholung bestätigt, 16:12 Uhr, Unterschrift Eva Berger. Drei Minuten. In der Kita nichts. In ihrem Kopf ein Riss.",
   "Sie wischte durch die Historie. Montag, Dienstag, Mittwoch. Alles sauber. Immer dieselbe Art Eintrag, dieselbe Form, dieselbe Selbstverständlichkeit. Nichts daran sah nach Fehler aus. Gerade das war das Problem.",
   "Dann stand sie auf und holte den grünen Ordner aus dem Schrank, Kita-Unterlagen seit Milas Aufnahme. Das Plastik am Rücken war unten schon weiß geworden vom Anfassen. Sie blätterte durch Impfpass-Kopie, Beitragsbescheid, Eingewöhnungsnotiz, alte Elternbriefe, bis hinten in einer Klarsichthülle die Reserve-Notfallliste lag.",
   "Sie zog das Blatt langsam heraus.",
@@ -211,7 +211,7 @@ const sceneFourParagraphs = [
   "Das wusste niemand außer ihr.",
   "Eva stand mit der Hand noch am Türknauf und rührte sich nicht. Aus der Wohnung kam Milas Atem, gleichmäßig, unversehrt. Aus dem Hof kam nichts. Aus dem Flur kam der schwache Geruch nach Karottensuppe, der sich an der Tür vorbeigeschoben haben musste, als sie zugezogen hatte.",
   "Sie streckte langsam die Hand aus und berührte den Stoff der Jacke. Kühl. Nicht frisch von draußen, nicht warm aus einem Auto. Irgendwo zwischendurch gewesen. Auf einem Tisch gelegen. Über einer Stuhllehne gehangen. An einem anderen Haken, bevor sie an diesen gekommen war.",
-  "Eva ließ die Jacke hängen. Sie rührte sie nicht an, außer mit den Fingerspitzen, als könnte sie etwas verwischen, wenn sie mehr nähme. Sie ging zurück in die Küche, zum Kalender, zur Reserveliste, zur App. Sie setzte sich nicht. Sie blieb vor dem Tisch stehen und sah auf ihre eigene Unterschrift von vor zwei Jahren, und auf ihre Unterschrift von gestern um sechzehn Uhr zwölf, und versuchte, den Unterschied zu finden, der ihr gehören würde.",
+  "Eva ließ die Jacke hängen. Sie rührte sie nicht an, außer mit den Fingerspitzen, als könnte sie etwas verwischen, wenn sie mehr nähme. Sie ging zurück in die Küche, zum Kalender, zur Reserveliste, zur App. Sie setzte sich nicht. Sie blieb vor dem Tisch stehen und sah auf ihre eigene Unterschrift von vor zwei Jahren, und auf ihre Unterschrift von gestern um 16:12 Uhr, und versuchte, den Unterschied zu finden, der ihr gehören würde.",
   "Im Flur, hinter ihr, hing die Jacke am falschen richtigen Haken."
 ];
 
@@ -273,15 +273,15 @@ const sceneFiveParagraphs = [
 const sceneSixParagraphs = [
   "Die Praxis meldete sich beim dritten Klingeln. Eva stand am Küchentisch, die Hand auf Milas Vorsorgeheft, und zwang ihre Stimme in die alltägliche Lage, die man am Telefon erwartet.",
   "„Berger, guten Tag. Ich wollte den Termin für Mila morgen bestätigen.\"",
-  "„Einen Moment.\" Tastenklicken. „Frau Berger, der Termin wurde doch verschoben. Auf Donnerstag, elf Uhr.\"",
+  "„Einen Moment.\" Tastenklicken. „Frau Berger, der Termin wurde doch verschoben. Auf Donnerstag, 11:00 Uhr.\"",
   "„Verschoben.\"",
-  "„Sie haben gestern angerufen. Kurz nach vierzehn Uhr, glaube ich. Soll ich nachsehen?\"",
+  "„Sie haben gestern angerufen. Kurz nach 14:00 Uhr, glaube ich. Soll ich nachsehen?\"",
   "„Ja. Bitte.\"",
-  "Das Klicken wurde länger. Im Hintergrund hustete ein Kind, eine zweite Stimme rief Nummern auf. Eva sah auf ihren eigenen Kalender, auf den Eintrag Mittwoch, zehn Uhr, in ihrer Handschrift, zweimal unterstrichen.",
-  "„Vierzehn Uhr sieben. Donnerstag, elf. Frau Dr. Keller hat das so übernommen.\"",
+  "Das Klicken wurde länger. Im Hintergrund hustete ein Kind, eine zweite Stimme rief Nummern auf. Eva sah auf ihren eigenen Kalender, auf den Eintrag Mittwoch, 10:00 Uhr, in ihrer Handschrift, zweimal unterstrichen.",
+  "„14:07 Uhr. Donnerstag, 11:00 Uhr. Frau Dr. Keller hat das so übernommen.\"",
   "„Wer hat angerufen?\"",
   "„Sie.\"",
-  "„Ich war gestern um vierzehn Uhr im Büro.\"",
+  "„Ich war gestern um 14:00 Uhr im Büro.\"",
   "Die Sprechstundenhilfe machte eine kleine Pause, in der kein Ärger lag, nur die Geduld, die man am Empfang lernt. „Soll ich den Termin wieder auf morgen legen?\"",
   "„Warten Sie.\" Eva atmete durch. „Das Folgerezept für den Inhalator. Liegt das bei Ihnen?\"",
   "„Das wurde gestern abgeholt.\"",
@@ -312,7 +312,7 @@ const sceneSixParagraphs = [
   "„Der Termin ist verschoben\", sagte Simon. „Auf Donnerstag, elf.\"",
   "„Ja.\"",
   "„Die Frau am Empfang sagt, du hättest gestern angerufen.\"",
-  "„Ich war im Büro, Simon. Ich war in der Besprechung mit Kranz bis fünfzehn Uhr, du kannst ihn anrufen, wenn du willst.\"",
+  "„Ich war im Büro, Simon. Ich war in der Besprechung mit Kranz bis 15:00 Uhr, du kannst ihn anrufen, wenn du willst.\"",
   "„Und das Rezept?\"",
   "„Abgeholt. Mit meinem Kürzel.\"",
   "Er atmete aus. Nicht genervt. Nachdenklich.",
@@ -583,7 +583,7 @@ const sceneElevenParagraphs = [
 ];
 
 const sceneTwelveParagraphs = [
-  `Der Anruf kam um sieben Uhr zweiundzwanzig, als Eva den Kaffee noch nicht aufgegossen hatte. Simons Name auf dem Display, nicht Nachricht, sondern Anruf, und das allein hieß, dass er etwas besprechen wollte, bevor er es tat.`,
+  `Der Anruf kam um 07:22 Uhr, als Eva den Kaffee noch nicht aufgegossen hatte. Simons Name auf dem Display, nicht Nachricht, sondern Anruf, und das allein hieß, dass er etwas besprechen wollte, bevor er es tat.`,
   `„Eva, hör mal." Seine Stimme hatte diesen Ton, den sie kannte, sachlich, leicht vorbereitet, als hätte er zwei Sätze schon im Kopf geordnet. „Nora hat mich gestern Abend angerufen."`,
   `Sie stellte die Kanne zurück auf die Platte.`,
   `„Sie hat einen Vorschlag gemacht. Ich finde ihn vernünftig, deshalb rufe ich an, bevor irgendwas läuft."`,
@@ -678,7 +678,7 @@ const sceneTwelveParagraphs = [
   `Auf dem Pflaster vor ihren Füßen lag ein einzelnes Lindenblatt, noch grün, an den Rändern braun. Sie hob es nicht auf. Oben klappte Noras Fenster leise zu.`,
   `In der Küche piepste die Kaffeemaschine, die sie nie eingeschaltet hatte.`,
   `Eva ging hinein, zog den Stecker, wickelte das Kabel um den Sockel und stellte das Gerät auf die Anrichte neben der Spüle. Dann holte sie ein Blatt aus dem Drucker und schrieb mit der Hand, weil die Hand sich nicht so leicht überschreiben ließ wie eine App.`,
-  `Dienstag. Sieben Uhr achtundzwanzig.`,
+  `Dienstag. 07:28 Uhr.`,
   `Darunter: Simon schlägt vor, dass Nora bei Engpässen Bring- und Holwege übernimmt. Ich lehne ab. Er sagt zu, diese Woche bei der alten Regelung zu bleiben und es Nora heute direkt zu sagen.`,
   `Darunter, in einer zweiten Zeile, kleiner: Mila nennt Montage mit Nora „Nora-Montag". Stand mir nicht bekannt.`,
   `Sie sah auf das Wort, das sie nicht gekannt hatte, und unterstrich es einmal.`
@@ -771,7 +771,7 @@ const sceneFourteenParagraphs = [
 ];
 
 const sceneFifteenParagraphs = [
-  `Petra las die Chronologie zweimal. Eva sah es an der Art, wie ihr Finger an den Zeitangaben hängen blieb, bei vierzehn Uhr sieben, bei vierzehn Uhr zweiundzwanzig, bei der Zeile, in der Eva notiert hatte, dass sie an der Ampel in der Rheinuferstraße gestanden hatte, als die App den Abholeintrag gesetzt haben soll.`,
+  `Petra las die Chronologie zweimal. Eva sah es an der Art, wie ihr Finger an den Zeitangaben hängen blieb, bei 14:07 Uhr, bei 14:22 Uhr, bei der Zeile, in der Eva notiert hatte, dass sie an der Ampel in der Rheinuferstraße gestanden hatte, als die App den Abholeintrag gesetzt haben soll.`,
   `„Das ist sauber aufgeschrieben", sagte Petra. Ihre Stimme war leiser als sonst. Sie legte die beiden Blätter nebeneinander auf den Schreibtisch, das Original und Evas Kopie. „Ich sehe die Differenz."`,
   `„Dann ändern Sie etwas."`,
   `„Ich kann nichts ändern, Frau Berger. Nicht heute. Nicht ohne den Träger." Petra zog die Schultern hoch, nicht abwehrend, eher wie jemand, der ein Paket trägt, das zu schwer ist. „Ich kann die Liste weitergeben. Ich kann schreiben, dass wir den Eintrag prüfen. Mehr nicht. Heute nicht mehr."`,
