@@ -1540,12 +1540,14 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 - Nahe dritte Person auf Eva. Keine allwissende Erklaerstimme.
 - Szenen steigen spaet ein und gehen frueh raus.
 - Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
+- Im Mittelteil nie laenger als zwei reine Indizszenen hintereinander. Danach braucht es eine reale Folge fuer Zugriff, Loyalitaet, Institution oder Kinderroutine.
 - Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits traegt, folgt kein erklaerender Satz.
 - Keine drei Atmosphaerenbeobachtungen vor dem eigentlichen Schlag. Binnenprosa nur unter Zug.
 - Raum, Koerper und Stimmung nur dann ausfuehren, wenn sie Beweislage, Glaubwuerdigkeit, Zugriff oder Routine veraendern.
 - Nora bleibt frueh sozial plausibel, hilfreich lesbar und nie zu perfekt kuratiert bedrohlich.
+- Nora darf nie wie eine folgenlose Alltags-Supertaeterin wirken. Jeder groessere Zug hinterlaesst Restfehler, Gegendruck oder engeren Spielraum.
 - Eva unter Druck praezise, aber leicht ueberladen. Ihre Wahrnehmung darf kurz stolpern, ohne hysterisch zu werden.
-- Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen.
+- Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen. Wenn sie falsch reagieren, muss das Eva konkret etwas kosten.
 - Objektspannung vor Reflexion. Dinge muessen zuerst handeln, bevor Gedanken sie ausdeuten.
 - Jede Szene verschiebt mindestens eines: Beweislage, Glaubwuerdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalitaet.
 - Dialog darf nie bloss atmosphaerisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
@@ -1554,7 +1556,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 - Kurze bis mittlere Kapitel bevorzugen. 850-1450 Woerter sind Normalbereich; nur Schluesselszenen duerfen darueber druecken.
 
 ### Copy-Paste Director Note (globaler Lauf-Block)
-`Straffe die Szene auf Zug statt Vollstaendigkeit. Steige spaet ein, gehe frueh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklaeren. Keine dritte Atmosphaerenbeobachtung vor dem eigentlichen Schlag. Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Eva bleibt praezise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
+`Straffe die Szene auf Zug statt Vollstaendigkeit. Steige spaet ein, gehe frueh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklaeren. Keine dritte Atmosphaerenbeobachtung vor dem eigentlichen Schlag. Im Mittelteil nicht die dritte reine Beweisszene hintereinander schreiben: spaetestens dann braucht es eine reale Folge fuer Zugriff, Loyalitaet, Institution oder Kinderroutine. Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Jeder groessere Zug hinterlaesst Restfehler oder Gegendruck. Eva bleibt praezise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
 
 ### Copy-Paste Regieanweisungen fuer die Writer-UI
 
