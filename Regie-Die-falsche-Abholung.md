@@ -299,6 +299,94 @@
 
 ---
 
+## VOICE PACK
+
+Diese Sektion ist nicht fuer Backstory, sondern fuer Mikrofuehrung in Satz, Wahrnehmung und Dialog. Wenn ein Draft auf Plotebene funktioniert, aber sprachlich zu generisch wird, gilt diese Sektion vor allen spaeteren Schoenformulierungen.
+
+### EVA
+- Eva beobachtet zuerst Abweichung, Takt, Objekt, Reihenfolge. Gefuehl kommt spaeter, wenn ueberhaupt.
+- Ihre Saetze werden unter Druck nicht poetischer, sondern genauer und kuerzer.
+- Sie benennt Dinge oft ueber Funktion: Schluessel, Eintrag, Wechselkleidung, Rueckruf, Ausdruck, Liste.
+- Sie deutet Nora nicht frueh als Monster, sondern als Frau, die zu viel Zugriff hat.
+- Sie denkt in Ketten: Wer wusste was, wann, woher, mit welchem legitimen Restzugang.
+- Wenn Eva etwas nicht glaubt, prueft sie erst Material, dann Erinnerung, erst spaeter Intuition.
+- Gute Eva-Saetze tragen ueber Differenz, Unstimmigkeit, Verwaltungsrest, falsches Alltagsdetail.
+- Schlechte Eva-Saetze erklaeren ihre Panik, moralische Wahrheit oder die Bedeutung eines Moments aus.
+
+Positive Muster:
+- `Die Uhrzeit stand da, als waere sie unstrittig.`
+- `Der Mantel war ihrer. Der Gang nicht ganz.`
+- `Nora sagte es, als haette der Satz schon laenger in ihrer Tasche gelegen.`
+
+Verbotene Drift:
+- Keine langen Innenmonologe ueber Mutterschaft.
+- Keine Metaphern, die den Schmerz schoener machen als die Lage.
+- Kein Satz nach dem Muster: `Jetzt verstand sie, dass ...`
+
+### NORA
+- Nora spricht knapp, hilfreich, leicht entlastend. Ihre Fragen klingen wie Ordnungshilfe.
+- Sie behauptet nie grob. Sie schiebt Formulierungen so, dass andere den Schluss selbst ziehen.
+- Sie benutzt Routinevokabular: `ich uebernehme`, `ich kann schnell`, `wenn es hilft`, `ich war eh dort`, `mach du erst mal`.
+- Sie wird nie melodramatisch und nie offen kalt, solange andere im Raum sind.
+- Ihre Bedrohung liegt in korrektem Timing, nicht in boesen Saetzen.
+- Sie kennt Details, aber legt sie oft nebenbei ab, als waeren sie selbstverstaendlich.
+- Gute Nora-Dialoge entlasten und besetzen dabei unbemerkt Position.
+- Schlechte Nora-Dialoge klingen villainhaft, zu pointiert oder zu bewusst doppeldeutig.
+
+Positive Muster:
+- `Ich kann Mila kurz nehmen, wenn du erst das mit Petra klaeren willst.`
+- `Komisch, gestern hatte sie den gelben Becher doch noch in der Hand.`
+- `Ich dachte, Simon weiss das laengst.`
+
+Verbotene Drift:
+- Kein offenes Drohen.
+- Keine psychoanalytische Selbstauskunft.
+- Kein Satz, der Nora frueh als klare Taeterin markiert, wenn noch soziale Plausibilitaet noetig ist.
+
+### SIMON
+- Simon spricht verfahrensnah. Er will Ablage, Abfolge, Plausibilitaet.
+- Er beruhigt nicht ueber Gefuehl, sondern ueber Ordnungsschritte.
+- Seine Saetze werden unter Druck nicht lauter, sondern enger.
+- Er versucht, Widerspruch zu neutralisieren, nicht ihn emotional auszutragen.
+- Gute Simon-Zeilen klingen nach Absicherung, nicht nach Dominanz.
+- Schlechte Simon-Zeilen klingen zynisch, richterlich oder ex-maennlich verbittert.
+
+Positive Muster:
+- `Schick mir bitte alles, was du hast, in der Reihenfolge.`
+- `Ich sage nicht, dass du dich irrst. Ich sage, wir muessen wissen, woran es haengt.`
+- `Wenn es einen Eintrag gibt, muessen wir den zuerst sauber kriegen.`
+
+Verbotene Drift:
+- Kein kalter Familienrechts-Sound.
+- Keine grossen Trennungsabrechnungen mitten in Beweisszenen.
+- Keine Dialogzeilen, die ihn heimlich zum Antagonisten umcodieren.
+
+### PETRA
+- Petra spricht institutionell praezise, aber nie feindselig.
+- Sie vermeidet Spekulation und haelt sich an Vorgaenge, Sichtbares, Dokumentiertes.
+- Ihre Hoeflichkeit bleibt echt. Gerade deshalb kann sie hart wirken.
+- Sie schuetzt Team und Kind ueber Verfahren, nicht ueber Intuition.
+- Gute Petra-Zeilen sind klar, knapp und ohne soziale Schaerfe.
+- Schlechte Petra-Zeilen klingen belehrend, defensiv aggressiv oder nach Plotfunktion.
+
+Positive Muster:
+- `Ich sage nicht, dass es so war. Ich sage, dass es so protokolliert ist.`
+- `Wir muessen ab jetzt anders sichern, bis wir das geklaert haben.`
+- `Fuer mich ist im Moment entscheidend, was belegbar ist.`
+
+Verbotene Drift:
+- Keine kalte Kita-Buerokratie als Karikatur.
+- Keine boeswillige Mutter-Bewertung.
+- Keine Szene, in der Petra plotbequem ploetzlich alles versteht.
+
+### MIKROREGELN FUER DIALOG UND ABSATZENDE
+- Dialogzeilen sollen Macht, Vertrauen, Verfahren oder Zugriff verschieben. Kein atmosphaerisches Fuellgespraech.
+- Nach der staerksten Objektbeobachtung, dem staerksten Beweisbild oder einem leisen Machtkipp endet der Absatz oder die Szene. Kein Nacherklaeren.
+- Wenn eine Figur einen Satz sagt, der schon eine neue Lesart etabliert, folgt kein zweiter Satz, der dieselbe Wirkung ausdeutet.
+- Kapitelschluesse bevorzugen Material, Restsignal, Verwaltungsdetail oder kleine soziale Verrutschung statt grosser Pointe.
+
+---
+
 ## CONTINUITY GUARDRAILS (Arbeitsstand Entwurf)
 
 Diese Sektion ist nicht fuer Dramaturgie da, sondern gegen Drift in der Produktion. Solange keine globale Umbenennung beschlossen wird, gelten die folgenden Angaben als gesperrter Arbeitsstand.
@@ -319,6 +407,46 @@ Diese Sektion ist nicht fuer Dramaturgie da, sondern gegen Drift in der Produkti
 
 ### Merksatz fuer EMBER
 > Kanon in den `Codex`. Alltagsbeweise in die `Scene Card`. Einmalige Steuerung in die `Regieanweisung`.
+
+---
+
+## NORA CAPABILITY MAP
+
+Nora wirkt nur dann stark, wenn ihr Zugriff realistisch bleibt. Diese Map begrenzt sie und macht sie gleichzeitig gefaehrlicher, weil alles aus legitimer Naehe, Beobachtung und liegengebliebenem Alltag kommt.
+
+### Was Nora glaubhaft wissen kann
+- Abholzeiten, Bringrhythmen, Kleidungswechsel, Brotdosenlogik, Trinkbecher, typische Stressfenster von Eva.
+- Namen, Funktionen und Tonlagen der Kita-Mitarbeitenden durch fruehere Uebergaben und Nachbarschaftsnaehe.
+- Welche Listen, Ausdrucke, Freigaben und Notfallkontakte im Umlauf waren oder frueher einmal gueltig waren.
+- Simons Stabilitaetslogik, weil er auf vernuenftige Hilfe anspringt, solange sie Mila entlastet.
+- Wie Eva spricht, schreibt, absagt und improvisiert, weil Nora ueber Jahre genug Alltagsmaterial gesehen hat.
+
+### Woher Nora dieses Wissen hat
+- Fruehere legitime Notfallfunktion.
+- Regelmaessige Nachbarschaftsnaehe im Hof, im Treppenhaus, bei Bring- und Abholmomenten.
+- Chats, Fotos, Listenreste, alte Ausdrucke, liegengebliebene Zettel, geteilte Orga.
+- Fruehere echte Hilfesituationen, in denen Eva dankbar, unachtsam oder unter Zeitdruck war.
+- Beobachtung statt Techniktrick. Nora sammelt, merkt sich, legt ab.
+
+### Was Nora operativ tun kann
+- Sich in bestehende Routinen einschieben, wenn jemand bereits an ihre Hilfsrolle gewoehnt ist.
+- Fruehere Dokumente, Freigaben oder Kontaktlisten laenger nutzen, als andere glauben.
+- Sprache, Kleidung, Gegenstaende und Timing so angleichen, dass fuer Aussenstehende Plausibilitaet reicht.
+- Simon und Kita nicht manipulieren wie eine Genialtaeterin, sondern deren Ordnungsbeduerfnis bedienen.
+- Materielle Doppelungen herstellen: zweite Jacke, zweite Tasche, zweite Version eines Nachmittags.
+
+### Was Nora nicht koennen darf
+- Keine technische Wunderfaehigkeit, kein Hacking, keine lueckenlose digitale Ueberwachung.
+- Kein unerklaertes Wissen ueber intime Gespraeche, bei denen sie nicht anwesend war und keinen realen Restzugang hatte.
+- Keine perfekte Imitation ueber Wochen ohne kleine Verrutschungen.
+- Keine offene Gewalt, solange das Buch auf sozialer Ersetzung basiert.
+- Keine institutionelle Allmacht. Polizei, Kita und Simon muessen fuer sie nur lange genug in die falsche Richtung lesen, nicht blind alles schlucken.
+
+### Rote Linien fuer Embers Driftkontrolle
+- Wenn Nora etwas weiss, muss der Draft implizit mittragen, woher.
+- Wenn Nora zu frueh zu unheimlich wirkt, fehlt soziale Tarnung.
+- Wenn Nora zu perfekt wirkt, fehlt menschlicher Restfehler.
+- Wenn Nora wie ein Thrillergehirn wirkt, zurueck auf Nachbarschaft, Routine, Dokument und Timing.
 
 ---
 
@@ -360,6 +488,46 @@ Diese Sektion ist nicht fuer Dramaturgie da, sondern gegen Drift in der Produkti
   ]
 }
 ```
+
+---
+
+## PROOF LADDER
+
+Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart und Glaubwuerdigkeit. Jede neue Stufe muss etwas Frueheres umcodieren, nicht nur zusaetzlich illustrieren.
+
+### Act 1 - Irrtum wird zu Muster
+| Bereich | Vorgabe |
+| --- | --- |
+| Neue harte Fakten | App-Eintrag, Videoausschnitt, Unterschrift, alte Reserve-Liste, fruehere Vollmacht |
+| Falsche Anfangslesart | technischer Fehler oder chaotische Kita-Kommunikation |
+| Neue Lesart nach Act 1 | Es gab einen realen alltagsnahen Zugriff, der Evas Spur benutzt hat |
+| Wer glaubt was | Eva glaubt an gezielte Verschiebung; Petra an dokumentationspflichtige Unklarheit; Simon an gefaehrliche, aber noch erklaerbare Schieflage |
+| Was unbewiesen bleiben muss | Dass Nora die Taeterin ist und dass der Zugriff systematisch geplant ist |
+
+### Act 2 - Zugriff wird zu Ersetzung
+| Bereich | Vorgabe |
+| --- | --- |
+| Neue harte Fakten | doppelte Gegenstaende, Sprachreste, alte Freigaben, falsche Alltagskenntnisse, Familienalbum/Fotofreigaben, Druckerspur, Zugriff auf Orga-Reste |
+| Falsche Zwischenlesart | Nora ist nur zu praesent oder zu hilfreich; Eva reagiert ueber |
+| Neue Lesart nach Act 2 | Jemand baut aus frueherer Hilfe eine zweite, sozial glaubwuerdige Version von Mutterschaft |
+| Wer glaubt was | Eva erkennt Muster; Simon kippt langsam von Absicherung zu Zweifel an Nora; Petra bleibt formal vorsichtig; Mila folgt Wiederholung statt Wahrheit |
+| Was unbewiesen bleiben muss | Der institutionell belastbare Vollbeweis und das volle Motivmass |
+
+### Act 3 - Ersetzung wird nachweisbar
+| Bereich | Vorgabe |
+| --- | --- |
+| Neue harte Fakten | kleine Unmoeglichkeitsfenster, Signaturfehler, Kalenderabgleich, Wohnungsfund, Mail-/Druckkette, kohaerente Beweiskette aus mehreren alltagsnahen Resten |
+| Falsche Vor-Endlesart | Es reicht fuer Verdacht, aber nicht fuer Eingriff |
+| Neue Lesart nach Act 3 | Nora hat nicht punktuell geholfen, sondern systematisch Position, Glaubwuerdigkeit und Mutterroutine besetzt |
+| Wer glaubt was | Simon und Petra sehen das Muster jetzt mit; Institutionen reagieren auf Kette statt auf Einzelreiz |
+| Was bis zum Schluss gelten muss | Kein Wunderfund, kein Gestandnis als Abkuerzung, keine boesartige Karikatur statt sozial glaubhafter Taeterlogik |
+
+### Kapitelweise Leitfragen fuer Scene Cards
+- Welcher neue Fakt liegt am Ende materiell oder sozial belastbar im Raum?
+- Welche fruehere Lesart wird dadurch schwaecher?
+- Wessen Glaubwuerdigkeit steigt, wessen sinkt?
+- Was darf der Leser jetzt vermuten, aber noch nicht sicher wissen?
+- Welches kleine Restdetail kann spaeter als Rueckbeweis tragen?
 
 ---
 
