@@ -193,6 +193,19 @@
 
   const storefrontStories = [
     {
+      title: "Ich sehe dich",
+      subtitle: "Buchprobe",
+      description:
+        "Alltagsnaher Familienroman über eine alleinerziehende Mutter, ein Kind mit großem Bindungsbedürfnis und die unsichtbare Arbeit von Liebe unter Erschöpfung.",
+      tags: ["Familienroman", "Women's Fiction", "Care-Arbeit"],
+      status: "Leseprobe",
+      available: true,
+      action: "open-link",
+      href: "/samples/ich-sehe-dich",
+      buttonLabel: "Lesen",
+      progressLabel: "Szene 1 online"
+    },
+    {
       title: "Restrisiko",
       subtitle: "Buchprobe",
       description:
@@ -508,7 +521,7 @@
               <div class="store-hero-meta">
                 <span class="store-hero-pill">${escapeHtml(featuredStory.status)}</span>
                 <span class="store-hero-status">${escapeHtml(featuredStory.progressLabel || getProgressLabel())}</span>
-                <span class="store-hero-status">2 Storys freigeschaltet</span>
+                <span class="store-hero-status">3 Storys freigeschaltet</span>
               </div>
               <div class="actions actions--hero">
                 <button
@@ -528,9 +541,9 @@
                 <p class="eyebrow">Auswahl</p>
                 <h2 class="store-section-title">Storys im Store</h2>
               </div>
-              <p class="store-section-copy">Nur ${escapeHtml(
+              <p class="store-section-copy">Drei Buchproben sind bereits lesbar. ${escapeHtml(
                 STORY.meta.appTitle
-              )} ist derzeit aktiv. Die übrigen Karten bleiben vorerst Platzhalter.</p>
+              )} bleibt als interaktive Story der aktive Haupttitel.</p>
             </div>
             <div class="store-grid">${storeCards}</div>
           </section>
