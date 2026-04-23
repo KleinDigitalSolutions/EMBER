@@ -101,29 +101,11 @@ const sceneTwoParagraphs = [
   "\"Ich möchte, dass du Simon informierst, bevor wir es müssen.\"",
   "Im selben Moment vibrierte Evas Handy auf dem Tisch. Sie hatte es nicht bewusst dorthin gelegt. Der Bildschirm hellte sich auf, ein Banner zog sich über das Display, oben, lesbar für beide, ob man wollte oder nicht.",
   "*Nora: Alles okay bei euch? Hab Mila heute Mittag im Hof gehört, war kurz unsicher, ob ich rüberkomme. Melde dich.*",
-  "Eva legte die Hand auf das Telefon, ein Reflex, das Banner verschwinden zu lassen. Petra sah weg, so höflich, dass es schlimmer war, als hätte sie hingestarrt.",
-  "\"Ich rufe Simon an\", sagte Eva.",
-  "\"Heute noch.\"",
-  "\"Heute noch.\"",
-  "\"Danke.\"",
-  "Petra stand nicht auf. Sie schloss auch das Video nicht. Das angehaltene Bild blieb auf dem Monitor, die Frau in Evas Mantel, in der Hand Milas gelber Becher, und Eva sah es, während sie ihre Tasche vom Boden hob.",
-  "An der Tür drehte sie sich noch einmal um.",
-  "\"Sie bewahren das Video auf.\"",
-  "\"Selbstverständlich.\"",
-  "\"Unverändert.\"",
-  "Petra nickte. \"Unverändert.\"",
-  "Im Flur schlug Eva der warme Geruch von Linsensuppe aus der Küche entgegen, Kinderstimmen hinter einer Tür, das Quietschen von Gummistiefeln. Sie ging an der Garderobe vorbei, sah Milas Haken, drittes Fach von links, roter Punkt, Affe. Der Haken war leer.",
-  "Sie wusste, dass er leer sein musste. Sie hatte Mila heute Morgen nicht hergebracht. Mila war zu Hause, Mila war seit gestern Abend bei ihr, Mila hatte heute früh im Pyjama am Küchentisch gefrühstückt, die Milch halb auf der Serviette, den gelben Becher neben dem Teller.",
-  "Den gelben Becher.",
-  "Eva blieb stehen, eine Hand an der Garderobenbank. Der Becher stand zu Hause. Sie hatte ihn heute Morgen selbst gefüllt. Sie hatte ihn mitgenommen, als sie Mila zu Simon brachte, mittags, weil sie es nicht mehr geschafft hätte. Oder hatte sie ihn dagelassen. Sie musste kurz überlegen, und dieses Kurz-Überlegen schnitt ihr den Atem ab.",
-  "Sie tippte im Gehen Simons Namen an, hielt das Telefon zu nah ans Ohr und spürte, wie ihr Puls gegen die Haut hinter dem Kiefer schlug. Auf dem Display blinkte noch immer Noras Nachricht, ungeöffnet, geduldig.",
-  "Draußen war die Luft kälter, als sie erwartet hatte. Das Freisprechsignal ging im Fahrtwind unter. Evas Wagen stand am Ende der Reihe. Sie ging darauf zu, schneller als beim Herkommen, und hörte sich selbst denken, nur ein Satz, immer derselbe: Ich muss Simon erreichen, bevor Petra es tut.",
-  "Beim Einsteigen fiel ihr Blick auf das Handy. Simon nahm nicht ab. Noras Nachricht blinkte weiter.",
-  "Sie drückte auf Noras Namen, weil das schneller ging, und erst als das Freizeichen lief, merkte sie, dass sie gar nicht wusste, was sie sagen wollte."
+  "Eva legte die Hand auf das Telefon, ein Reflex, das Banner verschwinden zu lassen. Petra sah weg, so höflich, dass es schlimmer war, als hätte sie hingestarrt."
 ];
 
 const sceneThreeParagraphs = [
-  "Eva saß im Wagen, die Tür einen Spalt offen, den Schlüssel in der Hand, ohne ihn ins Schloss zu stecken. Auf dem Display stand Simons Name, bevor sie ihn gewählt hatte. Sie hatte ihn nur angetippt.",
+  "„Ich rufe Simon an\", sagte Eva. „Heute noch.\" Petra nickte, und Eva nahm das Telefon vom Tisch. Im Flur blieb ihr Blick an Milas Haken hängen, dann an dem gelben Becher, der gleichzeitig auf ihrem Küchentresen und in der falschen Hand gewesen war. Draußen tippte sie Simons Namen an. Er nahm nicht ab. Sie setzte sich ins Auto und wählte noch einmal.",
   "„Eva.\"",
   "„Bei Mila ist alles gut.\" Sie hörte sich zu ruhig sagen und korrigierte. „Sie ist drin, sie spielt. Aber in der App steht, ich hätte sie gestern abgeholt.\"",
   "Stille. Kein Einatmen, kein Ach was. Simon sortierte.",
@@ -165,9 +147,9 @@ const sceneThreeParagraphs = [
   "„Sie haben Video.\"",
   "„Das ist ja absurd. Hör zu, ich mach dir Tee, ich nehm die Wäsche aus dem Hof, ich hol nachher Brot mit, damit du nicht nochmal raus musst. Ich bin einfach da, wenn du kommst, ja?\"",
   "„Das musst du nicht —\"",
-  "„Ich weiß. Ich will.\" Ein kurzes Lachen, das nicht unpassend war, nur schnell. „Eva. Dass jemand behauptet, du hättest Mila um fünfzehn Uhr zweiundvierzig abgeholt, wo du nachweislich im Büro warst, das ist nicht dein Problem, das ist deren Problem. Das kriegen wir sortiert.\"",
+  "„Ich weiß. Ich will.\" Ein kurzes Lachen, das nicht unpassend war, nur schnell. „Eva. Dass jemand behauptet, du hättest Mila gestern schon abgeholt, wo du doch im Büro warst, das ist nicht dein Problem, das ist deren Problem. Das kriegen wir sortiert.\"",
   "Eva hielt das Telefon fester.",
-  "Sie ging die letzten zehn Sekunden durch. Problem mit der App. Gestern. Video. Nein. Sie hatte keine Uhrzeit gesagt. Sie war sicher.",
+  "Sie ging die letzten zehn Sekunden durch. Problem mit der App. Gestern. Video. Nein. Sie hatte nicht gesagt, dass sie im Büro gewesen war. Sie war sicher.",
   "Sie war sicher.",
   "„Eva?\"",
   "„Ja. Ich — ja. Ich komm jetzt los.\"",
@@ -357,27 +339,11 @@ const sceneSixParagraphs = [
   "Eva stellte die Tüte ab. Die Milch kippte auf die Seite. Sie ließ sie liegen.",
   "„Dann frag zu Ende.\"",
   "„Ich habe gefragt.\"",
-  "Sie legte auf, bevor sie etwas sagte, das er später zitieren könnte.",
-  "Oben in der Wohnung stand Milas Rucksack im Flur, wo sie ihn am Morgen abgestellt hatte. Der Inhalator lag in der Seitentasche, halb voll, wie gestern, wie vorgestern. Eva nahm ihn heraus und hielt ihn in der Hand. Das Plastik war kühl. Das Etikett war ihres.",
-  "Sie ging in die Küche, legte den Inhalator auf den Tisch, daneben ihren Kalender, daneben das Handy. Drei Dinge, die ihr gehörten.",
-  "Sie nahm einen Stift und schrieb auf die Rückseite eines Kassenzettels: *14:07 Praxis. 16:30 Supermarkt. Jacke Sterne. Zopf.* Ihre Hand war ruhig.",
-  "Das Handy lag stumm neben dem Kalender. Simon rief nicht zurück.",
-  "Sie bückte sich noch einmal in den Flur, holte die Tüte, stellte die Milch zurück in den Kühlschrank und legte den Bon zu den anderen Zetteln.",
-  "Im Wohnzimmer klingelte das Festnetz. Sie ließ es dreimal klingeln, bevor sie abnahm.",
-  "„Berger.\"",
-  "„Frau Berger, entschuldigen Sie die Störung, hier ist noch einmal die Praxis.\" Dieselbe Stimme wie vorhin. „Ihr Mann hat angerufen. Ich wollte nur sichergehen, was jetzt mit dem Termin ist. Donnerstag oder morgen.\"",
-  "Eva stand mit dem Hörer in der Hand und sah auf den Kalender auf dem Küchentisch, auf die zweimal unterstrichene Zehn.",
-  "„Lassen Sie ihn auf Donnerstag\", sagte sie. „Bitte markieren Sie in der Akte, dass die Verschiebung nicht von mir kam.\"",
-  "„Frau Berger, das kann ich so nicht —\"",
-  "„Dann schreiben Sie daneben: *Patientin bestreitet den gestrigen Anruf.* Mit Datum.\"",
-  "Schweigen. Dann Tastenklicken, langsamer als vorher.",
-  "„Ich habe es notiert.\"",
-  "„Danke.\"",
-  "Auf dem Küchentisch lagen der Inhalator, der Kalender, das Handy und vier Zettel. Eva setzte sich, zog ein leeres Blatt heran und schrieb nur das Datum. Darunter: *14:07 Praxis. 16:30 Supermarkt. Jacke mit Sternen. Zopf schief.* Dann hielt sie inne.",
-  "Unter der letzten Zeile blieb mehr leerer Platz, als auf die Seite passte."
+  "Sie legte auf, bevor sie etwas sagte, das er später zitieren könnte."
 ];
 
 const sceneSevenParagraphs = [
+  `Das Festnetz klingelte, als sie die Milch noch nicht wieder in den Kühlschrank gestellt hatte. Die Praxis wollte nach Simons Rückruf wissen, ob der Termin nun Donnerstag bleiben solle. Eva zwang die Helferin, in der Akte zu notieren, dass die Verschiebung nicht von ihr gekommen war. Danach legte sie Inhalator, Kalender und den Bon nebeneinander auf den Küchentisch, schrieb das Datum auf ein leeres Blatt und fuhr zu Simon, bevor die Tinte ganz trocken war.`,
   `Eva drückte zweimal, obwohl sie wusste, dass einmal reichte. Die Tür ging auf, bevor der Summer ganz verstummt war.`,
   `Simon stand im Flur, die Ärmel hochgeschlagen, ein Geschirrtuch über der Schulter. Hinter ihm roch es nach angebratenen Zwiebeln und warmem Öl.`,
   `„Komm rein."`,
@@ -718,14 +684,7 @@ const sceneTwelveParagraphs = [
   `Dienstag. Sieben Uhr achtundzwanzig.`,
   `Darunter: Simon schlägt vor, dass Nora bei Engpässen Bring- und Holwege übernimmt. Ich lehne ab. Er sagt zu, diese Woche bei der alten Regelung zu bleiben und es Nora heute direkt zu sagen.`,
   `Darunter, in einer zweiten Zeile, kleiner: Mila nennt Montage mit Nora „Nora-Montag". Stand mir nicht bekannt.`,
-  `Sie sah auf das Wort, das sie nicht gekannt hatte, und unterstrich es einmal.`,
-  `Oben im ersten Stock, auf der anderen Hofseite, hörte sie eine Tür gehen. Schritte auf Treppenstufen, ruhig, nicht eilig. Die Hoftür unten klickte. Noras Stimme, freundlich, gedämpft, zu einer Nachbarin, die offenbar gerade ihren Hund hinausließ.`,
-  `„Guten Morgen, Frau Kettler. Nein, heute früh raus. Ich hol nachher nur was für Mila aus der Drogerie, die Kleine braucht Pflaster."`,
-  `Eva stand in der Küche, das Blatt in der Hand, und wartete, bis die Stimme weiter weg war.`,
-  `Mila hatte keine offene Stelle. Sie hatte gestern Abend ihre Beine nachgesehen, Knie, Schienbeine, Füße, wie immer nach dem Baden.`,
-  `Sie schrieb eine dritte Zeile auf das Blatt.`,
-  `Sieben Uhr einunddreißig. Nora im Hof. Sagt, sie kauft Pflaster für Mila.`,
-  `Dann legte sie den Stift ordentlich daneben, so, dass er parallel zur Kante lag, und ging zurück zur Tür, um nachzusehen, welchen Weg Nora nahm.`
+  `Sie sah auf das Wort, das sie nicht gekannt hatte, und unterstrich es einmal.`
 ];
 
 const sceneThirteenParagraphs = [
@@ -914,8 +873,6 @@ const sceneSixteenParagraphs = [
   `„Kommst du nachher rüber? Sie will dir den Zahn zeigen, der wackelt."`,
   `„Ich komme nachher rüber."`,
   `Er blieb noch einen Moment in der Leitung, als wolle er etwas sagen. Dann legte er auf.`,
-  `Eva drehte das Telefon um, öffnete den Chat mit Simon und scrollte nach oben. Das Bild von Nora lag dort, von Simon weitergeleitet, um 12:14. Darüber, auf der Linie des Weitergeleiteten, der Hinweis *von Nora Seidel*. Sein *Danke* an Nora sah sie nicht, das stand in einem anderen Chat, in den sie keinen Einblick hatte. Sie wusste nur, dass es existierte, weil er es gesagt hatte.`,
-  `Sie schloss das Fenster und schob das Telefon bis an die Kante der Tischplatte.`,
   `Den Nachmittag über bearbeitete sie Rechnungen, die keiner Bearbeitung bedurften. Zweimal öffnete sie die Kita-App und schloss sie wieder. Die App zeigte für Montag kein Abholprotokoll an, weil sie nicht die abholende Person war, und sie hatte in acht Monaten nicht gelernt, das nicht persönlich zu nehmen.`,
   `Um halb sechs stand sie in Simons Flur. Mila hing an ihrem Bein, roch nach Kita und nach dem Shampoo, das Simon benutzte, und zeigte den wackelnden Zahn, indem sie ihn mit der Zunge hin und her schob, bis Eva lachte. Eva kniete in der Garderobe, damit die Arme ihrer Tochter um ihren Hals passten, und hielt so lange still, wie Mila es zuließ.`,
   `Simon kam aus der Küche, Geschirrtuch über der Schulter, Telefon in der Hand. „Ich hab Petra zurückgerufen wegen des Elternabends, die wollte wissen, ob —" Er hielt das Telefon hoch, um ihr den Termin zu zeigen, und wischte in der Kontaktliste ein Stück nach unten.`,

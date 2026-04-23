@@ -28,7 +28,7 @@
 | **Amazon Goal** | Standalone-Debüt mit hoher Kindle- und Paperback-Tauglichkeit, klarer Hook in einem Satz, starker Serienmöglichkeit für spätere Mutter/Alltagsspannungsstoffe |
 | **Category Lane** | Psychological Thriller > Domestic Suspense > Crime Thriller |
 | **Comp Titles** | Freida McFadden für Zug und kurze Kapitel, Claire Douglas für Alltagsbedrohung, Lisa Jewell für Nahbereichs-Paranoia, Sebastian Fitzek als Negativgrenze: Tempo ja, aber ohne billige Überkonstruktion |
-| **Commercial Hook** | Was, wenn die Kita dir bestätigt, du hättest dein Kind gestern abgeholt und die Videoaufnahme tatsächlich dich zeigt, obwohl du sicher weisst, nie dort gewesen zu sein? |
+| **Commercial Hook** | Was, wenn die Kita dir bestätigt, du hättest dein Kind gestern abgeholt und die Videoaufnahme tatsächlich dich zeigt, obwohl du sicher weißt, nie dort gewesen zu sein? |
 | **Serienpotenzial** | Mittel. Das Buch muss als Einzelband vollständig funktionieren, kann aber bei Erfolg eine lose Reihe von Alltagsbedrohungs-Thrillern rund um Verfahrenslogik, Familie und Wahrnehmung eröffnen. |
 | **Cover-Richtung** | Kein Blut. Kein Messer. Kein schreiendes Kind. Stattdessen Glas der Kita-Tür, reflektierte Mutterfigur, Kinderzeichnung, Abholschild, neutraler Flur, leicht entstellte Spiegelung. |
 
@@ -107,7 +107,7 @@
 ## WORLD BIBLE
 
 ### Setting
-- **Ort:** Deutschland, Gegenwart. Mittelgrosse westdeutsche Stadt.
+- **Ort:** Deutschland, Gegenwart. Mittelgroße westdeutsche Stadt.
 - **Hauptschauplätze:** Kita "Sonnengarten", Evas Altbauwohnung, gemeinsamer Innenhof, Parkplatz vor der Kita, Simons neue Wohnung, ein kleines Polizeikommissariat, Kinderarztpraxis.
 - **Sekundäre Räume:** Hausflur, Spielplatz, Elternabendraum, Supermarkt, Tiefgarage, Waschkuche, Treppenhaus.
 - **Atmosphäre:** Frühlingslicht, Glas, Schlüssel, Stofftaschen, nasse Jacken, Thermobecher, Elternhektik, Verwaltungsfreundlichkeit mit kaltem Kern.
@@ -142,7 +142,7 @@
 - Es gibt keinen Doppelgänger im fantastischen Sinn.
 - Nora hat Evas Routinen über Monate studiert und an entscheidenden Punkten mit legal wirkenden Hilfsrollen kombiniert.
 - Ihr Ziel ist nicht der einmalige Zugriff, sondern der schrittweise Beweis, dass Eva unzuverlässig, überfordert oder instabil wirkt.
-- Die "falsche Abholung" ist Auftakt und Testlauf eines grösseren Ersetzungsmusters.
+- Die "falsche Abholung" ist Auftakt und Testlauf eines größeren Ersetzungsmusters.
 
 ### Eröffnungsmechanik für Kapitel 1
 - Eva sieht am späten Nachmittag in der Kita-App einen verspätet synchronisierten Abschlussvermerk vom Vortag: Mila sei um 15:42 Uhr von ihr abgeholt worden.
@@ -251,7 +251,7 @@
     "was_passiert_ist": "Nora hat vor Jahren nach einer Suchtphase ihren eigenen Sohn an den Vater verloren. Sie ist inzwischen stabil, aber das Gefühl, als Mutter nicht mehr als glaubwürdig zu gelten, hat sich in ihr festgesetzt.",
     "was_es_heute_macht": "Sie verwechselt Fürsorge mit Anspruch. Wo Eva überlastet wirkt, liest Nora keine Grenze, sondern eine Einladung zur Übernahme.",
     "was_er_niemals_tut": "Sie verliert nie sichtbar die Kontrolle, solange andere zusehen.",
-    "arc_abschluss": "Nora wird nicht als irrsinnige Ausnahme entlarvt, sondern als Frau, die aus Demütigung und Selbstgerechtigkeit eine minutihö geplante Ersetzung baut."
+    "arc_abschluss": "Nora wird nicht als irrsinnige Ausnahme entlarvt, sondern als Frau, die aus Demütigung und Selbstgerechtigkeit eine minutiös geplante Ersetzung baut."
   },
   "initial_state": {
     "physisch": "ruhig, gepflegt, unauffällig",
@@ -275,7 +275,7 @@
   "role": "Evas Ex-Mann und Milas Vater",
   "background": "Simon lebt seit der Trennung in einer kleineren Wohnung auf der anderen Rheinseite. Er ist kein Gegner, aber jemand, der Unsicherheit sofort in Absicherung übersetzt.",
   "wunde": {
-    "was_passiert_ist": "Die Trennung hat ihn mit dem Gefühl zurürgelassen, Eva habe Belastung zu lange ausgesessen statt sie rechtzeitig zu benennen.",
+    "was_passiert_ist": "Die Trennung hat ihn mit dem Gefühl zurückgelassen, Eva habe Belastung zu lange ausgesessen statt sie rechtzeitig zu benennen.",
     "was_es_heute_macht": "Wenn Mila betroffen sein könnte, vertraut er eher Dokumenten und Dritten als Evas spontaner Version der Lage.",
     "was_er_niemals_tut": "Er wird Mila nicht bewusst als Druckmittel missbrauchen.",
     "arc_abschluss": "Simon muss lernen, dass rationale Vorsicht ohne Beziehungsgedächtnis selbst zur Waffe gegen Eva werden kann."
@@ -326,7 +326,7 @@ Diese Sektion ist nicht für Backstory, sondern für Mikroführung in Satz, Wahr
 
 ### EVA
 - Eva beobachtet zuerst Abweichung, Takt, Objekt, Reihenfolge. Gefühl kommt später, wenn überhaupt.
-- Ihre Sätze werden unter Druck nicht pötischer, sondern genauer und kürzer.
+- Ihre Sätze werden unter Druck nicht poetischer, sondern genauer und kürzer.
 - Sie benennt Dinge oft über Funktion: Schlüssel, Eintrag, Wechselkleidung, Rückruf, Ausdruck, Liste.
 - Sie deutet Nora nicht früh als Monster, sondern als Frau, die zu viel Zugriff hat.
 - Sie denkt in Ketten: Wer wusste was, wann, woher, mit welchem legitimen Restzugang.
@@ -357,7 +357,7 @@ Verbotene Drift:
 Positive Muster:
 - `Ich kann Mila kurz nehmen, wenn du erst das mit Petra klären willst.`
 - `Komisch, gestern hatte sie den gelben Becher doch noch in der Hand.`
-- `Ich dachte, Simon weiss das längst.`
+- `Ich dachte, Simon weiß das längst.`
 
 Verbotene Drift:
 - Kein offenes Drohen.
@@ -398,7 +398,7 @@ Positive Muster:
 Verbotene Drift:
 - Keine kalte Kita-Bürokratie als Karikatur.
 - Keine böswillige Mutter-Bewertung.
-- Keine Szene, in der Petra plotbeqüm plötzlich alles versteht.
+- Keine Szene, in der Petra plotbequem plötzlich alles versteht.
 
 ### MIKROREGELN FUER DIALOG UND ABSATZENDE
 - Dialogzeilen sollen Macht, Vertrauen, Verfahren oder Zugriff verschieben. Kein atmosphärisches Füllgespräch.
@@ -544,7 +544,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ### Act 3 - Ersetzung wird nachweisbar
 | Bereich | Vorgabe |
 | --- | --- |
-| Neue harte Fakten | kleine Unmöglichkeitsfenster, Signaturfehler, Kalenderabgleich, Wohnungsfund, Mail-/Druckkette, kohärente Beweiskette aus mehreren alltagsnahen Resten und aktülle Verfahrensfolgen daraus |
+| Neue harte Fakten | kleine Unmöglichkeitsfenster, Signaturfehler, Kalenderabgleich, Wohnungsfund, Mail-/Druckkette, kohärente Beweiskette aus mehreren alltagsnahen Resten und aktuellen Verfahrensfolgen daraus |
 | Falsche Vor-Endlesart | Es reicht für Verdacht, aber nicht für Eingriff |
 | Neue Lesart nach Act 3 | Nora hat nicht punktuell geholfen, sondern systematisch Position, Glaubwürdigkeit und Mutterroutine besetzt; dieselben Institutionen, die Eva vorher ausdünnten, müssen ihre Lesart jetzt revidieren |
 | Wer glaubt was | Simon und Petra sehen das Muster jetzt mit; Institutionen reagieren auf Kette statt auf Einzelreiz; Eva gewinnt Autorität nicht privat, sondern sichtbar zurück |
@@ -584,7 +584,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ## ACTS & KAPITEL — SCENE CARDS
 
 ### Template-Hinweis für andere Agents und spätere Regie-Dateien
-- Diese Datei ist die Referenz-Regie für den aktüllen Book-Writer-Pfad.
+- Diese Datei ist die Referenz-Regie für den aktuellen Book-Writer-Pfad.
 - Die Scene Card ist der härteste Produktionsanker. Writer Summaries und Director Notes verdichten nur zusätzlich.
 - Neben `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt`, `alltagswaffe` und ähnlichen Spezialfeldern sollen die folgenden vier Hebel wenn möglich pro Kapitel gesetzt werden:
   - `szenenantrieb`: Figur will X, tut Y, riskiert Z.
@@ -1722,7 +1722,7 @@ Nach Kapitel 38 darf Eva nicht in bloße Panik kippen. Diese Szene ist ihre Här
 
 ### Kapitel 40 — „Die Vorabmail"
 **Writer Summary**
-Eva und Petra ziehen jetzt den harten aktüllen Beweis aus dem Vorabwissen um den Ausflug. Die Szene muss zeigen, wie aus Verdacht prüfbare Struktur wird: Druckjob, Entwurfsmail, Materialraum, Helferschlüssel, Zeitfenster, Foto. Petra wird hier endgültig vom vorsichtigen Gegenüber zur professionellen Verbündeten. Wichtig ist, dass der Beweis nicht aus Geständnis, sondern aus einer Kette kleiner Verwaltungsrealitäten entsteht. Ende auf Petras klarer Linie für den kommenden Morgen.
+Eva und Petra ziehen jetzt den harten aktuellen Beweis aus dem Vorabwissen um den Ausflug. Die Szene muss zeigen, wie aus Verdacht prüfbare Struktur wird: Druckjob, Entwurfsmail, Materialraum, Helferschlüssel, Zeitfenster, Foto. Petra wird hier endgültig vom vorsichtigen Gegenüber zur professionellen Verbündeten. Wichtig ist, dass der Beweis nicht aus Geständnis, sondern aus einer Kette kleiner Verwaltungsrealitäten entsteht. Ende auf Petras klarer Linie für den kommenden Morgen.
 
 ### Kapitel 41 — „Rückholung"
 **Writer Summary**
@@ -1808,7 +1808,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Keine juristische Eskalationsszene daraus machen. Simon handelt aus Schutzlogik, nicht gegen Eva. Nora taucht sozial glaubwürdig auf und Mila begrüsst sie mit Wiederholungs-Selbstverständlichkeit, nicht mit Ersatzmutter-Pathos. Das Ende muss nach Stabilität aussehen und sich für Eva wie Entzug anfühlen.`
 
 #### Kapitel 8 — „Die Akte über Nora"
-`Kein Enthüllungskapitel mit beqümer Akte. Eva bekommt nur Bruchstücke, gerade genug, um Noras Gegenwartslogik zu schärfen. Polizei und Bekannte liefern keine Plotabkürzung, sondern nur Massstab für Beweisbarkeit. Die Brotdose am Ende ist stärker als jede Information davor.`
+`Kein Enthüllungskapitel mit bequemer Akte. Eva bekommt nur Bruchstücke, gerade genug, um Noras Gegenwartslogik zu schärfen. Polizei und Bekannte liefern keine Plotabkürzung, sondern nur Massstab für Beweisbarkeit. Die Brotdose am Ende ist stärker als jede Information davor.`
 
 #### Kapitel 9 — „Der Ersatzschlüssel"
 `Die Szene ist kein Einbruchs-Thriller, sondern ein Nachweis früherer legitimer Nähe. Eva soll aktiv handeln und den Zylinder wechseln, aber die Massnahme darf nicht wie Sieg wirken. Der eigentliche Schrecken ist, dass Zutritt nur der Anfang war und die kopierten Routinen bleiben. Nora am Ende freundlich, nicht triumphierend.`
@@ -1844,7 +1844,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Kein Exkurs und kein Sozialdrama-Ausflug. Nur so viel Vergangenheit wie nötig, um Noras Gegenwartslogik schärfer zu machen. Die Wunde erklärt ihre Logik, nicht ihre Unschuld.`
 
 #### Kapitel 20 — „Zugang"
-`Die Szene soll Prozesse entzaubern, nicht dramatisieren. Petra merkt hier selbst, dass freundliche Elternkultur ein Einfallstor war. Kein Schuldzuweisungsdüll zwischen Petra und Eva. Der gelöschte Scanlauf ist nur ein halbharter Marker, aber einer, der erstmals institutionell nach Metall klingt.`
+`Die Szene soll Prozesse entzaubern, nicht dramatisieren. Petra merkt hier selbst, dass freundliche Elternkultur ein Einfallstor war. Kein Schuldzuweisungsduell zwischen Petra und Eva. Der gelöschte Scanlauf ist nur ein halbharter Marker, aber einer, der erstmals institutionell nach Metall klingt.`
 
 #### Kapitel 21 — „Der erste Fehler"
 `Nora darf hier nicht plötzlich dumm werden. Der Fehler muss klein, menschlich und sofort überspielt sein. Entscheidend ist Simons kurzer Riss, nicht ein offenes Auffliegen. Spannung über Korrektur, nicht über Entlarvung.`
