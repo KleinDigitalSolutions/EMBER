@@ -233,6 +233,7 @@ const sceneFiveParagraphs = [
   "\"Der zweite war besser.\"",
   "\"Glaub ich dir.\"",
   "Sie gingen weiter. Auf der Straße zog sie ihm die Mütze übers Ohr, das immer wieder freikam.",
+  "Beim Vorbeigehen sah sie die Wichteltür an der Sockelleiste. Das Päckchen davor stand noch da.",
   "Zu Hause zog sie ihm die Schuhe aus, bevor er nach dem Reißverschluss fragen konnte. Er stand da und ließ es geschehen. Dann ging er zum Sofa und legte sich hin, längs, den Kopf auf das Kissen, das nach ihr roch.",
   "\"Ich hab Hunger.\"",
   "Sie machte ein Brot mit Frischkäse und schnitt die Rinde ab, obwohl er die Rinde normalerweise aß. Heute nicht. Heute mit abgeschnittener Rinde. Er aß die Hälfte und legte den Rest auf den Teller am Boden.",
@@ -257,7 +258,7 @@ const sceneFiveParagraphs = [
   "Als sie ihn schließlich hochnahm, war ihr Arm bis zur Schulter ohne Gefühl. Sie stand vorsichtig auf, legte das Kissen unter seinen Kopf, zog die Decke über ihn. Sie blieb einen Moment gebückt, bis der Rücken sich sortierte. Dann kam das Kribbeln zurück, in kleinen Stichen, vom Ellbogen nach unten.",
   "In der Küche war das Licht zu hell. Sie schaltete es nicht aus. Auf dem Display standen zwei Anrufe von derselben Nummer. Kein Name.",
   "Sie drückte auf die Mailbox. Erst ihr eigenes Band. Dann die Männerstimme vom ersten Mal, leise und nah, als stünde der Mund direkt am Telefon. \"Laura? Ich versuch's später noch mal.\" Mehr nicht.",
-  "Sie hörte die Nachricht zu Ende, ohne das Gerät ans Ohr zu nehmen. Danach stand sie einen Moment reglos da, das Telefon in der Hand, das Summen der Küche um sie herum, die Maschine im Bad, irgendwo Wasser in den Rohren.",
+  "Sie hörte die Nachricht zu Ende, ohne das Telefon ans Ohr zu nehmen. Danach stand sie einen Moment reglos da, das Telefon in der Hand. Im Bad schlug die nasse Wäsche gegen die Trommel. Der Kühlschrank summte. Irgendwo in den Rohren sackte Wasser ab.",
   "Auf ihrem Pullover, an der Schulter, war ein feuchter Abdruck. Rund, von seiner Wange.",
   "Als das Telefon wieder zu klingeln begann, drehte sie es um und ließ es klingeln."
 ];
