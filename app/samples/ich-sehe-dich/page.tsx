@@ -21,6 +21,54 @@ const sceneOneParagraphs = [
   "Laura machte das Licht aus."
 ];
 
+const sceneTwoParagraphs = [
+  "Der Badboden zog ihr die Wärme aus den Fußsohlen, als sie nach dem Schlafanzug griff, der halb unter der Wanne lag. Henri saß auf dem Klodeckel und weinte ohne Ton, nur Schultern und Nase.",
+  "\"Ich will nicht.\"",
+  "\"Ich weiß.\" Sie zog ihm die Unterhose hoch, dann die Strumpfhose. Seine Beine waren steif. \"Arm.\"",
+  "Er hob den Arm nicht. Sie hob ihn. Der Ärmel blieb am Ellenbogen hängen, sie zog ihn durch, Kopf durch den Kragen, andere Seite. Im Spiegel über dem Waschbecken sah sie sich kurz. Ungewaschenes Haar. Augen wie nach zu wenig Schlaf.",
+  "\"Zähne.\"",
+  "\"Ich will zu Hause bleiben.\"",
+  "\"Zähne, Henri.\"",
+  "Sie drückte ihm die Bürste in die Hand, gab Paste drauf, zählte im Kopf bis zwanzig, nahm ihm die Bürste wieder ab, spülte sie aus. In der Küche war der Wasserkocher schon wieder kalt. Sie stellte ihn noch einmal an, schnitt Brot, strich Butter, schnitt Gurke, packte alles in die Dose. Henri stand im Flur in Socken. Auf dem Schuhschrank lagen noch die Reha-Unterlagen von Tobias.",
+  "\"Schuhe.\"",
+  "\"Mein Bauch tut weh.\"",
+  "\"Nach der Kita gucken wir.\" Sie kniete, zog ihm die Schuhe an, Klett links, Klett rechts. \"Jacke. Mütze. Komm.\"",
+  "Der Toast lag in einem Küchentuch auf dem Beifahrersitz und kühlte ab. An der Kita löste sie Henris Finger einzeln vom Reißverschluss ihrer Jacke. Die Erzieherin lächelte, als sei alles normal. Laura lächelte zurück, als sei alles normal.",
+  "Sie starrte auf ihre Jacke am Haken. Sie konnte sich nicht erinnern, sie aufgehängt zu haben. Erster Patient, kleiner Junge mit Sigmatismus, die Mutter sprach zu viel. Laura hörte zu, notierte, spielte, korrigierte, lobte. Zwischen Patient eins und Patient zwei ging sie in die Küche, goss sich Kaffee ein, nahm einen Schluck im Stehen, stellte die Tasse ab, weil Ines etwas fragte, und vergaß sie dort.",
+  "Patient zwei, fünf Jahre, Mundmotorik. Patient drei, Nachbesprechung mit einer Mutter, die weinte, weil der Logopäde vor ihr nichts gebracht habe. Laura reichte ihr Taschentücher. Ihre Hand fand den Karton, als hätte sie das schon zu oft gemacht. Sie sagte ruhige Sätze. Patient vier fiel aus, dafür schob Ines ihr eine Akte in die Hand, Attestanfrage, Krankenkasse, eilig.",
+  "Sie ging in die Küche zurück. Die Tasse stand noch da, der Kaffee war kalt. Sie trank ihn im Stehen aus, zwei Schluck, drei. Für einen Moment war da der Gedanke, ob Henri vielleicht doch krank war. Sie stellte die Tasse ab. Im Türrahmen rief jemand ihren Namen.",
+  "Der Lagerraum roch nach Pappkarton und Desinfektionsmittel. Sie schloss die Tür hinter sich, lehnte sich mit dem Rücken dagegen, die Akte noch in der Hand. Dann fiel ihr der Kopf nach vorn. Es kam nicht viel. Zwei, drei Atemzüge, in denen das Gesicht heiß wurde. Sie presste die Handfläche auf den Mund.",
+  "Schritte im Flur. Jemand ging an der Tür vorbei, Richtung Toilette. Sie richtete sich auf, wischte mit dem Handrücken unter den Augen entlang, einmal links, einmal rechts, strich sich die Haare hinter die Ohren. Die Akte war an der Ecke zerknittert, sie strich sie glatt.",
+  "Als sie rausging, hielt sie die Akte so, als hätte sie sie gerade aus dem Regal geholt. Ines nickte ihr im Vorbeigehen zu. Laura nickte zurück.",
+  "Henri stand allein an der Garderobe, Jacke halb an, als sie ankam. Die Erzieherin sagte, er habe heute wenig gegessen. Laura sagte Danke und zog ihm den Reißverschluss hoch.",
+  "\"Wir müssen noch schnell einkaufen.\"",
+  "\"Ich will nicht einkaufen.\"",
+  "\"Ich weiß.\"",
+  "Im Supermarkt klammerte er sich an die Stange des Einkaufswagens, Füße auf dem unteren Gitter, Gesicht an ihrem Ärmel. \"Guck mal, Mama.\" Er hielt eine kleine Packung Tiermüsliriegel hoch, die er aus dem Regal gezogen hatte. \"Guck mal, da sind Bären drauf.\"",
+  "\"Schön. Leg zurück.\"",
+  "\"Dürfen wir?\"",
+  "\"Leg zurück, Henri.\"",
+  "Er ließ den Riegel los, Finger für Finger, bis er das Metall des Regals berührte. Sie hakte die Liste im Kopf ab: Nudeln, Tomaten, Käse, Joghurt, Klopapier, Brot für morgen. Milch. Milch. An der Kasse fiel ihr ein, dass die Milch fehlte. Hinter ihr stand schon jemand mit vollem Wagen. Sie legte die Sachen aufs Band. Henri sah auf die Bären, dann auf sie. Sie nahm die Packung aus seiner Hand und legte sie mit aufs Band.",
+  "Im Auto saß er still und aß einen der Riegel, während sie anfuhr.",
+  "\"Guck mal.\" Er hielt das Papier hoch, bevor er es in die Türablage stopfte. \"Ich hab ihn ganz aufgegessen.\"",
+  "\"Hab ich gesehen.\"",
+  "Zuhause: Schuhe aus, Jacke weg, Hände waschen, Nudeln aufsetzen, Henri vor das Malbuch, Wäsche aus der Maschine in den Trockner, Tomatensauce aus dem Glas, Käse reiben, Tisch decken. Er aß drei Gabeln und sagte, der Bauch tue immer noch weh.",
+  "\"Dann ins Bett.\"",
+  "\"Aber ich will erst noch malen.\"",
+  "\"Eine Seite.\"",
+  "Er malte zwei. Sie ließ es durchgehen. \"Guck mal\", sagte er und drehte das Heft zu ihr. Ein Haus mit vier Fenstern, in jedem Fenster ein Kopf. Sie nickte, bevor sie hingesehen hatte, sah dann doch hin, nickte noch einmal.",
+  "Zähne, Pipi, Schlafanzug, Kuscheltier, das richtige, nicht das andere. Sie las ihm drei Seiten aus dem Buch, das sie seit Wochen lasen, Hand auf seinem Rücken, und spürte, wie sein Atem langsamer wurde.",
+  "\"Mama.\"",
+  "\"Ja.\"",
+  "\"Bleibst du da?\"",
+  "\"Ich bleib noch kurz.\"",
+  "Sie blieb, bis er schwer wurde.",
+  "In der Küche stand der halb abgedeckte Tisch. Die Sauce war am Tellerrand eingetrocknet. Sie stellte den Teller in die Spüle, tat die restlichen Nudeln in eine Dose, wischte kurz, ließ den Rest. Auf dem Flur lagen Henris Socken. Sie hob sie auf, ließ sie auf die Waschmaschine fallen. Auf dem Schuhschrank lagen noch immer die Reha-Unterlagen.",
+  "Dann fiel ihr ein, dass sie das Auto nicht abgeschlossen hatte.",
+  "Sie zog die Jacke über den Pyjama, ging runter. Der Hof war leer, das Licht im Treppenhaus ging aus, bevor sie die Haustür erreichte. Sie setzte sich auf den Fahrersitz, um den Schlüssel in die Zündung zu stecken und wieder rauszuziehen, eine Gewohnheit, sie wusste nicht warum. Im Becherhalter stand die Kaffeetasse aus der Praxis, die sie heute Morgen nicht mitgenommen hatte, sondern gestern. Oder vorgestern. Der Rand war braun und trocken, und an einer Stelle hatte sich ein feiner Ring gebildet, wo die Flüssigkeit verdunstet war.",
+  "Sie saß da und sah ihn an."
+];
+
 export default function IchSeheDichSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -28,7 +76,7 @@ export default function IchSeheDichSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Ich sehe dich</h1>
-          <p>Szene 1 ist live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Die Szenen 1 und 2 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -42,16 +90,32 @@ export default function IchSeheDichSamplePage() {
 
       <article className="sample-reader__article">
         <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 1</p>
+          <p className="reader-eyebrow">Buchprobe · Szenen 1–2</p>
           <h2>Die Wichteltür</h2>
           <p>
-            Laura baut nachts die kleine Tür für Henri auf. Der erste Moment des Romans
-            zeigt Liebe, Erschöpfung und die Arbeit, die niemand sieht.
+            Laura baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
+            weiter. Die Leseprobe zeigt Liebe, Erschöpfung und die Arbeit, die niemand
+            sieht.
           </p>
         </div>
 
         <section className="sample-reader__scene">
           {sceneOneParagraphs.map(function (paragraph) {
+            return <p key={paragraph}>{paragraph}</p>;
+          })}
+        </section>
+
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 2</p>
+          <h2>Der nächste Tag</h2>
+          <p>
+            Zwischen Bad, Kita, Praxis, Supermarkt und Abendroutine hält Laura alles in
+            Bewegung, bis am Ende nur noch eine vergessene Tasse im Auto übrig bleibt.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneTwoParagraphs.map(function (paragraph) {
             return <p key={paragraph}>{paragraph}</p>;
           })}
         </section>
