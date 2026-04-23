@@ -207,6 +207,7 @@ export function StudioWorkspace({
     ? getAssistantArtifact(draftStory, selectedAssistantArtifactId)
     : null;
   const footerStatus = latestDraftJob ? formatFooterStatus(latestDraftJob.mode) : null;
+  const displayedSavedAt = lastSavedAt ?? activeLibraryEntry?.updatedAt ?? null;
 
   useEffect(
     function () {
@@ -1770,7 +1771,7 @@ export function StudioWorkspace({
               }
               title={saveError ?? undefined}
             >
-              {formatSaveState(lastSavedAt, saveState, saveError)}
+              {formatSaveState(displayedSavedAt, saveState, saveError)}
             </span>
             {isBranchingStory(draftStory) ? (
               <Link href="/story" className="flat-button topbar-link">
@@ -1810,7 +1811,7 @@ export function StudioWorkspace({
               story={draftStory}
               sceneContext={selectedSceneContext}
               selectedSceneId={selectedSceneId}
-              saveLabel={formatSaveState(lastSavedAt, saveState, saveError)}
+              saveLabel={formatSaveState(displayedSavedAt, saveState, saveError)}
               onSelectScene={setSelectedSceneId}
               onManualSave={handleManualSave}
               onCreateFirstScene={handleCreateFirstScene}
