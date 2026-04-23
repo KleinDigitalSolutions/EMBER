@@ -455,7 +455,7 @@
     "psychisch": "zugewandt, direkt, manchmal leicht naiv gegenueber Care-Last",
     "verhaeltnis_zu_laura": "eng, loyal, liebevoll neckend",
     "verhaeltnis_zu_henri": "freundlich, bemueht, nicht natuerlich eingespielt",
-    "verhaeltnis_zu_marc": "vorsichtig neugierig"
+    "verhaeltnis_zu_cem": "vorsichtig neugierig"
   },
   "speech_pattern": "direkt, herzlich, manchmal einen Satz zu schnell",
   "arc": [
@@ -497,7 +497,7 @@
     "psychisch": "sorgend, kontrollierend, liebevoll, leicht druckvoll",
     "verhaeltnis_zu_laura": "warm, reibend, voller unausgesprochener Ansprueche",
     "verhaeltnis_zu_henri": "grosse Oma-Liebe auf Distanz, etwas ueberversorgend",
-    "verhaeltnis_zu_marc": "zunaechst skeptisch, spaeter still beeindruckt"
+    "verhaeltnis_zu_cem": "zunaechst skeptisch; ihre Sorge um Laura mischt sich mit unausgesprochenen Vorbehalten gegenueber Cems Herkunft. Spaeter, als sie sieht wie ruhig und gut er mit Henri ist, wird aus Vorsicht stille Achtung"
   },
   "speech_pattern": "nachfragend, ratschlaghaft, fast nie eindeutig bestaetigend",
   "arc": [
@@ -539,7 +539,7 @@
     "psychisch": "zugewandt, wortkarg, praktisch, konfliktvermeidend",
     "verhaeltnis_zu_laura": "liebevoll, aber selten direkt formuliert",
     "verhaeltnis_zu_henri": "zuneigend, grossvaeterlich, unaufdringlich",
-    "verhaeltnis_zu_marc": "findet ueber praktische Themen sofort Zugang"
+    "verhaeltnis_zu_cem": "findet ueber praktische Themen sofort Zugang"
   },
   "speech_pattern": "wenige Worte, oft aus dem Hintergrund, nie analysierend",
   "arc": [
@@ -668,6 +668,7 @@ Verbotene Drift:
 - Sie lobt kaum direkt, sondern tastet sich ueber Kontrolle und Hinweise an Liebe heran.
 - Ihre Saetze muessen gut gemeint und trotzdem leicht reibend klingen.
 - Sie beobachtet am Telefon ueber Stimme, Atmung und Alltagsdetails.
+- Ihre Vorbehalte gegenueber Cem laufen nie ueber offene Feindseligkeit, sondern ueber Sorge, Vorsicht und schlecht benannte Schutzreflexe.
 - Gute Ingrid-Zeilen erzeugen Druck ohne Bosheit.
 - Schlechte Ingrid-Zeilen machen sie zur boesartigen Mutter oder zur Karikatur eines Boomer-Klischees.
 
@@ -675,6 +676,7 @@ Positive Muster:
 - `Isst Henri denn im Moment ordentlich?`
 - `Du klingst muede. Schlaefst du ueberhaupt genug?`
 - `Mit Cem musst du halt wirklich vorsichtig sein, ja?`
+- `Du kennst ihn doch noch gar nicht richtig, Laura.`
 
 Verbotene Drift:
 - Kein offenes Herabsetzen von Laura.
@@ -1901,21 +1903,36 @@ Keine Ruehrungs-Musik im Text. Der Schmerz liegt darin, dass diese Zartheit Arbe
 **Writer Summary**
 Ein voller, scheinbar normaler Wochentag zeigt, wie sehr Lauras Leben aus ununterbrochener Bewegung besteht. Kita, Praxis, Lagerraum-Weinen, Einkauf, Abendroutine. Der Clou ist nicht das Spektakel, sondern dass nichts daran fuer die Umwelt nach Leistung aussieht.
 
+**Director Note**
+Kein Montage-Gefuehl. Der Tag muss sich dicht und kleinteilig anfuehlen, nicht elegant zusammengefasst.
+
 ### Kapitel 3 — „Tobias ruft an"
 **Writer Summary**
 Tobias muss frueh als komplizierte Menschlichkeit im Roman stehen. Der Anruf aus der Klinik ist ruhig, klar und dadurch schmerzhafter. Laura antwortet nicht hart aus Grausamkeit, sondern aus Muedigkeit und Wahrheit.
+
+**Director Note**
+Tobias darf fuer einen Moment fast wie frueher klingen. Genau das macht ihn gefaehrlich fuer Lauras Hoffnung.
 
 ### Kapitel 4 — „Der Nachbar"
 **Writer Summary**
 Cem wird nicht ueber Attraktivitaet oder Charme eingefuehrt, sondern ueber das Gefuehl erleichterter Schultern. Die Szene ist kurz und alltagsnah. Wichtig ist, dass Laura den Unterschied im Koerper bemerkt, nicht im Herzen.
 
+**Director Note**
+Kein romantischer Marker. Die Szene lebt ueber Gewicht, Treppenstufen und den winzigen Unterschied im Koerper.
+
 ### Kapitel 5 — „Was Henri braucht"
 **Writer Summary**
 Henri ist hier maximal beduerftig und Laura maximal noetig. Nasse Bettwaesche, fruehes Abholen, Sofa, eingeschlafener Arm. Die Szene muss zeigen, wie erschöpfend und gleichzeitig richtig dieses Dasein ist.
 
+**Director Note**
+Nicht weichzeichnen. Ekel, Scham, Koerpernahe und Liebe duerfen gleichzeitig im Raum sein.
+
 ### Kapitel 6 — „Weihnachtsmarkt"
 **Writer Summary**
 Die Szene stellt Lauras Fremdbild gegen ihre Innenwahrheit. Sabine nennt sie geduldig, Laura erlebt nur Notwendigkeit. Henri kippt von Begeisterung in Ueberreizung, und genau daraus muss die Leserin ihre eigene Wahrheit erkennen.
+
+**Director Note**
+Der Weihnachtsmarkt ist kein Stimmungsbild, sondern ein Reizraum. Tempo und Ueberforderung muessen unter der Festlichkeit liegen.
 
 ### Kapitel 7 — „Heiligabend"
 **Writer Summary**
@@ -1928,17 +1945,29 @@ Kein Feiertagskitsch. Der Baum bleibt schoen, gerade deshalb tut die Einsamkeit 
 **Writer Summary**
 Laura geht aus Vernunft zu Sabine, fuehlt sich aber fehl am Platz. Im Treppenhaus folgt mit Cem die erste kleine, ehrliche Erwachsenenszene des Romans. Es geht nicht um Flirt, sondern um eine ernst gemeinte Frage.
 
+**Director Note**
+Schreibe die Party nicht breit. Wichtig ist die Fremdheit dort und die Ruhe im Treppenhaus danach.
+
 ### Kapitel 9 — „Januar"
 **Writer Summary**
 Das Kapitel zeigt graue Belastung ohne Ereignis. Krankheit, Rechnungen, Miete, zu wenig Puffer. Ingrid ruft an und meint es gut, laesst Laura aber erschoepfter zurück; Werner schickt still Geld mit dem Betreff `fuer Henri`. Genau diese Mischung aus Liebe, Distanz und Unentlastung macht die Herkunftslinie der Familie stark.
+
+**Director Note**
+Der Unterhalts-Beat mit Tobias darf nicht laut werden. Die Grausamkeit liegt in der warmen Uneindeutigkeit, nicht in offener Bosheit.
 
 ### Kapitel 10 — „Erster Kaffee"
 **Writer Summary**
 Cem sitzt in Lauras Kueche und hoert zu. Das Besondere ist, dass Laura sich beim Sprechen einen Moment lang selbst vergisst. Die Szene endet nicht romantisch, sondern erleichtert.
 
+**Director Note**
+Der Sog ist akustisch und koerperlich: wie die Kueche klingt, wie Zeit kurz verschwindet. Keine offensichtliche Chemie-Inszenierung.
+
 ### Kapitel 11 — „Knospen"
 **Writer Summary**
 Fruehling beginnt, aber Laura merkt ihn kaum. Henris Termine, ihre Arbeit und die Ironie, dass sie anderen Kindern mit Sprache hilft, waehrend das eigene Kind kaempft, laufen unter der Oberflaeche. Das Kapitel zeigt Taktung und Leerstelle fuer sie selbst.
+
+**Director Note**
+Nicht symbolisch aufladen. Fruehling ist hier nur eine leichte Veraenderung am Rand, noch keine Befreiung.
 
 ### Kapitel 12 — „Tobias kommt"
 **Writer Summary**
@@ -1951,49 +1980,85 @@ Nicht die Begegnung zwischen Vater und Sohn sentimental ausschlachten. Die Kraft
 **Writer Summary**
 Cem repariert den Schrank, Henri schaut zu, Laura kocht. Das Kapitel lebt davon, dass niemand aus dem Moment etwas Besonderes macht und er genau deshalb besonders wird. Die neue Moeglichkeit heisst hier: drei Menschen in einem Raum ohne Alarm.
 
+**Director Note**
+Halte die Szene niedrig und praktisch. Gerade die Unspektakularitaet muss eine neue Familienluft aufmachen.
+
 ### Kapitel 14 — „Was sie nicht sagt"
 **Writer Summary**
 Innere Szene, aber streng gefuehrt. Laura sitzt im Badezimmer und denkt die Dinge durch, die sie nie ausspricht. Keine poetische Klage, sondern ein Katalog aus Naechten, Scham, Erschoepfung und verlorener Selbstwahrnehmung.
+
+**Director Note**
+Keine Sprache, die schoener ist als Lauras Lage. Jeder Gedanke braucht einen Gegenstand, einen Koerperrest oder eine konkrete Nacht.
 
 ### Kapitel 15 — „Henris Fortschritt"
 **Writer Summary**
 Der Arzt nennt beiläufig sechs trockene Wochen. Fuer Laura ist das riesig, fuer die Umgebung eine Randnotiz. Genau diese Diskrepanz macht die Szene.
 
+**Director Note**
+Der Moment darf fast zu klein wirken. Die Kraft liegt darin, dass nur Laura weiss, wie gross er ist.
+
 ### Kapitel 16 — „Abend fuer Laura"
 **Writer Summary**
 Laura hat freie Zeit und weiss zuerst nichts damit anzufangen. Dass sie dann auf dem Sofa einschlaeft und dies als schoen erlebt, ist die Pointe. Kein Event, sondern Ruhe als ungewohnter Luxus.
+
+**Director Note**
+Kein Selbstfindungsabend. Lass die Leere zuerst irritierend sein und das Einschlafen dann fast unscheinbar schoen.
 
 ### Kapitel 17 — „Tobias trinkt wieder"
 **Writer Summary**
 Rueckfall. Wieder abgesagter Vatermoment. Laura muss Henri eine Wahrheit tragen helfen, die sie nicht verursacht hat. Entscheidend ist ihr Satz `Ja. Aber er kaempft.` als neue Form von Fairness.
 
+**Director Note**
+Laura darf Tobias nicht retten und nicht vernichten. Ihre Fairness gegenueber Henri ist hier das eigentliche Gewicht.
+
 ### Kapitel 18 — „Cem fragt"
 **Writer Summary**
 Die Szene funktioniert nur ueber Schlichtheit. Cem fragt, Laura antwortet wahr, Cem kommentiert nicht uebermaessig. Seine Hand auf ihrer ist staerker als jeder kluge Satz.
+
+**Director Note**
+Vertrau der Pause. Das Kapitel verliert sofort, wenn Cem zu viel versteht oder zu viel sagt.
 
 ### Kapitel 19 — „Muttertag"
 **Writer Summary**
 Henris Bild `MAMA IST STARK` ist gleichzeitig Geschenk, Projektion und Frage. Laura haengt es an den Kuehlschrank, spaeter wird es zum emotionalen Rueckspiegel des Romans. Wichtig: kein Kitschueberhang.
 
+**Director Note**
+Das Bild ist kein Slogan, sondern ein stiller Druckpunkt. Lass den Satz erst spaeter in Laura arbeiten.
+
 ### Kapitel 20 — „Erste Naehe"
 **Writer Summary**
 Hier wird nicht Liebe deklariert, sondern Last kurz gehalten. Filmlicht, Muedigkeit, Sofakissen, Schulter. Dass Laura an Cem einschlaeft, muss sich wie ein kleiner Kontrollverlust anfuehlen, nicht wie eine inszenierte Romantikszene.
+
+**Director Note**
+Die Szene darf fast unspektakulaer sein. Wichtig ist, dass Gehaltenwerden fuer Laura ungewohnt bleibt.
 
 ### Kapitel 21 — „Urlaub ist kein Wort"
 **Writer Summary**
 Sommer in der Stadt statt Reise. Das Kapitel soll zeigen, wie Laura aus wenig etwas Warmes baut, ohne dass ihre Erschoepfung verschwindet. Glueck und Muedigkeit muessen zusammen im Satz stehen koennen.
 
+**Director Note**
+Nicht gegen andere Familien polemisieren. Der Sommer soll knapp sein, aber nicht bitter.
+
 ### Kapitel 22 — „Cem entlastet"
 **Writer Summary**
 Cem nimmt Henri mit in seine Wohnung und an seinen stillen Arbeitsplatz, zeigt ihm alte Hardware, Kabel und kleine technische Handgriffe, waehrend Laura ein paar Stunden allein hat und fast nichts tut. Diese `nutzlose` Zeit ist der eigentliche Schatz. Die Szene darf nicht so klingen, als muesste Laura ihre Entlastung rechtfertigen.
+
+**Director Note**
+Die Technik ist nur Material, kein Nerd-Kapitel. Entscheidender als Hardware ist Lauras irritierende Ruhe.
 
 ### Kapitel 23 — „Was Laura will"
 **Writer Summary**
 Die Frage nach Lauras eigenem Wollen ist hier wichtiger als ihre Antwort. Das Kapitel lebt von kleinen, unspektakulaeren Pruefungen: Was waehlt sie fuer sich, wenn niemand sonst davon abhaengt?
 
+**Director Note**
+Die Leerstelle ist hier die eigentliche Bewegung. Laura muss noch nicht wissen, was sie will.
+
 ### Kapitel 24 — „Tobias und Henri allein"
 **Writer Summary**
 Henri ist weg, die Wohnung still, und Laura merkt, dass Stille fuer sie nicht automatisch Erholung bedeutet. Das Kapitel muss Leere und Alarm zugleich tragen. Kein Suspense, sondern Nervensystem.
+
+**Director Note**
+Kein Misstrauensplot gegen Tobias. Die Spannung liegt in Lauras Koerper, nicht in aeußerer Gefahr.
 
 ### Kapitel 25 — „Laura und Cem allein"
 **Writer Summary**
@@ -2006,41 +2071,71 @@ Schreibe das wie ein Koerperkapitel, nicht wie ein Liebeskapitel.
 **Writer Summary**
 Tobias bringt Henri zurueck und sagt den wichtigsten Satz, den er im ganzen Buch haben wird. Laura nimmt ihn nicht kommentierend, sondern still auf. Die Kraft liegt in der Kleinheit des Moments.
 
+**Director Note**
+Nicht vergroessern. Tobias' Satz muss kurz sein und genau deshalb so tief treffen.
+
 ### Kapitel 27 — „Riss"
 **Writer Summary**
 Cem zieht sich zurueck, weil Naehe fuer ihn auch Angst bedeutet. Laura deutet das sofort ueber ihr altes Muster: Natuerlich geht auch das kaputt. Die Szene darf nicht melodramatisch werden, sondern muss weh tun, weil beide menschlich bleiben.
+
+**Director Note**
+Beide muessen nachvollziehbar bleiben. Kein Schuldverteilen, kein Beziehungsdrama auf Lautstaerke.
 
 ### Kapitel 28 — „Sabine sagt die Wahrheit"
 **Writer Summary**
 Sabine gibt Laura keine Trostformel, sondern eine unangenehme Lesart ihres Schutzverhaltens. Das Kapitel ist nur dann gut, wenn Sabine liebevoll und zu direkt zugleich klingt.
 
+**Director Note**
+Sabine darf nicht wie die Autorin sprechen. Sie muss eine Freundin bleiben, die knapp daneben und genau richtig zugleich trifft.
+
 ### Kapitel 29 — „Cem kommt zurueck"
 **Writer Summary**
 Cem und Laura finden ueber gegenseitige Unsicherheit wieder zusammen. Keine grossen Gesten, nur zwei klare Saetze. Die Szene braucht Bodenhaftung, sonst wirkt sie wie eine zu schnelle Reparation.
+
+**Director Note**
+Die Versoehnung lebt von Verlegenheit und Schlichtheit. Nichts daran darf geschniegelt wirken.
 
 ### Kapitel 30 — „Lauras Praxis"
 **Writer Summary**
 Laura erkennt im beruflichen Raum erstmals den Wert ihrer gelebten Erfahrung. Nicht als Heroisierung, sondern als stilles Verstehen: Ihre Last macht sie in mancher Hinsicht besser in dem, was sie tut.
 
+**Director Note**
+Kein Berufs-Triumph. Die Szene muss leise nachhallen, nicht sich selbst feiern.
+
 ### Kapitel 31 — „Schulranzen"
 **Writer Summary**
 Der Schulranzenkauf ist Uebergang in Materialform. Henri waehlt selbst. Laura sieht in diesem Kauf zugleich Stolz und die Geschwindigkeit der Jahre.
+
+**Director Note**
+Der Ranzen ist Objekt und Schock zugleich. Halte den Kauf banal genug, damit er weh tun darf.
 
 ### Kapitel 32 — „Tobias faellt wieder"
 **Writer Summary**
 Kurz vor der Einschulung bricht die alte Unsicherheit noch einmal auf. Wichtig ist nicht Tobias' Drama, sondern Henris kleines `Okay` und Lauras Reaktion darauf. Das Kapitel muss still schneiden.
 
+**Director Note**
+Das `Okay` ist schwerer als Traenen. Nicht nachhelfen, nicht ausdeuten.
+
 ### Kapitel 33 — „Lauras schlimmste Nacht"
 **Writer Summary**
 Schlaflosigkeit vor der Einschulung. Laura bilanziert ihre Fehler, Cem haelt nur ihre Hand. Die Szene funktioniert ueber Begrenzung, nicht ueber Ueberredung.
+
+**Director Note**
+Lass die Nacht eng werden. Cem bleibt Gegenwart, nicht Loesung.
 
 ### Kapitel 34 — „Was sie weiss"
 **Writer Summary**
 Laura findet am Morgen eine schlichte, tragfaehige Wahrheit. Keine grosse Erkenntnisprosa, sondern konkrete Erinnerungslinie: Wichteltuer, Dino-Socken, Schlaf, Naechte, Liebe.
 
+**Director Note**
+Das Kapitel darf hell werden, aber nicht erhaben. Die Wahrheit muss erschöpft und belastbar klingen.
+
 ### Kapitel 35 — „Erster Schultag"
 **Writer Summary**
 Der Morgen der Einschulung ist Handgriff, Foto, Frage, Brotdose, Ranzen. Cem ist da, ohne im Zentrum zu stehen. Der Moment muss nach Familie im Werden klingen, nicht nach fertiger Heilung.
+
+**Director Note**
+Der Morgen braucht leichte Hektik. Keine Feierlichkeit, die den Alltag aus der Szene drueckt.
 
 ### Kapitel 36 — „Die Schultuer"
 **Writer Summary**
@@ -2053,13 +2148,22 @@ Nichts nacherzaehlen. Wenn die Hand leer ist, ist der Satz fertig.
 **Writer Summary**
 Laura weint vor der Schultuer, und der Roman darf das nicht mit `Stolz`, `Trauer` oder `Glueck` zu sauber beschriften. Die Groesse dieses Moments liegt gerade in seiner begrifflichen Unsauberkeit.
 
+**Director Note**
+Keine Begriffswolke. Der Koerper soll zuerst fuehlen, bevor Sprache hinterherkommt.
+
 ### Kapitel 38 — „Was Sabine schreibt"
 **Writer Summary**
 Die Nachricht an Sabine verdichtet die ganze Szene in einen weitergebbaren Satz. `Er hat einfach losgelassen.` muss wie eine ehrliche, erschrockene, schoene Feststellung wirken, nicht wie ein Spruch.
 
+**Director Note**
+Der Satz darf fast zu klein wirken. Genau darin liegt seine Wahrheit.
+
 ### Kapitel 39 — „Nachmittag"
 **Writer Summary**
 Henri kommt mit Schulgeschichten heim und bringt die neue Welt in die alte Kueche. Laura hoert zu und merkt, dass etwas begonnen hat, das nicht mehr ganz ihr gehoert. Das ist Verlust und Erfolg zugleich, aber bitte ohne grosses Benennen.
+
+**Director Note**
+Henris Tempo ist hier der Rhythmus. Laura hoert mehr, als sie sagt.
 
 ### Kapitel 40 — „Der letzte Satz"
 **Writer Summary**
