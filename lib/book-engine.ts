@@ -53,6 +53,10 @@ export type SceneContextPacket = {
     sceneCardLabel: string | null;
     sceneHeaderHints: string[];
     sceneHardConstraints: string[];
+    sceneDrive: string | null;
+    povKnowledgeBoundary: string | null;
+    relationshipPressure: string | null;
+    endStateHook: string | null;
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -206,6 +210,7 @@ export function buildSceneContextPacket(
   const canonLedger = buildCanonLedger(syncedStory);
   const characterLedger = buildCharacterLedger(syncedStory);
   const memory = syncedStory.book.memory;
+  const sceneBeat = timeline[sceneIndex] ?? null;
   const contextPack =
     memory.contextPacks.find(function (pack) {
       return pack.sceneId === sceneId;
@@ -254,10 +259,29 @@ export function buildSceneContextPacket(
       sceneTitle: sceneContext.scene.title,
       sceneSummary: sceneContext.scene.summary,
       sceneExcerpt: buildSceneExcerpt(sceneContext.scene),
-      sceneCardOutline: timeline[sceneIndex]?.outline ?? [],
-      sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
-      sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
-      sceneHardConstraints: buildSceneHardConstraints(timeline[sceneIndex] ?? null),
+      sceneCardOutline: sceneBeat?.outline ?? [],
+      sceneCardLabel: sceneBeat?.orderLabel ?? null,
+      sceneHeaderHints: buildSceneHeaderHints(sceneBeat),
+      sceneHardConstraints: buildSceneHardConstraints(sceneBeat),
+      sceneDrive: resolveSceneDirectiveCustomValue(sceneBeat, [
+        "szenenantrieb",
+        "scene_drive",
+        "kausalzug"
+      ]),
+      povKnowledgeBoundary: resolveSceneDirectiveCustomValue(sceneBeat, [
+        "wissensgrenze",
+        "pov_knowledge_boundary",
+        "knowledge_boundary"
+      ]),
+      relationshipPressure: resolveSceneDirectiveCustomValue(sceneBeat, [
+        "beziehungsdruck",
+        "relationship_pressure"
+      ]),
+      endStateHook: resolveSceneDirectiveCustomValue(sceneBeat, [
+        "endzustand_hook",
+        "end_state_hook",
+        "hook_endzustand"
+      ]),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -1564,6 +1588,15 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       thread
         ? `Der offene Thread lautet im Kern: ${thread.label}. ${thread.detail}`
         : "Der Druck kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
+      packet.dynamicContext.sceneDrive
+        ? `Szenenantrieb: ${packet.dynamicContext.sceneDrive}`
+        : "",
+      packet.dynamicContext.povKnowledgeBoundary
+        ? `Wissensgrenze der POV-Figur: ${packet.dynamicContext.povKnowledgeBoundary}`
+        : "",
+      packet.dynamicContext.relationshipPressure
+        ? `Beziehungsdruck in der Szene: ${packet.dynamicContext.relationshipPressure}`
+        : "",
       "Die Figuren reagieren konkret, nicht essayistisch."
     ].join(" "),
     [
@@ -1573,6 +1606,9 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
         : "Die Szene soll bereits eine lesbare emotionale Verschiebung erzeugen.",
       packet.stablePrefix.categoryLane
         ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
+        : "",
+      packet.dynamicContext.endStateHook
+        ? `Pflicht-Nachhall am Szenenende: ${packet.dynamicContext.endStateHook}.`
         : "",
       nextBeat
         ? `Am Ende muss genug Zug in Richtung ${nextBeat.sceneTitle} bleiben.`
@@ -1794,6 +1830,17 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
       normalizedKey === "beweisobjekt" ||
       normalizedKey === "alltagswaffe" ||
       normalizedKey === "ersetzungsmoment" ||
+      normalizedKey === "szenenantrieb" ||
+      normalizedKey === "scene_drive" ||
+      normalizedKey === "kausalzug" ||
+      normalizedKey === "wissensgrenze" ||
+      normalizedKey === "pov_knowledge_boundary" ||
+      normalizedKey === "knowledge_boundary" ||
+      normalizedKey === "beziehungsdruck" ||
+      normalizedKey === "relationship_pressure" ||
+      normalizedKey === "endzustand_hook" ||
+      normalizedKey === "end_state_hook" ||
+      normalizedKey === "hook_endzustand" ||
       normalizedKey === "false_friend_signal" ||
       normalizedKey === "payoff" ||
       entry.key === "setup" ||
@@ -1871,6 +1918,33 @@ function parseSceneCardOutlineFields(outline: string[]) {
     fields[normalizedKey] = value;
     return fields;
   }, {} as Record<string, string>);
+}
+
+function resolveSceneDirectiveCustomValue(sceneCard: TimelineBeat | null, aliases: string[]) {
+  if (!sceneCard) {
+    return null;
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const aliasSet = new Set(
+    aliases.map(function (alias) {
+      return normalizeText(alias);
+    })
+  );
+  const values = directives.custom
+    .filter(function (entry) {
+      return aliasSet.has(normalizeText(entry.key));
+    })
+    .map(function (entry) {
+      return entry.value.trim();
+    })
+    .filter(Boolean);
+
+  return uniqueStrings(values).join(" | ") || null;
+}
+
+function uniqueStrings(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 function buildSceneCardOutline(scene: StoryScene, chapterGoal: string, nextSceneTitle: string | null) {

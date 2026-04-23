@@ -181,6 +181,21 @@ Nicht ein einziger Mega-Prompt. Stattdessen modulare System-Prompts.
 
 `aktualisiert 2026-04-20`: Der Book-Drafting-Pfad läuft jetzt nicht mehr als ein kombiniertes Draft/Rewrite/Extract-Schema. Prosa und Metadaten sind getrennt, damit Wortbudget, Qualitätsmessung und nachgelagerte Korrekturen belastbar steuerbar bleiben.
 
+### Operative Regie fuer Book-Jobs
+Fuer starke Szenen braucht das Modell nicht mehr Gesamt-Lore, sondern scharfere szenische Verdichtung. Neben `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt` und `alltagswaffe` sollen Scene Cards deshalb wenn moeglich auch diese vier Felder tragen:
+- `szenenantrieb`: `Eva will X, tut Y, riskiert Z.`
+- `wissensgrenze`: Was die POV-Figur jetzt weiss, nur vermutet und noch nicht wissen darf.
+- `beziehungsdruck`: Die konkrete Reibung zwischen den wichtigsten Figuren in dieser Szene.
+- `endzustand_hook`: Welcher Nachhall oder welcher Druck am Szenenende zwingend stehen muss.
+
+Beispiel im bestehenden Scene-Card-Format:
+```txt
+szenenantrieb: Eva will Simon als Verbuendeten gewinnen, drueckt ihm den ersten belastbaren Beweis in die Hand und riskiert, dass er ihre Vorsicht wieder gegen sie wendet.
+wissensgrenze: Eva weiss, dass Nora reagiert hat; sie vermutet systematische Vorbereitung; sie darf noch nicht wissen, wie tief Nora in Simons Alltag steckt.
+beziehungsdruck: Eva braucht von Simon Glauben statt Verwaltung; Simon will Mila schuetzen, ohne seine eigene Fehlentscheidung zuzugeben.
+endzustand_hook: Simon kann Evas Logik nicht mehr wegwischen, aber sein Kippen kommt zu spaet, um den Druck sofort zu loesen.
+```
+
 ### Gemeinsamer Basis-Prompt
 - Rolle des Modells
 - klare Aufgabe

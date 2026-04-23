@@ -36,3 +36,11 @@ If you change Regie, check these files:
 - `scripts/bootstrap-book-from-regie.ts` for markdown parsing and DB bootstrap behavior.
 - `lib/book-engine.ts` for `sceneCards`, `director_note`, `buildSceneContextPacket()`, and prompt-facing constraints.
 - `lib/server/studio-story-service.ts` for Supabase load/save mappings of `book_scene_cards` and related memory tables.
+
+Regie for strong book jobs should stay scene-bound and causal. Besides `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt`, and `alltagswaffe`, prefer these custom Scene Card keys when useful:
+- `szenenantrieb`: `Figur will X, tut Y, riskiert Z.`
+- `wissensgrenze`: what the POV knows, suspects, and must not know yet
+- `beziehungsdruck`: the active interpersonal friction in this scene
+- `endzustand_hook`: the mandatory closing pressure or aftershock
+
+Write them directly inside the Scene Card block so they persist into `sceneCards`, Supabase, and the prompt packet.
