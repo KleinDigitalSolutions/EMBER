@@ -292,8 +292,8 @@ export default function IchSeheDichSamplePage() {
         </div>
 
         <section className="sample-reader__scene">
-          {sceneOneParagraphs.map(function (paragraph) {
-            return <p key={paragraph}>{paragraph}</p>;
+          {sceneOneParagraphs.map(function (paragraph, index) {
+            return <p key={`scene-1-${index}`}>{paragraph}</p>;
           })}
         </section>
 
@@ -307,8 +307,8 @@ export default function IchSeheDichSamplePage() {
         </div>
 
         <section className="sample-reader__scene">
-          {sceneTwoParagraphs.map(function (paragraph) {
-            return <p key={paragraph}>{paragraph}</p>;
+          {sceneTwoParagraphs.map(function (paragraph, index) {
+            return <p key={`scene-2-${index}`}>{paragraph}</p>;
           })}
         </section>
 
@@ -322,8 +322,8 @@ export default function IchSeheDichSamplePage() {
         </div>
 
         <section className="sample-reader__scene">
-          {sceneThreeParagraphs.map(function (paragraph) {
-            return <p key={paragraph}>{paragraph}</p>;
+          {sceneThreeParagraphs.map(function (paragraph, index) {
+            return <p key={`scene-3-${index}`}>{paragraph}</p>;
           })}
         </section>
 
@@ -337,8 +337,8 @@ export default function IchSeheDichSamplePage() {
         </div>
 
         <section className="sample-reader__scene">
-          {sceneFourParagraphs.map(function (paragraph) {
-            return <p key={paragraph}>{paragraph}</p>;
+          {sceneFourParagraphs.map(function (paragraph, index) {
+            return <p key={`scene-4-${index}`}>{paragraph}</p>;
           })}
         </section>
 
@@ -352,8 +352,8 @@ export default function IchSeheDichSamplePage() {
         </div>
 
         <section className="sample-reader__scene">
-          {sceneFiveParagraphs.map(function (paragraph) {
-            return <p key={paragraph}>{paragraph}</p>;
+          {sceneFiveParagraphs.map(function (paragraph, index) {
+            return <p key={`scene-5-${index}`}>{paragraph}</p>;
           })}
         </section>
 
