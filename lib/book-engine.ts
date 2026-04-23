@@ -1718,13 +1718,21 @@ function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
   }
 
   const directives = resolveSceneCardDirectives(sceneCard);
+  const customHints = directives.custom
+    .filter(function (entry) {
+      const key = normalizeText(entry.key);
+      return key === "beweisobjekt" || key === "alltagswaffe" || key === "ersetzungsmoment";
+    })
+    .map(function (entry) {
+      return `${entry.key}: ${entry.value}`;
+    });
   const hints = [directives.timeAnchor, directives.location]
     .map(function (value) {
       return value?.trim() || "";
     })
     .filter(Boolean);
 
-  return hints.slice(0, 2);
+  return hints.concat(customHints).slice(0, 4);
 }
 
 function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
@@ -1772,10 +1780,22 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
   }
 
   directives.custom.forEach(function (entry) {
+    const normalizedKey = normalizeText(entry.key);
+
+    if (normalizedKey === "director_note" || normalizedKey === "regieanweisung") {
+      hardConstraints.push(`Regieanweisung fuer diese Szene: ${entry.value}`)
+      return
+    }
+
     if (
       entry.key.endsWith("_moment") ||
       entry.key.endsWith("_plant") ||
       entry.key.endsWith("_payoff") ||
+      normalizedKey === "beweisobjekt" ||
+      normalizedKey === "alltagswaffe" ||
+      normalizedKey === "ersetzungsmoment" ||
+      normalizedKey === "false_friend_signal" ||
+      normalizedKey === "payoff" ||
       entry.key === "setup" ||
       entry.key === "subtext" ||
       entry.key === "charakter_subtext" ||
@@ -1889,8 +1909,15 @@ function deriveSceneSummary(job: BookDraftJob) {
 function normalizeText(value: string) {
   return value
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function clampText(value: string, maxLength: number) {

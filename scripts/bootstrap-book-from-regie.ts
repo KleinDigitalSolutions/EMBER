@@ -46,6 +46,7 @@ type ParsedScene = {
   sceneTitle: string
   orderLabel: string
   summary: string
+  directorNote: string | null
   excerpt: string
   chapterGoal: string
   directives: ReturnType<typeof createEmptyBookSceneCardDirectives>
@@ -108,7 +109,6 @@ async function main() {
   const baseStory = await loadStudioStory(created.storyId)
   const story = buildStoryFromRegie(baseStory, parsed)
   await saveStudioStory(story)
-  await overwriteBookMemory(story)
   const savedStory = await loadStudioStory(story.id)
 
   console.log(
@@ -645,9 +645,13 @@ function parseRegie(
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
-  const writerSummariesSection = getOptionalTopLevelSection(
+  const writerSummariesSections = getOptionalTopLevelSectionsByPrefix(
     productionMarkdown,
-    "WRITER-SUMMARIES — KAPITEL 1 BIS 12"
+    "WRITER-SUMMARIES"
+  )
+  const writerUiSection = getOptionalTopLevelSection(
+    productionMarkdown,
+    "Copy-Paste Regieanweisungen fuer die Writer-UI"
   )
   const canonFacts = parseJsonBlock<{ canon_facts: Array<{ id: string; fact: string; status: string }> }>(
     getTopLevelSection(productionMarkdown, "CANON FACTS (Initial — Stand: vor Kapitel 1)")
@@ -669,8 +673,9 @@ function parseRegie(
       payoffAct: thread.payoff_act ?? null
     }
   })
-  const writerSummaries = parseWriterSummaries(writerSummariesSection)
-  const scenes = parseScenes(productionMarkdown, writerSummaries)
+  const writerSummaries = writerSummariesSections.flatMap(parseWriterSummaries)
+  const writerUiNotes = parseChapterNotesFromRegieUi(writerUiSection)
+  const scenes = parseScenes(productionMarkdown, writerSummaries, writerUiNotes)
   const defaultBook = createDefaultBookBlueprint(titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt")
   const title = titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt"
   const genre = masterBriefRows["Genre"] || ""
@@ -757,16 +762,16 @@ function parseCharacters(section: string): ParsedCharacter[] {
       legacyId: typeof record.character_id === "string" ? record.character_id : createUuid(),
       name: typeof record.name === "string" ? record.name : "Unbenannte Figur",
       role,
-      summary: clampText(summaryParts.join(" "), 260),
+      summary: clampText(summaryParts.join(" "), 420),
       currentState: clampText(
         (currentStateParts as string[]).join(" ") || firstArcState || summaryParts[0] || role || "Noch keine explizite Charaktergrundlage.",
-        240
+        420
       ),
       innerShift: clampText(
         getNestedString(record, ["wunde", "was_es_heute_macht"]) ||
           firstArcState ||
           "Noch keine explizite innere Verschiebung formuliert.",
-        240
+        420
       ),
       agenda: clampText(
         String(
@@ -776,13 +781,17 @@ function parseCharacters(section: string): ParsedCharacter[] {
             role ||
             "Noch keine explizite Agenda."
         ),
-        240
+        420
       )
     }
   })
 }
 
-function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): ParsedScene[] {
+function parseScenes(
+  markdown: string,
+  writerSummaries: ParsedWriterSummary[],
+  writerUiNotes: Map<string, string>
+): ParsedScene[] {
   const lines = markdown.split(/\r?\n/)
   const scenes: ParsedScene[] = []
   const writerSummaryByChapterTitle = new Map(
@@ -834,10 +843,29 @@ function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): 
     const goal = parsedBlock.directives.objective || chapterTitle
     const coreAction = parsedBlock.directives.coreAction || parsedBlock.directives.dramaticBeat || goal
     const writerSummary = writerSummaryByChapterTitle.get(normalizeText(chapterTitle))
+    const uiDirectorNote = writerUiNotes.get(normalizeText(chapterTitle)) ?? null
+    const mergedDirectorNote = mergeDirectiveNotes(
+      [writerSummary?.directorNote?.trim(), uiDirectorNote?.trim()].filter(Boolean) as string[]
+    )
     const summary = writerSummary?.summary?.trim()
-      ? clampText(writerSummary.summary.trim(), 1200)
-      : clampText(`${goal} ${coreAction}`.trim(), 220)
-    const excerpt = clampText(coreAction, 220)
+      ? clampText(writerSummary.summary.trim(), 1800)
+      : clampText(`${goal} ${coreAction}`.trim(), 360)
+    const excerpt = clampText(coreAction, 320)
+
+    if (mergedDirectorNote) {
+      parsedBlock.directives.custom = parsedBlock.directives.custom.concat([
+        {
+          key: "director_note",
+          value: mergedDirectorNote
+        }
+      ])
+      parsedBlock.custom = parsedBlock.custom.concat([
+        {
+          key: "director_note",
+          value: mergedDirectorNote
+        }
+      ])
+    }
 
     scenes.push({
       legacyId: parsedBlock.legacyId,
@@ -847,6 +875,7 @@ function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): 
       sceneTitle: chapterTitle,
       orderLabel: parsedBlock.legacyId,
       summary,
+      directorNote: mergedDirectorNote,
       excerpt,
       chapterGoal: goal,
       directives: parsedBlock.directives,
@@ -1052,6 +1081,52 @@ function parseWriterSummaries(section: string): ParsedWriterSummary[] {
   return summaries
 }
 
+function parseChapterNotesFromRegieUi(section: string) {
+  const notes = new Map<string, string>()
+
+  if (!section.trim()) {
+    return notes
+  }
+
+  const lines = section.split(/\r?\n/)
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index].trim()
+
+    if (!line.startsWith("#### ")) {
+      continue
+    }
+
+    const chapterTitle = normalizeChapterTitle(line.replace(/^####\s*/, "").trim())
+    const collected: string[] = []
+
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      const current = lines[cursor].trim()
+
+      if (current.startsWith("#### ") || current.startsWith("### ")) {
+        index = cursor - 1
+        break
+      }
+
+      if (current) {
+        collected.push(current.replace(/^`|`$/g, ""))
+      }
+
+      if (cursor === lines.length - 1) {
+        index = cursor
+      }
+    }
+
+    const note = collected.join(" ").trim()
+
+    if (note) {
+      notes.set(normalizeText(chapterTitle), note)
+    }
+  }
+
+  return notes
+}
+
 function buildWorldBibleEntries(
   worldBibleSection: string,
   characters: ParsedCharacter[],
@@ -1062,7 +1137,7 @@ function buildWorldBibleEntries(
       id: createUuid(),
       title: character.name,
       kind: "character",
-      summary: clampText([character.role, character.summary].filter(Boolean).join(" — "), 260)
+      summary: clampText([character.role, character.summary].filter(Boolean).join(" — "), 420)
     }
   })
 
@@ -1097,7 +1172,7 @@ function buildWorldBibleEntries(
     ? [
         {
           title: "Objektivitaet und Schuld",
-          summary: clampText(thematicCore, 260)
+          summary: clampText(thematicCore, 420)
         }
       ]
     : []
@@ -1233,6 +1308,44 @@ function getOptionalTopLevelSection(markdown: string, heading: string) {
       : markdown.slice(afterHeadingIndex, nextHeadingIndex)
 
   return rawSection.trim()
+}
+
+function getOptionalTopLevelSectionsByPrefix(markdown: string, headingPrefix: string) {
+  const sections: string[] = []
+  const lines = markdown.split(/\r?\n/)
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index]
+
+    if (!line.startsWith("## ")) {
+      continue
+    }
+
+    const heading = line.replace(/^##\s+/, "").trim()
+
+    if (!heading.startsWith(headingPrefix)) {
+      continue
+    }
+
+    const collected: string[] = []
+
+    for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+      if (lines[cursor].startsWith("## ")) {
+        index = cursor - 1
+        break
+      }
+
+      collected.push(lines[cursor])
+
+      if (cursor === lines.length - 1) {
+        index = cursor
+      }
+    }
+
+    sections.push(collected.join("\n").trim())
+  }
+
+  return sections
 }
 
 function getOptionalSubsection(section: string, headings: string[]) {
@@ -1531,12 +1644,47 @@ function normalizeKey(value: string) {
 function normalizeText(value: string) {
   return value
     .toLowerCase()
-    .normalize("NFD")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
 }
 
 function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.filter(Boolean)))
+}
+
+function uniqueByNormalizedText(values: string[]) {
+  const seen = new Set<string>()
+
+  return values.filter(function (value) {
+    const normalized = normalizeText(value)
+
+    if (!normalized || seen.has(normalized)) {
+      return false
+    }
+
+    seen.add(normalized)
+    return true
+  })
+}
+
+function mergeDirectiveNotes(values: string[]) {
+  return uniqueByNormalizedText(
+    values.flatMap(function (value) {
+      const fragments = value.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [value]
+      return fragments
+        .map(function (fragment) {
+          return fragment.trim()
+        })
+        .filter(Boolean)
+    })
+  ).join(" ").trim() || null
 }
 
 function dedupeWorldBible(entries: WorldBibleEntry[]) {

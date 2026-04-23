@@ -39,6 +39,16 @@
 - Das Kind ist emotionaler Kern, aber nie sentimentales Plotwerkzeug.
 - Die Aufloesung muss rueckwirkend alle kleinen Alltagsdetails erklaeren koennen.
 - Die Spannung liegt frueh nicht primaer im Taeterraetsel, sondern im Beweis- und Machtkampf um Glaubwuerdigkeit.
+- Fuer das Debuet zaehlt nicht nur Plotqualitaet, sondern Lesesog pro Kapitel. Der Mittelteil wird auf Wiederholungsresistenz und Weglegerisiko hin gebaut.
+
+### Best-Practice-Umsetzung fuer Commercial Suspense
+- Einstieg so nah wie moeglich am ersten realen Angriff. Keine zwei bis drei Einleitungskapitel vor dem eigentlichen Thriller-Motor.
+- Backstory nur unter Bewegung. Vergangenheit wird in kleinen, spaeten Einsprengseln gegeben, nie als Bremsblock vor dem Konflikt.
+- Der Roman denkt in Kausalketten, nicht in Ereignisreihen: nicht `und dann`, sondern `deshalb` oder `aber`.
+- Jede Szene braucht ein lesbares Mini-Getriebe: Ziel, Motivation, Entscheidung, Aktion, Hindernis.
+- Im Mittelteil gilt Folgenpflicht: Neue Evidenz ist nur dann stark, wenn sie Zugriff, Vertrauen, Routine oder Status real verschiebt.
+- Commercial-Pacing bedeutet nicht Laerm, sondern Weglassen: Alles, was nur bestaetigt, wird gekuerzt, fusioniert oder gestrichen.
+- Kurze Kapitel helfen nur dann, wenn ihre Funktion unterscheidbar ist. Kapitelduplikate schaden mehr als laengere, schaerfere Kapitel.
 
 ---
 
@@ -85,6 +95,12 @@
 - Unklar bleiben darf, wie nah Nora psychisch vor dem totalen Uebergriff schon war.
 - Klar werden muss, dass sie Mila nicht zufaellig wollte, sondern Evas Alltag systematisch studiert und besetzt hat.
 - Der letzte Satz ist ein Konkretheitsbild aus Evas Rueckgewinnung von Alltag, keine These ueber Mutterschaft.
+
+### X-Ray-Pflicht fuer jede Revision
+- Vor jedem grossen Ueberarbeitungslauf ein Kapitel-X-Ray mit genau einem Satz pro Kapitel:
+  `Eva will X, tut Y, verliert oder gewinnt Z.`
+- Wenn ein Kapitel in diesem Format keinen klaren Verlust, Gewinn oder Richtungswechsel hat, ist es Kandidat fuer Fusion oder Streichung.
+- Wenn zwei benachbarte Kapitel denselben Satzbau ergeben, tun sie sehr wahrscheinlich dieselbe Arbeit.
 
 ---
 
@@ -538,6 +554,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 - Nach spaetestens zwei Kapiteln mit neuer Evidenz braucht es ein Kapitel, in dem diese Evidenz eine direkte Folge erzeugt: weniger Zugriff, weniger Vertrauen, veraenderte Routine, institutionelle Vorsicht oder einen echten Gegenzug.
 - Kein Kapitel darf nur bestaetigen, was der Leser ohnehin schon weiss. Jede Wiederholung muss entweder teurer, oeffentlicher oder irreversibler werden.
 - Simon-, Petra- und Mila-Szenen sind keine Pausen vom Plot, sondern die Orte, an denen Beweise Konsequenzen bekommen.
+- Kapitel 38 darf nicht die erste Stelle sein, an der Noras Moral logisch lesbar wird. Spaetestens in zwei frueheren Szenen muessen bereits ihre Prioritaeten sichtbar werden: Verlaesslichkeit vor Bindung, Ordnung vor Ruecksicht, Plausibilitaet vor Naehe.
 
 ### Kapitelweise Leitfragen fuer Scene Cards
 - Welcher neue Fakt liegt am Ende materiell oder sozial belastbar im Raum?
@@ -545,6 +562,22 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 - Wessen Glaubwuerdigkeit steigt, wessen sinkt?
 - Was darf der Leser jetzt vermuten, aber noch nicht sicher wissen?
 - Welches kleine Restdetail kann spaeter als Rueckbeweis tragen?
+- Was kostet dieses Kapitel Eva konkret, wenn man alle Stimmungswoerter streicht?
+- Wuerde zwischen diesem Kapitel und dem vorherigen eher `deshalb` oder `aber` stehen? Wenn nur `und dann` passt, ist die Kette zu weich.
+
+### Produktionsbeschluss fuer die Straffung
+- Zielkorridor fuer das Debuet: 40 bis 42 Kapitel bei 60.000 bis 68.000 Woertern.
+- Act 2 wird in der Manuskriptphase als 12-Kapitel-Block geschrieben, auch wenn die Regie zu Planungszwecken feiner bleibt.
+- Vorrang haben Fusionskapitel mit doppelter Funktion, nicht spaetere Mikrokosmetik.
+
+### Empfohlene Fusionsachsen fuer Act 2
+- `Kapitel 17 "Hofblick"` + `Kapitel 18 "Das Familienalbum"`:
+  Beobachteter Nahraum und digitaler Restzugriff werden zu einem Kapitel ueber gespeicherten Alltag zusammengezogen. Ziel: nicht zweimal nacheinander dieselbe Erkenntnis `Nora hat mitgelesen`.
+- `Kapitel 24 "Kinderarzt"` + `Kapitel 25 "Die zweite Jacke"`:
+  Institutioneller Vertrauensraum und materielles Duplikat werden zu einem Kapitel ueber doppelte Versorgung mit realer Folge fuer Evas Status fusioniert.
+- `Kapitel 29 "Das Archiv der Hilfe"` + `Kapitel 30 "Nicht unzuverlaessig, sondern ersetzt"`:
+  Rueckblickende Ordnung und Midpoint-Erkenntnis werden als ein einziger harter Umschaltmoment gebaut: aus Hilfekette wird die begriffene Ersetzungslogik.
+- Diese Fusionsachsen sind Produktionsvorgaben, keine bloessen Optionen. Wenn spaeter einzelne Kapitel getrennt bleiben, muessen sie nachweisbar unterschiedliche Funktionen behalten.
 
 ---
 
@@ -1460,7 +1493,7 @@ Nach dem Midpoint wird sichtbar, dass Nora nicht auf einen einmaligen Zugriff se
 
 ### Kapitel 32 — „Das Wochenende danach"
 **Writer Summary**
-Diese Szene zeigt den Preis der Ersetzung direkt im Kind, ohne Mila zu instrumentalisieren. Eva erlebt, dass Nora nicht nur Dinge und Wege kopiert, sondern bereits Sprachrhythmen und kleine Verhaltensmuster im Alltag des Kindes verankert hat. Das darf still und schmerzhaft sein, nicht hysterisch. Der Schock liegt darin, dass nichts offen feindlich wirkt. Ende auf Evas Erkenntnis, dass sogar Trost und Gewöhnung schon Konkurrenz haben.
+Diese Szene zeigt den Preis der Ersetzung direkt im Kind, ohne Mila zu instrumentalisieren. Eva erlebt, dass Nora nicht nur Dinge und Wege kopiert, sondern bereits Sprachrhythmen und kleine Verhaltensmuster im Alltag des Kindes verankert hat. Das darf still und schmerzhaft sein, nicht hysterisch. Der Schock liegt darin, dass nichts offen feindlich wirkt. Wichtig ist hier ein erster indirekter Blick auf Noras Moral: Mila wiederholt einen Satz oder Ablauf, in dem Verlaesslichkeit hoeher gewichtet wird als Gefuehl. Ende auf Evas Erkenntnis, dass sogar Trost und Gewöhnung schon Konkurrenz haben.
 
 ### Kapitel 33 — „Abgemeldet"
 **Writer Summary**
@@ -1472,7 +1505,7 @@ Eva geht zu Petra nicht mehr als verletzte Mutter, sondern mit einer Matrix aus 
 
 ### Kapitel 35 — „Das ruhige Gesicht"
 **Writer Summary**
-Im Dreiergespräch zeigt Nora ihre größte Stärke: nicht Lautstärke, sondern kontrollierte Selbstzurücknahme. Für einen Moment muss Eva fast aggressiver wirken als Nora, obwohl sie recht hat. Das macht die Szene so gefährlich. Nora darf hier nicht entlarvend sprechen, sondern fast zu vernünftig sein. Der eingesteckte Zettel am Ende ist deshalb wichtig: die eigentliche Invasion geschieht wieder leise, nah und ohne Zeugen.
+Im Dreiergespraech zeigt Nora ihre groesste Staerke: nicht Lautstaerke, sondern kontrollierte Selbstzuruecknahme. Fuer einen Moment muss Eva fast aggressiver wirken als Nora, obwohl sie recht hat. Das macht die Szene so gefaehrlich. Nora darf hier nicht entlarvend sprechen, sondern fast zu vernuenftig sein. Gleichzeitig muss die Szene einen zweiten indirekten Vorgriff auf Kapitel 38 leisten: Nora soll in einem scheinbar harmlosen Satz verraten, dass fuer sie Verlaesslichkeit mehr zaehlt als Bindung. Der eingesteckte Zettel am Ende ist deshalb wichtig: die eigentliche Invasion geschieht wieder leise, nah und ohne Zeugen.
 
 **Director Note**
 Nora darf in dieser Szene nicht "böse" schreiben. Ihre Ruhe ist ihre Waffe. Der Leser soll spüren, wie schwer es ist, eine so kontrollierte Person im offenen Raum plausibel zu beschuldigen.
@@ -1541,6 +1574,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 - Szenen steigen spaet ein und gehen frueh raus.
 - Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
 - Im Mittelteil nie laenger als zwei reine Indizszenen hintereinander. Danach braucht es eine reale Folge fuer Zugriff, Loyalitaet, Institution oder Kinderroutine.
+- Die Uebergaenge zwischen Szenen muessen kausal lesbar sein. Beim Durchsehen muss zwischen zwei Kapiteln eher `deshalb` oder `aber` passen als `und dann`.
 - Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits traegt, folgt kein erklaerender Satz.
 - Keine drei Atmosphaerenbeobachtungen vor dem eigentlichen Schlag. Binnenprosa nur unter Zug.
 - Raum, Koerper und Stimmung nur dann ausfuehren, wenn sie Beweislage, Glaubwuerdigkeit, Zugriff oder Routine veraendern.
@@ -1548,6 +1582,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 - Nora darf nie wie eine folgenlose Alltags-Supertaeterin wirken. Jeder groessere Zug hinterlaesst Restfehler, Gegendruck oder engeren Spielraum.
 - Eva unter Druck praezise, aber leicht ueberladen. Ihre Wahrnehmung darf kurz stolpern, ohne hysterisch zu werden.
 - Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen. Wenn sie falsch reagieren, muss das Eva konkret etwas kosten.
+- Simon braucht vor seinem spaeten Kippmoment mindestens eine fruehere aktive Fehlentscheidung, die aus Schutzlogik plausibel ist und Eva real Zugriff nimmt.
 - Objektspannung vor Reflexion. Dinge muessen zuerst handeln, bevor Gedanken sie ausdeuten.
 - Jede Szene verschiebt mindestens eines: Beweislage, Glaubwuerdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalitaet.
 - Dialog darf nie bloss atmosphaerisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
@@ -1556,7 +1591,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 - Kurze bis mittlere Kapitel bevorzugen. 850-1450 Woerter sind Normalbereich; nur Schluesselszenen duerfen darueber druecken.
 
 ### Copy-Paste Director Note (globaler Lauf-Block)
-`Straffe die Szene auf Zug statt Vollstaendigkeit. Steige spaet ein, gehe frueh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklaeren. Keine dritte Atmosphaerenbeobachtung vor dem eigentlichen Schlag. Im Mittelteil nicht die dritte reine Beweisszene hintereinander schreiben: spaetestens dann braucht es eine reale Folge fuer Zugriff, Loyalitaet, Institution oder Kinderroutine. Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Jeder groessere Zug hinterlaesst Restfehler oder Gegendruck. Eva bleibt praezise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
+`Straffe die Szene auf Zug statt Vollstaendigkeit. Steige spaet ein, gehe frueh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklaeren. Keine dritte Atmosphaerenbeobachtung vor dem eigentlichen Schlag. Im Mittelteil nicht die dritte reine Beweisszene hintereinander schreiben: spaetestens dann braucht es eine reale Folge fuer Zugriff, Loyalitaet, Institution oder Kinderroutine. Pruefe jeden Anschluss auf Kausalitaet: passt eher deshalb oder aber als und dann? Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Jeder groessere Zug hinterlaesst Restfehler oder Gegendruck. Eva bleibt praezise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
 
 ### Copy-Paste Regieanweisungen fuer die Writer-UI
 

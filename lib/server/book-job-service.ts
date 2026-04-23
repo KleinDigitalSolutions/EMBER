@@ -1789,6 +1789,7 @@ function buildRewriteProsePrompt(
     "Preserve canon and beat order. Expand pressure, not fluff.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current draft: ${draftText}`
   ].join("\n");
 }
@@ -1811,6 +1812,7 @@ function buildExpandPrompt(
     `Preferred expansion beats: ${beatsToExpand.join(" | ") || "last two beats"}`,
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -1828,6 +1830,7 @@ function buildCompressPrompt(
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -2892,9 +2895,13 @@ function normalizeAnthropicModelName(value: string) {
 function normalizeText(value: string) {
   return value
     .toLowerCase()
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/[^a-z0-9_\s-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
