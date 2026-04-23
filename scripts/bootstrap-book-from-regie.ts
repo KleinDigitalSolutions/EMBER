@@ -811,7 +811,7 @@ function parseScenes(markdown: string, writerSummaries: ParsedWriterSummary[]): 
     let blockStart = -1
 
     for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
-      if (lines[cursor].trim() === "```") {
+      if (/^```/.test(lines[cursor].trim())) {
         blockStart = cursor + 1
         break
       }
