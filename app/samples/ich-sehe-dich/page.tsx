@@ -142,6 +142,72 @@ const sceneThreeParagraphs = [
   "Das Geschirrtuch hing schief über dem Spülbecken. Sie ließ es hängen."
 ];
 
+const sceneFourParagraphs = [
+  "Der späte Nachmittag hing grau über dem Parkplatz, als Laura die Haustür mit dem Ellenbogen aufdrückte. In der rechten Hand zwei Stofftaschen, in der linken eine Papiertüte mit dem Kuchen, den Sabine ihr noch mitgegeben hatte, dazu der Autoschlüssel zwischen zwei Fingern. Henri hing an ihrem Mantelsaum.",
+  "\"Mama, guck mal, ich hab das Blatt noch.\"",
+  "\"Ja, Schatz.\"",
+  "\"Guck mal richtig.\"",
+  "\"Gleich, Henri. Halt mal kurz die Tüte hier, die kleine.\"",
+  "Er ließ den Mantel los und nahm die Papiertüte, zu breit für seine Hände. Die Henkel der Stofftaschen schnitten in ihre Handflächen. Milch, zwei Flaschen Wasser, Kartoffeln, der Käse. Der linke Henkel rutschte. Sie zog die Schulter hoch, um ihn zu halten.",
+  "\"Laura, warte mal.\"",
+  "Sabine kam die drei Stufen herunter, eine Strickjacke über den Schultern, in Hausschuhen. Hinter ihr, einen halben Schritt versetzt, ein Mann in einem dunklen Pullover, die Hände in den Jackentaschen.",
+  "\"Du bist ja losgestürmt, als würde es brennen\", sagte Sabine. \"Das ist Cem. Der ist übers Wochenende hier. Ich hab dir doch von ihm erzählt, aus meinem Kurs damals.\"",
+  "\"Hi\", sagte Cem.",
+  "\"Hallo.\" Laura nickte, beide Hände voll, und hoffte, dass das als Gruß reichte.",
+  "Henri zog an ihrem Mantel. \"Guck mal, das Blatt, da sind so Streifen drin.\"",
+  "\"Gleich, Henri.\"",
+  "Sabine beugte sich zu ihm herunter. \"Hast du Oma Sabine ein Blatt mitgebracht?\"",
+  "\"Nein, ich hab’s für Mama.\"",
+  "\"Ach so.\" Sabine lachte kurz. Laura versuchte, den rutschenden Henkel neu zu fassen, ohne den Kuchen schief zu kippen. Sie sah, wie Cem den Blick auf die Taschen legte, nicht auf ihr Gesicht.",
+  "Er trat einen Schritt nach vorn und streckte die Hand aus.",
+  "\"Darf ich?\"",
+  "Es war keine Frage, die eine Antwort brauchte. Bevor Laura überlegen konnte, ob sie ablehnen wollte, hatte er die beiden schweren Taschen schon an den Henkeln, ruhig, als nehme er sich sein eigenes Gepäck. Er trat einen halben Schritt zurück. Keine Geste dazu. Kein Lächeln, das etwas bedeuten sollte.",
+  "\"Welches Auto?\"",
+  "\"Der blaue, der zweite da hinten.\"",
+  "\"Okay.\"",
+  "Er ging voraus. Sabine schob die Strickjacke höher.",
+  "\"Cem bleibt bis Sonntag. Wir müssen uns echt mal wieder richtig sehen, Laura, nicht immer nur im Vorbeigehen.\"",
+  "\"Ja. Ich ruf dich an.\"",
+  "\"Das sagst du immer.\"",
+  "\"Ich weiß.\"",
+  "Sabine drückte sie kurz an der Schulter, über den Mantel, und blieb auf der Treppe stehen. Laura folgte Cem mit der Papiertüte und Henri an der Hand. Der Junge hielt das Blatt jetzt hoch, als laufe er an einer Fahnenstange entlang.",
+  "\"Guck mal, Mama. Die Streifen sehen aus wie Finger.\"",
+  "\"Ja, sehe ich.\"",
+  "\"Richtig?\"",
+  "\"Richtig.\"",
+  "Ihre rechte Hand war leer. Nur der Schlüssel, die Tüte, Henris kleine feuchte Hand. Die linke Hand war leer. Sie bemerkte es daran, dass ihre Finger sich zum ersten Mal seit dem Supermarkt langsam öffneten, ohne dass sie es entschied. Der Weg bis zum Auto waren vielleicht zwanzig Meter. Sie ging sie anders.",
+  "Die Schultern saßen tiefer. Der rechte Oberarm brannte noch von der Kassenschlange. Aber der Griff, mit dem sie normalerweise die Taschen hielt, bis sie beim Auto ankam, dieser Griff war aus.",
+  "Cem stellte die beiden Taschen am Kofferraum ab, ohne nachzusehen, ob sie schon da war. Er trat zurück, zwei Schritte, Hände wieder in den Jackentaschen.",
+  "\"Danke\", sagte Laura.",
+  "\"Klar.\"",
+  "Sie stellte die Papiertüte oben auf eine der Taschen. Henri zog an ihrem Arm.",
+  "\"Guck mal, da ist noch so ein Blatt, das gleiche.\"",
+  "\"Henri, ich muss das einladen, bleib beim Auto.\"",
+  "\"Aber guck mal schnell.\"",
+  "\"Gleich.\"",
+  "Sie hob die erste Tasche in den Kofferraum. Der Henkel streifte ihre Handfläche, und da sah sie die beiden roten Streifen, quer über die Ballen, dort, wo das Gewicht gelegen hatte. Die zweite Tasche. Die Papiertüte in die Mulde neben dem Reserverad. Kuchen nicht umkippen.",
+  "Cem stand einen Meter entfernt, sah zu Henri, der das neue Blatt zwischen zwei Finger klemmte.",
+  "\"Schönes Blatt\", sagte Cem.",
+  "\"Ja\", sagte Henri. \"Das ist für Mama.\"",
+  "\"Ah.\"",
+  "Mehr nicht. Er wartete nicht, dass Henri weiter erzählte, und drängte ihn nicht.",
+  "Laura klappte den Kofferraum zu. \"Nochmal danke.\"",
+  "\"Passt schon.\"",
+  "Sie schob Henri in den Kindersitz, schnallte ihn an. Sein Anorak war zu dick, der Gurt saß zu hoch, sie zog ihn zurecht. Als sie den Kopf wieder hob, war Cem schon auf halbem Weg zu Sabine zurück. Sabine winkte von der Treppe. Laura winkte kurz zurück, ohne zu sehen, ob es ankam, und stieg ein.",
+  "Im Auto roch es nach feuchter Jacke und dem Bananenrest, den Henri heute Morgen im Getränkehalter liegengelassen hatte. Sie startete, fuhr aus der Parklücke, hielt am Ausfahrtsschild, setzte den Blinker. Henri erzählte hinten von den Streifen im Blatt, dann von einem Käfer in der Kita, dann wieder vom Blatt.",
+  "\"Mama, guck mal im Spiegel.\"",
+  "\"Ich fahre, Henri.\"",
+  "\"Nur kurz.\"",
+  "Sie sah im Rückspiegel das Blatt, das er an die Scheibe hielt. \"Schön.\"",
+  "\"Richtig schön?\"",
+  "\"Richtig schön.\"",
+  "An der Ampel öffnete und schloss sie die Hand am Lenkrad. Die linke. Die Streifen brannten noch leicht, aber es war nur noch Haut, kein Gewicht mehr. Sie legte die Finger wieder um das Lenkrad, gleichmäßig verteilt, und fuhr weiter.",
+  "Zu Hause stellte sie die Taschen in der Küche ab, eine nach der anderen, und blieb einen Moment stehen, die Hände auf der Arbeitsplatte. Draußen wurde es früh dunkel. Henri zog im Flur die Schuhe aus, einer fiel um, er ließ ihn liegen. Sie hörte ihn in sein Zimmer gehen.",
+  "Sie drehte die Handflächen nach oben. Die roten Streifen lagen quer über den Ballen, an der linken Hand deutlicher als an der rechten. Sie rieb kurz darüber mit dem Daumen. Schon blasser, als sie gedacht hatte.",
+  "Ihre Schultern brannten weniger.",
+  "Sie hob die Milch aus der Tasche und stellte sie in den Kühlschrank."
+];
+
 export default function IchSeheDichSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -149,7 +215,7 @@ export default function IchSeheDichSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Ich sehe dich</h1>
-          <p>Die Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Die Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -163,7 +229,7 @@ export default function IchSeheDichSamplePage() {
 
       <article className="sample-reader__article">
         <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szenen 1–3</p>
+          <p className="reader-eyebrow">Buchprobe · Szenen 1–4</p>
           <h2>Die Wichteltür</h2>
           <p>
             Laura baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
@@ -204,6 +270,21 @@ export default function IchSeheDichSamplePage() {
 
         <section className="sample-reader__scene">
           {sceneThreeParagraphs.map(function (paragraph) {
+            return <p key={paragraph}>{paragraph}</p>;
+          })}
+        </section>
+
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
+          <h2>Der Parkplatz</h2>
+          <p>
+            Nach einem Besuch bei Sabine trägt Laura den Einkauf zum Auto. Cem hilft, ohne
+            mehr daraus zu machen, und genau darin liegt die Entlastung.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFourParagraphs.map(function (paragraph) {
             return <p key={paragraph}>{paragraph}</p>;
           })}
         </section>
