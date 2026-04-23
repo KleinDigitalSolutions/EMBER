@@ -111,8 +111,8 @@
 
 ### Setting
 - **Ort:** Deutschland, Gegenwart. Mittelgrosse westdeutsche Stadt ohne Glamour.
-- **Hauptschauplaetze:** Lauras Zweizimmerwohnung im Altbau, die Logopaedie-Praxis, Henris Kita, spaeter Grundschule, Cems Wohnung mit kleinem Arbeitszimmer, Supermarkt, Spielplatz, Kinderarztpraxis.
-- **Sekundaere Raeume:** Treppenhaus, Badezimmer, Auto, Weihnachtsmarkt, Cafe mit Tobias, Sabines Wohnung, Klinikbesuch.
+- **Hauptschauplaetze:** Lauras Zweizimmerwohnung im Altbau, die Logopaedie-Praxis, Henris Kita, spaeter Grundschule, Cems Wohnung in einer anderen Stadt mit kleinem Arbeitszimmer, Bahnhof, Regionalzug, Supermarkt, Spielplatz, Kinderarztpraxis.
+- **Sekundaere Raeume:** Badezimmer, Auto, Weihnachtsmarkt, Cafe mit Tobias, Sabines Wohnung, Klinikbesuch, Hotelzimmer.
 - **Atmosphaere:** Nasse Jacken im Flur, warme Lampen, zu enge Kueche, kalter Kaffee, Elternbriefe, Dino-Socken, Pflaster auf Kinderknien, Schulranzen im Septemberlicht.
 
 ### Emotionaler Realismus-Anker
@@ -129,7 +129,7 @@
 - Arbeit ist nicht Flucht, sondern Pflicht plus Selbstwert.
 - Geld ist kein permanenter Krisenplot, aber oft ein enger Rahmen.
 - Jeder Ausfall von Tobias erzeugt nicht nur Schmerz, sondern Mehrorganisation.
-- Zu diesem Alltag gehoert auch eine von Laura auf Ibiza gerettete Katze, die in der kleinen Wohnung einen weiteren Pflegepunkt bildet und fuer Henri zeitweise zum Eifersuchtsobjekt wird.
+- Zu diesem Alltag gehoert auch Poppy, eine von Laura auf Ibiza gerettete Katze, die in der kleinen Wohnung einen weiteren Pflegepunkt bildet und fuer Henri zeitweise zum Eifersuchtsobjekt wird.
 
 ### Henris Regulationslogik
 - Henri braucht Vorhersehbarkeit, Naehe und Wiederholung.
@@ -139,10 +139,11 @@
 - Er orientiert sich an dem Erwachsenen, der ruhig genug bleibt, um nicht noch eine Aufgabe zu werden.
 
 ### Cem als Entlastungsraum
-- Cem lebt nah genug, um real verfuegbar zu sein, aber weit genug, um nicht von Anfang an in Lauras Alltag eingebaut zu wirken.
+- Cem lebt rund hundert Kilometer entfernt. Die Beziehung entsteht ueber konzentrierte Wochenenden, Fahrten, verpasste Zeitfenster und Kontakt dazwischen, der fuer beide nicht kostenlos ist.
 - Seine Arbeit erdet ihn. Er denkt in Strukturen, Systemen und stillen Loesungen, nicht in grossen Reden.
-- Er ist dann am staerksten, wenn er nicht loest, sondern mittraegt.
+- Er ist dann am staerksten, wenn er nicht loest, sondern innerhalb enger gemeinsamer Zeit mittraegt.
 - Seine Gegenwart muss immer als freiwillige Naehe wirken, nie als plotbequeme Verfuegbarkeit.
+- Rueckzug zwischen zwei Treffen darf nie automatisch als Liebesentzug gelesen werden; fuer Laura fuehlt er sich trotzdem real wie Schaden an.
 
 ### Tobias als Abwesenheitslinie
 - Tobias ist nicht das Chaos im Raum, sondern die Luecke, die alle mitorganisieren muessen.
@@ -192,7 +193,7 @@
     },
     {
       "id": "CF005",
-      "fact": "Cem Aydin, 31, ist selbstaendiger ITler, alevitischer Tuerke mit Wurzeln in Kars, aufgewachsen in Deutschland zwischen den Welten. Er hat frueh gelernt, Menschen genau zu lesen, weil er selbst so lange gelesen wurde. Seine soziale Phobie kennt, benennt und navigiert er; sie regiert ihn nicht mehr. Fuer Laura wird er zuerst als ruhige Entlastung wichtig, nicht als romantische Loesung.",
+      "fact": "Cem Aydin, 31, ist selbstaendiger ITler, alevitischer Tuerke mit Wurzeln in Kars, aufgewachsen in Deutschland zwischen den Welten und lebt rund hundert Kilometer von Laura entfernt. Er hat frueh gelernt, Menschen genau zu lesen, weil er selbst so lange gelesen wurde. Seine soziale Phobie kennt, benennt und navigiert er; sie regiert ihn nicht mehr. Fuer Laura wird er zuerst als ruhige Entlastung wichtig, nicht als romantische Loesung. Ihre Naehe entsteht ueber Wochenenden, Fahrten und Nachrichten, in denen jedes Antworten schon eine kleine Form von Arbeit sein kann.",
       "status": "aktiv — verdecktes Entwicklungspotenzial"
     },
     {
@@ -247,7 +248,7 @@
     },
     {
       "id": "CF016",
-      "fact": "Lauras Katze wurde von ihr auf Ibiza gerettet, noch vor der Trennung von Tobias. Sie ist das einzige Lebewesen im Haushalt, dem Laura Zuneigung ohne Pflichtgefuehl zeigt. Henri beobachtet das und prueft still, ob fuer ihn dasselbe gilt.",
+      "fact": "Lauras Katze Poppy wurde von ihr auf Ibiza gerettet, noch vor der Trennung von Tobias. Sie ist das einzige Lebewesen im Haushalt, dem Laura Zuneigung ohne Pflichtgefuehl zeigt. Henri beobachtet das und prueft still, ob fuer ihn dasselbe gilt.",
       "status": "Kern-Anker"
     },
     {
@@ -358,11 +359,11 @@
 {
   "character_id": "CEM",
   "name": "Cem Aydin",
-  "role": "Selbstaendiger ITler, Nachbar, spaeter Lauras Partner",
-  "background": "Cem ist ein ruhiger, systemisch denkender Mann, alevitischer Tuerke mit Wurzeln in Kars, aufgewachsen in Deutschland zwischen den Welten. Er hat frueh gelernt, Menschen genau zu lesen, weil er selbst so lange gelesen wurde. Seine soziale Phobie kennt und navigiert er bewusst; Kapuze im Winter, Sonnenbrille im Sommer und klug gewaehlte Wege sind fuer ihn kein Rueckzug aus Schwaeche, sondern Werkzeug. Er begegnet Laura ohne grosses Theater.",
+  "role": "Selbstaendiger ITler aus einer anderen Stadt, spaeter Lauras Partner",
+  "background": "Cem ist ein ruhiger, systemisch denkender Mann, alevitischer Tuerke mit Wurzeln in Kars, aufgewachsen in Deutschland zwischen den Welten. Er lebt rund hundert Kilometer von Laura entfernt. Er hat frueh gelernt, Menschen genau zu lesen, weil er selbst so lange gelesen wurde. Seine soziale Phobie kennt und navigiert er bewusst; Kapuze im Winter, Sonnenbrille im Sommer und klug gewaehlte Wege sind fuer ihn kein Rueckzug aus Schwaeche, sondern Werkzeug. Er begegnet Laura ohne grosses Theater.",
   "wunde": {
     "was_passiert_ist": "Cem ist zwischen den Welten aufgewachsen und hat frueh gelernt, wie es ist, nirgends ganz dazuzugehoeren. Spaeter kamen Sucht und Verlust in sein Leben, und beides hat ihn gezwungen, sich selbst genauer kennenzulernen, als ihm lieb war.",
-    "was_es_heute_macht": "Er liest Menschen und Raeume schnell, reagiert auf zu viel emotionale Dichte manchmal mit Rueckzug statt mit offenem Benennen seiner Grenzen und vertraut Ruhe mehr als grossen Gefuehlen, weil er weiss, wie schnell Dinge kippen koennen.",
+    "was_es_heute_macht": "Er liest Menschen und Raeume schnell, reagiert auf zu viel emotionale Dichte manchmal mit Rueckzug statt mit offenem Benennen seiner Grenzen und vertraut Ruhe mehr als grossen Gefuehlen, weil er weiss, wie schnell Dinge kippen koennen. Gerade ueber Distanz beantwortet er Nachrichten nicht immer in der Geschwindigkeit, die sein Gegenueber brauchen wuerde.",
     "was_er_niemals_tut": "Cem draengt Laura nicht zu Dankbarkeit und inszeniert Hilfe nicht als Anspruch.",
     "arc_abschluss": "Cem muss nicht lernen, wie man einen inneren Feind besiegt. Er muss lernen, dass getragene Naehe trotz alter Schutzmuster moeglich ist. Laura muss lernen, dass sie trotzdem bleiben darf."
   },
@@ -377,11 +378,11 @@
   "arc": [
     {
       "phase": "Act 1",
-      "state": "Cem tritt als beilaufige Hilfe in Lauras Alltag und wird zur stillen Beobachtungslinie."
+      "state": "Cem tritt zunaechst nur punktuell in Lauras Leben und wird ueber wenige, praegende Begegnungen und spaeteren Kontakt zur stillen Beobachtungslinie."
     },
     {
       "phase": "Act 2",
-      "state": "Er wird fuer Laura zum ersten echten Entlastungsraum und beginnt selbst emotional mitzuschwingen."
+      "state": "Er wird fuer Laura ueber Wochenenden und konzentrierte Besuche zum ersten echten Entlastungsraum und beginnt selbst emotional mitzuschwingen."
     },
     {
       "phase": "Act 3",
@@ -563,6 +564,27 @@
 }
 ```
 
+### Poppy — „Das pflichtfreie Wesen"
+```json
+{
+  "character_id": "POPPY",
+  "name": "Poppy",
+  "role": "Lauras Katze, auf Ibiza gerettet",
+  "background": "Poppy lebt mit Laura und Henri in der kleinen Wohnung und ist kein niedliches Accessoire, sondern ein weiterer stiller Teil von Lauras Alltag. Fuer Laura ist sie das einzige Lebewesen im Haushalt, dem Zuneigung oft ohne Pflicht vorausgeht.",
+  "funktion": {
+    "im_roman": "Poppy zeigt, dass Laura noch faehig ist zu weicher, unangestrengter Zuwendung. Fuer Henri wird sie zeitweise zum stillen Vergleichsobjekt: Wie fuehlt sich Liebe an, wenn keine Aufgabe daran haengt?",
+    "was_sie_nicht_werden_darf": "Poppy darf nie zur Symbolkatze oder zum reinen Niedlichkeitsbeat verkommen.",
+    "arc_abschluss": "Poppy veraendert sich nicht. Ihre Konstanz ist gerade ihre Funktion."
+  },
+  "initial_state": {
+    "physisch": "klein, wach, eigensinnig, oft warm zusammengerollt",
+    "verhaeltnis_zu_laura": "vertraut, koerperlich selbstverstaendlich nah",
+    "verhaeltnis_zu_henri": "geduldet, beobachtet, gelegentlich Ausloeser fuer Eifersucht",
+    "verhaeltnis_zum_haushalt": "weiterer Pflegepunkt, aber emotional anders aufgeladen als alle anderen Aufgaben"
+  }
+}
+```
+
 ---
 
 ## VOICE PACK
@@ -621,7 +643,7 @@ Verbotene Drift:
 
 Positive Muster:
 - `Du musst mir nichts erklaeren. Ich kann auch einfach bleiben.`
-- `Soll ich den Abwasch machen oder soll ich einfach still sein?`
+- `Ich schaffe Schreiben heute nicht gut. Ich melde mich morgen richtig.`
 - `Du musst mir nicht stark sein.`
 
 Verbotene Drift:
@@ -725,6 +747,7 @@ Verbotene Drift:
 - Tobias darf Hoffnung erzeugen, aber keine plotbequeme Reparatur.
 - Laura darf wutentbrannt sein, aber nie gegen Henri als Charakter abgekippt werden.
 - Wenn eine Szene warm ist, muss spuerbar bleiben, was sie gekostet hat.
+- Zwischen Laura und Cem darf Kontakt nie kostenlos wirken: Fahrten, Zeitfenster, Antworten und Schweigen haben immer Gewicht.
 
 ### Saisonale Guardrails
 - Winter ist eng und dunkel, aber nicht trostlos.
@@ -743,19 +766,19 @@ Cem wirkt nur dann glaubhaft, wenn seine Wirksamkeit begrenzt und konkret bleibt
 
 ### Was Cem glaubhaft sehen kann
 - Dass Laura dauernd weiterarbeitet, auch wenn niemand hinsieht.
-- Welche Kleinigkeiten liegenbleiben, weil ihr Alltag zu eng ist.
+- Wie sehr gemeinsame Zeit bei ihr sofort unter Alltagsdruck geraet.
 - Wann Henri Ruhe statt Ansprache braucht.
 - Dass Laura auf Fragen nach sich selbst erst reflexhaft ausweicht.
 - Wie schnell sich Entlastung fuer Laura nach Luxus anfuehlt.
 
 ### Woher Cem das weiss
-- Aus raeumlicher Naehe und wiederholten kleinen Begegnungen.
+- Aus konzentrierten Wochenenden und der Art, wie schnell diese Zeit wieder vorbei ist.
 - Aus stiller Beobachtung, nicht aus hellseherischer Sensibilitaet.
 - Aus eigener Erfahrung mit Beziehungsmuedigkeit und Ueberforderung.
-- Aus konkreten Situationen: Treppenhaus, Kueche, Reparatur, Arbeitszimmer, Abholmomente.
+- Aus konkreten Situationen: Bahnhof, Kueche, Reparatur, Hotelmorgen, Handy-Schweigen, Abholmomente.
 
 ### Was Cem operativ tun kann
-- Praktische Last kurz mittragen.
+- Praktische Last innerhalb der gemeinsamen Wochenenden kurz mittragen.
 - Stille aushalten, ohne sie zu fuerchten.
 - Henri ueber gemeinsame Handlung und Geduld gewinnen.
 - Laura Fragen stellen, die nicht nach Leistung klingen.
@@ -873,7 +896,7 @@ Diese Treppe ordnet nicht Thriller-Beweise, sondern die wachsenden Belege von La
 | Falsche Anfangslesart | Laura ist einfach stark und kommt eben durch |
 | Neue Lesart nach Act 1 | Laura traegt ununterbrochen mehr, als ihr Umfeld wirklich sieht |
 | Wer glaubt was | Laura glaubt noch, Durchhalten sei ihr einziger Modus; Sabine bewundert sie; Cem sieht erste Risse; Henri haelt sich an ihr fest |
-| Was unbewiesen bleiben muss | Dass Laura Hilfe annehmen kann und dass Cem mehr sein koennte als ein freundlicher Nachbar |
+| Was unbewiesen bleiben muss | Dass Laura Hilfe annehmen kann und dass Cem mehr sein koennte als ein freundlicher Mann auf Distanz |
 
 ### Act 2 - Oeffnung wird riskierbar
 | Bereich | Vorgabe |
@@ -988,22 +1011,22 @@ Scene Card
   setup: CF003, CF004, OT003
 ```
 
-#### Kapitel 4: „Der Nachbar"
+#### Kapitel 4: „Die Taschen"
 ```text
 Scene Card
   id: SC_1_4
   pov: LAURA
-  ort: Treppenhaus
+  ort: Vor Sabines Haus / Parkplatz
   uhrzeit: spaeter Nachmittag
   ziel: Cem unaufgeregt, konkret und alltagsnah einfuehren.
-  opening: Laura kommt mit Einkaufstaschen und Henri im Schlepptau die Treppe hoch.
+  opening: Nach einem kurzen Besuch bei Sabine steht Laura mit Einkaufstaschen, Henri und zu vielen Dingen gleichzeitig vor dem Auto.
   objective: Cem als reale Hilfe markieren, noch ohne Romantikinszenierung.
-  coreAction: Cem nimmt ihr wortlos zwei schwere Taschen ab, fragt nicht viel und laechelt nur kurz Henri zu.
-  dramaticBeat: Laura merkt weniger den Mann als den winzigen Unterschied, wie sich die letzten Stufen mit freien Haenden anfuehlen.
+  coreAction: Sabine stellt ihren Freund Cem vor, der aus einer anderen Stadt zu Besuch ist und Laura wortlos zwei schwere Taschen abnimmt.
+  dramaticBeat: Laura merkt weniger den Mann als den winzigen Unterschied, wie sich der Weg bis zur Haustuer mit freien Haenden anfuehlt.
   ending: Drinnen denkt sie nicht an sein Gesicht, sondern daran, dass ihre Schultern ploetzlich weniger brennen.
   beweisobjekt: Die zwei abgenommenen Einkaufstaschen
   alltagswaffe: Gewicht
-  soziale tarnung: Es ist nur nachbarschaftliche Hoeflichkeit
+  soziale tarnung: Es ist nur eine kleine Hoeflichkeit beim Abschied
   falsche lesart: Der Moment ist zu klein, um wichtig zu sein
   ersetzungsmoment: Entlastung tritt fuer Sekunden an die Stelle von Gewoehnung
   closing_image: Die roten Druckstellen an Lauras Handflaechen verblassen
@@ -1089,12 +1112,12 @@ Scene Card
 Scene Card
   id: SC_1_8
   pov: LAURA
-  ort: Sabines Feier / Treppenhaus
+  ort: Sabines Feier / vor der Haustuer
   uhrzeit: spaeter Abend
   ziel: Lauras Fremdheit im sozialen Raum und Cems erste echte Frage setzen.
   opening: Laura geht aus Pflicht gegen sich selbst kurz zu Sabines Silvesterabend.
   objective: Zeigen, dass Erholung und Ausgehen fuer Laura nicht automatisch Leichtigkeit bedeuten.
-  coreAction: Sie fuehlt sich zwischen Gelaechter und Smalltalk fehl am Platz, geht frueh und trifft Cem im Treppenhaus.
+  coreAction: Sie fuehlt sich zwischen Gelaechter und Smalltalk fehl am Platz, geht frueh und trifft draussen vor dem Haus wieder auf Cem, der die letzte Zigarette ausdrueckt, bevor er zurueckfahren will.
   dramaticBeat: Auf seine Frage `Wie war's?` antwortet sie zum ersten Mal einem fast Fremden ehrlich.
   ending: Cem lacht leise, nicht ueber sie, sondern mit ihr gegen diesen Abend.
   beweisobjekt: Glitzernder Partybecher, den Laura halbvoll mit nach Hause bringt
@@ -1102,7 +1125,7 @@ Scene Card
   soziale tarnung: Es ist nur eine harmlose Silvesterfrage
   falsche lesart: Laura braucht nur mal wieder unter Leute
   ersetzungsmoment: Ehrlichkeit tritt kurz an die Stelle von Selbstbeherrschung
-  closing_image: Feuerwerk spiegelt sich im Treppenhausfenster hinter Cem
+  closing_image: Feuerwerk spiegelt sich auf der Windschutzscheibe hinter Cem
   verbotene drift: Keine RomCom-Energie
   was die szene nicht tun darf: Silvester als Wendepunkt ueberinszenieren
   setup: CF005, CF006, OT004, OT005
@@ -1138,17 +1161,17 @@ Scene Card
   id: SC_1_10
   pov: LAURA
   ort: Wohnung / Kueche
-  uhrzeit: spaeter Vormittag
+  uhrzeit: Samstagvormittag
   ziel: Cem als ersten echten Zuhörer in Lauras Gegenwart platzieren.
-  opening: Cem steht mit ihrer versehentlich mitgenommenen Post vor der Tuer.
+  opening: Nach einigen vorsichtigen Nachrichten kuendigt Cem sich fuer einen Samstag in ihrer Stadt an und steht mit Kaffee vom Bahnhof vor der Tuer.
   objective: Eine stille Naehe herstellen, die sich nicht wie Plot anfühlt.
   coreAction: Laura bietet Kaffee an, spricht mehr als beabsichtigt ueber Henri und ihren Alltag, Cem hoert einfach zu.
   dramaticBeat: Laura merkt beim Aufstehen, dass sie fast eine Stunde lang nicht an Waesche, Uhrzeiten oder Tobias gedacht hat.
   ending: Nach seinem Gehen klingt die Wohnung nicht leerer, sondern einen Moment lang leichter.
   beweisobjekt: Geoeffneter Brief neben zwei Kaffeetassen
   alltagswaffe: Unerwartete Ruhe
-  soziale tarnung: Es ist nur Kaffee wegen falsch verteilter Post
-  falsche lesart: Das ist bloss ein nettes Nachbarsgespraech
+  soziale tarnung: Es ist nur ein Kaffee vor seiner Rueckfahrt
+  falsche lesart: Das ist bloss ein nettes Treffen zwischendurch
   ersetzungsmoment: Gesehenwerden tritt an die Stelle von Daueralarm
   closing_image: Sie dachte nicht daran, was er war. Nur daran, wie die Wohnung klang, nachdem er gegangen war.
   verbotene drift: Kein offensichtlicher Flirtbogen
@@ -1217,13 +1240,13 @@ Scene Card
   ziel: Cem ueber Handlung tiefer in Lauras Alltag holen.
   opening: Der kaputte Kuechenschrank steht schon lange schief, aber Laura kam nie dazu.
   objective: Cem als Mann zeigen, der sieht und macht, ohne Held daraus zu werden.
-  coreAction: Cem kommt mit Werkzeug, repariert den Schrank, Henri schaut zu, Laura kocht nebenbei.
-  dramaticBeat: Zum ersten Mal sind Laura, Henri und Cem ohne grosse Anspannung gleichzeitig in einem Raum und niemand muss daraus etwas machen.
+  coreAction: Cem ist fuer das Wochenende da, kommt mit Werkzeug aus dem Auto hoch, repariert den Schrank, Henri schaut zu, Laura kocht nebenbei.
+  dramaticBeat: Zum ersten Mal sind Laura, Henri und Cem innerhalb einer begrenzten gemeinsamen Zeit ohne grosse Anspannung gleichzeitig in einem Raum und niemand muss daraus etwas machen.
   ending: Als Cem geht, schliesst die Schranktuer wieder leise und ordentlich.
   beweisobjekt: Reparierte Schranktuer
   alltagswaffe: Aufgeschobenes Praktisches
-  soziale tarnung: Es ist nur eine Reparatur
-  falsche lesart: Hilfe im Haushalt ist unromantisch und klein
+  soziale tarnung: Es ist nur eine Reparatur an einem Samstag
+  falsche lesart: Gemeinsame Wochenendzeit darf nicht praktisch werden
   ersetzungsmoment: Mitgetragenwerden tritt an die Stelle von Daueraufschub
   closing_image: Henri streicht mit den Fingern ueber die gerade Schrankkante
   verbotene drift: Kein handwerklicher Alpha-Charme
@@ -1332,20 +1355,20 @@ Scene Card
 Scene Card
   id: SC_2_8
   pov: LAURA
-  ort: Treppenhaus / Cems Wohnungstuer
-  uhrzeit: Abend
+  ort: Vor der Wohnung / Auto
+  uhrzeit: Sonntagabend
   ziel: Den ersten echten Wahrheitsmoment zwischen Laura und Cem setzen.
-  opening: Cem trifft Laura nach Tobias' Rueckfall im Flur.
+  opening: Nach Tobias' Rueckfall ist ein gemeinsames Wochenende fast vorbei, und Cem steht schon halb auf dem Weg zurueck zu seinem Auto.
   objective: Die simple Frage `Wie geht es dir wirklich?` als Verschiebung lesbar machen.
   coreAction: Laura will automatisch `Gut` sagen und sagt stattdessen die Wahrheit. Cem antwortet nicht klug, sondern legt nur seine Hand auf ihre.
   dramaticBeat: Gerade weil er nichts auslegt, entsteht fuer Laura zum ersten Mal seit Langem kein Druck, sich sofort wieder zu sortieren.
-  ending: Als sie spaeter in ihrer Wohnung steht, spuert sie noch das Gewicht seiner Hand auf ihrer.
+  ending: Als sein Ruecklicht spaeter aus der Strasse verschwindet, spuert Laura noch das Gewicht seiner Hand auf ihrer.
   beweisobjekt: Cems Hand auf Lauras Hand
   alltagswaffe: Eine einfache Frage
-  soziale tarnung: Es ist nur ein kurzer Flurmoment
+  soziale tarnung: Es ist nur ein kurzer Abschied vor der Fahrt
   falsche lesart: Ein Gespraech hilft nicht gegen echte Ueberforderung
   ersetzungsmoment: Wahrheit tritt an die Stelle von Reflexantwort
-  closing_image: Laura lehnt innen an ihrer Wohnungstuer und sieht auf ihre eigene Hand
+  closing_image: Laura steht noch auf dem Gehweg und sieht auf ihre eigene Hand
   verbotene drift: Kein Sofortverlieben
   was die szene nicht tun darf: Cem als Therapeutenersatz schreiben
   setup: CF005, OT004, OT005
@@ -1380,17 +1403,17 @@ Scene Card
 Scene Card
   id: SC_2_10
   pov: LAURA
-  ort: Cems Sofa
+  ort: Lauras Sofa
   uhrzeit: spaeter Abend
   ziel: Koerperliche Naehe ohne Romantikueberschrift etablieren.
-  opening: Laura bleibt nach einem mueden Abend bei Cem auf dem Sofa haengen.
+  opening: Nach einem langen Samstag bleibt Laura auf ihrem eigenen Sofa neben Cem sitzen, waehrend Henri bei Sabine schlaeft.
   objective: Eine Intimitaet zeigen, die nicht ueber Sex oder grosses Bekenntnis laeuft.
   coreAction: Film, zu viel Muedigkeit, zu wenig Distanz, Cem haelt sie einfach fest.
   dramaticBeat: Das Entscheidende ist nicht Begehren, sondern dass jemand ihren erschlafften Koerper haelt, ohne etwas zu verlangen.
   ending: Laura schlaeft kurz an seiner Schulter ein und erschrickt nicht einmal darueber.
   beweisobjekt: Eingedruecktes Sofakissen neben Cems Schulter
   alltagswaffe: Muedigkeit
-  soziale tarnung: Es ist nur ein zu spaeter Abend mit Film
+  soziale tarnung: Es ist nur ein zu spaeter Abend an einem selten freien Wochenende
   falsche lesart: Romantik muss gross markiert werden
   ersetzungsmoment: Getragenwerden tritt an die Stelle von Wachsamkeit
   closing_image: Das blaeuliche Filmlicht auf Lauras geschlossenem Gesicht
@@ -1431,17 +1454,17 @@ Scene Card
 Scene Card
   id: SC_3_2
   pov: LAURA
-  ort: Wohnung / Cems Arbeitszimmer
+  ort: Wohnung / Repair-Cafe
   uhrzeit: Nachmittag
   ziel: Zeigen, wie ungewohnt getragene Zeit fuer Laura ist.
-  opening: Cem nimmt Henri fuer ein paar Stunden mit in seine Wohnung und an seinen Arbeitsplatz.
+  opening: Cem ist fuer das Wochenende da und nimmt Henri fuer ein paar Stunden mit in ein kleines Repair-Cafe in der Stadt.
   objective: Entlastung als realen, koerperlichen Vorgang und nicht als romantischen Bonus schreiben.
   coreAction: Henri schaut Cem dabei zu, wie er alte Hardware auseinanderschraubt, Kabel sortiert und ein kleines, stilles System wieder zum Laufen bringt; Laura hat vier Stunden allein und tut fast nichts.
   dramaticBeat: Dass `nichts` fuer Laura reicht, ist der eigentliche Umschlagpunkt.
   ending: Als Henri strahlend zurueckkommt, schämt Laura sich kurz fuer ihre Ruhe und spuert dann, dass genau das falsch ist.
   beweisobjekt: Eine alte Tastenkappe und ein kleines Kabelteil, das Henri mitbringt
   alltagswaffe: Schuld beim Ausruhen
-  soziale tarnung: Es ist nur ein netter Nachmittag bei Cem
+  soziale tarnung: Es ist nur ein netter Samstagnachmittag mit Cem
   falsche lesart: Freie Stunden muessen produktiv genutzt werden
   ersetzungsmoment: Pause tritt an die Stelle von Pflicht
   closing_image: Eine alte Tastenkappe liegt auf Lauras Kuechentisch neben Henris Trinkbecher
@@ -1509,7 +1532,7 @@ Scene Card
   opening: Laura wacht in einem Hotelbett auf und merkt erst nach Sekunden, dass sie nicht aufgesprungen ist.
   objective: Das Wochenendwegsein als tiefen Koerpermoment statt als Date-Romantik schreiben.
   coreAction: Laura schlaeft aus, Cem bringt ihr Kaffee ans Bett, sie weint ohne klare Ursache.
-  dramaticBeat: Nicht das Hotel oder die Romantik, sondern der fremde Luxus, ausgeruht zu sein, bringt sie an die Grenze.
+  dramaticBeat: Nicht das Hotel oder die Romantik, sondern der fremde Luxus, ausgeruht zu sein, bringt sie an die Grenze; zugleich liegt ueber dem Morgen das Wissen, wie viel jetzt in dieses eine Wochenende hineinpasst.
   ending: Cem fragt nicht nach einer Begruendung und setzt sich einfach zu ihr.
   beweisobjekt: Kaffee am Bett um neun Uhr morgens
   alltagswaffe: Unerwartete Sanftheit
@@ -1551,20 +1574,20 @@ Scene Card
 Scene Card
   id: SC_3_7
   pov: LAURA
-  ort: Cems Wohnung / Strasse davor
+  ort: Handy / Bahnhofsvorplatz
   uhrzeit: Abend
   ziel: Die erste echte Reibung zwischen Laura und Cem glaubhaft machen.
-  opening: Nach einigen guten Wochen kippt eine eigentlich kleine Ueberforderung.
-  objective: Zeigen, dass auch Entlastung eigene Grenzen und Angst mitbringt.
-  coreAction: Cem zieht sich zurueck und sagt, dass er Zeit braucht, weil ihm die Naehe zu gross geworden ist.
-  dramaticBeat: Laura denkt nicht zuerst an die konkrete Situation, sondern sofort: Natuerlich geht auch das kaputt.
+  opening: Nach einigen guten Wochen kippt nicht ein grosses Ereignis, sondern ein Wochenende, in das zu viel Erwartung und zu wenig Atem gepresst wurde.
+  objective: Zeigen, dass auch Entlastung eigene Grenzen, Distanzkosten und Angst mitbringt.
+  coreAction: Nach einem gereizten Abschied antwortet Cem auf Lauras Nachricht stundenlang nicht und sagt spaeter knapp, dass ihm alles zu gross geworden ist und er Zeit braucht.
+  dramaticBeat: Fuer Cem ist das ein ueberforderter Rueckzug. Fuer Laura fuehlt sich genau dieselbe Luecke sofort wie Schaden an.
   ending: Sie laesst ihn gehen, ohne zu kaempfen, und weiss noch im selben Moment, dass das nicht nur Stolz ist.
   beweisobjekt: Nicht beantwortete Nachricht von Cem
   alltagswaffe: Rueckzug
-  soziale tarnung: Es ist nur ein vernuenftiges Grenzgespraech
-  falsche lesart: Wer ruhig ist, verletzt nicht
+  soziale tarnung: Es ist nur eine Pause zwischen zwei Treffen
+  falsche lesart: Distanz macht Verletzung kleiner
   ersetzungsmoment: Schutzreaktion tritt an die Stelle von Wunsch
-  closing_image: Laura steht allein auf der Strasse und haelt ihr Handy fest, ohne zu tippen
+  closing_image: Laura steht vor dem Bahnsteigdisplay und haelt ihr Handy fest, ohne zu tippen
   verbotene drift: Kein melodramatischer Paarstreit
   was die szene nicht tun darf: Cem ploetzlich untreu, kalt oder unfair machen
   setup: CF005, OT004, OT005
@@ -1599,17 +1622,17 @@ Scene Card
 Scene Card
   id: SC_3_9
   pov: LAURA
-  ort: Treppenhaus / Kueche
+  ort: Vor der Wohnung / Kueche
   uhrzeit: Abend
   ziel: Die Beziehung ueber Ehrlichkeit statt Gesten neu ansetzen.
-  opening: Cem steht vor der Tuer, sichtbar unbeholfen.
+  opening: Cem steht nach der Fahrt unangekuendigt, aber sichtbar unbeholfen vor der Tuer.
   objective: Den Rueckweg in die Naehe ueber kleine, ehrliche Saetze bauen.
   coreAction: Cem entschuldigt sich und sagt, dass er Angst hatte, nicht genug zu sein; Laura antwortet, dass sie das auch kennt.
   dramaticBeat: Nicht grosse Romantik, sondern die Gleichheit ihrer Unsicherheit oeffnet die Tuer wieder.
   ending: Cem bleibt in der Kueche stehen, als sei das allein schon eine neue Entscheidung.
   beweisobjekt: Der Satz `Ich hatte Angst, nicht genug zu sein`
   alltagswaffe: Entschuldigung ohne Inszenierung
-  soziale tarnung: Es ist nur ein kurzes Nachgespraech
+  soziale tarnung: Es ist nur ein kurzes Nachgespraech nach zu langer Stille
   falsche lesart: Nur der Verlassene hat Angst
   ersetzungsmoment: Gegenseitigkeit tritt an die Stelle von Abwehr
   closing_image: Zwei Menschen stehen im Kuechenlicht zwischen Wasserkocher und Kindermalstiften
@@ -1703,7 +1726,7 @@ Scene Card
   ziel: Das letzte grosse innere Wanken vor der Ankunft zeigen.
   opening: Laura liegt wach und kann den Koerper nicht in Schlaf ueberreden.
   objective: Ihre gesamte Fehlerliste noch einmal aufziehen, ohne ins Essay abzugleiten.
-  coreAction: Sie geht durch, was sie alles haette besser machen koennen, waehrend Cem neben ihr wach bleibt.
+  coreAction: Sie geht durch, was sie alles haette besser machen koennen, waehrend Cem, der fuer die Einschulung angereist ist, neben ihr wach bleibt.
   dramaticBeat: Cem sagt fast nichts, haelt nur ihre Hand, und gerade diese Nicht-Rede verhindert, dass die Szene in Trostklischee kippt.
   ending: Vor dem Morgengrauen hat Laura nicht geschlafen, aber die Panik ist leiser geworden.
   beweisobjekt: Cems Hand in der Nacht
@@ -1751,7 +1774,7 @@ Scene Card
   ziel: Den Schultagmorgen ueber konkrete Handgriffe lebendig machen.
   opening: Henri zieht sich an, zaehlt Stifte und fragt dreimal dasselbe.
   objective: Den Morgen als Mischung aus Aufregung, Routine und Liebe schreiben.
-  coreAction: Laura macht Fotos, richtet Kleidung, beantwortet Wiederholungsfragen; Cem macht Fruehstueck, ohne gebeten zu sein.
+  coreAction: Laura macht Fotos, richtet Kleidung, beantwortet Wiederholungsfragen; Cem, der fuer diesen Morgen geblieben ist, macht Fruehstueck, ohne gebeten zu sein.
   dramaticBeat: Gerade Cems beiläufiges Dasein zeigt, wie sehr Laura inzwischen nicht mehr alles allein im Bild halten muss.
   ending: Im Flur haengt der Dino-Ranzen fertig an Henris Ruecken.
   beweisobjekt: Geschmierte Brotdose und Dino-Ranzen
@@ -1913,12 +1936,12 @@ Tobias muss frueh als komplizierte Menschlichkeit im Roman stehen. Der Anruf aus
 **Director Note**
 Tobias darf fuer einen Moment fast wie frueher klingen. Genau das macht ihn gefaehrlich fuer Lauras Hoffnung.
 
-### Kapitel 4 — „Der Nachbar"
+### Kapitel 4 — „Die Taschen"
 **Writer Summary**
-Cem wird nicht ueber Attraktivitaet oder Charme eingefuehrt, sondern ueber das Gefuehl erleichterter Schultern. Die Szene ist kurz und alltagsnah. Wichtig ist, dass Laura den Unterschied im Koerper bemerkt, nicht im Herzen.
+Cem wird nicht ueber Attraktivitaet oder Charme eingefuehrt, sondern ueber das Gefuehl erleichterter Schultern. Sabine stellt ihn nur kurz vor, er nimmt Laura zwei Taschen ab, mehr passiert fast nicht. Wichtig ist, dass Laura den Unterschied im Koerper bemerkt, nicht im Herzen.
 
 **Director Note**
-Kein romantischer Marker. Die Szene lebt ueber Gewicht, Treppenstufen und den winzigen Unterschied im Koerper.
+Kein romantischer Marker. Die Szene lebt ueber Gewicht, einen zu vollen Abschied und den winzigen Unterschied im Koerper.
 
 ### Kapitel 5 — „Was Henri braucht"
 **Writer Summary**
@@ -1943,10 +1966,10 @@ Kein Feiertagskitsch. Der Baum bleibt schoen, gerade deshalb tut die Einsamkeit 
 
 ### Kapitel 8 — „Silvester"
 **Writer Summary**
-Laura geht aus Vernunft zu Sabine, fuehlt sich aber fehl am Platz. Im Treppenhaus folgt mit Cem die erste kleine, ehrliche Erwachsenenszene des Romans. Es geht nicht um Flirt, sondern um eine ernst gemeinte Frage.
+Laura geht aus Vernunft zu Sabine, fuehlt sich aber fehl am Platz. Draussen vor dem Haus folgt mit Cem die erste kleine, ehrliche Erwachsenenszene des Romans, kurz bevor er zurueckfahren will. Es geht nicht um Flirt, sondern um eine ernst gemeinte Frage.
 
 **Director Note**
-Schreibe die Party nicht breit. Wichtig ist die Fremdheit dort und die Ruhe im Treppenhaus danach.
+Schreibe die Party nicht breit. Wichtig ist die Fremdheit dort und die kurze Ruhe draussen vor dem Heimweg.
 
 ### Kapitel 9 — „Januar"
 **Writer Summary**
@@ -1957,10 +1980,10 @@ Der Unterhalts-Beat mit Tobias darf nicht laut werden. Die Grausamkeit liegt in 
 
 ### Kapitel 10 — „Erster Kaffee"
 **Writer Summary**
-Cem sitzt in Lauras Kueche und hoert zu. Das Besondere ist, dass Laura sich beim Sprechen einen Moment lang selbst vergisst. Die Szene endet nicht romantisch, sondern erleichtert.
+Cem sitzt nach einigen vorsichtigen Nachrichten an einem Samstag in Lauras Kueche und hoert zu. Das Besondere ist, dass Laura sich beim Sprechen einen Moment lang selbst vergisst. Die Szene endet nicht romantisch, sondern erleichtert.
 
 **Director Note**
-Der Sog ist akustisch und koerperlich: wie die Kueche klingt, wie Zeit kurz verschwindet. Keine offensichtliche Chemie-Inszenierung.
+Der Sog ist akustisch und koerperlich: wie die Kueche klingt, wie Zeit kurz verschwindet. Im Hintergrund darf leicht spuergbar bleiben, dass dieser Vormittag nicht beliebig wiederholbar ist.
 
 ### Kapitel 11 — „Knospen"
 **Writer Summary**
@@ -1978,10 +2001,10 @@ Nicht die Begegnung zwischen Vater und Sohn sentimental ausschlachten. Die Kraft
 
 ### Kapitel 13 — „Cem baut etwas"
 **Writer Summary**
-Cem repariert den Schrank, Henri schaut zu, Laura kocht. Das Kapitel lebt davon, dass niemand aus dem Moment etwas Besonderes macht und er genau deshalb besonders wird. Die neue Moeglichkeit heisst hier: drei Menschen in einem Raum ohne Alarm.
+Cem repariert waehrend eines Wochenendes den Schrank, Henri schaut zu, Laura kocht. Das Kapitel lebt davon, dass niemand aus dem Moment etwas Besonderes macht und er genau deshalb besonders wird. Die neue Moeglichkeit heisst hier: drei Menschen in einem Raum ohne Alarm.
 
 **Director Note**
-Halte die Szene niedrig und praktisch. Gerade die Unspektakularitaet muss eine neue Familienluft aufmachen.
+Halte die Szene niedrig und praktisch. Gerade weil gemeinsame Zeit selten ist, darf sie nicht aufgeladen, sondern alltagsnah werden.
 
 ### Kapitel 14 — „Was sie nicht sagt"
 **Writer Summary**
@@ -2013,10 +2036,10 @@ Laura darf Tobias nicht retten und nicht vernichten. Ihre Fairness gegenueber He
 
 ### Kapitel 18 — „Cem fragt"
 **Writer Summary**
-Die Szene funktioniert nur ueber Schlichtheit. Cem fragt, Laura antwortet wahr, Cem kommentiert nicht uebermaessig. Seine Hand auf ihrer ist staerker als jeder kluge Satz.
+Die Szene funktioniert nur ueber Schlichtheit. Kurz vor seiner Rueckfahrt fragt Cem, Laura antwortet wahr, Cem kommentiert nicht uebermaessig. Seine Hand auf ihrer ist staerker als jeder kluge Satz.
 
 **Director Note**
-Vertrau der Pause. Das Kapitel verliert sofort, wenn Cem zu viel versteht oder zu viel sagt.
+Vertrau der Pause. Stark wird die Szene auch dadurch, dass Wahrheit genau im Abschied aufbricht und nicht in maximaler gemeinsamer Zeit.
 
 ### Kapitel 19 — „Muttertag"
 **Writer Summary**
@@ -2027,7 +2050,7 @@ Das Bild ist kein Slogan, sondern ein stiller Druckpunkt. Lass den Satz erst spa
 
 ### Kapitel 20 — „Erste Naehe"
 **Writer Summary**
-Hier wird nicht Liebe deklariert, sondern Last kurz gehalten. Filmlicht, Muedigkeit, Sofakissen, Schulter. Dass Laura an Cem einschlaeft, muss sich wie ein kleiner Kontrollverlust anfuehlen, nicht wie eine inszenierte Romantikszene.
+Hier wird nicht Liebe deklariert, sondern Last kurz gehalten. Filmlicht, Muedigkeit, Sofakissen, Schulter. Dass Laura in einer selten freien Wochenendnacht an Cem einschlaeft, muss sich wie ein kleiner Kontrollverlust anfuehlen, nicht wie eine inszenierte Romantikszene.
 
 **Director Note**
 Die Szene darf fast unspektakulaer sein. Wichtig ist, dass Gehaltenwerden fuer Laura ungewohnt bleibt.
@@ -2041,10 +2064,10 @@ Nicht gegen andere Familien polemisieren. Der Sommer soll knapp sein, aber nicht
 
 ### Kapitel 22 — „Cem entlastet"
 **Writer Summary**
-Cem nimmt Henri mit in seine Wohnung und an seinen stillen Arbeitsplatz, zeigt ihm alte Hardware, Kabel und kleine technische Handgriffe, waehrend Laura ein paar Stunden allein hat und fast nichts tut. Diese `nutzlose` Zeit ist der eigentliche Schatz. Die Szene darf nicht so klingen, als muesste Laura ihre Entlastung rechtfertigen.
+Cem ist fuer das Wochenende da und nimmt Henri fuer ein paar Stunden mit in ein kleines Repair-Cafe, zeigt ihm alte Hardware, Kabel und kleine technische Handgriffe, waehrend Laura ein paar Stunden allein hat und fast nichts tut. Diese `nutzlose` Zeit ist der eigentliche Schatz. Die Szene darf nicht so klingen, als muesste Laura ihre Entlastung rechtfertigen.
 
 **Director Note**
-Die Technik ist nur Material, kein Nerd-Kapitel. Entscheidender als Hardware ist Lauras irritierende Ruhe.
+Die Technik ist nur Material, kein Nerd-Kapitel. Entscheidender als Hardware ist Lauras irritierende Ruhe und dass selbst Entlastung hier erst organisiert werden musste.
 
 ### Kapitel 23 — „Was Laura will"
 **Writer Summary**
@@ -2062,10 +2085,10 @@ Kein Misstrauensplot gegen Tobias. Die Spannung liegt in Lauras Koerper, nicht i
 
 ### Kapitel 25 — „Laura und Cem allein"
 **Writer Summary**
-Das Hotel ist nur Kulisse. Entscheidend ist, dass Laura bis neun schlaeft, Kaffee ans Bett bekommt und darauf mit Traenen reagiert. Nicht Romantik weckt etwas in ihr, sondern die Unerhoerigkeit, ausgeruht zu sein.
+Das Hotel ist nur Kulisse. Entscheidend ist, dass Laura bis neun schlaeft, Kaffee ans Bett bekommt und darauf mit Traenen reagiert. Nicht Romantik weckt etwas in ihr, sondern die Unerhoerigkeit, ausgeruht zu sein. Ueber dem Morgen liegt zusaetzlich der Druck, dass in dieses eine Wochenende zu viel hineinpasst.
 
 **Director Note**
-Schreibe das wie ein Koerperkapitel, nicht wie ein Liebeskapitel.
+Schreibe das wie ein Koerperkapitel, nicht wie ein Liebeskapitel. Seltene gemeinsame Zeit darf nicht automatisch nach Glueck aussehen.
 
 ### Kapitel 26 — „Henri kommt zurueck"
 **Writer Summary**
@@ -2076,10 +2099,10 @@ Nicht vergroessern. Tobias' Satz muss kurz sein und genau deshalb so tief treffe
 
 ### Kapitel 27 — „Riss"
 **Writer Summary**
-Cem zieht sich zurueck, weil Naehe fuer ihn auch Angst bedeutet. Laura deutet das sofort ueber ihr altes Muster: Natuerlich geht auch das kaputt. Die Szene darf nicht melodramatisch werden, sondern muss weh tun, weil beide menschlich bleiben.
+Cem zieht sich nach einem zu vollen Wochenende und einer zu langen Nachrichtenstille zurueck, weil Naehe fuer ihn auch Angst und Ueberforderung bedeutet. Laura deutet das sofort ueber ihr altes Muster: Natuerlich geht auch das kaputt. Die Szene darf nicht melodramatisch werden, sondern muss weh tun, weil beide menschlich bleiben.
 
 **Director Note**
-Beide muessen nachvollziehbar bleiben. Kein Schuldverteilen, kein Beziehungsdrama auf Lautstaerke.
+Beide muessen nachvollziehbar bleiben. Distanz ist hier kein dekorativer Umstand, sondern der Verstaerker des Schmerzes.
 
 ### Kapitel 28 — „Sabine sagt die Wahrheit"
 **Writer Summary**
@@ -2090,10 +2113,10 @@ Sabine darf nicht wie die Autorin sprechen. Sie muss eine Freundin bleiben, die 
 
 ### Kapitel 29 — „Cem kommt zurueck"
 **Writer Summary**
-Cem und Laura finden ueber gegenseitige Unsicherheit wieder zusammen. Keine grossen Gesten, nur zwei klare Saetze. Die Szene braucht Bodenhaftung, sonst wirkt sie wie eine zu schnelle Reparation.
+Cem und Laura finden nach zu viel Stille ueber gegenseitige Unsicherheit wieder zusammen. Keine grossen Gesten, nur zwei klare Saetze. Die Szene braucht Bodenhaftung, sonst wirkt sie wie eine zu schnelle Reparation.
 
 **Director Note**
-Die Versoehnung lebt von Verlegenheit und Schlichtheit. Nichts daran darf geschniegelt wirken.
+Die Versoehnung lebt von Verlegenheit und Schlichtheit. Wichtig ist auch der Preis der Rueckkehr: Jemand ist dafuer wirklich wieder losgefahren.
 
 ### Kapitel 30 — „Lauras Praxis"
 **Writer Summary**
@@ -2118,7 +2141,7 @@ Das `Okay` ist schwerer als Traenen. Nicht nachhelfen, nicht ausdeuten.
 
 ### Kapitel 33 — „Lauras schlimmste Nacht"
 **Writer Summary**
-Schlaflosigkeit vor der Einschulung. Laura bilanziert ihre Fehler, Cem haelt nur ihre Hand. Die Szene funktioniert ueber Begrenzung, nicht ueber Ueberredung.
+Schlaflosigkeit vor der Einschulung. Laura bilanziert ihre Fehler, Cem, der fuer diesen Termin angereist ist, haelt nur ihre Hand. Die Szene funktioniert ueber Begrenzung, nicht ueber Ueberredung.
 
 **Director Note**
 Lass die Nacht eng werden. Cem bleibt Gegenwart, nicht Loesung.
@@ -2132,7 +2155,7 @@ Das Kapitel darf hell werden, aber nicht erhaben. Die Wahrheit muss erschöpft u
 
 ### Kapitel 35 — „Erster Schultag"
 **Writer Summary**
-Der Morgen der Einschulung ist Handgriff, Foto, Frage, Brotdose, Ranzen. Cem ist da, ohne im Zentrum zu stehen. Der Moment muss nach Familie im Werden klingen, nicht nach fertiger Heilung.
+Der Morgen der Einschulung ist Handgriff, Foto, Frage, Brotdose, Ranzen. Cem ist da, weil er bewusst fuer diesen Tag geblieben ist, ohne im Zentrum zu stehen. Der Moment muss nach Familie im Werden klingen, nicht nach fertiger Heilung.
 
 **Director Note**
 Der Morgen braucht leichte Hektik. Keine Feierlichkeit, die den Alltag aus der Szene drueckt.
