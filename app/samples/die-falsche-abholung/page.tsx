@@ -98,14 +98,11 @@ const sceneTwoParagraphs = [
   "\"Ich habe nicht gesagt, dass ich dir nicht glaube. Ich habe dir gezeigt, was wir haben. Das hier\" – Petra legte die Hand neben die Liste, nicht darauf – \"ist das, was wir einem Elternteil vorlegen müssten, wenn jemand fragt. Und es ist das, was wir dir zeigen, bevor jemand fragt.\"",
   "\"Wer soll fragen?\"",
   "Petra sah sie ruhig an.",
-  "\"Ich möchte, dass du Simon informierst, bevor wir es müssen.\"",
-  "Im selben Moment vibrierte Evas Handy auf dem Tisch. Sie hatte es nicht bewusst dorthin gelegt. Der Bildschirm hellte sich auf, ein Banner zog sich über das Display, oben, lesbar für beide, ob man wollte oder nicht.",
-  "*Nora: Alles okay bei euch? Hab Mila heute Mittag im Hof gehört, war kurz unsicher, ob ich rüberkomme. Melde dich.*",
-  "Eva legte die Hand auf das Telefon, ein Reflex, das Banner verschwinden zu lassen. Petra sah weg, so höflich, dass es schlimmer war, als hätte sie hingestarrt."
+  "\"Ich möchte, dass du Simon informierst, bevor wir es müssen.\""
 ];
 
 const sceneThreeParagraphs = [
-  "„Ich rufe Simon an\", sagte Eva. „Heute noch.\" Petra nickte, und Eva nahm das Telefon vom Tisch. Im Flur blieb ihr Blick an Milas Haken hängen, dann an dem gelben Becher, der gleichzeitig auf ihrem Küchentresen und in der falschen Hand gewesen war. Draußen tippte sie Simons Namen an. Er nahm nicht ab. Sie setzte sich ins Auto und wählte noch einmal.",
+  "Im selben Moment vibrierte Evas Handy auf dem Tisch. Sie hatte es nicht bewusst dorthin gelegt. Der Bildschirm hellte sich auf, ein Banner zog sich über das Display, oben, lesbar für beide, ob man wollte oder nicht. *Nora: Alles okay bei euch? Hab Mila heute Mittag im Hof gehört, war kurz unsicher, ob ich rüberkomme. Melde dich.* Eva legte die Hand auf das Telefon, ein Reflex, das Banner verschwinden zu lassen. Petra sah weg, so höflich, dass es schlimmer war, als hätte sie hingestarrt. „Ich rufe Simon an“, sagte Eva. „Heute noch.“ Petra nickte, und Eva nahm das Telefon vom Tisch. Im Flur blieb ihr Blick an Milas Haken hängen, dann an dem gelben Becher, der gleichzeitig auf ihrem Küchentresen und in der falschen Hand gewesen war. Draußen tippte sie Simons Namen an. Er nahm nicht ab. Sie setzte sich ins Auto und wählte noch einmal.",
   "„Eva.\"",
   "„Bei Mila ist alles gut.\" Sie hörte sich zu ruhig sagen und korrigierte. „Sie ist drin, sie spielt. Aber in der App steht, ich hätte sie gestern abgeholt.\"",
   "Stille. Kein Einatmen, kein Ach was. Simon sortierte.",

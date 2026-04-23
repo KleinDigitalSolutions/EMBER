@@ -796,7 +796,7 @@ Scene Card
   ziel: Den sozialen Raum gegen Eva kippen lassen.
   objective: Eva will dort erscheinen, wo normale Elternpräsenz ihre Verlässlichkeit zeigen müsste.
   szenenantrieb: Eva will im Elternraum Normalität zurückgewinnen, zeigt Präsenz und riskiert, dass Nora selbst aus der Abwesenheit heraus mehr Zugehörigkeit ausstrahlt als sie.
-  wissensgrenze: Eva weiss, dass Nora überraschend gut informiert ist, vermutet einen weiteren sozialen Kanal und darf noch nicht wissen, wie früh Nora Zugang zu Ausflug und Helferinfos hatte.
+  wissensgrenze: Eva weiss, dass Nora überraschend gut informiert ist, vermutet einen weiteren sozialen Kanal und darf noch nicht wissen, wie früh Nora Zugang zu Ausflug und Helferinfos hatte.
   beziehungsdruck: Eva will vor anderen Eltern stabil wirken; der Elternraum liest Instabilität sofort, während Nora über praktische Lösungen punktet.
   coreAction: Beim Elternabend ist Nora nicht eingeladen und dennoch über Themen informiert, die erst vor Ort angesprochen werden. Eva merkt, wie vorsichtig andere Eltern mit ihr sprechen.
   dramaticBeat: Petra erwähnt einen kommenden Waldtag, und Nora schreibt Eva noch während des Treffens, sie habe zufällig schon eine regenfeste Hose für Mila mitgebracht.
@@ -817,7 +817,7 @@ Scene Card
   ziel: Die stimmliche Plausibilität der falschen Abholung alltagsrealistisch erklären.
   objective: Eva will verstehen, warum die Erzieherinnen sich so sicher mit dem Wiedererkennen waren.
   szenenantrieb: Eva will die stimmliche Gewissheit der Erzieherinnen entkräften, hört altes Material ab und riskiert, dass nicht Technik, sondern gesammelte Intimität den Fall noch unheimlicher macht.
-  wissensgrenze: Eva weiss, dass Nora keine Hightech braucht, vermutet Wiederholung und Nähe als Werkzeug und darf noch nicht alle Qüllen dieser gesammelten Alltagsstimme kennen.
+  wissensgrenze: Eva weiss, dass Nora keine Hightech braucht, vermutet Wiederholung und Nähe als Werkzeug und darf noch nicht alle Quellen dieser gesammelten Alltagsstimme kennen.
   beziehungsdruck: Eva kämpft hier nicht gegen eine Person im Raum, sondern gegen die nachträgliche Erkenntnis, wie oft sie Nora selbst Material geliefert hat.
   coreAction: Eva hört alte Voicemails, Familienvideos und Sprachnachrichten ab. Dabei erkennt sie, wie oft Nora sie in entspannten Momenten kurze Kita-Sätze, Absagen und Alltagsformeln wiederholen liess.
   dramaticBeat: In einer alten Hofaufnahme hört Eva, wie Nora sie bittet, "Sag's nochmal kurz, dann leite ich es weiter" zu sagen. In verrauschten Situationen und mit vertrauter Erwartung reicht genau so ein Satz, um stimmlich plausibel zu wirken.
@@ -857,9 +857,9 @@ Scene Card
   uhrzeit: Abend
   ziel: Das Muster der Doppelroutine körperlich sichtbar machen.
   objective: Eva will Milas Sachen für den nächsten Tag packen und Kontrolle zurückgewinnen.
-  szenenantrieb: Eva will über Milas Tasche wieder echte Mutterkontrolle gewinnen, packt konkret und riskiert, dass selbst dieser intime Handgriff bereits doppelt geführt wird.
+  szenenantrieb: Eva will über Milas Tasche wieder echte Mutterkontrolle gewinnen, packt konkret und riskiert, dass selbst dieser intime Handgriff bereits doppelt geführt wird.
   wissensgrenze: Eva weiss, dass Nora Routinen kopiert, vermutet tieferen Zugriff in Milas Alltagsgegenstände und darf noch nicht wissen, wie lange diese Doppelroutine schon läuft.
-  beziehungsdruck: Eva braucht von Simon Alarm über das Falsche im Vertrauten; Simon liest dieselben Dinge lieber als Kleinigkeiten.
+  beziehungsdruck: Eva braucht von Simon Alarm über das Falsche im Vertrauten; Simon liest dieselben Dinge lieber als Kleinigkeiten.
   coreAction: In Milas Dienstagstasche liegen Dinge, die Eva nicht eingepackt hat, aber exakt ihrem Stil entsprechen: beschriftete Brotdose, Ersatzsocken, Pflasterstreifen, ein kleiner Zettel.
   dramaticBeat: Der Zettel ist in Evas typischer Kurzschrift formuliert, aber mit einem Wort, das nur Nora immer benutzt.
   ending: Eva nimmt die Tasche mit und merkt im Treppenhaus, dass Simon glaubt, sie mache aus Kleinigkeiten zu viel.
@@ -1146,13 +1146,13 @@ Scene Card
   ziel: Die Handschriftfrage von Bauchgefühl zu technischer Beobachtung heben.
   objective: Eva will ihre Vermutung zur imitierten Unterschrift absichern.
   szenenantrieb: Eva will aus einer Vermutung einen lesbaren Fachblick machen, sucht externe Hilfe und riskiert, dass der Fund nicht Nora entlarvt, sondern deren Sorgfalt noch unheimlicher macht.
-  wissensgrenze: Eva weiss, dass die Unterschrift nicht zu ihrer aktüllen Routine passt, vermutet archivierte Kopie und darf noch nicht wissen, welche anderen alten Versionen von ihr Nora ebenfalls gespeichert hat.
+  wissensgrenze: Eva weiss, dass die Unterschrift nicht zu ihrer aktuellen Routine passt, vermutet archivierte Kopie und darf noch nicht wissen, welche anderen alten Versionen von ihr Nora ebenfalls gespeichert hat.
   beziehungsdruck: Eva braucht hier weniger Trost als ein Handwerkszeug, das ihre Wahrnehmung gegen Wegerklären absichert.
   coreAction: Eine befreundete Buchhalterin zeigt ihr, woran man kopierte Routineunterschriften oft erkennt: nicht am Namen, sondern an Tempo, Druck und Wiederholungsfehler.
   dramaticBeat: In der Kita-Unterschrift taucht eine unbewusste Schleife aus Evas alten Vollmachten auf, die sie selbst seit der Trennung nicht mehr benutzt.
-  ending: Eva versteht, dass Nora nicht ihre aktülle Eva kopiert, sondern archivierte Versionen von ihr.
+  ending: Eva versteht, dass Nora nicht ihre aktuelle Eva kopiert, sondern archivierte Versionen von ihr.
   endzustand_hook: Das Ende muss die Zeitverschiebung brutal machen: Nora arbeitet mit einer früheren Eva gegen die jetzige.
-  beweisobjekt: Vergleich alte Vollmacht / aktülle Signatur
+  beweisobjekt: Vergleich alte Vollmacht / aktuelle Signatur
   setup: CF004, CF006, OT001, OT002
 ```
 
@@ -1271,12 +1271,12 @@ Scene Card
   ziel: Eva technisch und sozial weiter aus der Mutterrolle drängen.
   objective: Eva will ihre Zugriffe auf die Kita selbst sichern.
   szenenantrieb: Eva will den technischen Zugriff zurückholen, kümmert sich sofort und riskiert, dass selbst ein Verwaltungsprozess inzwischen gegen sie lesbar und plausibel kapernbar ist.
-  wissensgrenze: Eva weiss, dass alte Datenbestande gefährlich sind, vermutet einen gezielten Rückgriff auf frühe Formulare und darf noch nicht wissen, welche alten Listen noch offen herumliegen.
+  wissensgrenze: Eva weiss, dass alte Datenbestände gefährlich sind, vermutet einen gezielten Rückgriff auf frühe Formulare und darf noch nicht wissen, welche alten Listen noch offen herumliegen.
   beziehungsdruck: Eva braucht digitale Selbstverständlichkeit zurück; Kita und Verwaltung reagieren auf plausiblere Prozessdaten statt auf ihre gelebte Nähe.
   coreAction: Ohne Vorwarnung wird Eva aus der Kita-App ausgeloggt. Eine manülle Rücksetzung ist bereits über die Verwaltung angestossen worden, nachdem jemand telefonisch einen plausiblen Wechsel wegen eines angeblich defekten Handys gemeldet hat.
   dramaticBeat: Petra bestätigt, dass die Bestätigung an ein altes Postfach ging, das noch in einer Reserve-Liste stand. Im Gespräch fiel ein intimes Alltagsdetail zu Milas Kuscheltierfach, das die Rückfrage glaubhaft genug machte.
   ending: Eva starrt auf die alte Mailadresse, die sie seit zwei Jahren nicht mehr nutzt und die Nora nur aus früheren Formularen kennen kann.
-  endzustand_hook: Die Szene muss mit der Erkenntnis enden, dass alte Formulare noch immer gegen die aktülle Mutter arbeiten.
+  endzustand_hook: Die Szene muss mit der Erkenntnis enden, dass alte Formulare noch immer gegen die aktuelle Mutter arbeiten.
   beweisobjekt: Manülle App-Rücksetzung über altes Postfach
   setup: CF003, CF004, CF006, OT001, OT002
 ```
@@ -1295,7 +1295,7 @@ Scene Card
   beziehungsdruck: Eva braucht von Petra institutionelle Rückendeckung; Petra braucht prüfbare Muster, nicht nur begründetes Misstrauen.
   coreAction: Eva zeigt eine Matrix aus Zugriffen, Terminen, Signaturmustern und Falschinformation. Petra erkennt, dass nicht ein Einzelvorfall, sondern ein Muster vorliegt.
   dramaticBeat: Petra gibt zu, dass Nora bei Helferdiensten mehr Einblick in Elternunterlagen hatte, als ihr heute lieb ist, und setzt für den Ausflug ab sofort die Regel, dass keine externe Hilfe ohne direkte Gegenzeichnung und Sichtkontakt läuft.
-  ending: Petra warnt Eva trotzdem, dass sie ohne harten aktüllen Vorfall offiziell wenig mehr tun kann.
+  ending: Petra warnt Eva trotzdem, dass sie ohne harten aktuellen Vorfall offiziell wenig mehr tun kann.
   endzustand_hook: Die Szene muss mit vorsichtiger Allianz plus harter Restgrenze enden, nicht mit falscher Entlastung.
   beweisobjekt: Muster-Matrix aus Vorfällen
   setup: CF003, CF004, OT001, OT002, OT005
@@ -1313,7 +1313,7 @@ Scene Card
   szenenantrieb: Eva will Nora im Direktkontakt aus der Hilfsrolle ziehen, konfrontiert sie vor Petra und riskiert, dass Noras Ruhe Eva selbst aggressiver erscheinen lässt.
   wissensgrenze: Eva weiss, dass Nora lügt und ersetzt, vermutet aber noch nicht, wie weit Nora moralisch bereit ist, ihre eigene Rolle als Verlässlichkeit umzudeuten.
   beziehungsdruck: Eva braucht ein sichtbares Rutschen bei Nora; Nora braucht nur Selbstkontrolle, um als die ruhigere Erwachsene zu erscheinen.
-  coreAction: Im Gespräch bleibt Nora leise, hilfsbereit und beinahe rücksichtsvoll. Sie bietet sogar an, sich komplett zurückzuziehen, falls das für Eva besser sei.
+  coreAction: Im Gespräch bleibt Nora leise, hilfsbereit und beinahe rücksichtsvoll. Sie bietet sogar an, sich komplett zurückzuziehen, falls das für Eva besser sei.
   dramaticBeat: Gerade ihre Selbstzurücknahme lässt Eva für einen Moment wie die aggressivere Person aussehen.
   ending: Nach dem Termin liegt in Evas Tasche ein von Nora eingesteckter Zettel: "Ich wollte nie gegen dich arbeiten."
   endzustand_hook: Das Kapitel muss mit dem täterischen Nachgriff enden, nicht mit dem Gespräch selbst.
@@ -1351,7 +1351,7 @@ Scene Card
   ziel: Die finale Gegenmassnahme vorbereiten.
   objective: Eva will Beweise so sichern, dass Nora sie nicht wieder in Zweifel ziehen kann.
   szenenantrieb: Eva will aus Material belastbare Reihenfolge machen, sichert alles neu und riskiert, dass selbst jetzt noch ein offizieller Ausflugszug Nora die nächste Bühne bietet.
-  wissensgrenze: Eva weiss, dass der Ausflug der nächste entscheidende Moment ist, vermutet Noras Zugriff auf Vorabinformationen und darf noch nicht wissen, wie frisch der aktülle Beweis wirklich sein wird.
+  wissensgrenze: Eva weiss, dass der Ausflug der nächste entscheidende Moment ist, vermutet Noras Zugriff auf Vorabinformationen und darf noch nicht wissen, wie frisch der aktuelle Beweis wirklich sein wird.
   beziehungsdruck: Eva und Simon müssen erstmals als funktionale Allianz arbeiten, obwohl zwischen ihnen noch viel Restschuld steht.
   coreAction: Eva und Simon ordnen Dokumente, Ausdrucke, Screenshots, Signaturen und Zeitfenster. Petra wird nur das sehen, was man sofort prüfen kann.
   dramaticBeat: Dabei merken sie, dass der kommende Kita-Ausflug die ideale nächste offizielle Übergabe für Nora wäre.
@@ -1376,7 +1376,7 @@ Scene Card
   coreAction: Eva konfrontiert Nora in deren perfekt geordneter Wohnung. Dort stehen Milas bekannte Dinge nicht offen als Trophäen, sondern eingeordnet in eine fast plausible Ersatznormalität: Wechselshirt, Foto aus dem Hof, ein zweites Set Haarspangen, ausgedruckte Kita-Mails, sauber abgeheftete Routinen.
   dramaticBeat: Nora sagt nicht "Ich wollte sie wegnehmen", sondern "Jemand musste anfangen, für sie verlässlich zu sein." Damit kippt der ganze Roman rückwirkend von Entführungsangst zu geplanter Mutterersetzung.
   ending: Als Eva gehen will, sieht sie auf Noras Tisch eine vorab ausgefüllte, aber noch nicht abgegebene Einverständniserklärung für den Kita-Ausflug — mit Evas Daten für einen Termin, der erst morgen offiziell kommuniziert wird.
-  endzustand_hook: Die Szene muss mit moralischer Selbstrechtfertigung plus aktüllem Vorab-Beweis enden; das ist der eigentliche täterische Offenbarungsschlag.
+  endzustand_hook: Die Szene muss mit moralischer Selbstrechtfertigung plus aktuellem Vorab-Beweis enden; das ist der eigentliche täterische Offenbarungsschlag.
   beweisobjekt: Vorab ausgefüllte Ausflugserklärung und abgeheftete Routinen
   closing_line: Eva nimmt das Blatt nicht mit. Sie fotografiert es, ohne dass ihre Hand zittert.
   setup: CF004, CF007, OT002, OT004, OT005
@@ -1409,13 +1409,13 @@ Scene Card
   pov: EVA
   ort: Kita / Druckerraum / Petra Büro
   uhrzeit: früher Morgen
-  ziel: Den harten aktüllen Beweis für Petra liefern.
+  ziel: Den harten aktuellen Beweis für Petra liefern.
   objective: Eva will zeigen, dass Nora an den Ausflug gelangte, bevor Eltern informiert wurden.
   szenenantrieb: Eva will aus dem Fotofund einen institutionell verwertbaren Gegenwartsbeweis machen, prüft alles sofort und riskiert, dass selbst jetzt noch nur diffuse Plausibilität bleibt.
-  wissensgrenze: Eva weiss, dass die Vorab-Erklärung echt ist, vermutet Druck-, Mail- und Raumzugang als Kette und darf erst jetzt den harten aktüllen Beweis schliessen.
+  wissensgrenze: Eva weiss, dass die Vorab-Erklärung echt ist, vermutet Druck-, Mail- und Raumzugang als Kette und darf erst jetzt den harten aktuellen Beweis schliessen.
   beziehungsdruck: Eva braucht von Petra nicht mehr Mitgefühl, sondern amtstaugliche Entschlossenheit.
   coreAction: Petra prüft Mailversand, Druckhistorie, Helferlisten und den Zugang zum Materialraum. Alles führt zu einem Ausdrucksfenster am Vorabend, einem frühen Entwurfsversand und Noras Zugriff über einen harmlosen Schlüssel für den Materialraum.
-  dramaticBeat: Das Foto der vorab ausgefüllten Erklärung wird erst durch Druckjob, Entwurfszeit und Raumzugang zum harten aktüllen Beweis.
+  dramaticBeat: Das Foto der vorab ausgefüllten Erklärung wird erst durch Druckjob, Entwurfszeit und Raumzugang zum harten aktuellen Beweis.
   ending: Petra sagt: "Wenn sie heute auftaucht, hole ich sie nicht als Hilfe dazu."
   endzustand_hook: Die Szene muss mit Petras klarer Handlungslinie enden, weil erst jetzt institutioneller Gegendruck wirklich steht.
   beweisobjekt: Druckjob, Entwurfsmail und Foto der Vorab-Erklärung
@@ -1567,7 +1567,7 @@ Eva sucht Simon persönlich auf und will ihn auf ihre Seite ziehen. Statt offen 
 
 ### Kapitel 8 — „Die Akte über Nora"
 **Writer Summary**
-Eva sammelt erstmals Material über Nora, bekommt aber bewusst keine beqüme Akteneinsicht. Stattdessen erfährt sie nur indirekt von einem früheren Sorgekonflikt, in dem nicht Lautstärke, sondern administrative Glaubwürdigkeit entscheidend war. Genau dadurch wird klar, dass Nora Strukturen lesen und nutzen kann, ohne dass der Roman seinen Alltagsrealismus verliert. Zuhause wartet bereits das nächste kleine Zeichen nachträglicher Alltagsbesetzung: Milas Brotdose steht gespült in Evas Küche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzüberschreitung.
+Eva sammelt erstmals Material über Nora, bekommt aber bewusst keine bequeme Akteneinsicht. Stattdessen erfährt sie nur indirekt von einem früheren Sorgekonflikt, in dem nicht Lautstärke, sondern administrative Glaubwürdigkeit entscheidend war. Genau dadurch wird klar, dass Nora Strukturen lesen und nutzen kann, ohne dass der Roman seinen Alltagsrealismus verliert. Zuhause wartet bereits das nächste kleine Zeichen nachträglicher Alltagsbesetzung: Milas Brotdose steht gespült in Evas Küche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzüberschreitung.
 
 ### Kapitel 9 — „Der Ersatzschlüssel"
 **Writer Summary**
@@ -1616,7 +1616,7 @@ Eva beobachtet Nora nicht als Detektivin, sondern als Frau, die begreifen muss, 
 
 ### Kapitel 18 — „Das Familienalbum"
 **Writer Summary**
-Eva sucht nicht nach Hackerthriller-Material, sondern nach alltagsnahen digitalen Resten. Im Familienalbum erkennt sie, dass Nora nie eingebrochen ist, sondern legal zu lange dabeigeblieben ist. Dadurch wird klar: Die Bedrohung ist nicht technisch genial, sondern konseqünt genug, um alte Freigaben in Waffen zu verwandeln. Der Screenshot von Evas Kita-Notizen macht aus bloßer Beobachtung erstmals reproduzierbaren Zugriff. Ende auf dem Schock, dass private Familienreste in Noras Vorrat gehören.
+Eva sucht nicht nach Hackerthriller-Material, sondern nach alltagsnahen digitalen Resten. Im Familienalbum erkennt sie, dass Nora nie eingebrochen ist, sondern legal zu lange dabeigeblieben ist. Dadurch wird klar: Die Bedrohung ist nicht technisch genial, sondern konsequent genug, um alte Freigaben in Waffen zu verwandeln. Der Screenshot von Evas Kita-Notizen macht aus bloßer Beobachtung erstmals reproduzierbaren Zugriff. Ende auf dem Schock, dass private Familienreste in Noras Vorrat gehören.
 
 ### Kapitel 19 — „Die alte Mutter"
 **Writer Summary**
@@ -1639,14 +1639,14 @@ Eva sucht erneut institutionelle Hilfe, diesmal mit besserem Material, bekommt a
 
 ### Kapitel 23 — „Ersatzplan"
 **Writer Summary**
-Eva geht jetzt endlich selbst in eine aktive Gegenstrategie. Das ist der Wechsel von bedrängter Mutter zu handelnder Gegenspielerin. Papierheft, Einwegtelefon, isolierte Kanäle: alles soll zeigen, dass sie Noras Zugriff über normale Vernetztheit unterbricht. Die Falschinformation über den Donnerstag ist deshalb so stark, weil sie simpel und prüfbar ist. Die Szene endet, sobald Nora darauf reagiert, nicht erst nach langer Auswertung.
+Eva geht jetzt endlich selbst in eine aktive Gegenstrategie. Das ist der Wechsel von bedrängter Mutter zu handelnder Gegenspielerin. Papierheft, Einwegtelefon, isolierte Kanäle: alles soll zeigen, dass sie Noras Zugriff über normale Vernetztheit unterbricht. Die Falschinformation über den Donnerstag ist deshalb so stark, weil sie simpel und prüfbar ist. Die Szene endet, sobald Nora darauf reagiert, nicht erst nach langer Auswertung.
 
 **Director Note**
 Die Szene soll entschlossen wirken, nicht clever-cool. Eva baut keinen Agentenplan, sondern eine plausible Selbstschutzstrategie aus Alltagsmitteln.
 
 ### Kapitel 24 — „Kinderarzt"
 **Writer Summary**
-Die Kinderarztpraxis erweitert Noras Zugriff in einen weiteren Vertrauensraum. Entscheidend ist, dass eine ruhige Stimme und eine plausible Rolle dort fast mehr zählen als das Gesicht. Eva merkt, dass Nora nicht nur Dinge weiss, sondern in ihrem Namen Bewegung erzeugen kann. Die Notiz im System und der Ausdruck aus einer mutmasslichen E-Mail machen den Zugriff administrativ greifbar. Wichtig ist die reale Folge: Aus Vorsicht laufen künftige Terminbestätigungen vorerst über Simon und schriftlich über Eva. So wird aus einem Beweis sofort ein Statusverlust.
+Die Kinderarztpraxis erweitert Noras Zugriff in einen weiteren Vertrauensraum. Entscheidend ist, dass eine ruhige Stimme und eine plausible Rolle dort fast mehr zählen als das Gesicht. Eva merkt, dass Nora nicht nur Dinge weiss, sondern in ihrem Namen Bewegung erzeugen kann. Die Notiz im System und der Ausdruck aus einer mutmasslichen E-Mail machen den Zugriff administrativ greifbar. Wichtig ist die reale Folge: Aus Vorsicht laufen künftige Terminbestätigungen vorerst über Simon und schriftlich über Eva. So wird aus einem Beweis sofort ein Statusverlust.
 
 ### Kapitel 25 — „Die zweite Jacke"
 **Writer Summary**
@@ -1711,7 +1711,7 @@ Eva und Simon bereiten den Gegenschlag so vor, dass er institutionell belastbar 
 
 ### Kapitel 38 — „Noras Wohnung"
 **Writer Summary**
-Das ist der stärkste Konfrontationsmoment des Buches und muss die Logik des ganzen Romans offenlegen, ohne sie totzürklären. Eva geht nicht zu Nora, um einen Thriller-Showdown zu führen, sondern um den Kern endlich direkt zu sehen. In Noras Wohnung sind Milas Dinge nicht als Trophäen ausgestellt, sondern als plausible Parallelordnung einsortiert. Genau darin liegt der Horror. Der Schlüsselsatz ist, dass Nora nicht von Wegnahme spricht, sondern von Verlässlichkeit. Der ganze Roman kippt hier von Entführungsangst zu moralisch legitimierter Mutterersetzung. Das Ende liefert noch keinen Vollbeweis, sondern einen halbharten Fund: eine vorab ausgefüllte Ausflugserklärung, die erst durch Kapitel 40 institutionell belastbar wird.
+Das ist der stärkste Konfrontationsmoment des Buches und muss die Logik des ganzen Romans offenlegen, ohne sie totzuerklären. Eva geht nicht zu Nora, um einen Thriller-Showdown zu führen, sondern um den Kern endlich direkt zu sehen. In Noras Wohnung sind Milas Dinge nicht als Trophäen ausgestellt, sondern als plausible Parallelordnung einsortiert. Genau darin liegt der Horror. Der Schlüsselsatz ist, dass Nora nicht von Wegnahme spricht, sondern von Verlässlichkeit. Der ganze Roman kippt hier von Entführungsangst zu moralisch legitimierter Mutterersetzung. Das Ende liefert noch keinen Vollbeweis, sondern einen halbharten Fund: eine vorab ausgefüllte Ausflugserklärung, die erst durch Kapitel 40 institutionell belastbar wird.
 
 **Director Note**
 Schütze die innere Logik dieses Moments. Nora ist nicht hysterisch und nicht dämonisch. Ihr zentraler Satz ist: "Jemand musste anfangen, für sie verlässlich zu sein." Die Szene darf diesen Gedanken nicht verwässern. Kapitel 38 liefert Motiv und halbharten Fund, aber noch nicht den institutionellen Vollbeweis. Keine überflüssige Eskalation, keine Thrillershow. Die Gefahr liegt in ihrer ruhigen moralischen Selbstrechtfertigung.
