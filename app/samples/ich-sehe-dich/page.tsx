@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const sceneOneParagraphs = [
-  "Die kleine Tür lehnte schon an der Sockelleiste, als Laura sich auf die Knie ließ. Das Holz war billig, aus dem Bastelladen, zwei Euro neunzig. Das Scharnier war nur eine Prägung im Plastik. Sie drückte sie gegen die Leiste neben der Garderobe, dort, wo Henri am Morgen als Erstes hinsehen würde, wenn er barfuß aus seinem Zimmer kam. Die Dielen waren kalt durch den Stoff der Leggings. Im Rücken zog es von der Schulter bis unter das Schulterblatt, der gleiche Strang wie jeden Abend.",
+  "Die kleine Tür lehnte schon an der Sockelleiste, als Mara sich auf die Knie ließ. Das Holz war billig, aus dem Bastelladen, zwei Euro neunzig. Das Scharnier war nur eine Prägung im Plastik. Sie drückte sie gegen die Leiste neben der Garderobe, dort, wo Henri am Morgen als Erstes hinsehen würde, wenn er barfuß aus seinem Zimmer kam. Die Dielen waren kalt durch den Stoff der Leggings. Im Rücken zog es von der Schulter bis unter das Schulterblatt, der gleiche Strang wie jeden Abend.",
   "Sie hatte nur die kleine Stehlampe an. Die Wohnung hörte sich anders an, wenn Henri schlief. Der Kühlschrank arbeitete. Die Heizung klackte einmal, dann war wieder Ruhe. Unter der Balkontür strich die Luft über die Dielen, und sie zog die Strickjacke enger.",
   "Der Klebestreifen löste sich schlecht von der Rolle. Sie biss ihn mit den Zähnen ab, wie immer, und schmeckte den Kleber. Zwei Streifen hinten an die Tür, einer oben, einer unten. Sie drückte sie fest. Ein Daumenabdruck blieb auf dem Lack. Sie wischte ihn mit dem Ärmel weg.",
   "Der Zettel lag auf dem Couchtisch, neben der Schachtel, in der sie die Wichtelsachen seit November sammelte. Drei Rollen Tesa, ein paar Schokoladentaler aus dem Adventskalender-Restbestand, ein Päckchen Miniatur-Bauklötze für einsneunundneunzig, Geschenkpapier in Streifen geschnitten. Sie hatte darüber im letzten Jahr noch mit Sabine am Telefon gelacht. Jetzt war es einfach Teil der Liste.",
@@ -18,7 +18,7 @@ const sceneOneParagraphs = [
   "Sie stand auf, eine Hand an der Wand, die andere auf dem Knie. Der Rücken zog. Sie drückte die Faust in die Stelle unter dem Schulterblatt und atmete einmal tief durch die Nase.",
   "Im Bad putzte sie sich die Zähne im Dunkeln, nur das Licht aus dem Flur. Sie spuckte aus, spülte, wischte den Rand des Waschbeckens mit dem Handtuch, weil sie es nicht lassen konnte.",
   "Bevor sie ins Schlafzimmer ging, blieb sie im Flur stehen. Die kleine Tür saß an der Sockelleiste. Das Goldpapier fing das Licht der Stehlampe auf. In der Küche warteten die Tassen und der Pinguinbecher.",
-  "Laura machte das Licht aus."
+  "Mara machte das Licht aus."
 ];
 
 const sceneTwoParagraphs = [
@@ -33,14 +33,14 @@ const sceneTwoParagraphs = [
   "\"Schuhe.\"",
   "\"Mein Bauch tut weh.\"",
   "\"Nach der Kita gucken wir.\" Sie kniete, zog ihm die Schuhe an, Klett links, Klett rechts. \"Jacke. Mütze. Komm.\"",
-  "Der Toast lag in einem Küchentuch auf dem Beifahrersitz und kühlte ab. An der Kita löste sie Henris Finger einzeln vom Reißverschluss ihrer Jacke. Die Erzieherin lächelte, als sei alles normal. Laura lächelte zurück, als sei alles normal.",
-  "Sie starrte auf ihre Jacke am Haken. Sie konnte sich nicht erinnern, sie aufgehängt zu haben. Erster Patient, kleiner Junge mit Sigmatismus, die Mutter sprach zu viel. Laura hörte zu, notierte, spielte, korrigierte, lobte. Zwischen Patient eins und Patient zwei ging sie in die Küche, goss sich Kaffee ein, nahm einen Schluck im Stehen, stellte die Tasse ab, weil Ines etwas fragte, und vergaß sie dort.",
-  "Patient zwei, fünf Jahre, Mundmotorik. Patient drei, Nachbesprechung mit einer Mutter, die weinte, weil der Logopäde vor ihr nichts gebracht habe. Laura reichte ihr Taschentücher. Ihre Hand fand den Karton, als hätte sie das schon zu oft gemacht. Sie sagte ruhige Sätze. Patient vier fiel aus, dafür schob Ines ihr eine Akte in die Hand, Attestanfrage, Krankenkasse, eilig.",
+  "Der Toast lag in einem Küchentuch auf dem Beifahrersitz und kühlte ab. An der Kita löste sie Henris Finger einzeln vom Reißverschluss ihrer Jacke. Die Erzieherin lächelte, als sei alles normal. Mara lächelte zurück, als sei alles normal.",
+  "Sie starrte auf ihre Jacke am Haken. Sie konnte sich nicht erinnern, sie aufgehängt zu haben. Erster Patient, kleiner Junge mit Sigmatismus, die Mutter sprach zu viel. Mara hörte zu, notierte, spielte, korrigierte, lobte. Zwischen Patient eins und Patient zwei ging sie in die Küche, goss sich Kaffee ein, nahm einen Schluck im Stehen, stellte die Tasse ab, weil Ines etwas fragte, und vergaß sie dort.",
+  "Patient zwei, fünf Jahre, Mundmotorik. Patient drei, Nachbesprechung mit einer Mutter, die weinte, weil der Logopäde vor ihr nichts gebracht habe. Mara reichte ihr Taschentücher. Ihre Hand fand den Karton, als hätte sie das schon zu oft gemacht. Sie sagte ruhige Sätze. Patient vier fiel aus, dafür schob Ines ihr eine Akte in die Hand, Attestanfrage, Krankenkasse, eilig.",
   "Sie ging in die Küche zurück. Die Tasse stand noch da, der Kaffee war kalt. Sie trank ihn im Stehen aus, zwei Schluck, drei. Für einen Moment war da der Gedanke, ob Henri vielleicht doch krank war. Sie stellte die Tasse ab. Im Türrahmen rief jemand ihren Namen.",
   "Der Lagerraum roch nach Pappkarton und Desinfektionsmittel. Sie schloss die Tür hinter sich, lehnte sich mit dem Rücken dagegen, die Akte noch in der Hand. Dann fiel ihr der Kopf nach vorn. Es kam nicht viel. Zwei, drei Atemzüge, in denen das Gesicht heiß wurde. Sie presste die Handfläche auf den Mund.",
   "Schritte im Flur. Jemand ging an der Tür vorbei, Richtung Toilette. Sie richtete sich auf, wischte mit dem Handrücken unter den Augen entlang, einmal links, einmal rechts, strich sich die Haare hinter die Ohren. Die Akte war an der Ecke zerknittert, sie strich sie glatt.",
-  "Als sie rausging, hielt sie die Akte so, als hätte sie sie gerade aus dem Regal geholt. Ines nickte ihr im Vorbeigehen zu. Laura nickte zurück.",
-  "Henri stand allein an der Garderobe, Jacke halb an, als sie ankam. Die Erzieherin sagte, er habe heute wenig gegessen. Laura sagte Danke und zog ihm den Reißverschluss hoch.",
+  "Als sie rausging, hielt sie die Akte so, als hätte sie sie gerade aus dem Regal geholt. Ines nickte ihr im Vorbeigehen zu. Mara nickte zurück.",
+  "Henri stand allein an der Garderobe, Jacke halb an, als sie ankam. Die Erzieherin sagte, er habe heute wenig gegessen. Mara sagte Danke und zog ihm den Reißverschluss hoch.",
   "\"Wir müssen noch schnell einkaufen.\"",
   "\"Ich will nicht einkaufen.\"",
   "\"Ich weiß.\"",
@@ -70,11 +70,11 @@ const sceneTwoParagraphs = [
 ];
 
 const sceneThreeParagraphs = [
-  "Die Brotdose war innen noch feucht. Laura drehte sie um, hielt sie schräg gegen das Licht der Dunstabzugshaube und fuhr mit dem Geschirrtuch in die Ecken, in denen sich immer ein Rest Joghurt oder Apfelspucke hielt. Das Plastik roch nach Spülmittel und nach dem Salamibrot von heute Mittag. Morgen Käse. Den Zettel an der Kühlschranktür hatte sie schon umgedreht.",
+  "Die Brotdose war innen noch feucht. Mara drehte sie um, hielt sie schräg gegen das Licht der Dunstabzugshaube und fuhr mit dem Geschirrtuch in die Ecken, in denen sich immer ein Rest Joghurt oder Apfelspucke hielt. Das Plastik roch nach Spülmittel und nach dem Salamibrot von heute Mittag. Morgen Käse. Den Zettel an der Kühlschranktür hatte sie schon umgedreht.",
   "In der Wohnung war es still auf eine Art, die sie als Arbeit kannte. Henri atmete im Zimmer nebenan hörbar tief. Die Heizung knackte. Auf dem Herd stand der halbvolle Topf vom Nudelwasser, den sie gleich ausleeren würde, gleich, sobald die Dose trocken war.",
   "Das Telefon vibrierte auf der Arbeitsplatte, bevor es klingelte. Sie sah den Namen, bevor sie den Ton hörte.",
   "Tobias.",
-  "Laura legte das Geschirrtuch zur Seite, nicht die Brotdose. Die behielt sie in der Hand.",
+  "Mara legte das Geschirrtuch zur Seite, nicht die Brotdose. Die behielt sie in der Hand.",
   "\"Ja.\"",
   "\"Hey.\" Seine Stimme war klar. Nicht belegt, nicht zu hell. Nur Tobias. \"Ich hoffe, es ist nicht zu spät.\"",
   "\"Es geht.\"",
@@ -82,7 +82,7 @@ const sceneThreeParagraphs = [
   "\"Okay.\"",
   "Sie hörte im Hintergrund einen Flur, das Schließen einer Tür, weit weg eine Männerstimme. Dann wieder nur ihn. Er atmete einmal ein, wie jemand, der sich entschieden hat.",
   "\"Wie geht es ihm?\"",
-  "Laura drehte die Brotdose in der Hand. Der Deckel lag neben der Spüle, rot, mit Kratzern vom Spülmaschinensieb.",
+  "Mara drehte die Brotdose in der Hand. Der Deckel lag neben der Spüle, rot, mit Kratzern vom Spülmaschinensieb.",
   "\"Gut. Er schläft.\"",
   "\"Gut.\" Er sagte es, als beruhige ihn das Wort. \"Und sonst? Was macht er gerade so?\"",
   "Sie überlegte, was eine ehrliche Antwort wäre und was eine, die ihm half. Es war nicht dasselbe.",
@@ -93,7 +93,7 @@ const sceneThreeParagraphs = [
   "\"Heute einen Tannenzapfen. Gestern einen Radiergummi.\"",
   "Tobias lachte leise. Es war kein Schutzlachen. Es war wirklich ein Lachen, und für einen Moment stand er vor ihr, wie er früher im Flur gestanden hatte, Schlüssel in der Hand, Jacke noch an, und hatte über etwas gelacht, das Henri gesagt hatte.",
   "Sie stellte die Brotdose auf die Arbeitsplatte. Sie ließ sie nicht los.",
-  "\"Laura.\"",
+  "\"Mara.\"",
   "\"Ja.\"",
   "\"Ich weiß, dass ich viel verpasse.\"",
   "Sie sagte nichts.",
@@ -126,15 +126,15 @@ const sceneThreeParagraphs = [
   "\"Ja.\"",
   "\"Gib ihm einen Kuss von mir. Morgen früh. Wenn er es hören will.\"",
   "\"Mach ich.\"",
-  "\"Laura.\" Er zögerte. \"Danke.\"",
+  "\"Mara.\" Er zögerte. \"Danke.\"",
   "Sie legte auf, bevor sie antworten musste.",
   "Die Küche war genauso hell wie vorher. Der Nudeltopf stand noch auf dem Herd. Das Geschirrtuch hatte sie irgendwann aus der Hand gelegt, ohne es zu merken, und wieder aufgenommen. Jetzt hing es halb über dem Rand des Spülbeckens, eine Ecke im Wasser, die andere auf der Arbeitsplatte. Die Brotdose stand offen, der rote Deckel daneben.",
   "Sie rührte sich nicht.",
   "Auf dem Display war das Gespräch zu einem Eintrag geworden, mit Uhrzeit und Dauer. Sieben Minuten. Es hatte sich länger angefühlt und kürzer zugleich. Sie drehte das Telefon mit dem Display nach unten, als würde das etwas verschließen.",
   "Im Kinderzimmer drehte Henri sich im Bett. Eine Matratze, die sie kannte. Ein kurzes Seufzen, dann wieder Atem.",
-  "Laura sah die Brotdose an. Morgen Käse. Sie hatte eine Packung im Kühlschrank, die am Freitag ablief, das reichte. Der Tannenzapfen lag noch im Wohnzimmer vor der Tür, sie musste ihn vor dem Schlafen wegräumen und etwas dafür hinlegen, irgendwas, einen Bonbon, einen kleinen Knopf, sie hatte Knöpfe in der Schublade in der Diele.",
+  "Mara sah die Brotdose an. Morgen Käse. Sie hatte eine Packung im Kühlschrank, die am Freitag ablief, das reichte. Der Tannenzapfen lag noch im Wohnzimmer vor der Tür, sie musste ihn vor dem Schlafen wegräumen und etwas dafür hinlegen, irgendwas, einen Bonbon, einen kleinen Knopf, sie hatte Knöpfe in der Schublade in der Diele.",
   "Sie dachte all das nebeneinander, in Reihenfolge, und rührte sich trotzdem nicht.",
-  "Irgendwo zwischen Brotdose und Tannenzapfen war etwas, das nicht zur Reihenfolge gehörte, und das wartete darauf, benannt zu werden. Sie benannte es nicht. Sie wusste, wie er vor zwei Jahren im Flur gestanden hatte, am Morgen vor der ersten Einweisung, die Jacke schon an, die Tasche noch nicht, und wie er gesagt hatte, diesmal, Laura. Diesmal.",
+  "Irgendwo zwischen Brotdose und Tannenzapfen war etwas, das nicht zur Reihenfolge gehörte, und das wartete darauf, benannt zu werden. Sie benannte es nicht. Sie wusste, wie er vor zwei Jahren im Flur gestanden hatte, am Morgen vor der ersten Einweisung, die Jacke schon an, die Tasche noch nicht, und wie er gesagt hatte, diesmal, Mara. Diesmal.",
   "Sie hatte ihm heute nicht genickt. Sie hatte wahrscheinlich gesagt. Das war nicht dasselbe, und sie wusste nicht, ob es besser war.",
   "Sie griff nach dem Geschirrtuch, um es gerade zu ziehen, und hielt dann nur die Ecke zwischen zwei Fingern. Der Stoff war an der nassen Seite kühl. Sie zog ihn nicht.",
   "Das Telefon lag umgedreht. Der Topf stand voll. Die Brotdose offen. Der rote Deckel daneben.",
@@ -143,34 +143,34 @@ const sceneThreeParagraphs = [
 ];
 
 const sceneFourParagraphs = [
-  "Der späte Nachmittag hing grau über dem Parkplatz, als Laura die Haustür mit dem Ellenbogen aufdrückte. In der rechten Hand zwei Stofftaschen, in der linken eine Papiertüte mit dem Kuchen, den Sabine ihr noch mitgegeben hatte, dazu der Autoschlüssel zwischen zwei Fingern. Henri hing an ihrem Mantelsaum.",
+  "Der späte Nachmittag hing grau über dem Parkplatz, als Mara die Haustür mit dem Ellenbogen aufdrückte. In der rechten Hand zwei Stofftaschen, in der linken eine Papiertüte mit dem Kuchen, den Sabine ihr noch mitgegeben hatte, dazu der Autoschlüssel zwischen zwei Fingern. Henri hing an ihrem Mantelsaum.",
   "\"Mama, guck mal, ich hab das Blatt noch.\"",
   "\"Ja, Schatz.\"",
   "\"Guck mal richtig.\"",
   "\"Gleich, Henri. Halt mal kurz die Tüte hier, die kleine.\"",
   "Er ließ den Mantel los und nahm die Papiertüte, zu breit für seine Hände. Die Henkel der Stofftaschen schnitten in ihre Handflächen. Milch, zwei Flaschen Wasser, Kartoffeln, der Käse. Der linke Henkel rutschte. Sie zog die Schulter hoch, um ihn zu halten.",
-  "\"Laura, warte mal.\"",
+  "\"Mara, warte mal.\"",
   "Sabine kam die drei Stufen herunter, eine Strickjacke über den Schultern, in Hausschuhen. Hinter ihr, einen halben Schritt versetzt, ein Mann in einem dunklen Pullover, die Hände in den Jackentaschen.",
   "\"Du bist ja losgestürmt, als würde es brennen\", sagte Sabine. \"Das ist Cem. Der ist übers Wochenende hier. Ich hab dir doch von ihm erzählt, wir haben uns über eine App kennengelernt.\"",
   "\"Hi\", sagte Cem.",
-  "\"Hallo.\" Laura nickte, beide Hände voll, und hoffte, dass das als Gruß reichte.",
+  "\"Hallo.\" Mara nickte, beide Hände voll, und hoffte, dass das als Gruß reichte.",
   "Henri zog an ihrem Mantel. \"Guck mal, das Blatt, da sind so Streifen drin.\"",
   "\"Gleich, Henri.\"",
   "Sabine beugte sich zu ihm herunter. \"Hast du Oma Sabine ein Blatt mitgebracht?\"",
   "\"Nein, ich hab’s für Mama.\"",
-  "\"Ach so.\" Sabine lachte kurz. Laura versuchte, den rutschenden Henkel neu zu fassen, ohne den Kuchen schief zu kippen. Sie sah, wie Cem den Blick auf die Taschen legte, nicht auf ihr Gesicht.",
+  "\"Ach so.\" Sabine lachte kurz. Mara versuchte, den rutschenden Henkel neu zu fassen, ohne den Kuchen schief zu kippen. Sie sah, wie Cem den Blick auf die Taschen legte, nicht auf ihr Gesicht.",
   "Er trat einen Schritt nach vorn und streckte die Hand aus.",
   "\"Darf ich?\"",
-  "Es war keine Frage, die eine Antwort brauchte. Bevor Laura überlegen konnte, ob sie ablehnen wollte, hatte er die beiden schweren Taschen schon an den Henkeln, ruhig, als nehme er sich sein eigenes Gepäck. Er trat einen halben Schritt zurück. Keine Geste dazu. Kein Lächeln, das etwas bedeuten sollte.",
+  "Es war keine Frage, die eine Antwort brauchte. Bevor Mara überlegen konnte, ob sie ablehnen wollte, hatte er die beiden schweren Taschen schon an den Henkeln, ruhig, als nehme er sich sein eigenes Gepäck. Er trat einen halben Schritt zurück. Keine Geste dazu. Kein Lächeln, das etwas bedeuten sollte.",
   "\"Welches Auto?\"",
   "\"Der blaue, der zweite da hinten.\"",
   "\"Okay.\"",
   "Er ging voraus. Sabine schob die Strickjacke höher.",
-  "\"Cem bleibt bis Sonntag. Wir müssen uns echt mal wieder richtig sehen, Laura, nicht immer nur im Vorbeigehen.\"",
+  "\"Cem bleibt bis Sonntag. Wir müssen uns echt mal wieder richtig sehen, Mara, nicht immer nur im Vorbeigehen.\"",
   "\"Ja. Ich ruf dich an.\"",
   "\"Das sagst du immer.\"",
   "\"Ich weiß.\"",
-  "Sabine drückte sie kurz an der Schulter, über den Mantel, und blieb auf der Treppe stehen. Laura folgte Cem mit der Papiertüte und Henri an der Hand. Der Junge hielt das Blatt jetzt hoch, als laufe er an einer Fahnenstange entlang.",
+  "Sabine drückte sie kurz an der Schulter, über den Mantel, und blieb auf der Treppe stehen. Mara folgte Cem mit der Papiertüte und Henri an der Hand. Der Junge hielt das Blatt jetzt hoch, als laufe er an einer Fahnenstange entlang.",
   "\"Guck mal, Mama. Die Streifen sehen aus wie Finger.\"",
   "\"Ja, sehe ich.\"",
   "\"Richtig?\"",
@@ -178,7 +178,7 @@ const sceneFourParagraphs = [
   "Ihre rechte Hand war leer. Nur der Schlüssel, die Tüte, Henris kleine feuchte Hand. Die linke Hand war leer. Sie bemerkte es daran, dass ihre Finger sich zum ersten Mal seit dem Supermarkt langsam öffneten, ohne dass sie es entschied. Der Weg bis zum Auto waren vielleicht zwanzig Meter. Sie ging sie anders.",
   "Die Schultern saßen tiefer. Der rechte Oberarm brannte noch von der Kassenschlange. Aber der Griff, mit dem sie normalerweise die Taschen hielt, bis sie beim Auto ankam, dieser Griff war aus.",
   "Cem stellte die beiden Taschen am Kofferraum ab, ohne nachzusehen, ob sie schon da war. Er trat zurück, zwei Schritte, Hände wieder in den Jackentaschen.",
-  "\"Danke\", sagte Laura.",
+  "\"Danke\", sagte Mara.",
   "\"Klar.\"",
   "Sie stellte die Papiertüte oben auf eine der Taschen. Henri zog an ihrem Arm.",
   "\"Guck mal, da ist noch so ein Blatt, das gleiche.\"",
@@ -191,9 +191,9 @@ const sceneFourParagraphs = [
   "\"Ja\", sagte Henri. \"Das ist für Mama.\"",
   "\"Ah.\"",
   "Mehr nicht. Er wartete nicht, dass Henri weiter erzählte, und drängte ihn nicht.",
-  "Laura klappte den Kofferraum zu. \"Nochmal danke.\"",
+  "Mara klappte den Kofferraum zu. \"Nochmal danke.\"",
   "\"Passt schon.\"",
-  "Sie schob Henri in den Kindersitz, schnallte ihn an. Sein Anorak war zu dick, der Gurt saß zu hoch, sie zog ihn zurecht. Als sie den Kopf wieder hob, war Cem schon auf halbem Weg zu Sabine zurück. Sabine winkte von der Treppe. Laura winkte kurz zurück, ohne zu sehen, ob es ankam, und stieg ein.",
+  "Sie schob Henri in den Kindersitz, schnallte ihn an. Sein Anorak war zu dick, der Gurt saß zu hoch, sie zog ihn zurecht. Als sie den Kopf wieder hob, war Cem schon auf halbem Weg zu Sabine zurück. Sabine winkte von der Treppe. Mara winkte kurz zurück, ohne zu sehen, ob es ankam, und stieg ein.",
   "Im Auto roch es nach feuchter Jacke und dem Bananenrest, den Henri heute Morgen im Getränkehalter liegengelassen hatte. Sie startete, fuhr aus der Parklücke, hielt am Ausfahrtsschild, setzte den Blinker. Henri erzählte hinten von den Streifen im Blatt, dann von einem Käfer in der Kita, dann wieder vom Blatt.",
   "\"Mama, guck mal im Spiegel.\"",
   "\"Ich fahre, Henri.\"",
@@ -209,7 +209,7 @@ const sceneFourParagraphs = [
 ];
 
 const sceneFiveParagraphs = [
-  "Das Laken war kalt dort, wo es nass war, und warm dort, wo Henri noch darauf gelegen hatte. Laura zog es an den Ecken vom Bett, erst oben links, dann rechts, dann hinüber zur Matratzenseite, die schon eingezogen hatte. Der Geruch kam hoch, bevor sie Luft holen konnte. Sie atmete durch den Mund weiter.",
+  "Das Laken war kalt dort, wo es nass war, und warm dort, wo Henri noch darauf gelegen hatte. Mara zog es an den Ecken vom Bett, erst oben links, dann rechts, dann hinüber zur Matratzenseite, die schon eingezogen hatte. Der Geruch kam hoch, bevor sie Luft holen konnte. Sie atmete durch den Mund weiter.",
   "Henri stand in der Tür, in der Schlafanzughose, die noch trocken war, den Oberkörper nackt. Er hielt sich am Türrahmen fest.",
   "\"Guck mal\", sagte er, \"ich bin schon aus dem Bett.\"",
   "\"Ich seh dich.\" Sie rollte das Laken nach innen ein, damit nichts tropfte. \"Geh bitte aufs Klo und dann trockene Sachen aus der zweiten Schublade.\"",
@@ -219,10 +219,10 @@ const sceneFiveParagraphs = [
   "Im Bad war Henri schon fertig, die Hände noch feucht. Sie rieb sie mit dem Handtuch trocken, Finger für Finger. Er ließ sich das machen.",
   "Der Anruf aus der Kita kam gegen elf, zwischen zwei Terminen. Frau Peters klang so, wie sie immer klang, wenn sie nicht wollte, dass man es dramatisch nahm.",
   "\"Er hat viel geweint heute. Wir haben alles probiert. Vielleicht wäre es besser, wenn er heute früher zu Hause ist.\"",
-  "\"Ich komme\", sagte Laura.",
+  "\"Ich komme\", sagte Mara.",
   "Sie legte auf und rief Frau Albers an, Viertel nach zwei, Stimmtraining. Dann Herrn Kowalski, Viertel vor vier. Beide waren freundlich. Beide fragten nicht, warum. Sie schrieb \"KITA krank\" in den Kalender, obwohl er nicht krank war. Es war die Vokabel, die alle verstanden.",
   "Auf der Fahrt rechnete sie nicht nach. Nicht die Stunden, nicht die Kasse, nicht den Dienstag nächste Woche. Sie fuhr und hielt an der Ampel, und die Scheibenwischer gingen auf der ersten Stufe.",
-  "Im Flur der Kita hing sein Rucksack schon am Haken. Er stand daneben, die Jacke halb zu, eine Hand in Frau Peters' Hand. Als er Laura sah, ließ er los und ging drei Schritte und blieb dann stehen, als hätte er vergessen, wohin. Sie ging den Rest.",
+  "Im Flur der Kita hing sein Rucksack schon am Haken. Er stand daneben, die Jacke halb zu, eine Hand in Frau Peters' Hand. Als er Mara sah, ließ er los und ging drei Schritte und blieb dann stehen, als hätte er vergessen, wohin. Sie ging den Rest.",
   "\"Komm\", sagte sie.",
   "Er drückte das Gesicht in ihre Jacke, unter die Reißverschlusslasche, und hielt sich am Stoff fest. Er sagte nichts. Sie nickte Frau Peters zu. Frau Peters nickte zurück.",
   "Im Treppenhaus wurde er schwerer an ihrem Arm. Sie hielt kurz an auf dem Absatz.",
@@ -255,7 +255,7 @@ const sceneFiveParagraphs = [
   "Sie sah auf den Scheitel, der an ihrer Halsbeuge lag. Eine Strähne war nass vor Schweiß an der Schläfe, da, wo das Kissen an seine Wange drückte. Sie wischte nichts weg.",
   "Als sie ihn schließlich hochnahm, war ihr Arm bis zur Schulter ohne Gefühl. Sie stand vorsichtig auf, legte das Kissen unter seinen Kopf, zog die Decke über ihn. Sie blieb einen Moment gebückt, bis der Rücken sich sortierte. Dann kam das Kribbeln zurück, in kleinen Stichen, vom Ellbogen nach unten.",
   "In der Küche war das Licht zu hell. Sie schaltete es nicht aus. Auf dem Display standen zwei Anrufe von derselben Nummer. Kein Name.",
-  "Sie drückte auf die Mailbox. Erst ihr eigenes Band. Dann die Männerstimme vom ersten Mal, leise und nah, als stünde der Mund direkt am Telefon. \"Laura? Ich versuch's später noch mal.\" Mehr nicht.",
+  "Sie drückte auf die Mailbox. Erst ihr eigenes Band. Dann die Männerstimme vom ersten Mal, leise und nah, als stünde der Mund direkt am Telefon. \"Mara? Ich versuch's später noch mal.\" Mehr nicht.",
   "Sie hörte die Nachricht zu Ende, ohne das Telefon ans Ohr zu nehmen. Danach stand sie einen Moment reglos da, das Telefon in der Hand. Im Bad schlug die nasse Wäsche gegen die Trommel. Der Kühlschrank summte. Irgendwo in den Rohren sackte Wasser ab.",
   "Auf ihrem Pullover, an der Schulter, war ein feuchter Abdruck. Rund, von seiner Wange.",
   "Als das Telefon wieder zu klingeln begann, drehte sie es um und ließ es klingeln."
@@ -285,7 +285,7 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">Buchprobe · Szenen 1–5</p>
           <h2>Die Wichteltür</h2>
           <p>
-            Laura baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
+            Mara baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
             weiter. Dann ruft Tobias an. Die Leseprobe zeigt Liebe, Erschöpfung und die
             Arbeit, die niemand sieht.
           </p>
@@ -301,7 +301,7 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">Buchprobe · Szene 2</p>
           <h2>Der nächste Tag</h2>
           <p>
-            Zwischen Bad, Kita, Praxis, Supermarkt und Abendroutine hält Laura alles in
+            Zwischen Bad, Kita, Praxis, Supermarkt und Abendroutine hält Mara alles in
             Bewegung, bis am Ende nur noch eine vergessene Tasse im Auto übrig bleibt.
           </p>
         </div>
@@ -316,7 +316,7 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">Buchprobe · Szene 3</p>
           <h2>Der Anruf</h2>
           <p>
-            Abends in der Küche spricht Laura mit Tobias aus der Klinik. Nichts eskaliert,
+            Abends in der Küche spricht Mara mit Tobias aus der Klinik. Nichts eskaliert,
             aber nach sieben Minuten steht alles wieder offen im Raum.
           </p>
         </div>
@@ -331,7 +331,7 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">Buchprobe · Szene 4</p>
           <h2>Der Parkplatz</h2>
           <p>
-            Nach einem Besuch bei Sabine trägt Laura den Einkauf zum Auto. Cem hilft, ohne
+            Nach einem Besuch bei Sabine trägt Mara den Einkauf zum Auto. Cem hilft, ohne
             mehr daraus zu machen, und genau darin liegt die Entlastung.
           </p>
         </div>
@@ -346,7 +346,7 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">Buchprobe · Szene 5</p>
           <h2>Früher nach Hause</h2>
           <p>
-            Henri hält den Kitatag nicht durch. Zuhause schläft er auf Laura ein, während
+            Henri hält den Kitatag nicht durch. Zuhause schläft er auf Mara ein, während
             zwei unbeantwortete Anrufe wie eine leise Drohung im Hintergrund bleiben.
           </p>
         </div>
