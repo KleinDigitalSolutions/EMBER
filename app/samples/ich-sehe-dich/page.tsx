@@ -208,6 +208,60 @@ const sceneFourParagraphs = [
   "Sie hob die Milch aus der Tasche und stellte sie in den Kühlschrank."
 ];
 
+const sceneFiveParagraphs = [
+  "Das Laken war kalt dort, wo es nass war, und warm dort, wo Henri noch darauf gelegen hatte. Laura zog es an den Ecken vom Bett, erst oben links, dann rechts, dann hinüber zur Matratzenseite, die schon eingezogen hatte. Der Geruch kam hoch, bevor sie Luft holen konnte. Sie atmete durch den Mund weiter.",
+  "Henri stand in der Tür, in der Schlafanzughose, die noch trocken war, den Oberkörper nackt. Er hielt sich am Türrahmen fest.",
+  "\"Guck mal\", sagte er, \"ich bin schon aus dem Bett.\"",
+  "\"Ich seh dich.\" Sie rollte das Laken nach innen ein, damit nichts tropfte. \"Geh bitte aufs Klo und dann trockene Sachen aus der zweiten Schublade.\"",
+  "\"Die blauen?\"",
+  "\"Die blauen sind okay.\"",
+  "Sie trug das Bündel mit ausgestreckten Armen durch den Flur. Die Maschine war noch halb voll von gestern. Sie drückte das Laken nach, schloss die Klappe, stellte sechzig ein. Der Bezug musste warten. Ihr Rücken zog beim Bücken.",
+  "Im Bad war Henri schon fertig, die Hände noch feucht. Sie rieb sie mit dem Handtuch trocken, Finger für Finger. Er ließ sich das machen.",
+  "Der Anruf aus der Kita kam gegen elf, zwischen zwei Terminen. Frau Peters klang so, wie sie immer klang, wenn sie nicht wollte, dass man es dramatisch nahm.",
+  "\"Er hat viel geweint heute. Wir haben alles probiert. Vielleicht wäre es besser, wenn er heute früher zu Hause ist.\"",
+  "\"Ich komme\", sagte Laura.",
+  "Sie legte auf und rief Frau Albers an, Viertel nach zwei, Stimmtraining. Dann Herrn Kowalski, Viertel vor vier. Beide waren freundlich. Beide fragten nicht, warum. Sie schrieb \"KITA krank\" in den Kalender, obwohl er nicht krank war. Es war die Vokabel, die alle verstanden.",
+  "Auf der Fahrt rechnete sie nicht nach. Nicht die Stunden, nicht die Kasse, nicht den Dienstag nächste Woche. Sie fuhr und hielt an der Ampel, und die Scheibenwischer gingen auf der ersten Stufe.",
+  "Im Flur der Kita hing sein Rucksack schon am Haken. Er stand daneben, die Jacke halb zu, eine Hand in Frau Peters' Hand. Als er Laura sah, ließ er los und ging drei Schritte und blieb dann stehen, als hätte er vergessen, wohin. Sie ging den Rest.",
+  "\"Komm\", sagte sie.",
+  "Er drückte das Gesicht in ihre Jacke, unter die Reißverschlusslasche, und hielt sich am Stoff fest. Er sagte nichts. Sie nickte Frau Peters zu. Frau Peters nickte zurück.",
+  "Im Treppenhaus wurde er schwerer an ihrem Arm. Sie hielt kurz an auf dem Absatz.",
+  "\"Ich hab einen Turm gemacht\", sagte er dann, in den Jackenstoff.",
+  "\"Ja?\"",
+  "\"Er ist umgefallen. Aber dann hab ich wieder einen gemacht.\"",
+  "\"Das ist gut.\"",
+  "\"Der zweite war besser.\"",
+  "\"Glaub ich dir.\"",
+  "Sie gingen weiter. Auf der Straße zog sie ihm die Mütze übers Ohr, das immer wieder freikam.",
+  "Zu Hause zog sie ihm die Schuhe aus, bevor er nach dem Reißverschluss fragen konnte. Er stand da und ließ es geschehen. Dann ging er zum Sofa und legte sich hin, längs, den Kopf auf das Kissen, das nach ihr roch.",
+  "\"Ich hab Hunger.\"",
+  "Sie machte ein Brot mit Frischkäse und schnitt die Rinde ab, obwohl er die Rinde normalerweise aß. Heute nicht. Heute mit abgeschnittener Rinde. Er aß die Hälfte und legte den Rest auf den Teller am Boden.",
+  "\"Kannst du herkommen?\"",
+  "Sie kam. Sie setzte sich, und er legte sich halb über sie, Kopf auf ihre Schulter, ein Bein über ihren Oberschenkel. Sein Haar roch nach Kita, nach dem Flur dort, nach Tempera. Sie zog ihm die Socken gerade.",
+  "\"Guck mal\", sagte er und hob den Finger in Richtung Lampe. \"Da ist eine Spinne.\"",
+  "Es war eine Fluse.",
+  "\"Ich seh sie.\"",
+  "\"Machst du sie weg?\"",
+  "\"Später.\"",
+  "\"Okay.\"",
+  "Er erzählte etwas über einen Jungen, der Emil hieß, und dann etwas über ein Auto, das Emil hatte, und dann wieder über den Turm, diesmal anders herum. Mitten im Satz wurde er leiser. Der Satz brach ab bei: \"und dann ist er ...\" Sie wartete auf das, was kommen sollte. Es kam nicht. Sein Mund blieb halb offen.",
+  "Sie schaltete den Fernseher nicht an. Sie legte den Kopf nicht zurück. Ihre Hand lag auf seinem Rücken, zwischen den Schulterblättern, da, wo er dünn war.",
+  "In der Küche klingelte das Telefon. Es klingelte viermal, dann ging es auf die Mailbox. Sie hörte das eigene Band, leise, und dann eine Männerstimme, die sie nicht zuordnen konnte, kurz. Dann war es still.",
+  "Ihr Arm unter seinem Kopf fing an zu kribbeln. Erst an der Hand, dann im Ellbogen, dann im Oberarm. Sie verschob nichts. Sie atmete flach, damit er nicht aufwachte von ihrer Brust.",
+  "Draußen wurde es grau, dann dunkler. Im Fenster lag schon das Küchenlicht, das sie hatte brennen lassen. Der Teller stand noch am Boden. Die abgeschnittene Rinde daneben.",
+  "Sie dachte an das Laken, das gleich fertig war. An den Trockner, den sie eigentlich nicht mehr aufmachen wollte vor dem Essen. An morgen früh, aber nur bis zum Wecker.",
+  "Er murmelte etwas im Schlaf, eine Silbe, keine ganze. Seine Hand bewegte sich kurz in ihrem Pulloverstoff und wurde wieder locker.",
+  "Ihre Schulter fing an zu brennen unter seinem Gewicht. Das Bein, das er über ihren Oberschenkel gelegt hatte, war warm und schwer. Sie rückte den Kopf an der Lehne einen Millimeter zur Seite. Mehr nicht. Das Telefon begann wieder zu klingeln.",
+  "Viermal, zählte sie mit. Dann Mailbox. Diesmal keine Stimme. Nur ein paar Sekunden Atemgeräusch, oder Leitung, sie konnte es nicht unterscheiden.",
+  "Sie sah auf den Scheitel, der an ihrer Halsbeuge lag. Eine Strähne war nass vor Schweiß an der Schläfe, da, wo das Kissen an seine Wange drückte. Sie wischte nichts weg.",
+  "Als sie ihn schließlich hochnahm, war ihr Arm bis zur Schulter ohne Gefühl. Sie stand vorsichtig auf, legte das Kissen unter seinen Kopf, zog die Decke über ihn. Sie blieb einen Moment gebückt, bis der Rücken sich sortierte. Dann kam das Kribbeln zurück, in kleinen Stichen, vom Ellbogen nach unten.",
+  "In der Küche war das Licht zu hell. Sie schaltete es nicht aus. Auf dem Display standen zwei Anrufe von derselben Nummer. Kein Name.",
+  "Sie drückte auf die Mailbox. Erst ihr eigenes Band. Dann die Männerstimme vom ersten Mal, leise und nah, als stünde der Mund direkt am Telefon. \"Laura? Ich versuch's später noch mal.\" Mehr nicht.",
+  "Sie hörte die Nachricht zu Ende, ohne das Gerät ans Ohr zu nehmen. Danach stand sie einen Moment reglos da, das Telefon in der Hand, das Summen der Küche um sie herum, die Maschine im Bad, irgendwo Wasser in den Rohren.",
+  "Auf ihrem Pullover, an der Schulter, war ein feuchter Abdruck. Rund, von seiner Wange.",
+  "Als das Telefon wieder zu klingeln begann, drehte sie es um und ließ es klingeln."
+];
+
 export default function IchSeheDichSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -215,7 +269,7 @@ export default function IchSeheDichSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Ich sehe dich</h1>
-          <p>Die Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Die Szenen 1 bis 5 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -229,7 +283,7 @@ export default function IchSeheDichSamplePage() {
 
       <article className="sample-reader__article">
         <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szenen 1–4</p>
+          <p className="reader-eyebrow">Buchprobe · Szenen 1–5</p>
           <h2>Die Wichteltür</h2>
           <p>
             Laura baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
@@ -285,6 +339,21 @@ export default function IchSeheDichSamplePage() {
 
         <section className="sample-reader__scene">
           {sceneFourParagraphs.map(function (paragraph) {
+            return <p key={paragraph}>{paragraph}</p>;
+          })}
+        </section>
+
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 5</p>
+          <h2>Früher nach Hause</h2>
+          <p>
+            Henri hält den Kitatag nicht durch. Zuhause schläft er auf Laura ein, während
+            zwei unbeantwortete Anrufe wie eine leise Drohung im Hintergrund bleiben.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneFiveParagraphs.map(function (paragraph) {
             return <p key={paragraph}>{paragraph}</p>;
           })}
         </section>
