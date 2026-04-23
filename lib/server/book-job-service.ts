@@ -440,7 +440,7 @@ async function generateWithAnthropic(
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: beatPlanSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildAnthropicBeatPlanPrompt(packet, options)
+        userPrompt: buildBeatPlanPrompt(packet, options)
       });
     },
     writeDraft: function (beatPlan) {
@@ -510,7 +510,7 @@ async function generateWithAnthropic(
         maxTokens: EXTRACT_STAGE_MAX_TOKENS,
         schema: stateExtractionSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildAnthropicStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
       });
     },
     auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
@@ -521,7 +521,7 @@ async function generateWithAnthropic(
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: continuityAuditSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildAnthropicContinuityAuditPrompt(
+        userPrompt: buildContinuityAuditPrompt(
           packet,
           options,
           beatPlan,
@@ -539,7 +539,7 @@ async function generateWithAnthropic(
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: qualityEvalSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildAnthropicQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
       });
     }
   });
@@ -1921,6 +1921,10 @@ function buildAnthropicScenePrompt(params: {
           : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
 
   return [
+    `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
+    `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
+    `<scene_context>${sceneContext}</scene_context>`,
+    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
@@ -1931,96 +1935,6 @@ function buildAnthropicScenePrompt(params: {
   ]
     .filter(Boolean)
     .join("\n");
-}
-
-function buildAnthropicBeatPlanPrompt(
-  _packet: SceneContextPacket,
-  options: DraftGenerationOptions
-) {
-  const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
-
-  return [
-    "Create a compact beat plan for one scene.",
-    "Return only structured output matching the requested schema.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    `Preferred total beat budget: ${totalTarget} words.`,
-    "Requirements:",
-    "- 3 to 5 beats.",
-    "- Each beat must have a functional purpose and a concrete mustLand payoff.",
-    "- targetWords across all beats should roughly sum to the preferred total.",
-    "- Keep beats dramatic, not essayistic.",
-    "- label should stay short.",
-    "- purpose should be one compact sentence.",
-    "- mustLand should be one compact payoff sentence.",
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
-  ].join("\n");
-}
-
-function buildAnthropicStateExtractionPrompt(
-  _packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  beatPlan: BeatPlanPayload,
-  rewriteText: string
-) {
-  return [
-    "Extract scene state from the finished rewrite.",
-    "Return only structured output matching the requested schema.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Rules:",
-    "- rewriteNotes must describe visible revisions or strengths in plain compact language.",
-    "- rewriteNotes: 1 to 4 items, each under 100 characters.",
-    "- Every extractedState list: 0 to 3 items, each under 100 characters.",
-    "- Every extractedState entry must be a plain string. No objects.",
-    "- extractedState must stay conservative: explicit facts only.",
-    "- Prefer empty arrays over speculative entries.",
-    "- Uncertainty belongs only in continuityRisks.",
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    `Final rewrite: ${rewriteText}`
-  ].join("\n");
-}
-
-function buildAnthropicContinuityAuditPrompt(
-  _packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  beatPlan: BeatPlanPayload,
-  draftText: string,
-  rewriteText: string,
-  extractedState: DraftExtractionState
-) {
-  return [
-    "Audit this scene for continuity and style drift only.",
-    "Return only structured output matching the requested schema.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
-    "Keep every listed issue compact.",
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    `Draft text: ${draftText}`,
-    `Rewrite text: ${rewriteText}`,
-    `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
-    `Existing style drift notes: ${extractedState.styleDriftNotes.join(" | ") || "none"}`
-  ].join("\n");
-}
-
-function buildAnthropicQualityEvalPrompt(
-  _packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  beatPlan: BeatPlanPayload,
-  rewriteText: string,
-  extractedState: DraftExtractionState
-) {
-  return [
-    "Evaluate the final scene quality.",
-    "Return only structured output matching the requested schema.",
-    "Score from 0 to 10.",
-    `wordTargetMin must equal ${options.targetSceneWordsMin}.`,
-    `wordTargetMax must equal ${options.targetSceneWordsMax}.`,
-    `wordActual must equal the actual word count of the scene text.`,
-    "Issues should be short, concrete, and user-facing.",
-    "Keep every issue compact.",
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
-    `Final rewrite: ${rewriteText}`
-  ].join("\n");
 }
 
 function buildSceneContextPrompt(packet: SceneContextPacket) {
