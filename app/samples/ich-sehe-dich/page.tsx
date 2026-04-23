@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const sceneOneParagraphs = [
   "Die kleine Tür lehnte schon an der Sockelleiste, als Mara sich auf die Knie ließ. Das Holz war billig, aus dem Bastelladen, zwei Euro neunzig. Das Scharnier war nur eine Prägung im Plastik. Sie drückte sie gegen die Leiste neben der Garderobe, dort, wo Henri am Morgen als Erstes hinsehen würde, wenn er barfuß aus seinem Zimmer kam. Die Dielen waren kalt durch den Stoff der Leggings. Im Rücken zog es von der Schulter bis unter das Schulterblatt, der gleiche Strang wie jeden Abend.",
   "Sie hatte nur die kleine Stehlampe an. Die Wohnung hörte sich anders an, wenn Henri schlief. Der Kühlschrank arbeitete. Die Heizung klackte einmal, dann war wieder Ruhe. Unter der Balkontür strich die Luft über die Dielen, und sie zog die Strickjacke enger.",
@@ -269,14 +267,6 @@ export default function IchSeheDichSamplePage() {
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Ich sehe dich</h1>
           <p>Die Szenen 1 bis 5 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-        <div className="reader-actions">
-          <Link href="/" className="landing-button">
-            Store öffnen
-          </Link>
-          <Link href="/studio" className="landing-button">
-            Zurück ins Studio
-          </Link>
         </div>
       </header>
 

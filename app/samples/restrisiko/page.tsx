@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const sceneOneParagraphs = [
   "Der Beschluss lag ganz oben auf dem Stapel. Kopie, drei geheftete Seiten, das Deckblatt gelocht wie immer, wenn Rauschs Büro die Post vorbereitet hatte. Fehr las nur die erste Zeile. In der Unterbringungssache Elias Cord.",
   "Er legte die Hand flach auf das Papier, als müsste er es festhalten. Draußen, hinter dem Kanzleifenster, zog jemand einen Rollkoffer über das Kopfsteinpflaster, und das Geräusch kam verzögert an, als wäre das Glas dicker als gestern. Fehr rückte den Stapel gerade. Dann noch einmal. Er merkte es beim zweiten Mal und ließ die Hand sinken.",
@@ -204,14 +202,6 @@ export default function RestrisikoSamplePage() {
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Restrisiko</h1>
           <p>Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-        <div className="reader-actions">
-          <Link href="/" className="landing-button">
-            Store öffnen
-          </Link>
-          <Link href="/studio" className="landing-button">
-            Zurück ins Studio
-          </Link>
         </div>
       </header>
 

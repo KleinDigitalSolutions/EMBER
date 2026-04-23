@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const sceneOneParagraphs = [
   "Um 16:18 Uhr hatte Eva elf Minuten zwischen dem Gespräch mit der Kanzlei Hoffmann und der internen Besprechung. Sie trank einen Schluck aus der Flasche auf dem Schreibtisch, schob die Kopfhörer in den Nacken und tippte im Vorbeigehen auf die Kita-App. Grüner Status. Mila abgeholt. Dann, eine Zeile tiefer, ein nachsynchronisiertes Ereignis von gestern, grau hinterlegt, mit dem kleinen Wolkensymbol für verspäteten Abgleich.",
   "*Abholung Mila Berger, 15:42 Uhr, durch Eva Berger.*",
@@ -888,14 +886,6 @@ export default function DieFalscheAbholungSamplePage() {
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Die falsche Abholung</h1>
           <p>Szenen 1 bis 16 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-        <div className="reader-actions">
-          <Link href="/" className="landing-button">
-            Store öffnen
-          </Link>
-          <Link href="/studio" className="landing-button">
-            Zurück ins Studio
-          </Link>
         </div>
       </header>
 
