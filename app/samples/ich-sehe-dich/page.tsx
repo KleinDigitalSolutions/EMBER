@@ -69,6 +69,79 @@ const sceneTwoParagraphs = [
   "Sie saß da und sah ihn an."
 ];
 
+const sceneThreeParagraphs = [
+  "Die Brotdose war innen noch feucht. Laura drehte sie um, hielt sie schräg gegen das Licht der Dunstabzugshaube und fuhr mit dem Geschirrtuch in die Ecken, in denen sich immer ein Rest Joghurt oder Apfelspucke hielt. Das Plastik roch nach Spülmittel und nach dem Salamibrot von heute Mittag. Morgen Käse. Den Zettel an der Kühlschranktür hatte sie schon umgedreht.",
+  "In der Wohnung war es still auf eine Art, die sie als Arbeit kannte. Henri atmete im Zimmer nebenan hörbar tief. Die Heizung knackte. Auf dem Herd stand der halbvolle Topf vom Nudelwasser, den sie gleich ausleeren würde, gleich, sobald die Dose trocken war.",
+  "Das Telefon vibrierte auf der Arbeitsplatte, bevor es klingelte. Sie sah den Namen, bevor sie den Ton hörte.",
+  "Tobias.",
+  "Laura legte das Geschirrtuch zur Seite, nicht die Brotdose. Die behielt sie in der Hand.",
+  "\"Ja.\"",
+  "\"Hey.\" Seine Stimme war klar. Nicht belegt, nicht zu hell. Nur Tobias. \"Ich hoffe, es ist nicht zu spät.\"",
+  "\"Es geht.\"",
+  "\"Ich bin noch hier. In der Klinik, meine ich. Noch zwei Wochen.\" Er machte eine kleine Pause, als sortiere er etwas. \"Ich darf abends telefonieren.\"",
+  "\"Okay.\"",
+  "Sie hörte im Hintergrund einen Flur, das Schließen einer Tür, weit weg eine Männerstimme. Dann wieder nur ihn. Er atmete einmal ein, wie jemand, der sich entschieden hat.",
+  "\"Wie geht es ihm?\"",
+  "Laura drehte die Brotdose in der Hand. Der Deckel lag neben der Spüle, rot, mit Kratzern vom Spülmaschinensieb.",
+  "\"Gut. Er schläft.\"",
+  "\"Gut.\" Er sagte es, als beruhige ihn das Wort. \"Und sonst? Was macht er gerade so?\"",
+  "Sie überlegte, was eine ehrliche Antwort wäre und was eine, die ihm half. Es war nicht dasselbe.",
+  "\"Er hat eine Wichteltür. An der Wand im Wohnzimmer. Er legt da morgens Sachen hin.\"",
+  "\"Eine Wichteltür.\"",
+  "\"Ja.\"",
+  "\"Was legt er da hin?\"",
+  "\"Heute einen Tannenzapfen. Gestern einen Radiergummi.\"",
+  "Tobias lachte leise. Es war kein Schutzlachen. Es war wirklich ein Lachen, und für einen Moment stand er vor ihr, wie er früher im Flur gestanden hatte, Schlüssel in der Hand, Jacke noch an, und hatte über etwas gelacht, das Henri gesagt hatte.",
+  "Sie stellte die Brotdose auf die Arbeitsplatte. Sie ließ sie nicht los.",
+  "\"Laura.\"",
+  "\"Ja.\"",
+  "\"Ich weiß, dass ich viel verpasse.\"",
+  "Sie sagte nichts.",
+  "\"Ich meine\", er suchte, \"ich weiß, wie das klingt. Ich ruf an, ich frag, wie es ihm geht, und dann lege ich auf und bin trotzdem hier und nicht bei ihm.\"",
+  "\"Tobias.\"",
+  "\"Ich will das nur sagen. Dass ich das weiß.\"",
+  "Sie sah auf ihre Hand am Rand der Dose. Der Nagelrand war trocken, rissig. Sie fuhr mit dem Daumen darüber.",
+  "\"Er fragt manchmal nach dir.\"",
+  "Das war ein Geschenk. Sie hörte, wie er es in Empfang nahm.",
+  "\"Was sagt er?\"",
+  "\"Er fragt, wo du bist. Ich sag ihm, du bist in einem Haus, wo sie dir helfen, gesund zu werden.\"",
+  "\"Und das versteht er?\"",
+  "\"Er ist sechs. Er versteht, was er braucht.\"",
+  "Tobias war still. Nicht die Stille von vorhin. Eine andere. Sie hörte das Quietschen eines Stuhls, das Stocken seines Atems.",
+  "\"Ich würde ihn gern anrufen\", sagte Tobias. \"Irgendwann. Wenn ich hier rauskomme. Nicht jetzt.\"",
+  "\"Das können wir dann sehen.\"",
+  "\"Ja.\"",
+  "\"Tobias.\"",
+  "Er kam ihr zuvor.",
+  "\"Ich mache es wieder kaputt, oder?\"",
+  "Der Kühlschrank sprang an. Sie spürte die Rückenmuskeln über dem Beckenkamm, die seit Dienstag nicht weicher geworden waren. Die Brotdose unter ihrer Hand war jetzt fast trocken.",
+  "\"Wahrscheinlich. Ja.\"",
+  "Er sagte nichts.",
+  "\"Ich weiß es nicht, Tobias. Ich weiß nur, dass ich müde bin. Und dass ich nicht mehr so tun kann, als wäre ich mir bei dir sicher.\"",
+  "\"Nein.\"",
+  "\"Das ist nichts Böses. Das ist einfach nur wahr.\"",
+  "\"Ich weiß.\"",
+  "Sie hörte ihn einatmen, zweimal, als suche er einen Satz, der noch übrig war. Er fand keinen. Sie half ihm auch nicht.",
+  "\"Ich lass dich dann\", sagte er. \"Es ist spät.\"",
+  "\"Ja.\"",
+  "\"Gib ihm einen Kuss von mir. Morgen früh. Wenn er es hören will.\"",
+  "\"Mach ich.\"",
+  "\"Laura.\" Er zögerte. \"Danke.\"",
+  "Sie legte auf, bevor sie antworten musste.",
+  "Die Küche war genauso hell wie vorher. Der Nudeltopf stand noch auf dem Herd. Das Geschirrtuch hatte sie irgendwann aus der Hand gelegt, ohne es zu merken, und wieder aufgenommen. Jetzt hing es halb über dem Rand des Spülbeckens, eine Ecke im Wasser, die andere auf der Arbeitsplatte. Die Brotdose stand offen, der rote Deckel daneben.",
+  "Sie rührte sich nicht.",
+  "Auf dem Display war das Gespräch zu einem Eintrag geworden, mit Uhrzeit und Dauer. Sieben Minuten. Es hatte sich länger angefühlt und kürzer zugleich. Sie drehte das Telefon mit dem Display nach unten, als würde das etwas verschließen.",
+  "Im Kinderzimmer drehte Henri sich im Bett. Eine Matratze, die sie kannte. Ein kurzes Seufzen, dann wieder Atem.",
+  "Laura sah die Brotdose an. Morgen Käse. Sie hatte eine Packung im Kühlschrank, die am Freitag ablief, das reichte. Der Tannenzapfen lag noch im Wohnzimmer vor der Tür, sie musste ihn vor dem Schlafen wegräumen und etwas dafür hinlegen, irgendwas, einen Bonbon, einen kleinen Knopf, sie hatte Knöpfe in der Schublade in der Diele.",
+  "Sie dachte all das nebeneinander, in Reihenfolge, und rührte sich trotzdem nicht.",
+  "Irgendwo zwischen Brotdose und Tannenzapfen war etwas, das nicht zur Reihenfolge gehörte, und das wartete darauf, benannt zu werden. Sie benannte es nicht. Sie wusste, wie er vor zwei Jahren im Flur gestanden hatte, am Morgen vor der ersten Einweisung, die Jacke schon an, die Tasche noch nicht, und wie er gesagt hatte, diesmal, Laura. Diesmal.",
+  "Sie hatte ihm heute nicht genickt. Sie hatte wahrscheinlich gesagt. Das war nicht dasselbe, und sie wusste nicht, ob es besser war.",
+  "Sie griff nach dem Geschirrtuch, um es gerade zu ziehen, und hielt dann nur die Ecke zwischen zwei Fingern. Der Stoff war an der nassen Seite kühl. Sie zog ihn nicht.",
+  "Das Telefon lag umgedreht. Der Topf stand voll. Die Brotdose offen. Der rote Deckel daneben.",
+  "Sie stand in der Mitte ihrer Küche und sah auf die eigenen Hände, als gehörten sie zu jemandem, der gleich etwas tun würde. Dann, irgendwann, klappte sie den Deckel auf die Brotdose. Sie drückte die Ecken fest. Sie stellte die Dose auf den Zettel am Kühlschrank, damit sie morgen früh nicht suchte.",
+  "Das Geschirrtuch hing schief über dem Spülbecken. Sie ließ es hängen."
+];
+
 export default function IchSeheDichSamplePage() {
   return (
     <main className="reader-shell sample-reader">
@@ -76,7 +149,7 @@ export default function IchSeheDichSamplePage() {
         <div>
           <p className="reader-eyebrow">EMBER Leseprobe</p>
           <h1>Ich sehe dich</h1>
-          <p>Die Szenen 1 und 2 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
+          <p>Die Szenen 1 bis 3 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
         </div>
         <div className="reader-actions">
           <Link href="/" className="landing-button">
@@ -90,12 +163,12 @@ export default function IchSeheDichSamplePage() {
 
       <article className="sample-reader__article">
         <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szenen 1–2</p>
+          <p className="reader-eyebrow">Buchprobe · Szenen 1–3</p>
           <h2>Die Wichteltür</h2>
           <p>
             Laura baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
-            weiter. Die Leseprobe zeigt Liebe, Erschöpfung und die Arbeit, die niemand
-            sieht.
+            weiter. Dann ruft Tobias an. Die Leseprobe zeigt Liebe, Erschöpfung und die
+            Arbeit, die niemand sieht.
           </p>
         </div>
 
@@ -116,6 +189,21 @@ export default function IchSeheDichSamplePage() {
 
         <section className="sample-reader__scene">
           {sceneTwoParagraphs.map(function (paragraph) {
+            return <p key={paragraph}>{paragraph}</p>;
+          })}
+        </section>
+
+        <div className="sample-reader__hero">
+          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
+          <h2>Der Anruf</h2>
+          <p>
+            Abends in der Küche spricht Laura mit Tobias aus der Klinik. Nichts eskaliert,
+            aber nach sieben Minuten steht alles wieder offen im Raum.
+          </p>
+        </div>
+
+        <section className="sample-reader__scene">
+          {sceneThreeParagraphs.map(function (paragraph) {
             return <p key={paragraph}>{paragraph}</p>;
           })}
         </section>
