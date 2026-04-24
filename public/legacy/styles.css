@@ -556,7 +556,7 @@ select {
 
 .store-card--compact {
   display: grid;
-  grid-template-rows: 14rem 1fr;
+  grid-template-rows: auto 1fr;
 }
 
 .store-card--active {
@@ -599,6 +599,24 @@ select {
   object-fit: cover;
   object-position: center top;
   filter: saturate(0.88) contrast(1.03) brightness(0.8);
+}
+
+.store-card--compact .store-card-visual {
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem 0.75rem 1rem;
+}
+
+.store-card--compact .store-card-visual::after {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.12) 100%);
+}
+
+.store-card--compact .store-card-media {
+  object-fit: contain;
+  object-position: center;
 }
 
 .store-card-media--placeholder {

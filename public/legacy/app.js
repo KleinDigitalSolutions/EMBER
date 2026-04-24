@@ -563,6 +563,7 @@
   function renderStart() {
     const featuredStory = storefrontStories[0];
     const storeCards = storefrontStories
+      .slice(1)
       .map(function (story) {
         return renderStoreCard(story, false);
       })
