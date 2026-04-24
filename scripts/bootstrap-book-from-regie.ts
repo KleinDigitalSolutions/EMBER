@@ -407,8 +407,8 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
     },
     draftEngine: {
       ...blueprint.draftEngine,
-      targetSceneWordsMin: 900,
-      targetSceneWordsMax: 1700,
+      targetSceneWordsMin: 1000,
+      targetSceneWordsMax: 1950,
       jobs: []
     }
   }
