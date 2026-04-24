@@ -844,7 +844,7 @@ const sceneSixteenParagraphs = [
   `„Ja."`,
   `„Gut. Ich hab ihr gleich geantwortet, das war hilfreich. Sie war morgens kurz da, bevor ich losmusste."`,
   `„Wer, Nora?"`,
-  `„Ja. Sie hat gefragt, ob sie mal reinschauen soll, weil Mila den ersten Tag wieder dort hatte. Ich fand das okay."`,
+  `„Ja. Sie hat gefragt, ob sie kurz vorbeikommen soll, weil Mila morgens so still war. Ich fand das okay."`,
   `„Du hast ihr zuerst geantwortet."`,
   `Pause.`,
   `„Was?"`,
