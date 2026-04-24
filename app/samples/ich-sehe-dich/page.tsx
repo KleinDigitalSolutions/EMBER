@@ -133,7 +133,7 @@ const sceneThreeParagraphs = [
   "Auf dem Display war das Gespräch zu einem Eintrag geworden, mit Uhrzeit und Dauer. Sieben Minuten. Es hatte sich länger angefühlt und kürzer zugleich. Sie drehte das Telefon mit dem Display nach unten, als würde das etwas verschließen.",
   "Im Kinderzimmer drehte Henri sich im Bett. Eine Matratze, die sie kannte. Ein kurzes Seufzen, dann wieder Atem.",
   "Mara sah die Brotdose an. Morgen Käse. Sie hatte eine Packung im Kühlschrank, die am Freitag ablief, das reichte. Der Tannenzapfen lag noch im Wohnzimmer vor der Tür, sie musste ihn vor dem Schlafen wegräumen und etwas dafür hinlegen, irgendwas, einen Bonbon, einen kleinen Knopf, sie hatte Knöpfe in der Schublade in der Diele.",
-  "Sie dachte all das nebeneinander, in Reihenfolge, und rührte sich trotzdem nicht.",
+  "Sie dachte all das gleichzeitig und doch in einer festen Reihenfolge, und rührte sich trotzdem nicht.",
   "Irgendwo zwischen Brotdose und Tannenzapfen war etwas, das nicht zur Reihenfolge gehörte, und das wartete darauf, benannt zu werden. Sie benannte es nicht. Sie wusste, wie er vor zwei Jahren im Flur gestanden hatte, am Morgen vor der ersten Einweisung, die Jacke schon an, die Tasche noch nicht, und wie er gesagt hatte, diesmal, Mara. Diesmal.",
   "Sie hatte ihm heute nicht genickt. Sie hatte wahrscheinlich gesagt. Das war nicht dasselbe, und sie wusste nicht, ob es besser war.",
   "Sie griff nach dem Geschirrtuch, um es gerade zu ziehen, und hielt dann nur die Ecke zwischen zwei Fingern. Der Stoff war an der nassen Seite kühl. Sie zog ihn nicht.",

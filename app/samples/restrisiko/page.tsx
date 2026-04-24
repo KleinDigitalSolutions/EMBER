@@ -8,7 +8,7 @@ const sceneOneParagraphs = [
   "Er bemerkte, dass er den Atem seit einer halben Minute flacher führte. Er bemerkte es, weil er den Kaffee, den Frau Ulrich vor einer Stunde gebracht hatte, jetzt kalt im Glas sah und ihn trotzdem nicht anfasste. Der Name war keine Überraschung. Rausch hatte vor vier Tagen eine Mail geschrieben, zwei Zeilen: Wäre ein Mandat denkbar? Details folgen schriftlich. Er hatte ja geantwortet, ohne zu fragen, worum es ging. Er hatte es damals für Routine gehalten. Er hielt es auch jetzt dafür, solange er den Satz innerlich wiederholte.",
   "Das Telefon klingelte, bevor er die zweite Seite erreicht hatte.",
   "Rausch ließ ihm keine Anlaufzeit. Anhörung in elf Tagen. Presse und Ministerium saßen dem Verfahren im Nacken. Fehr sollte kein schönes Gutachten schreiben, sondern eines, das jede Zeile trägt. Er sagte zu, bevor die Akte ganz gelesen war, und merkte es erst, als der Hörer schon wieder in seiner Hand lag.",
-  "Im Vorzimmer sagte er Frau Ulrich, sie müsse die Termine verschieben. Dann fuhr er los. Auf der A4 sortierte er den Fall in fachliche Arbeitsschritte, bis sich zwischen den Formulierungen ein älterer Satz dazwischenschob, einer aus einem Gutachten von 2011, den er nie ganz losgeworden war. Er dachte den Namen nicht aus. Er erkannte nur, dass der alte Fall schon im Auto mitfuhr.",
+  "Im Vorzimmer sagte er Frau Ulrich, sie müsse die Termine verschieben. Dann fuhr er los. Auf der A4 sortierte er den Fall in fachliche Arbeitsschritte, bis sich zwischen den Formulierungen ein älterer Satz dazwischenschob, einer aus einem Gutachten von 2011, den er nie ganz losgeworden war. Er rief den Namen nicht bewusst auf. Er erkannte nur, dass der alte Fall schon im Auto mitfuhr.",
   "Vor der Klinik war die Luft kalt und stumpf zugleich. Nasser Kies, Wärmeschächte, der Geruch von Chlorreiniger hinter der Schleuse. Fehr gab Ausweis, Schlüssel, Telefon ab und ließ sich durch den zweiten Metalldetektor winken, weil die Akteklammer piepte. Der Flur war länger, als er ihn erinnerte. Ein Pfleger nickte, ohne stehenzubleiben. Die Neonröhre über der Brandschutztür flackerte im Takt seiner Schritte, oder er bildete es sich ein.",
   "Im Aufzug war er allein. Edelstahl, Sicherheitsglas, der gemauerte Schacht dahinter. Im Spiegel stand ein Mann mit grauem Sakko, Besucherchip am Revers und einer Akte, die fester unter dem Arm klemmte, als nötig war. Fehr sah das Gesicht an und dachte nicht an Cord. Er dachte an den alten Satz, den er damals nicht gestrichen hatte. Der Aufzug ruckte und fuhr nach oben."
 ];
@@ -100,7 +100,7 @@ const sceneThreeParagraphs = [
   "Lea legte die Gabel ab. Sie legte sie nicht ärgerlich ab, sondern präzise, parallel zum Tellerrand.",
   "„Seit wann ersetzt Beschreibung bei dir Verantwortung?\"",
   "„Das war nur –“",
-  "„Nein. Das war nicht nur. Du hast gerade einen Nachbarn in eine Kategorie gesteckt, weil er dich grüßt oder nicht grüßt.“",
+  "„Nein. Das war nicht nur so dahingesagt. Du hast gerade einen Nachbarn in eine Kategorie gesteckt, weil er dich grüßt oder nicht grüßt.“",
   "„Ich habe ihn beobachtet.“",
   "„Du hast ihn verwaltet.“",
   "Er hielt ihren Blick, so lange es ging. Dann sah er auf den Teller. Die Sauce stand schon auf dem Rand fest.",
