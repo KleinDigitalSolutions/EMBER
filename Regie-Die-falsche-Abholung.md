@@ -6,6 +6,39 @@
 
 ---
 
+## META-HINWEISE FÜR ANDERE AGENTS UND SPÄTERE REGIE-DATEIEN
+
+Diese Datei ist nicht nur eine Projekt-Regie, sondern eine Referenz für den aktuellen EMBER-Book-Writer-Pfad. Wer daraus eine neue Regie ableitet, soll Struktur und Funktionslogik übernehmen, nicht Stoff, Figuren oder Ton blind kopieren.
+
+### Pflichtsektionen für eine belastbare EMBER-Regie
+- `MASTER BRIEF`
+- `MARKET BRIEF`
+- `WRITER CONSTITUTION`
+- `WORLD BIBLE`
+- `CANON FACTS (Initial — Stand: vor Kapitel 1)`
+- `CHARACTER STATE LEDGER`
+- `OPEN THREADS (Initial)`
+- `ACTS & KAPITEL — SCENE CARDS`
+
+### Stark empfohlene Sektionen
+- `VOICE PACK` für Mikro-Prosa, Wahrnehmung und Dialog
+- `CONTINUITY GUARDRAILS` gegen spätere Drift
+- ein Capability- oder Zugriff-Block für antagonistische Logik
+- `PROOF LADDER` für Beweislogik, Lesartwechsel und Folgenpflicht
+- `WRITER-SUMMARIES` für operative Verdichtung während des Draftings
+- `Copy-Paste Writer Constitution` und `Copy-Paste Regieanweisungen für die Writer-UI` für manuelle Übergaben
+
+### Parser- und Prompt-Hinweis
+- Die Überschriften dieser Datei sind parserrelevant und sollen nicht frei umbenannt werden.
+- Wenn eine Sektion zwingend in Import, Persistenz oder Prompt landen soll, gehört sie in einen klar benannten Hauptblock und nicht nur in Fließtext oder Randbemerkungen.
+- Kritische Mikro-Regeln gehören in `WRITER CONSTITUTION`, `VOICE PACK`, `PROOF LADDER` oder direkt in die `Scene Card`, nicht nur in spätere Kommentare.
+- Projektlogik gehört in die Regie. Einmalige situative Feinsteuerung für einen konkreten Draft gehört später in `Regieanweisungen` oder `Director Notes`.
+
+### Was andere Agents aus dieser Datei übernehmen sollen und was nicht
+- Übernehmen: Sektionen, Feldlogik, Kausaldenken, Beweislogik, Szenendisziplin und die Trennung von globalen und szenischen Leitplanken.
+- Nicht blind übernehmen: Genre, Figurenkonstellation, Bedrohungsform, Ortsnamen, Hook-Material, Beispielsätze.
+- Beispiele in dieser Datei sind Funktionsmuster. Sie sind keine inhaltlichen Defaults für andere Projekte.
+
 ## MASTER BRIEF
 
 | Feld | Inhalt |
@@ -586,6 +619,10 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ### Template-Hinweis für andere Agents und spätere Regie-Dateien
 - Diese Datei ist die Referenz-Regie für den aktuellen Book-Writer-Pfad.
 - Die Scene Card ist der härteste Produktionsanker. Writer Summaries und Director Notes verdichten nur zusätzlich.
+- Pflicht-Mindeststandard pro Scene Card sind `objective`, `coreAction`, `dramaticBeat` und `ending`.
+- Stark empfohlen pro Scene Card sind außerdem `szenenantrieb`, `wissensgrenze`, `beziehungsdruck` und `endzustand_hook`, weil genau diese Felder Beat-Plan und Prosa am wirksamsten gegen weiche `und dann`-Ketten härten.
+- Spezialfelder wie `beweisobjekt`, `alltagswaffe`, `false_friend_signal`, `ersetzungsmoment`, `setup` oder projektbezogene Custom-Keys sollen nur gesetzt werden, wenn sie reale Steuerungsarbeit leisten.
+- Wenn ein Detail global für das ganze Buch gelten soll, gehört es nicht nur in eine Scene Card, sondern zusätzlich in einen globalen Block wie `WORLD BIBLE`, `WRITER CONSTITUTION`, `VOICE PACK` oder `PROOF LADDER`.
 - Neben `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt`, `alltagswaffe` und ähnlichen Spezialfeldern sollen die folgenden vier Hebel wenn möglich pro Kapitel gesetzt werden:
   - `szenenantrieb`: Figur will X, tut Y, riskiert Z.
   - `wissensgrenze`: Was die POV-Figur weiss, nur vermutet und noch nicht wissen darf.
