@@ -1674,7 +1674,7 @@ function normalizeJsonText(value: string) {
 }
 
 function buildSystemPrompt(packet: SceneContextPacket) {
-  return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
+  return [buildCoreSystemPrompt()].concat(buildStablePrefixSections(packet)).join("\n\n");
 }
 
 function buildCoreSystemPrompt() {
@@ -1693,30 +1693,43 @@ function buildCoreSystemPrompt() {
 }
 
 function buildStablePrefixPrompt(packet: SceneContextPacket) {
+  return buildStablePrefixSections(packet).join("\n\n");
+}
+
+function buildStablePrefixSections(packet: SceneContextPacket) {
   return [
-    `Premise: ${packet.stablePrefix.premise}`,
-    `Reader promise: ${packet.stablePrefix.readerPromise}`,
-    `Ending promise: ${packet.stablePrefix.endingPromise}`,
-    `Thematic core: ${packet.stablePrefix.thematicCore}`,
-    `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
-    `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
+    [
+      `Premise: ${packet.stablePrefix.premise}`,
+      `Reader promise: ${packet.stablePrefix.readerPromise}`,
+      `Ending promise: ${packet.stablePrefix.endingPromise}`,
+      `Thematic core: ${packet.stablePrefix.thematicCore}`,
+      `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
+      `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`
+    ].join("\n"),
     formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
     formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
-    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails)
-  ].join("\n");
+    formatGuidanceBlocks("Voice pack", packet.stablePrefix.voicePack),
+    formatGuidanceBlocks("Proof ladder", packet.stablePrefix.proofLadder),
+    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails),
+    formatWorldBiblePrimer("World bible primer", packet.stablePrefix.worldBiblePrimer)
+  ];
 }
 
 function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
+  const stablePrefixBlocks = buildStablePrefixSections(packet).map(function (text) {
+    return {
+      type: "text" as const,
+      text,
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    };
+  });
+
   return [
     {
       type: "text" as const,
       text: buildCoreSystemPrompt()
     },
-    {
-      type: "text" as const,
-      text: buildStablePrefixPrompt(packet),
-      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
-    },
+    ...stablePrefixBlocks,
     {
       type: "text" as const,
       text: buildAnthropicDynamicContextPrompt(packet),
@@ -1931,6 +1944,9 @@ function buildAnthropicScenePrompt(params: {
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
+    `<voice_pack>${escapeXml(serializeGuidanceBlocks(params.packet.stablePrefix.voicePack))}</voice_pack>`,
+    `<proof_ladder>${escapeXml(serializeGuidanceBlocks(params.packet.stablePrefix.proofLadder))}</proof_ladder>`,
+    `<world_bible>${escapeXml(serializeWorldBiblePrimer(params.packet.stablePrefix.worldBiblePrimer))}</world_bible>`,
     `<scene_context>${sceneContext}</scene_context>`,
     `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
@@ -2021,6 +2037,65 @@ function formatPromptList(label: string, items: string[]) {
   }
 
   return `${label}: ${compactItems.join(" | ")}`;
+}
+
+function formatGuidanceBlocks(
+  label: string,
+  blocks: SceneContextPacket["stablePrefix"]["voicePack"]
+) {
+  const compactBlocks = blocks.filter(function (block) {
+    return block.title.trim() && block.lines.length > 0;
+  });
+
+  if (!compactBlocks.length) {
+    return `${label}: none`;
+  }
+
+  return [
+    `${label}:`,
+    ...compactBlocks.flatMap(function (block, index) {
+      const lines = block.lines.map(function (line) {
+        return `- ${line}`;
+      });
+
+      return (index > 0 ? [""] : []).concat([`${block.title}:`]).concat(lines);
+    })
+  ].join("\n");
+}
+
+function formatWorldBiblePrimer(
+  label: string,
+  entries: SceneContextPacket["stablePrefix"]["worldBiblePrimer"]
+) {
+  if (!entries.length) {
+    return `${label}: none`;
+  }
+
+  return [
+    `${label}:`,
+    ...entries.map(function (entry) {
+      return `- [${entry.kind}] ${entry.title}: ${entry.summary}`;
+    })
+  ].join("\n");
+}
+
+function serializeGuidanceBlocks(blocks: SceneContextPacket["stablePrefix"]["voicePack"]) {
+  return blocks
+    .filter(function (block) {
+      return block.title.trim() && block.lines.length > 0;
+    })
+    .map(function (block) {
+      return `${block.title}: ${block.lines.join(" | ")}`;
+    })
+    .join(" || ") || "none";
+}
+
+function serializeWorldBiblePrimer(entries: SceneContextPacket["stablePrefix"]["worldBiblePrimer"]) {
+  return entries
+    .map(function (entry) {
+      return `[${entry.kind}] ${entry.title}: ${entry.summary}`;
+    })
+    .join(" | ") || "none";
 }
 
 function sanitizeBeatPlan(

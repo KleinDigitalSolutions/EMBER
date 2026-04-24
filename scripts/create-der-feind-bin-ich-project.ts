@@ -308,6 +308,7 @@ function buildSeededStory(baseStory: StoryDocument, regieMarkdown: string) {
     targetFormat: "novel",
     targetLengthWords: 85000,
     masterBrief: {
+      ...nextStory.book.masterBrief,
       premise:
         "Ein Mann, der gelernt hat, alleine zu überleben, lernt langsam, nicht mehr alleine sein zu müssen.",
       readerPromise:

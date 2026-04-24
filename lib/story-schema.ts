@@ -191,6 +191,8 @@ export type BookBlueprint = {
     endingPromise: string;
     thematicCore: string;
     storyArchitecture: string[];
+    voicePack: BookGuidanceBlock[];
+    proofLadder: BookGuidanceBlock[];
   };
   marketBrief: {
     amazonGoal: string;
@@ -339,6 +341,11 @@ export type BookContextPack = {
   relevantCanonEntryIds: string[];
   relevantCharacterStateIds: string[];
   activeThreadIds: string[];
+};
+
+export type BookGuidanceBlock = {
+  title: string;
+  lines: string[];
 };
 
 export type DraftExtractionState = {
@@ -524,6 +531,47 @@ export function normalizeBookRuleList(value: unknown, fallback: readonly string[
   return nextRules;
 }
 
+export function normalizeBookGuidanceBlocks(
+  value: unknown,
+  fallback: readonly BookGuidanceBlock[] = []
+): BookGuidanceBlock[] {
+  const nextBlocks = Array.isArray(value)
+    ? value
+        .filter(function (entry): entry is BookGuidanceBlock {
+          return Boolean(entry) && typeof entry === "object";
+        })
+        .map(function (entry) {
+          return {
+            title: typeof entry.title === "string" ? entry.title.trim() : "",
+            lines: Array.isArray(entry.lines)
+              ? entry.lines
+                  .filter(function (line): line is string {
+                    return typeof line === "string";
+                  })
+                  .map(function (line) {
+                    return line.trim();
+                  })
+                  .filter(Boolean)
+              : []
+          };
+        })
+        .filter(function (entry) {
+          return Boolean(entry.title) && entry.lines.length > 0;
+        })
+    : [];
+
+  if (!nextBlocks.length) {
+    return fallback.map(function (entry) {
+      return {
+        title: entry.title,
+        lines: entry.lines.slice()
+      };
+    });
+  }
+
+  return nextBlocks;
+}
+
 export function createEmptyBookSceneCardDirectives(): BookSceneCardDirectives {
   return {
     pov: null,
@@ -659,7 +707,9 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       readerPromise: "",
       endingPromise: "",
       thematicCore: "",
-      storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
+      storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice(),
+      voicePack: [],
+      proofLadder: []
     },
     marketBrief: {
       amazonGoal: "",

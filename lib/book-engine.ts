@@ -38,10 +38,13 @@ export type SceneContextPacket = {
     endingPromise: string;
     thematicCore: string;
     storyArchitecture: string[];
+    voicePack: StoryDocument["book"]["masterBrief"]["voicePack"];
+    proofLadder: StoryDocument["book"]["masterBrief"]["proofLadder"];
     categoryLane: string;
     marketHook: string;
     publishingGuardrails: string[];
     writerConstitution: string[];
+    worldBiblePrimer: WorldBibleEntry[];
   };
   dynamicContext: {
     actTitle: string;
@@ -248,10 +251,13 @@ export function buildSceneContextPacket(
       endingPromise: story.book.masterBrief.endingPromise,
       thematicCore: story.book.masterBrief.thematicCore,
       storyArchitecture: story.book.masterBrief.storyArchitecture,
+      voicePack: story.book.masterBrief.voicePack,
+      proofLadder: story.book.masterBrief.proofLadder,
       categoryLane: story.book.marketBrief.categoryLane,
       marketHook: story.book.marketBrief.hook,
       publishingGuardrails: story.book.marketBrief.publishingGuardrails,
-      writerConstitution: story.book.writerConstitution
+      writerConstitution: story.book.writerConstitution,
+      worldBiblePrimer: buildWorldBiblePrimer(story.worldBible)
     },
     dynamicContext: {
       actTitle: sceneContext.act.title,
@@ -307,6 +313,36 @@ export function buildSceneContextPacket(
       style_drift_notes: []
     }
   };
+}
+
+function buildWorldBiblePrimer(worldBible: StoryDocument["worldBible"]) {
+  const kindPriority: Record<WorldBibleEntry["kind"], number> = {
+    location: 0,
+    object: 1,
+    theme: 2,
+    character: 3
+  }
+
+  return worldBible
+    .map(function (entry, index) {
+      return {
+        entry,
+        index
+      }
+    })
+    .filter(function ({ entry }) {
+      return Boolean(entry.summary.trim())
+    })
+    .sort(function (left, right) {
+      return (
+        kindPriority[left.entry.kind] - kindPriority[right.entry.kind] ||
+        left.index - right.index
+      )
+    })
+    .map(function ({ entry }) {
+      return entry
+    })
+    .slice(0, 12)
 }
 
 export function getDraftJobsForScene(story: StoryDocument, sceneId: string) {
@@ -1521,10 +1557,19 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
       story.book.masterBrief.storyArchitecture.join("|"),
+      story.book.masterBrief.voicePack.map(function (block) {
+        return `${block.title}:${block.lines[0] || ""}`
+      }).join("|"),
+      story.book.masterBrief.proofLadder.map(function (block) {
+        return `${block.title}:${block.lines[0] || ""}`
+      }).join("|"),
       story.book.marketBrief.categoryLane,
       story.book.marketBrief.hook,
       chapterGoal,
-      story.book.writerConstitution.join("|")
+      story.book.writerConstitution.join("|"),
+      story.worldBible.map(function (entry) {
+        return `${entry.kind}:${entry.title}`
+      }).join("|")
     ].join(" :: "),
     180
   );

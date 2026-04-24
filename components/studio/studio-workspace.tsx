@@ -37,6 +37,7 @@ import {
   findSceneContext,
   isBranchingStory,
   normalizeBookDraftTargets,
+  normalizeBookGuidanceBlocks,
   normalizeBookRuleList,
   updateSceneInStory,
   type StoryAct,
@@ -2907,6 +2908,14 @@ function normalizeBookBlueprint(
       storyArchitecture: normalizeBookRuleList(
         candidate.masterBrief?.storyArchitecture,
         fallback.masterBrief.storyArchitecture
+      ),
+      voicePack: normalizeBookGuidanceBlocks(
+        candidate.masterBrief?.voicePack,
+        fallback.masterBrief.voicePack
+      ),
+      proofLadder: normalizeBookGuidanceBlocks(
+        candidate.masterBrief?.proofLadder,
+        fallback.masterBrief.proofLadder
       )
     },
     marketBrief: {

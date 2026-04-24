@@ -3,6 +3,7 @@ import path from "node:path"
 import { createUuid } from "../lib/id"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
+  type BookGuidanceBlock,
   createDefaultBookBlueprint,
   createEmptyBookSceneCardDirectives,
   type BookCharacterState,
@@ -644,6 +645,8 @@ function parseRegie(
   const marketBriefSection = getTopLevelSection(productionMarkdown, "MARKET BRIEF")
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
+  const voicePackSection = getOptionalTopLevelSection(productionMarkdown, "VOICE PACK")
+  const proofLadderSection = getOptionalTopLevelSection(productionMarkdown, "PROOF LADDER")
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
   const writerSummariesSections = getOptionalTopLevelSectionsByPrefix(
     productionMarkdown,
@@ -698,7 +701,9 @@ function parseRegie(
       readerPromise: masterBriefRows["Reader Promise"] || "",
       endingPromise: masterBriefRows["Ending Promise"] || "",
       thematicCore,
-      storyArchitecture
+      storyArchitecture,
+      voicePack: parseGuidanceBlocks(voicePackSection, "Voice Pack"),
+      proofLadder: parseGuidanceBlocks(proofLadderSection, "Proof Ladder")
     },
     marketBrief: {
       ...defaultBook.marketBrief,
@@ -1140,54 +1145,46 @@ function buildWorldBibleEntries(
       summary: clampText([character.role, character.summary].filter(Boolean).join(" — "), 420)
     }
   })
-
-  const locationEntries: Array<{ title: string; summary: string }> = []
-
-  if (worldBibleSection.includes("Rheinstadt")) {
-    locationEntries.push({
-      title: "Rheinstadt",
-      summary: "Fiktive deutsche Grossstadt der Gegenwart; institutionell kalt, politisch aufmerksam, ohne Gothic-Ueberhoehung."
+  const structuredEntries = splitSectionIntoBlocks(worldBibleSection, "World Bible")
+    .filter(function (block) {
+      return !isStoryArchitectureBlock(block.title)
     })
-  }
+    .map(function (block) {
+      const lines = collectStructuredSectionLines(block.body)
 
-  if (worldBibleSection.includes("Hohenhort")) {
-    locationEntries.push({
-      title: "Forensische Klinik Hohenhort",
-      summary: "Hochsicherheitsabteilung fuer schwere Gewalt- und Sexualdelikte; funktionaler Gespraechsraum, Protokolldruck und institutionelle Eigeninteressen."
+      if (!lines.length) {
+        return null
+      }
+
+      return {
+        id: createUuid(),
+        title: cleanMarkdownText(block.title),
+        kind: inferWorldBibleKind(block.title, lines),
+        summary: clampText(lines.join(" "), 420)
+      }
     })
-  }
-
-  const objectEntries: Array<{ title: string; summary: string }> = [
-    {
-      title: "Prognosegutachten",
-      summary: "Externes forensisches Gutachten mit hohem Einfluss auf eine Lockerungsentscheidung und maximale Fallhoehe fuer Fehr."
-    },
-    {
-      title: "Unbegleitete Lockerung",
-      summary: "Konkrete Verfahrensfrage des Romans: nicht Freiheit, sondern die erste externe Lockerungsstufe mit maximaler institutioneller Sprengkraft."
-    }
-  ]
+    .filter(function (
+      entry
+    ): entry is {
+      id: string
+      title: string
+      kind: WorldBibleEntry["kind"]
+      summary: string
+    } {
+      return Boolean(entry)
+    })
 
   const themeEntries: Array<{ title: string; summary: string }> = thematicCore
     ? [
         {
-          title: "Objektivitaet und Schuld",
+          title: "Thematischer Kern",
           summary: clampText(thematicCore, 420)
         }
       ]
     : []
 
   return dedupeWorldBible(entries
-    .concat(
-      locationEntries.map(function (entry) {
-        return { id: createUuid(), title: entry.title, kind: "location" as const, summary: entry.summary }
-      })
-    )
-    .concat(
-      objectEntries.map(function (entry) {
-        return { id: createUuid(), title: entry.title, kind: "object" as const, summary: entry.summary }
-      })
-    )
+    .concat(structuredEntries)
     .concat(
       themeEntries.map(function (entry) {
         return { id: createUuid(), title: entry.title, kind: "theme" as const, summary: entry.summary }
@@ -1398,6 +1395,236 @@ function parseStoryArchitecture(
   }
 
   return fallback.slice()
+}
+
+function parseGuidanceBlocks(section: string, fallbackTitle: string): BookGuidanceBlock[] {
+  return splitSectionIntoBlocks(section, fallbackTitle)
+    .map(function (block) {
+      const lines = collectStructuredSectionLines(block.body)
+
+      if (!lines.length) {
+        return null
+      }
+
+      return {
+        title: cleanMarkdownText(block.title),
+        lines
+      }
+    })
+    .filter(function (block): block is BookGuidanceBlock {
+      return Boolean(block)
+    })
+}
+
+function splitSectionIntoBlocks(section: string, fallbackTitle: string) {
+  const lines = section.split(/\r?\n/)
+  const blocks: Array<{ title: string; body: string }> = []
+  let currentTitle = fallbackTitle
+  let currentLines: string[] = []
+
+  function pushCurrentBlock() {
+    const body = currentLines.join("\n").trim()
+
+    if (body) {
+      blocks.push({
+        title: currentTitle,
+        body
+      })
+    }
+
+    currentLines = []
+  }
+
+  lines.forEach(function (rawLine) {
+    if (rawLine.startsWith("### ")) {
+      pushCurrentBlock()
+      currentTitle = rawLine.replace(/^###\s*/, "").trim()
+      return
+    }
+
+    currentLines.push(rawLine)
+  })
+
+  pushCurrentBlock()
+  return blocks
+}
+
+function collectStructuredSectionLines(section: string) {
+  const lines = section.split(/\r?\n/)
+  const entries: string[] = []
+  const tableLines: string[] = []
+  let activeLabel = ""
+
+  function flushTable() {
+    if (!tableLines.length) {
+      return
+    }
+
+    entries.push(...parseMarkdownTableLines(tableLines))
+    tableLines.length = 0
+    activeLabel = ""
+  }
+
+  lines.forEach(function (rawLine) {
+    const line = rawLine.trim()
+
+    if (!line || line === "---") {
+      flushTable()
+      activeLabel = ""
+      return
+    }
+
+    if (line.startsWith("|")) {
+      tableLines.push(line)
+      return
+    }
+
+    flushTable()
+
+    if (line.startsWith("- ")) {
+      const value = cleanMarkdownText(line.replace(/^- /, ""))
+
+      if (value) {
+        entries.push(activeLabel ? `${activeLabel}: ${value}` : value)
+      }
+      return
+    }
+
+    if (line.endsWith(":")) {
+      activeLabel = cleanMarkdownText(line.slice(0, -1))
+      return
+    }
+
+    const value = cleanMarkdownText(line)
+
+    if (!value) {
+      return
+    }
+
+    entries.push(activeLabel ? `${activeLabel}: ${value}` : value)
+    activeLabel = ""
+  })
+
+  flushTable()
+  return uniqueByNormalizedText(entries)
+}
+
+function parseMarkdownTableLines(tableLines: string[]) {
+  const rows = tableLines
+    .filter(function (line) {
+      return !/^\|[\s\-:|]+\|?$/.test(line)
+    })
+    .map(parseMarkdownRowCells)
+    .filter(function (cells) {
+      return cells.length > 0
+    })
+
+  if (rows.length <= 1) {
+    return rows
+      .flat()
+      .map(cleanMarkdownText)
+      .filter(Boolean)
+  }
+
+  return rows.slice(1)
+    .map(function (cells) {
+      if (cells.length >= 2) {
+        return cleanMarkdownText(`${cells[0]}: ${cells.slice(1).join(" — ")}`)
+      }
+
+      return cleanMarkdownText(cells[0] || "")
+    })
+    .filter(Boolean)
+}
+
+function cleanMarkdownText(value: string) {
+  return value
+    .replace(/^>\s*/, "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[(.*?)\]\([^)]+\)/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function isStoryArchitectureBlock(title: string) {
+  const normalized = normalizeText(title)
+
+  return [
+    "jahreszeiten mechanik",
+    "jahreszeiten struktur",
+    "story architecture",
+    "struktur"
+  ].some(function (entry) {
+    return normalized.includes(entry)
+  })
+}
+
+function inferWorldBibleKind(
+  title: string,
+  lines: string[]
+): WorldBibleEntry["kind"] {
+  const haystack = normalizeText(`${title} ${lines.join(" ")}`)
+
+  if (
+    [
+      "setting",
+      "ort",
+      "schauplatz",
+      "hauptschauplatz",
+      "raum",
+      "wohnung",
+      "haus",
+      "hof",
+      "kita",
+      "klinik",
+      "stadt",
+      "kommissariat",
+      "praxis",
+      "parkplatz",
+      "spielplatz"
+    ].some(function (token) {
+      return haystack.includes(token)
+    })
+  ) {
+    return "location"
+  }
+
+  if (
+    [
+      "objekt",
+      "gegenstand",
+      "beweis",
+      "eintrag",
+      "kamera",
+      "video",
+      "schluessel",
+      "liste",
+      "gutachten",
+      "dokument",
+      "signatur",
+      "kalender",
+      "app",
+      "mail",
+      "drucker",
+      "druckspur",
+      "ausdruck"
+    ].some(function (token) {
+      return haystack.includes(token)
+    })
+  ) {
+    return "object"
+  }
+
+  if (
+    ["figur", "charakter", "person"].some(function (token) {
+      return haystack.includes(token)
+    })
+  ) {
+    return "character"
+  }
+
+  return "theme"
 }
 
 function parseStoryArchitectureTable(section: string) {

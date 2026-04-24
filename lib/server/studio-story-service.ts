@@ -3,6 +3,7 @@ import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
+  normalizeBookGuidanceBlocks,
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
   normalizeAssistantWorkspace,
@@ -1566,7 +1567,9 @@ function normalizeMasterBrief(
       typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
     thematicCore:
       typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
-    storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture)
+    storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture),
+    voicePack: normalizeBookGuidanceBlocks(record.voicePack, fallback.voicePack),
+    proofLadder: normalizeBookGuidanceBlocks(record.proofLadder, fallback.proofLadder)
   }
 }
 
