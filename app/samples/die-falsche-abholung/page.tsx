@@ -882,8 +882,8 @@ export default function DieFalscheAbholungSamplePage() {
           <p>
             Eine verspätete Meldung in der Kita-App kippt Evas Alltag in wenigen Minuten
             aus der Bahn: Laut System hat sie ihre Tochter am Vortag selbst abgeholt.
-            App, Liste und Kamera sprechen gegen sie, obwohl sie sicher weiß, nie dort
-            gewesen zu sein.
+            Der App-Eintrag ist noch kein Beweis, bis Petra ihr das Standbild zeigt,
+            auf dem eine zweite Eva mit der Hand auf Milas Schulter stillsteht.
           </p>
         </div>
 
@@ -1123,8 +1123,8 @@ export default function DieFalscheAbholungSamplePage() {
           <h2>Die Woche bei Simon</h2>
           <p>
             Mila ist nicht verschwunden, aber Eva steht nicht mehr im Zentrum ihres
-            eigenen Alltags. Nora füllt die Lücke über hilfreiche Bilder und Simon
-            merkt nicht, wie sehr er sie dabei schon mit in seine Ordnung zieht.
+            eigenen Alltags. Nora füllt die Lücke über hilfreiche Nachrichten und
+            Simon merkt nicht, wie sehr er sie dabei schon mit in seine Ordnung zieht.
           </p>
         </div>
 
