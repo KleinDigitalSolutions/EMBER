@@ -323,7 +323,7 @@ Diese Datei ist nicht nur eine Projekt-Regie, sondern eine Referenz für den akt
   "speech_pattern": "kurz, verfahrensnah, kontrolliert",
   "arc": [
     {"phase": "Act 1", "state": "Simon glaubt an ein Missverständnis mit gefährlicher Schieflage."},
-    {"phase": "Act 2", "state": "Er erwägt zum ersten Mal, Eva könne tatsächlich etwas übersehen oder verdrängen."},
+    {"phase": "Act 2", "state": "Er erlebt erste kurze Risse in seinem Schutzreflex, glaubt Eva für Momente und zieht sich aus Angst vor Instabilität doch wieder auf Verwaltung und Vorsicht zurück."},
     {"phase": "Act 3", "state": "Er versteht, dass sein Stabilitätsreflex Nora begünstigt hat und muss sich klar auf Evas Seite stellen."}
   ]
 }
@@ -587,7 +587,20 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 - Nach spätestens zwei Kapiteln mit neuer Evidenz braucht es ein Kapitel, in dem diese Evidenz eine direkte Folge erzeugt: weniger Zugriff, weniger Vertrauen, veränderte Routine, institutionelle Vorsicht oder einen echten Gegenzug.
 - Kein Kapitel darf nur bestätigen, was der Leser ohnehin schon weiss. Jede Wiederholung muss entweder teurer, öffentlicher oder irreversibler werden.
 - Simon-, Petra- und Mila-Szenen sind keine Pausen vom Plot, sondern die Orte, an denen Beweise Konsequenzen bekommen.
+- Simon darf in Act 2 nicht nur die gleiche skeptische Wand bleiben. Er braucht mindestens einen kurzen Moment echten Glaubens, aus dem er aus Vorsicht wieder zurückrudert. Erst dadurch wird sein späterer Wechsel teuer.
+- Mila muss in Act 2 mindestens zweimal als Kind im gegenwärtigen Vollzug sichtbar werden: Stimme, falsches Wort, Gewohnheit, Blick oder kleine Handlung. Nicht sentimental und nicht nur als Beweisobjekt.
 - Kapitel 38 darf nicht die erste Stelle sein, an der Noras Moral logisch lesbar wird. Spätestens in zwei früheren Szenen müssen bereits ihre Prioritäten sichtbar werden: Verlässlichkeit vor Bindung, Ordnung vor Rücksicht, Plausibilität vor Nähe.
+
+### Interne Zeitachse für Act 2
+- `Kapitel 16`: Montagmorgen, erste Woche bei Simon beginnt.
+- `Kapitel 17-18`: Montagabend bis Nacht, Beobachtung und digitaler Restzugriff.
+- `Kapitel 19-20`: Dienstag später Vormittag bis Mittag, Nora-Vergangenheit und administrativer Zugang.
+- `Kapitel 21-22`: Dienstagabend bis später Abend, erster kleiner Fehler plus institutionelle Sackgasse.
+- `Kapitel 23`: Mittwoch, Eva geht in die aktive Gegenstrategie.
+- `Kapitel 24-25`: Donnerstagmittag bis Abend, Kinderarzt und doppelte Versorgung.
+- `Kapitel 26-28`: Freitag Nacht, Vormittag, Nachmittag. Schlaflosigkeit, Signatur, Falschinfo-Test.
+- `Kapitel 29-30`: Samstag Tag und Abend, Rueckwaertsarchiv und Midpoint-Erkenntnis.
+- Fuer den Draft gilt: Zeitfenster und verstrichene Tage im Mittelteil intern mitdenken, auch wenn der Text sie nicht jedes Mal als Datumsblock ausstellt.
 
 ### Kapitelweise Leitfragen für Scene Cards
 - Welcher neue Fakt liegt am Ende materiell oder sozial belastbar im Raum?
@@ -1064,8 +1077,8 @@ Scene Card
   szenenantrieb: Eva will Simon einen nicht wegerklärbaren Fehler zeigen, provoziert keine Falle, sondern beobachtet genau und riskiert, dass auch dieser Fehler noch als Versehen entschuldigt wird.
   wissensgrenze: Eva weiss, dass Nora nicht perfekt kopieren kann, vermutet die erste echte Rissstelle und darf noch nicht erwarten, dass Simon schon kippt.
   beziehungsdruck: Eva braucht von Simon Alarm statt Beruhigung; Simon will keine Welt akzeptieren, in der seine Schutzlogik Nora mitgebaut hat.
-  coreAction: Nora bringt Mila Essen vorbei und stellt selbstverständlich Erdbeerjoghurt auf den Tisch. Eva weiss, dass Mila seit Monaten keine Erdbeere verträgt. Als Mila schon den Kopf wegdreht, schiebt Nora sofort einen neutralen Becher nach und behauptet, sie habe natürlich beide Optionen dabeigehabt.
-  dramaticBeat: Simon zuckt nicht nur wegen des Fehlers zusammen, sondern auch wegen der zu schnellen Korrektur. Er relativiert trotzdem noch, Nora habe sich eben vertan und den Fehler sofort aufgefangen.
+  coreAction: Nora bringt Mila Essen vorbei und stellt selbstverständlich Erdbeerjoghurt auf den Tisch. Eva weiss, dass Mila seit Monaten keine Erdbeere verträgt. Mila verzieht nur das Gesicht, sagt leise, sie wolle den weissen wie immer, und rückt ihre Schüssel weg, ohne zu verstehen, warum Eva und Simon gleichzeitig still werden. Nora schiebt sofort einen neutralen Becher nach und behauptet, sie habe natürlich beide Optionen dabeigehabt.
+  dramaticBeat: Simon fragt zum ersten Mal scharf, seit wann Nora glaube, Mila esse wieder Erdbeere. Für einen kurzen Moment glaubt er Eva sichtbar mehr als Nora. Erst als Nora den Fehler zu ruhig und zu schnell auffängt, zieht er sich wieder auf die Erklärung zurück, sie habe sich eben vertan.
   ending: Später schreibt Simon Eva: "Es war nur ein Fehler." Eva antwortet nicht.
   endzustand_hook: Die Szene muss damit enden, dass selbst ein echter Fehler noch nicht reicht und Evas Einsamkeit deshalb grösser wird.
   beweisobjekt: Falscher Essensbezug plus hastige Korrektur
@@ -1145,7 +1158,7 @@ Scene Card
   wissensgrenze: Eva weiss, dass Nora nicht nur Informationen, sondern Dinge verdoppelt, vermutet bereits ein zweites Mütter-Set und darf noch nicht wissen, wie vollständig diese Ersatznormalität schon ist.
   beziehungsdruck: Eva braucht von Simon Alarm über das Material; Simon liest dieselbe Jacke als verantwortliche Reserve.
   coreAction: In Simons Flur hängt eine zweite, fast identische Regenjacke für Mila. Simon sagt, Nora habe sie "praktisch für alle Fälle" mitgebracht.
-  dramaticBeat: Mila greift automatisch zur falschen Jacke, weil sie sie mit Nora verbindet, nicht mit einem Ort. Als Eva sie mitnehmen will, hängt Simon sie wieder an den Haken und sagt, in so einer Lage sei doppelte Ausstattung eben vernünftig.
+  dramaticBeat: Mila greift automatisch zur falschen Jacke, weil sie sie mit Nora verbindet, nicht mit einem Ort, und sagt nur: "Die bleibt hier, sonst ist morgen falsch." Für einen Moment sieht Simon dieselbe Verstörung wie Eva. Dann hängt er die Jacke doch wieder an den Haken und sagt, in so einer Lage sei doppelte Ausstattung eben vernünftig.
   ending: Eva steckt die Jacke in eine Tüte und entdeckt im Innenfutter einen Zettel mit Noras sauberer Beschriftung derselben Grösse wie Evas eigene.
   endzustand_hook: Das Kapitel muss damit enden, dass Besitznahme als Fürsorge maskiert bleibt und genau deshalb weh tut.
   beweisobjekt: Zweite Regenjacke mit Namensetikett
@@ -1505,15 +1518,15 @@ Scene Card
   pov: EVA
   ort: Innenhof / Abend
   uhrzeit: später Abend
-  ziel: Den Nahbereich nach der Enthüllung nicht sofort sauber wirken lassen.
-  objective: Eva will zum ersten Mal seit Tagen ihre eigene Wohnung betreten, ohne auf Nora zu reagieren.
-  szenenantrieb: Eva will den Hof wieder als ihren Alltag betreten, geht hindurch und riskiert, dass jede Leerstelle dort noch von Nora nachhallt.
+  ziel: Den sozialen Nahbereich nach der Enthüllung nicht sofort sauber wirken lassen.
+  objective: Eva will zum ersten Mal seit Tagen durch den Hof gehen, ohne sich vor den Blicken anderer kleiner zu machen.
+  szenenantrieb: Eva will den Hof wieder als geteilten sozialen Raum betreten, geht hindurch und riskiert, dass jede Leerstelle dort noch von Nora nachhallt.
   wissensgrenze: Eva weiss, dass Nora gestoppt ist, vermutet aber, dass der Nahraum noch lange nicht neutral sein wird.
-  beziehungsdruck: Eva ringt hier nicht mehr gegen Nora direkt, sondern gegen deren Nachhall in Blicken, Dingen und Gewohnheiten.
-  coreAction: Der Hof ist derselbe, aber nicht harmlos. Nachbarblicke, halb gezogene Gardinen und die Leerstelle von Noras Routine zeigen, wie tief die Infiltration in den Alltag ging.
-  dramaticBeat: Im Briefkasten liegt ein letzter, nie abgeschickter Entwurf von Nora an die Kita: eine Hilfsnachricht, die wie eine Mutter klingt.
-  ending: Eva zerreisst den Zettel nicht. Sie nimmt ihn mit hoch.
-  endzustand_hook: Die Szene muss zeigen, dass der Nachhall bleibt, aber Eva ihn nicht mehr aus Reflex vernichten muss.
+  beziehungsdruck: Eva ringt hier nicht mehr gegen Nora direkt, sondern gegen deren Nachhall im sozialen Blick der Nachbarschaft.
+  coreAction: Der Hof ist derselbe, aber nicht harmlos. Nachbarblicke, halb gezogene Gardinen, ein stockendes Guten Abend und die Leerstelle von Noras Routine zeigen, wie tief die Infiltration in den Alltag ging.
+  dramaticBeat: Im Briefkasten liegt ein letzter, nie abgeschickter Entwurf von Nora an die Kita: eine Hilfsnachricht, die wie eine Mutter klingt. Gleichzeitig merkt Eva, dass die Stille im Hof nicht Entlastung ist, sondern Beobachtung ohne Kommentar.
+  ending: Eva zerreisst den Zettel nicht. Sie nimmt ihn mit hoch, obwohl sie spürt, dass mehrere Fenster ihr dabei zusehen.
+  endzustand_hook: Die Szene muss sozial nachhallen: Nora ist weg, aber der Hof weiss noch nicht, wie man ohne ihre Rolle auf Eva schaut.
   beweisobjekt: Ungesendeter Hilfsentwurf
   setup: CF004, OT004, OT005
 ```
@@ -1525,15 +1538,15 @@ Scene Card
   pov: EVA
   ort: Wohnung / Flur / Kinderzimmer
   uhrzeit: nächster Morgen
-  ziel: Rückgewinnung über kleine Ordnungsakte zeigen.
-  objective: Eva will den Alltag nicht symbolisch, sondern konkret zurückbauen.
-  szenenantrieb: Eva will den Alltag praktisch zurückerobern, sortiert Dinge aus und riskiert, dass jeder Gegenstand noch einmal zeigt, wie lange sie Hilfe für Harmlosigkeit hielt.
+  ziel: Den privaten Raum über kleine Ordnungsakte zurückgewinnen.
+  objective: Eva will den Alltag in der Wohnung nicht symbolisch, sondern konkret zurückbauen.
+  szenenantrieb: Eva will den Alltag im eigenen Zuhause praktisch zurückerobern, sortiert Dinge aus und riskiert, dass jeder Gegenstand noch einmal zeigt, wie lange sie Hilfe für Harmlosigkeit hielt.
   wissensgrenze: Eva weiss jetzt, welche Dinge doppelt liefen, vermutet aber noch nicht, wie lange sie diese Dopplung selbst übersehen hat.
-  beziehungsdruck: Eva arbeitet nicht mehr gegen Nora im Raum, sondern gegen Noras Ordnung in ihrem Zuhause.
+  beziehungsdruck: Eva arbeitet nicht mehr gegen soziale Blicke, sondern gegen Noras Ordnung in ihrem Zuhause.
   coreAction: Sie sortiert doppelte Jacken, doppelte Brotdosen, Ersatzhaargummis, überflüssige Zettel und falsch beschriftete Notizen aus.
   dramaticBeat: Erst jetzt merkt sie, wie viele Dinge sie wochenlang nicht als Eindringen, sondern als Entlastung gelesen hatte.
   ending: Am Haken im Flur bleibt nur eine Regenjacke.
-  endzustand_hook: Die Szene muss über einen kleinen, materiellen Rückbau schliessen, nicht über grosses Innenleben.
+  endzustand_hook: Die Szene muss privat und materiell schliessen: nicht der Hof, nicht Nachbarn, nur ein Zuhause, das wieder eine einzige Ordnung behauptet.
   payoff: OT005
   setup: CF006, OT004, OT005
 ```
@@ -1668,7 +1681,10 @@ Eva spricht mit Petra nicht mehr über Gefühle, sondern über Prozesse, Helferd
 
 ### Kapitel 21 — „Der erste Fehler"
 **Writer Summary**
-Nora macht zum ersten Mal einen objektiv greifbaren Fehler, aber noch keinen grossen. Das ist wichtig: Der Roman darf sie nicht plötzlich dumm machen. Der falsche Bezug auf Milas Unverträglichkeit zeigt, dass selbst eine minutiös vorbereitete Ersatzmutter nie vollkommen identisch sein kann. Noch wichtiger ist die hastige Korrektur direkt danach: Nora will den Fehler sofort wieder in Souveränität verwandeln. Simon spürt den Riss, weicht aber noch in Vernunft aus. Ende auf seiner Relativierung, weil genau diese Weigerung die Bedrohung weiter am Leben hält.
+Nora macht zum ersten Mal einen objektiv greifbaren Fehler, aber noch keinen grossen. Das ist wichtig: Der Roman darf sie nicht plötzlich dumm machen. Der falsche Erdbeerbezug und Milas leises "den weissen wie immer" zeigen, dass selbst eine minutiös vorbereitete Ersatzmutter nie vollkommen identisch sein kann. Noch wichtiger ist die hastige Korrektur direkt danach: Nora will den Fehler sofort wieder in Souveränität verwandeln. Simon glaubt Eva für einen kurzen Moment sichtbar mehr als Nora und zieht sich dann doch aus Schutzlogik auf Vernunft zurück. Ende auf seiner Relativierung, weil genau diese Weigerung die Bedrohung weiter am Leben hält.
+
+**Director Note**
+Der Fehler bleibt klein, alltagsnah und sofort repariert. Entscheidend ist nicht Entlarvung, sondern der kurze Riss bei Simon und Milas beiläufige Gegenwart als Kind, nicht als Beweisobjekt.
 
 ### Kapitel 22 — „Nicht jetzt"
 **Writer Summary**
@@ -1687,7 +1703,10 @@ Die Kinderarztpraxis erweitert Noras Zugriff in einen weiteren Vertrauensraum. E
 
 ### Kapitel 25 — „Die zweite Jacke"
 **Writer Summary**
-Eva sieht in Simons Flur eine zweite Regenjacke, die Milas Bedarf scheinbar nur sinnvoll absichert. Genau darin liegt der Schrecken: Nora produziert keine chaotischen Übergriffe, sondern plausible Duplikate. Das Kind lernt dadurch doppelte Versorgung als Normalität. Wichtig ist hier die Zusatzwunde über Simon: Er verteidigt das Duplikat als Vernunft und hängt es wieder zurück, obwohl Eva es entfernen will. Der kleine Zettel im Innenfutter kippt den Gegenstand dann von gut gemeinter Hilfe zu markierter Besitznahme.
+Eva sieht in Simons Flur eine zweite Regenjacke, die Milas Bedarf scheinbar nur sinnvoll absichert. Genau darin liegt der Schrecken: Nora produziert keine chaotischen Übergriffe, sondern plausible Duplikate. Mila macht das greifbar, ohne symbolisch überladen zu werden: "Die bleibt hier, sonst ist morgen falsch." Das Kind lernt dadurch doppelte Versorgung als Normalität. Wichtig ist hier die Zusatzwunde über Simon: Für einen kurzen Moment sieht er dieselbe Verstörung wie Eva, verteidigt das Duplikat dann aber doch wieder als Vernunft und hängt es zurück. Der kleine Zettel im Innenfutter kippt den Gegenstand dann von gut gemeinter Hilfe zu markierter Besitznahme.
+
+**Director Note**
+Nicht auf grosse Enthuellung schreiben. Die Wucht liegt in Milas Gewohnheitssatz und in Simons Rueckzug aus einem fast erreichten Glaubensmoment.
 
 ### Kapitel 26 — „Die Nacht vor Freitag"
 **Writer Summary**
@@ -1774,11 +1793,17 @@ Nach dem Zugriff braucht der Roman noch juristisches und soziales Gewicht. Diese
 
 ### Kapitel 43 — „Der Hof"
 **Writer Summary**
-Der Hof nach der Enthüllung darf nicht sofort heilsam wirken. Er muss derselbe Ort bleiben, nur anders gelesen. Briefkästen, Gardinen, Nachbarblicke und Leerräume zeigen, wie tief Nora im Mikrosozialen dieses Hauses verankert war. Der ungesendete Entwurf im Briefkasten ist wichtig, weil er noch einmal zeigt, wie mütterlich Nora klingen konnte, ohne Mutter zu sein. Die Szene endet nicht auf Zerstörung, sondern auf Mitnahme: Eva trägt diesen Rest der Fremdschrift mit nach oben.
+Der Hof nach der Enthüllung darf nicht sofort heilsam wirken. Er muss derselbe Ort bleiben, nur anders gelesen. Briefkästen, Gardinen, Nachbarblicke, stockende Höflichkeit und Leerräume zeigen, wie tief Nora im Mikrosozialen dieses Hauses verankert war. Der ungesendete Entwurf im Briefkasten ist wichtig, weil er noch einmal zeigt, wie mütterlich Nora klingen konnte, ohne Mutter zu sein. Diese Szene gehört klar dem sozialen Nachhall: Eva wird noch gesehen, geprüft und mitgelesen. Sie endet nicht auf Zerstörung, sondern auf Mitnahme: Eva trägt diesen Rest der Fremdschrift mit nach oben.
+
+**Director Note**
+Kapitel 43 ist der soziale Raum nach Nora, nicht schon der private Wiederaufbau. Wenn sich die Szene wie Heilung im Zuhause anfühlt, arbeitet sie gegen Kapitel 44.
 
 ### Kapitel 44 — „Keine Dopplung"
 **Writer Summary**
-Diese Szene ist keine Nachputzarbeit, sondern thematischer Rückgewinnungsakt. Eva räumt nicht symbolisch auf, sondern entfernt reale Dopplungen: Jacken, Zettel, Behälter, Etiketten, Routinereste. Gerade diese kleinen Dinge zeigen, was der Roman eigentlich verteidigt hat. Wichtig ist, dass Eva dabei auch ihre eigene frühere Blindheit erkennt, ohne sich in Selbstvorwürfen zu verlieren. Ende auf dem einzelnen Haken mit der einen Jacke.
+Diese Szene ist keine Nachputzarbeit, sondern thematischer Rückgewinnungsakt. Eva räumt nicht symbolisch auf, sondern entfernt reale Dopplungen: Jacken, Zettel, Behälter, Etiketten, Routinereste. Gerade diese kleinen Dinge zeigen, was der Roman eigentlich verteidigt hat. Wichtig ist, dass Eva dabei auch ihre eigene frühere Blindheit erkennt, ohne sich in Selbstvorwürfen zu verlieren. Im Unterschied zum Hof gehört diese Szene ganz dem privaten Raum: keine Nachbarn, keine Fenster, keine soziale Auswertung mehr. Ende auf dem einzelnen Haken mit der einen Jacke.
+
+**Director Note**
+Kapitel 44 darf die Arbeit von Kapitel 43 nicht wiederholen. Jetzt geht es nicht mehr um soziale Lesbarkeit, sondern um materielle Ordnung und die Rueckeroberung des eigenen Zuhauses.
 
 ### Kapitel 45 — „Gelber Becher"
 **Writer Summary**
@@ -1884,7 +1909,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Die Szene soll Prozesse entzaubern, nicht dramatisieren. Petra merkt hier selbst, dass freundliche Elternkultur ein Einfallstor war. Kein Schuldzuweisungsduell zwischen Petra und Eva. Der gelöschte Scanlauf ist nur ein halbharter Marker, aber einer, der erstmals institutionell nach Metall klingt.`
 
 #### Kapitel 21 — „Der erste Fehler"
-`Nora darf hier nicht plötzlich dumm werden. Der Fehler muss klein, menschlich und sofort überspielt sein. Entscheidend ist Simons kurzer Riss, nicht ein offenes Auffliegen. Spannung über Korrektur, nicht über Entlarvung.`
+`Nora darf hier nicht plötzlich dumm werden. Der Fehler muss klein, menschlich und sofort überspielt sein. Entscheidend sind Milas leiser Alltagssatz und Simons kurzer Riss, nicht ein offenes Auffliegen. Spannung über Korrektur, nicht über Entlarvung.`
 
 #### Kapitel 22 — „Nicht jetzt"
 `Die Polizei bleibt glaubhaft und begrenzt, nicht lächerlich. Eva hat mehr Material als zuvor, aber noch nicht das richtige Format für Intervention. Der bittere Punkt ist, dass institutionelle Vorsicht wieder Nora hilft. Der Kinderaufkleber am Ende zieht die Szene aus dem Amtlichen zurück in den Körperraum.`
@@ -1896,7 +1921,7 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Auch das Gesundheitssetting bleibt alltäglich, nicht sinister. Die ruhige Stimme und plausible Rolle sind hier gefährlicher als jedes Gesicht. Keine Medizinexposition; es geht um Vertrauen, nicht Fachlichkeit. Die Notiz am Ende macht den Zugriff formal greifbar.`
 
 #### Kapitel 25 — „Die zweite Jacke"
-`Keine grosse Enthüllung aus einem Kleidungsstück machen. Der Horror liegt im plausiblen Duplikat. Mila greift nicht gegen Eva zur falschen Jacke, sondern folgt Gewohnheit. Der Zettel im Futter ist der stille Besitzmarker.`
+`Keine grosse Enthüllung aus einem Kleidungsstück machen. Der Horror liegt im plausiblen Duplikat. Mila greift nicht gegen Eva zur falschen Jacke, sondern folgt Gewohnheit und sagt nur so viel, dass der Satz lange nachhängt. Simon darf hier kurz mitsehen und doch wieder zurückrudern. Der Zettel im Futter ist der stille Besitzmarker.`
 
 #### Kapitel 26 — „Die Nacht vor Freitag"
 `Kein Home-Invasion-Thriller. Die Nacht lebt von Schlafmangel, Vorbereitung und zu viel Synchronisation. Die Schlafhose ist intim genug; mehr braucht die Szene nicht. Eva soll nicht ausrasten, sondern wach bleiben.`
@@ -1950,10 +1975,10 @@ Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern di
 `Nach dem Zugriff braucht das Buch Schwere, keinen Epilogbetrieb. Keine Triumphszene. Aussagen und Protokolle sollen zeigen, wie oft Ruhe mit Glaubwürdigkeit verwechselt wurde. Nora bleibt auch hier kontrolliert.`
 
 #### Kapitel 43 — „Der Hof"
-`Nicht zu schnell heilen. Der Hof ist derselbe Ort und gerade deshalb noch nicht unschuldig. Die Leerstelle von Nora muss sozial spürbar sein. Der ungesendete Entwurf ist ein letzter Rest ihrer fremden Mutterstimme.`
+`Nicht zu schnell heilen. Der Hof ist derselbe Ort und gerade deshalb noch nicht unschuldig. Die Leerstelle von Nora muss sozial spürbar sein: Blicke, Fenster, stockende Höflichkeit. Der ungesendete Entwurf ist ein letzter Rest ihrer fremden Mutterstimme. Das Kapitel gehoert dem sozialen Nachhall, nicht dem privaten Aufraeumen.`
 
 #### Kapitel 44 — „Keine Dopplung"
-`Das ist kein Aufräum-Montagefinale, sondern Rückgewinnung durch kleine Ordnungsakte. Jeder Gegenstand steht für reale Infiltration, nicht Symbolik allein. Eva darf ihre Blindheit sehen, aber nicht in Selbstanklage versinken. Das Bild mit der einen Jacke muss tragen.`
+`Das ist kein Aufräum-Montagefinale, sondern Rückgewinnung durch kleine Ordnungsakte. Jeder Gegenstand steht für reale Infiltration, nicht Symbolik allein. Keine Wiederholung von Hof, Nachbarn oder sozialem Blick. Eva darf ihre Blindheit sehen, aber nicht in Selbstanklage versinken. Das Bild mit der einen Jacke muss tragen.`
 
 #### Kapitel 45 — „Gelber Becher"
 `Das Schlusskapitel nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form des Endes. Der letzte Satz bleibt ein Bild und trägt allein, ohne ihn kommentierend zu deuten.`
