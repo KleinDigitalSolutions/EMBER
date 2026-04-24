@@ -1,3 +1,5 @@
+import { SampleReader, type SampleReaderScene } from "@/components/sample-reader";
+
 const sceneOneParagraphs = [
   "Der Beschluss lag ganz oben auf dem Stapel. Kopie, drei geheftete Seiten, das Deckblatt gelocht wie immer, wenn Rauschs Büro die Post vorbereitet hatte. Fehr las nur die erste Zeile. In der Unterbringungssache Elias Cord.",
   "Er legte die Hand flach auf das Papier, als müsste er es festhalten. Draußen, hinter dem Kanzleifenster, zog jemand einen Rollkoffer über das Kopfsteinpflaster, und das Geräusch kam verzögert an, als wäre das Glas dicker als gestern. Fehr rückte den Stapel gerade. Dann noch einmal. Er merkte es beim zweiten Mal und ließ die Hand sinken.",
@@ -194,91 +196,60 @@ const sceneFourParagraphs = [
   "Auf dem Flur, Richtung Pförtnerloge, ging ihm auf, dass er den Namen Weidmann in keiner Zeile des Dienstprotokolls vermerkt hatte. Er blieb kurz stehen, die Hand schon an der Innentasche, und ging weiter."
 ];
 
+const scenes: SampleReaderScene[] = [
+  {
+    id: "scene-1",
+    kicker: "Buchprobe · Szene 1",
+    title: "Die Unterschrift",
+    summary:
+      "Forensischer Druck, institutionelle Kälte und die alte Fehlprognose im Rücken: Fehr nimmt den Cord-Fall an und merkt schon auf dem Weg in die Klinik, dass der Auftrag nicht neutral bleiben wird.",
+    paragraphs: sceneOneParagraphs
+  },
+  {
+    id: "scene-2",
+    kicker: "Buchprobe · Szene 2",
+    title: "Sitzung 1 — 10:05 Uhr",
+    summary:
+      "Das erste Aufeinandertreffen in Hohenhort. Elias Cord zeigt eine beängstigende Reflexionsgabe, die Fehrs professionelle Distanz vom ersten Moment an untergräbt.",
+    paragraphs: sceneTwoParagraphs
+  },
+  {
+    id: "scene-3",
+    kicker: "Buchprobe · Szene 3",
+    title: "Die Anwalts-Akte",
+    summary:
+      "Der Druck von außen wird konkret: Ein Anwalts-Dossier konfrontiert Fehr mit seinen eigenen Fehlern der Vergangenheit – und seine Tochter Lea stellt die alles entscheidende Frage nach der Verantwortung.",
+    paragraphs: sceneThreeParagraphs
+  },
+  {
+    id: "scene-4",
+    kicker: "Buchprobe · Szene 4",
+    title: "Sitzung 2 — Der Weidmann-Stimulus",
+    summary:
+      "Fehr versucht, Cord mit dem Namen „Weidmann“ aus der Reserve zu locken. Doch Cord reagiert mit einer Stille, die Fehr mehr über seine eigene Unterschrift verrät, als ihm lieb ist.",
+    paragraphs: sceneFourParagraphs
+  }
+];
+
 export default function RestrisikoSamplePage() {
   return (
-    <main className="reader-shell sample-reader">
-      <header className="reader-topbar sample-reader__topbar">
-        <div>
-          <p className="reader-eyebrow">EMBER Leseprobe</p>
-          <h1>Restrisiko</h1>
-          <p>Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-      </header>
-
-      <article className="sample-reader__article">
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 1</p>
-          <h2>Die Unterschrift</h2>
-          <p>
-            Forensischer Druck, institutionelle Kälte und die alte Fehlprognose im
-            Rücken: Fehr nimmt den Cord-Fall an und merkt schon auf dem Weg in die Klinik,
-            dass der Auftrag nicht neutral bleiben wird.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneOneParagraphs.map(function (paragraph, i) {
-            return <p key={`s1-p-${i}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 2</p>
-          <h2>Sitzung 1 — 10:05 Uhr</h2>
-          <p>
-            Das erste Aufeinandertreffen in Hohenhort. Elias Cord zeigt eine 
-            beängstigende Reflexionsgabe, die Fehrs professionelle Distanz 
-            vom ersten Moment an untergräbt.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneTwoParagraphs.map(function (paragraph, i) {
-            return <p key={`s2-p-${i}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
-          <h2>Die Anwalts-Akte</h2>
-          <p>
-            Der Druck von außen wird konkret: Ein Anwalts-Dossier konfrontiert 
-            Fehr mit seinen eigenen Fehlern der Vergangenheit – und seine Tochter 
-            Lea stellt die alles entscheidende Frage nach der Verantwortung.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneThreeParagraphs.map(function (paragraph, i) {
-            return <p key={`s3-p-${i}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
-          <h2>Sitzung 2 — Der Weidmann-Stimulus</h2>
-          <p>
-            Fehr versucht, Cord mit dem Namen „Weidmann“ aus der Reserve zu locken. 
-            Doch Cord reagiert mit einer Stille, die Fehr mehr über seine eigene 
-            Unterschrift verrät, als ihm lieb ist.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFourParagraphs.map(function (paragraph, i) {
-            return <p key={`s4-p-${i}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <section className="sample-reader__divider">
-          <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 5</h3>
-          <p>
-            Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den 
-            weiteren Verlauf der Geschichte gestalten.
-          </p>
-        </section>
-      </article>
-    </main>
+    <SampleReader
+      sampleId="restrisiko"
+      title="Restrisiko"
+      description="Szenen 1 bis 4 sind live. Die Leseprobe wird fortlaufend ergänzt."
+      heroKicker="Buchprobe · Szenen 1–4"
+      heroTitle="Die Unterschrift"
+      heroSummary="Forensischer Druck, institutionelle Kälte und die alte Fehlprognose im Rücken: Fehr nimmt den Cord-Fall an und merkt schon auf dem Weg in die Klinik, dass der Auftrag nicht neutral bleiben wird."
+      scenes={scenes}
+      continuationTitle="Szene 5"
+      continuationCopy="Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren Verlauf der Geschichte gestalten."
+      theme={{
+        accent: "#7c958e",
+        accentSoft: "rgba(124, 149, 142, 0.18)",
+        accentGlow: "rgba(124, 149, 142, 0.28)",
+        surface: "rgba(235, 245, 243, 0.028)",
+        railSurface: "rgba(18, 24, 24, 0.84)"
+      }}
+    />
   );
 }

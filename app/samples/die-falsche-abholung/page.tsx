@@ -1,3 +1,5 @@
+import { SampleReader, type SampleReaderScene } from "@/components/sample-reader";
+
 const sceneOneParagraphs = [
   "Um 16:18 Uhr hatte Eva elf Minuten zwischen dem Gespräch mit der Kanzlei Hoffmann und der internen Besprechung. Sie trank einen Schluck aus der Flasche auf dem Schreibtisch, schob die Kopfhörer in den Nacken und tippte im Vorbeigehen auf die Kita-App. Grüner Status. Mila abgeholt. Dann, eine Zeile tiefer, ein nachsynchronisiertes Ereignis von gestern, grau hinterlegt, mit dem kleinen Wolkensymbol für verspäteten Abgleich.",
   "*Abholung Mila Berger, 15:42 Uhr, durch Eva Berger.*",
@@ -864,285 +866,156 @@ const sceneSixteenParagraphs = [
   `So sah es aus, wenn sich etwas ohne Streit an den richtigen Platz schob.`
 ];
 
+const scenes: SampleReaderScene[] = [
+  {
+    id: "scene-1",
+    kicker: "Buchprobe · Szene 1",
+    title: "Gestern",
+    summary:
+      "Eine verspätete Meldung in der Kita-App kippt Evas Alltag in wenigen Minuten aus der Bahn: Laut System hat sie ihre Tochter am Vortag selbst abgeholt. Der App-Eintrag ist noch kein Beweis, bis Petra ihr das Standbild zeigt, auf dem eine zweite Eva mit der Hand auf Milas Schulter stillsteht.",
+    paragraphs: sceneOneParagraphs
+  },
+  {
+    id: "scene-2",
+    kicker: "Buchprobe · Szene 2",
+    title: "Das Bild",
+    summary:
+      "Petra zeigt Eva die Videoaufnahme, die Unterschrift und den gelben Becher in der falschen Hand. Was wie ein App-Fehler begann, kippt endgültig in ein dokumentiertes Glaubwürdigkeitsproblem.",
+    paragraphs: sceneTwoParagraphs
+  },
+  {
+    id: "scene-3",
+    kicker: "Buchprobe · Szene 3",
+    title: "Der Verdacht",
+    summary:
+      "Nach einem Telefonat mit Simon und einer irritierenden Begegnung mit Nora macht Eva zu Hause eine Entdeckung in Milas Rucksack, die den Fall in ein völlig neues Licht rückt.",
+    paragraphs: sceneThreeParagraphs
+  },
+  {
+    id: "scene-4",
+    kicker: "Buchprobe · Szene 4",
+    title: "Die Listen",
+    summary:
+      "Eva vergleicht Kalender, App und alte Papierformulare. Ein Fund im Kita-Ordner und eine nächtliche Begegnung im Hof verstärken das Gefühl, dass jemand ihre Identität bis in die kleinsten Details kennt.",
+    paragraphs: sceneFourParagraphs
+  },
+  {
+    id: "scene-5",
+    kicker: "Buchprobe · Szene 5",
+    title: "Das Codewort",
+    summary:
+      "Eva legt in der Kita neue Sicherheitsregeln und ein geheimes Codewort fest. Doch beim Blick in die alten Unterlagen zögert sie, Nora offiziell zu streichen – und macht kurz darauf eine Beobachtung auf der Straße.",
+    paragraphs: sceneFiveParagraphs
+  },
+  {
+    id: "scene-6",
+    kicker: "Buchprobe · Szene 6",
+    title: "Zwei Wahrheiten",
+    summary:
+      "Ein Anruf in der Praxis und eine Begegnung an der Supermarktkasse bestätigen Evas schlimmsten Verdacht: Jemand führt ihr Leben, während sie selbst an einem anderen Ort ist – und Simon beginnt, an ihrer Wahrnehmung zu zweifeln.",
+    paragraphs: sceneSixParagraphs
+  },
+  {
+    id: "scene-7",
+    kicker: "Buchprobe · Szene 7",
+    title: "Eine Woche",
+    summary:
+      "Eva konfrontiert Simon mit ihren Belegen. Unten im Hof wird sichtbar, wie selbstverständlich Nora längst in Milas Alltag steht und wie schnell Simon die Kontrolle über jede weitere Abholung an sich zieht.",
+    paragraphs: sceneSevenParagraphs
+  },
+  {
+    id: "scene-8",
+    kicker: "Buchprobe · Szene 8",
+    title: "Papier",
+    summary:
+      "Ein Gespräch und ein Gang zur Dienststelle verschieben Evas Verdacht in eine neue Richtung: Nicht nur das Kind, auch die Dokumentation selbst kann zur Waffe werden. Zuhause wartet bereits der nächste Beweis.",
+    paragraphs: sceneEightParagraphs
+  },
+  {
+    id: "scene-9",
+    kicker: "Buchprobe · Szene 9",
+    title: "Ersatz",
+    summary:
+      "Eva prüft Schlüssel, Kopien und Kellerbeutel und stößt auf Spuren, die sich nicht mehr als Zufall lesen lassen. Als Nora nachts im Treppenhaus auftaucht, kippt der Verdacht endgültig in konkrete Bedrohung.",
+    paragraphs: sceneNineParagraphs
+  },
+  {
+    id: "scene-10",
+    kicker: "Buchprobe · Szene 10",
+    title: "Waldtag",
+    summary:
+      "Beim Elternabend erfährt Eva, dass Nora Informationen über Mila besitzt, bevor die Eltern sie offiziell bekommen. Vor der Wohnungstür liegt kurz darauf bereits der nächste Beweis.",
+    paragraphs: sceneTenParagraphs
+  },
+  {
+    id: "scene-11",
+    kicker: "Buchprobe · Szene 11",
+    title: "Die Stimme",
+    summary:
+      "Eva hört alte Nachrichten, Hofclips und beiläufige Sprachreste ab und begreift, dass Nora nie Technik brauchte. Es genügte, Evas Alltag lange genug zu sammeln, bis ein vertrauter Satz wie eine Bestätigung klang.",
+    paragraphs: sceneElevenParagraphs
+  },
+  {
+    id: "scene-12",
+    kicker: "Buchprobe · Szene 12",
+    title: "Ein guter Vorschlag",
+    summary:
+      "Simon bringt einen Vorschlag ins Spiel, der nach Entlastung klingt und Nora in Wahrheit tiefer in den Alltag drückt. Der schlimmste Satz kommt nicht von ihm, sondern von Mila.",
+    paragraphs: sceneTwelveParagraphs
+  },
+  {
+    id: "scene-13",
+    kicker: "Buchprobe · Szene 13",
+    title: "Dienstagstasche",
+    summary:
+      "Eva prüft Milas gepackte Tasche und findet darin eine fast perfekte Imitation ihrer eigenen Mutterroutine. Verraten wird sie nicht durch die Dinge, sondern durch ein einziges Wort.",
+    paragraphs: sceneThirteenParagraphs
+  },
+  {
+    id: "scene-14",
+    kicker: "Buchprobe · Szene 14",
+    title: "Protokoll",
+    summary:
+      "Eva baut aus Uhrzeiten, Objekten und Zeugen erstmals eine belastbare Chronologie. Als der Drucker anspringt, liegt im Fach schon etwas, das dort nicht liegen dürfte.",
+    paragraphs: sceneFourteenParagraphs
+  },
+  {
+    id: "scene-15",
+    kicker: "Buchprobe · Szene 15",
+    title: "Der falsche Nachmittag",
+    summary:
+      "Eva bringt Petra ihre Chronologie und hofft auf eine klare Linie. Statt einer Entscheidung bekommt Simon den Alltag an sich gezogen, und genau darin liegt der eigentliche Verlust.",
+    paragraphs: sceneFifteenParagraphs
+  },
+  {
+    id: "scene-16",
+    kicker: "Buchprobe · Szene 16",
+    title: "Die Woche bei Simon",
+    summary:
+      "Mila ist nicht verschwunden, aber Eva steht nicht mehr im Zentrum ihres eigenen Alltags. Nora füllt die Lücke über hilfreiche Nachrichten und Simon merkt nicht, wie sehr er sie dabei schon mit in seine Ordnung zieht.",
+    paragraphs: sceneSixteenParagraphs
+  }
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
-    <main className="reader-shell sample-reader">
-      <header className="reader-topbar sample-reader__topbar">
-        <div>
-          <p className="reader-eyebrow">EMBER Leseprobe</p>
-          <h1>Die falsche Abholung</h1>
-          <p>Szenen 1 bis 16 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-      </header>
-
-      <article className="sample-reader__article">
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 1</p>
-          <h2>Gestern</h2>
-          <p>
-            Eine verspätete Meldung in der Kita-App kippt Evas Alltag in wenigen Minuten
-            aus der Bahn: Laut System hat sie ihre Tochter am Vortag selbst abgeholt.
-            Der App-Eintrag ist noch kein Beweis, bis Petra ihr das Standbild zeigt,
-            auf dem eine zweite Eva mit der Hand auf Milas Schulter stillsteht.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneOneParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s1-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 2</p>
-          <h2>Das Bild</h2>
-          <p>
-            Petra zeigt Eva die Videoaufnahme, die Unterschrift und den gelben Becher
-            in der falschen Hand. Was wie ein App-Fehler begann, kippt endgültig in
-            ein dokumentiertes Glaubwürdigkeitsproblem.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneTwoParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s2-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
-          <h2>Der Verdacht</h2>
-          <p>
-            Nach einem Telefonat mit Simon und einer irritierenden Begegnung mit Nora
-            macht Eva zu Hause eine Entdeckung in Milas Rucksack, die den Fall in ein
-            völlig neues Licht rückt.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneThreeParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s3-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
-          <h2>Die Listen</h2>
-          <p>
-            Eva vergleicht Kalender, App und alte Papierformulare. Ein Fund im
-            Kita-Ordner und eine nächtliche Begegnung im Hof verstärken das Gefühl,
-            dass jemand ihre Identität bis in die kleinsten Details kennt.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFourParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s4-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 5</p>
-          <h2>Das Codewort</h2>
-          <p>
-            Eva legt in der Kita neue Sicherheitsregeln und ein geheimes Codewort fest.
-            Doch beim Blick in die alten Unterlagen zögert sie, Nora offiziell zu
-            streichen – und macht kurz darauf eine Beobachtung auf der Straße.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFiveParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s5-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 6</p>
-          <h2>Zwei Wahrheiten</h2>
-          <p>
-            Ein Anruf in der Praxis und eine Begegnung an der Supermarktkasse
-            bestätigen Evas schlimmsten Verdacht: Jemand führt ihr Leben,
-            während sie selbst an einem anderen Ort ist – und Simon beginnt,
-            an ihrer Wahrnehmung zu zweifeln.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneSixParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s6-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 7</p>
-          <h2>Eine Woche</h2>
-          <p>
-            Eva konfrontiert Simon mit ihren Belegen. Unten im Hof wird sichtbar,
-            wie selbstverständlich Nora längst in Milas Alltag steht und wie schnell
-            Simon die Kontrolle über jede weitere Abholung an sich zieht.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneSevenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s7-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 8</p>
-          <h2>Papier</h2>
-          <p>
-            Ein Gespräch und ein Gang zur Dienststelle verschieben Evas Verdacht in
-            eine neue Richtung: Nicht nur das Kind, auch die Dokumentation selbst
-            kann zur Waffe werden. Zuhause wartet bereits der nächste Beweis.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneEightParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s8-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 9</p>
-          <h2>Ersatz</h2>
-          <p>
-            Eva prüft Schlüssel, Kopien und Kellerbeutel und stößt auf Spuren, die
-            sich nicht mehr als Zufall lesen lassen. Als Nora nachts im Treppenhaus
-            auftaucht, kippt der Verdacht endgültig in konkrete Bedrohung.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneNineParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s9-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 10</p>
-          <h2>Waldtag</h2>
-          <p>
-            Beim Elternabend erfährt Eva, dass Nora Informationen über Mila besitzt,
-            bevor die Eltern sie offiziell bekommen. Vor der Wohnungstür liegt kurz
-            darauf bereits der nächste Beweis.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneTenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s10-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 11</p>
-          <h2>Die Stimme</h2>
-          <p>
-            Eva hört alte Nachrichten, Hofclips und beiläufige Sprachreste ab und
-            begreift, dass Nora nie Technik brauchte. Es genügte, Evas Alltag lange
-            genug zu sammeln, bis ein vertrauter Satz wie eine Bestätigung klang.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneElevenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s11-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 12</p>
-          <h2>Ein guter Vorschlag</h2>
-          <p>
-            Simon bringt einen Vorschlag ins Spiel, der nach Entlastung klingt und
-            Nora in Wahrheit tiefer in den Alltag drückt. Der schlimmste Satz kommt
-            nicht von ihm, sondern von Mila.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneTwelveParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s12-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 13</p>
-          <h2>Dienstagstasche</h2>
-          <p>
-            Eva prüft Milas gepackte Tasche und findet darin eine fast perfekte
-            Imitation ihrer eigenen Mutterroutine. Verraten wird sie nicht durch die
-            Dinge, sondern durch ein einziges Wort.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneThirteenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s13-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 14</p>
-          <h2>Protokoll</h2>
-          <p>
-            Eva baut aus Uhrzeiten, Objekten und Zeugen erstmals eine belastbare
-            Chronologie. Als der Drucker anspringt, liegt im Fach schon etwas, das
-            dort nicht liegen dürfte.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFourteenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s14-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 15</p>
-          <h2>Der falsche Nachmittag</h2>
-          <p>
-            Eva bringt Petra ihre Chronologie und hofft auf eine klare Linie. Statt einer
-            Entscheidung bekommt Simon den Alltag an sich gezogen, und genau darin liegt
-            der eigentliche Verlust.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFifteenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s15-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 16</p>
-          <h2>Die Woche bei Simon</h2>
-          <p>
-            Mila ist nicht verschwunden, aber Eva steht nicht mehr im Zentrum ihres
-            eigenen Alltags. Nora füllt die Lücke über hilfreiche Nachrichten und
-            Simon merkt nicht, wie sehr er sie dabei schon mit in seine Ordnung zieht.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneSixteenParagraphs.map(function (paragraph, index) {
-            return <p key={`dfa-s16-p-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <section className="sample-reader__divider">
-          <p className="reader-eyebrow">Fortsetzung folgt</p>
-          <h3>Szene 17</h3>
-          <p>
-            Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren
-            Verlauf der Geschichte entwickeln.
-          </p>
-        </section>
-      </article>
-    </main>
+    <SampleReader
+      sampleId="die-falsche-abholung"
+      title="Die falsche Abholung"
+      description="Szenen 1 bis 16 sind live. Die Leseprobe wird fortlaufend ergänzt."
+      heroKicker="Buchprobe · Szenen 1–16"
+      heroTitle="Gestern"
+      heroSummary="Eine verspätete Meldung in der Kita-App kippt Evas Alltag in wenigen Minuten aus der Bahn: Laut System hat sie ihre Tochter am Vortag selbst abgeholt. Der App-Eintrag ist noch kein Beweis, bis Petra ihr das Standbild zeigt, auf dem eine zweite Eva mit der Hand auf Milas Schulter stillsteht."
+      scenes={scenes}
+      continuationTitle="Szene 17"
+      continuationCopy="Die Leseprobe endet hier vorerst. Im EMBER Studio kannst du den weiteren Verlauf der Geschichte entwickeln."
+      theme={{
+        accent: "#7e979d",
+        accentSoft: "rgba(126, 151, 157, 0.18)",
+        accentGlow: "rgba(126, 151, 157, 0.28)",
+        surface: "rgba(235, 246, 248, 0.03)",
+        railSurface: "rgba(16, 23, 26, 0.84)"
+      }}
+    />
   );
 }

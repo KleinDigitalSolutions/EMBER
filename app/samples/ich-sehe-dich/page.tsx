@@ -1,3 +1,5 @@
+import { SampleReader, type SampleReaderScene } from "@/components/sample-reader";
+
 const sceneOneParagraphs = [
   "Die kleine Tür lehnte schon an der Sockelleiste, als Mara sich auf die Knie ließ. Das Holz war billig, aus dem Bastelladen, zwei Euro neunzig. Das Scharnier war nur eine Prägung im Plastik. Sie drückte sie gegen die Leiste neben der Garderobe, dort, wo Henri am Morgen als Erstes hinsehen würde, wenn er barfuß aus seinem Zimmer kam. Die Dielen waren kalt durch den Stoff der Leggings. Im Rücken zog es von der Schulter bis unter das Schulterblatt, der gleiche Strang wie jeden Abend.",
   "Sie hatte nur die kleine Stehlampe an. Die Wohnung hörte sich anders an, wenn Henri schlief. Der Kühlschrank arbeitete. Die Heizung klackte einmal, dann war wieder Ruhe. Unter der Balkontür strich die Luft über die Dielen, und sie zog die Strickjacke enger.",
@@ -259,102 +261,68 @@ const sceneFiveParagraphs = [
   "Als das Telefon wieder zu klingeln begann, drehte sie es um und ließ es klingeln."
 ];
 
+const scenes: SampleReaderScene[] = [
+  {
+    id: "scene-1",
+    kicker: "Buchprobe · Szene 1",
+    title: "Die Wichteltür",
+    summary:
+      "Mara baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles weiter. Dann ruft Tobias an. Die Leseprobe zeigt Liebe, Erschöpfung und die Arbeit, die niemand sieht.",
+    paragraphs: sceneOneParagraphs
+  },
+  {
+    id: "scene-2",
+    kicker: "Buchprobe · Szene 2",
+    title: "Der nächste Tag",
+    summary:
+      "Zwischen Bad, Kita, Praxis, Supermarkt und Abendroutine hält Mara alles in Bewegung, bis am Ende nur noch eine vergessene Tasse im Auto übrig bleibt.",
+    paragraphs: sceneTwoParagraphs
+  },
+  {
+    id: "scene-3",
+    kicker: "Buchprobe · Szene 3",
+    title: "Der Anruf",
+    summary:
+      "Abends in der Küche spricht Mara mit Tobias aus der Klinik. Nichts eskaliert, aber nach sieben Minuten steht alles wieder offen im Raum.",
+    paragraphs: sceneThreeParagraphs
+  },
+  {
+    id: "scene-4",
+    kicker: "Buchprobe · Szene 4",
+    title: "Der Parkplatz",
+    summary:
+      "Nach einem Besuch bei Sabine trägt Mara den Einkauf zum Auto. Cem hilft, ohne mehr daraus zu machen, und genau darin liegt die Entlastung.",
+    paragraphs: sceneFourParagraphs
+  },
+  {
+    id: "scene-5",
+    kicker: "Buchprobe · Szene 5",
+    title: "Früher nach Hause",
+    summary:
+      "Henri hält den Kitatag nicht durch. Zuhause schläft er auf Mara ein, während zwei unbeantwortete Anrufe wie eine leise Drohung im Hintergrund bleiben.",
+    paragraphs: sceneFiveParagraphs
+  }
+];
+
 export default function IchSeheDichSamplePage() {
   return (
-    <main className="reader-shell sample-reader">
-      <header className="reader-topbar sample-reader__topbar">
-        <div>
-          <p className="reader-eyebrow">EMBER Leseprobe</p>
-          <h1>Ich sehe dich</h1>
-          <p>Die Szenen 1 bis 5 sind live. Die Leseprobe wird fortlaufend ergänzt.</p>
-        </div>
-      </header>
-
-      <article className="sample-reader__article">
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szenen 1–5</p>
-          <h2>Die Wichteltür</h2>
-          <p>
-            Mara baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles
-            weiter. Dann ruft Tobias an. Die Leseprobe zeigt Liebe, Erschöpfung und die
-            Arbeit, die niemand sieht.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneOneParagraphs.map(function (paragraph, index) {
-            return <p key={`scene-1-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 2</p>
-          <h2>Der nächste Tag</h2>
-          <p>
-            Zwischen Bad, Kita, Praxis, Supermarkt und Abendroutine hält Mara alles in
-            Bewegung, bis am Ende nur noch eine vergessene Tasse im Auto übrig bleibt.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneTwoParagraphs.map(function (paragraph, index) {
-            return <p key={`scene-2-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 3</p>
-          <h2>Der Anruf</h2>
-          <p>
-            Abends in der Küche spricht Mara mit Tobias aus der Klinik. Nichts eskaliert,
-            aber nach sieben Minuten steht alles wieder offen im Raum.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneThreeParagraphs.map(function (paragraph, index) {
-            return <p key={`scene-3-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 4</p>
-          <h2>Der Parkplatz</h2>
-          <p>
-            Nach einem Besuch bei Sabine trägt Mara den Einkauf zum Auto. Cem hilft, ohne
-            mehr daraus zu machen, und genau darin liegt die Entlastung.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFourParagraphs.map(function (paragraph, index) {
-            return <p key={`scene-4-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <div className="sample-reader__hero">
-          <p className="reader-eyebrow">Buchprobe · Szene 5</p>
-          <h2>Früher nach Hause</h2>
-          <p>
-            Henri hält den Kitatag nicht durch. Zuhause schläft er auf Mara ein, während
-            zwei unbeantwortete Anrufe wie eine leise Drohung im Hintergrund bleiben.
-          </p>
-        </div>
-
-        <section className="sample-reader__scene">
-          {sceneFiveParagraphs.map(function (paragraph, index) {
-            return <p key={`scene-5-${index}`}>{paragraph}</p>;
-          })}
-        </section>
-
-        <section className="sample-reader__divider">
-          <h3>Fortsetzung folgt</h3>
-          <p>
-            Die Leseprobe endet hier vorerst. Im EMBER Studio wird die nächste Szene
-            weiterentwickelt.
-          </p>
-        </section>
-      </article>
-    </main>
+    <SampleReader
+      sampleId="ich-sehe-dich"
+      title="Ich sehe dich"
+      description="Die Szenen 1 bis 5 sind live. Die Leseprobe wird fortlaufend ergänzt."
+      heroKicker="Buchprobe · Szenen 1–5"
+      heroTitle="Die Wichteltür"
+      heroSummary="Mara baut nachts die kleine Tür für Henri auf. Am nächsten Tag läuft alles weiter. Dann ruft Tobias an. Die Leseprobe zeigt Liebe, Erschöpfung und die Arbeit, die niemand sieht."
+      scenes={scenes}
+      continuationTitle="Szene 6"
+      continuationCopy="Die Leseprobe endet hier vorerst. Im EMBER Studio wird die nächste Szene weiterentwickelt."
+      theme={{
+        accent: "#b88269",
+        accentSoft: "rgba(184, 130, 105, 0.18)",
+        accentGlow: "rgba(184, 130, 105, 0.28)",
+        surface: "rgba(255, 244, 238, 0.03)",
+        railSurface: "rgba(27, 18, 16, 0.82)"
+      }}
+    />
   );
 }
