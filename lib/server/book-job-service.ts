@@ -21,6 +21,7 @@ import {
 import {
   normalizeBookDraftTargets,
   type BookDraftJob,
+  type BookDraftStageId,
   type BookDraftStageRuns,
   type DraftExtractionState,
   type StoryDocument,
@@ -136,6 +137,7 @@ type ScenePipelineAdapter = {
   modelName: string;
   continuityModelName: string | null;
   extractModelName: string | null;
+  stageProviders?: Partial<Record<BookDraftStageId, Exclude<BookJobProvider, "auto" | "local">>>;
   generateBeatPlan: () => Promise<StructuredStageResult<BeatPlanPayload>>;
   writeDraft: (beatPlan: BeatPlanPayload) => Promise<TextStageResult>;
   rewriteScene: (beatPlan: BeatPlanPayload, draftText: string) => Promise<TextStageResult>;
@@ -171,8 +173,9 @@ type DraftProviderResult = {
   warning?: string;
 };
 
-export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "groq" | "local";
+export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "groq" | "duo" | "local";
 type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
+const DEFAULT_DUO_OPENAI_MODEL = "gpt-5.5";
 
 export type BookJobExecution = {
   provider: Exclude<BookJobProvider, "auto">;
@@ -217,6 +220,15 @@ export async function generateBookDraftJob(params: {
 
   const remoteProvider = resolveRemoteProvider(provider);
 
+  if (provider === "duo" && remoteProvider !== "duo") {
+    return createLocalExecution(
+      packet,
+      targetSceneWordsMin,
+      targetSceneWordsMax,
+      "Duo benoetigt sowohl ANTHROPIC_API_KEY als auch OPENAI_API_KEY; lokaler Fallback verwendet."
+    );
+  }
+
   if (!remoteProvider) {
     return createLocalExecution(
       packet,
@@ -239,6 +251,8 @@ export async function generateBookDraftJob(params: {
         ? await generateWithOpenAI(packet, providerOptions)
         : remoteProvider === "anthropic"
           ? await generateWithAnthropic(packet, providerOptions)
+          : remoteProvider === "duo"
+            ? await generateWithDuo(packet, providerOptions)
           : remoteProvider === "gemini"
             ? await generateWithGemini(packet, providerOptions)
             : await generateWithGroq(packet, providerOptions);
@@ -272,6 +286,10 @@ function resolveRemoteProvider(provider: BookJobProvider) {
 
   if (provider === "anthropic" && process.env.ANTHROPIC_API_KEY) {
     return "anthropic" as const;
+  }
+
+  if (provider === "duo" && process.env.ANTHROPIC_API_KEY && process.env.OPENAI_API_KEY) {
+    return "duo" as const;
   }
 
   if (provider === "gemini" && getGeminiApiKey()) {
@@ -545,6 +563,133 @@ async function generateWithAnthropic(
   });
 }
 
+async function generateWithDuo(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions
+): Promise<DraftProviderResult> {
+  const anthropicModelName = resolveBookJobModelValue(
+    options.modelOverrides?.anthropic,
+    process.env.ANTHROPIC_BOOK_MODEL,
+    DEFAULT_BOOK_JOB_MODELS.anthropic
+  );
+  const openaiModelName = resolveBookJobModelValue(
+    options.modelOverrides?.openai,
+    process.env.OPENAI_BOOK_DUO_MODEL || process.env.OPENAI_BOOK_MODEL,
+    DEFAULT_DUO_OPENAI_MODEL
+  );
+  const anthropicClient = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY
+  });
+  const openAIClient = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  return runScenePipeline(packet, options, {
+    provider: "duo",
+    modelName: `${anthropicModelName} -> ${openaiModelName}`,
+    continuityModelName: openaiModelName,
+    extractModelName: openaiModelName,
+    stageProviders: {
+      beat_plan: "anthropic",
+      draft: "anthropic",
+      rewrite: "openai",
+      length_control: "openai",
+      extract: "openai",
+      continuity: "openai",
+      quality_eval: "openai"
+    },
+    generateBeatPlan: function () {
+      return requestAnthropicStructured({
+        client: anthropicClient,
+        stageName: "beat_plan",
+        modelName: anthropicModelName,
+        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+        schema: beatPlanSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildBeatPlanPrompt(packet, options)
+      });
+    },
+    writeDraft: function (beatPlan) {
+      return requestAnthropicText({
+        client: anthropicClient,
+        modelName: anthropicModelName,
+        maxTokens: resolveAnthropicProseMaxTokens(resolveDraftWordTargets(options).max),
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildAnthropicScenePrompt({
+          mode: "draft",
+          packet,
+          options,
+          beatPlan
+        })
+      });
+    },
+    rewriteScene: function (beatPlan, draftText) {
+      return requestOpenAIText({
+        client: openAIClient,
+        modelName: openaiModelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    expandScene: function (beatPlan, rewriteText) {
+      return requestOpenAIText({
+        client: openAIClient,
+        modelName: openaiModelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    compressScene: function (beatPlan, rewriteText) {
+      return requestOpenAIText({
+        client: openAIClient,
+        modelName: openaiModelName,
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
+      });
+    },
+    extractSceneState: function (beatPlan, rewriteText) {
+      return requestOpenAIStructured({
+        client: openAIClient,
+        modelName: openaiModelName,
+        schema: stateExtractionSchema,
+        schemaName: "ember_book_state_extract",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+      });
+    },
+    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+      return requestOpenAIStructured({
+        client: openAIClient,
+        modelName: openaiModelName,
+        schema: continuityAuditSchema,
+        schemaName: "ember_book_continuity_audit",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildContinuityAuditPrompt(
+          packet,
+          options,
+          beatPlan,
+          draftText,
+          rewriteText,
+          extractedState
+        )
+      });
+    },
+    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+      return requestOpenAIStructured({
+        client: openAIClient,
+        modelName: openaiModelName,
+        schema: qualityEvalSchema,
+        schemaName: "ember_book_quality_eval",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
+    }
+  });
+}
+
 async function generateWithGemini(
   packet: SceneContextPacket,
   options: DraftGenerationOptions
@@ -768,6 +913,13 @@ async function generateWithGroq(
   });
 }
 
+function getStageProvider(
+  adapter: ScenePipelineAdapter,
+  stageId: BookDraftStageId
+): Exclude<BookJobProvider, "auto" | "local"> {
+  return adapter.stageProviders?.[stageId] ?? adapter.provider;
+}
+
 async function runScenePipeline(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
@@ -779,7 +931,7 @@ async function runScenePipeline(
   let outlineNotes = buildOutlineFromBeatPlan(beatPlan);
   let beatPlanStage = createStageRun({
     status: "skipped",
-    provider: adapter.provider,
+    provider: getStageProvider(adapter, "beat_plan"),
     modelName: adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
@@ -791,7 +943,7 @@ async function runScenePipeline(
     beatPlan = sanitizeBeatPlan(packet, options, beatPlanResult.payload);
     outlineNotes = buildOutlineFromBeatPlan(beatPlan);
     beatPlanStage = createStageRun({
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "beat_plan"),
       modelName: beatPlanResult.metrics.modelName,
       updatedAt: new Date().toISOString(),
       attemptCount: beatPlanResult.metrics.attemptCount,
@@ -808,7 +960,7 @@ async function runScenePipeline(
     warnings.push(fallbackNote);
     beatPlanStage = createStageRun({
       status: "failed",
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "beat_plan"),
       modelName: adapter.modelName,
       updatedAt: new Date().toISOString(),
       notes: [fallbackNote].concat(outlineNotes.slice(0, 3))
@@ -848,7 +1000,7 @@ async function runScenePipeline(
   );
   let extractStage = createStageRun({
     status: "skipped",
-    provider: adapter.provider,
+    provider: getStageProvider(adapter, "extract"),
     modelName: adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
@@ -874,7 +1026,7 @@ async function runScenePipeline(
     }
 
     extractStage = createStageRun({
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "extract"),
       modelName: extractionResult.metrics.modelName,
       updatedAt: new Date().toISOString(),
       attemptCount: extractionResult.metrics.attemptCount,
@@ -897,7 +1049,7 @@ async function runScenePipeline(
     warnings.push(fallbackNote);
     extractStage = createStageRun({
       status: "failed",
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "extract"),
       modelName: adapter.extractModelName || adapter.modelName,
       updatedAt: new Date().toISOString(),
       notes: [fallbackNote].concat(buildExtractionNotes(rewriteNotes, []))
@@ -906,7 +1058,7 @@ async function runScenePipeline(
 
   let continuityStage = createStageRun({
     status: "skipped",
-    provider: adapter.provider,
+    provider: getStageProvider(adapter, "continuity"),
     modelName: adapter.continuityModelName ?? adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
@@ -922,7 +1074,7 @@ async function runScenePipeline(
     );
     extractedState = mergeContinuityAudit(extractedState, continuityResult.payload);
     continuityStage = createStageRun({
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "continuity"),
       modelName: adapter.continuityModelName ?? continuityResult.metrics.modelName,
       updatedAt: new Date().toISOString(),
       attemptCount: continuityResult.metrics.attemptCount,
@@ -939,7 +1091,7 @@ async function runScenePipeline(
   } catch (error) {
     continuityStage = createStageRun({
       status: "failed",
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "continuity"),
       modelName: adapter.continuityModelName ?? adapter.modelName,
       updatedAt: new Date().toISOString(),
       notes: [
@@ -952,7 +1104,7 @@ async function runScenePipeline(
   let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
   let qualityStage = createStageRun({
     status: "skipped",
-    provider: adapter.provider,
+    provider: getStageProvider(adapter, "quality_eval"),
     modelName: adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
@@ -967,7 +1119,7 @@ async function runScenePipeline(
     qualityEval = sanitizeQualityEval(qualityResult.payload, options, countWords(lengthControl.text));
     const qualityScore = computeQualityScore(qualityEval);
     qualityStage = createStageRun({
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "quality_eval"),
       modelName: qualityResult.metrics.modelName,
       updatedAt: new Date().toISOString(),
       attemptCount: qualityResult.metrics.attemptCount,
@@ -986,7 +1138,7 @@ async function runScenePipeline(
   } catch (error) {
     qualityStage = createStageRun({
       status: "failed",
-      provider: adapter.provider,
+      provider: getStageProvider(adapter, "quality_eval"),
       modelName: adapter.modelName,
       updatedAt: new Date().toISOString(),
       targetWordsMin: options.targetSceneWordsMin,
@@ -1010,14 +1162,14 @@ async function runScenePipeline(
     qualityEval,
     stages: {
       context: createStageRun({
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "context"),
         modelName: adapter.modelName,
         updatedAt: new Date().toISOString(),
         notes: ["Context-Pack vorbereitet."]
       }),
       beat_plan: beatPlanStage,
       draft: createStageRun({
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "draft"),
         modelName: draftResult.metrics.modelName,
         updatedAt: new Date().toISOString(),
         attemptCount: draftResult.metrics.attemptCount,
@@ -1032,7 +1184,7 @@ async function runScenePipeline(
         notes: [`Erster Prosa-Pass mit ${countWords(draftText)} Wörtern erstellt.`]
       }),
       rewrite: createStageRun({
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "rewrite"),
         modelName: rewriteResult.metrics.modelName,
         updatedAt: new Date().toISOString(),
         attemptCount: rewriteResult.metrics.attemptCount,
@@ -1071,7 +1223,7 @@ async function maybeRunLengthControl(
       warning: undefined,
       stage: createStageRun({
         status: "skipped",
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "length_control"),
         modelName: adapter.modelName,
         updatedAt: new Date().toISOString(),
         attemptCount: 0,
@@ -1104,7 +1256,7 @@ async function maybeRunLengthControl(
       text: finalText,
       warning,
       stage: createStageRun({
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "length_control"),
         modelName: result.metrics.modelName,
         updatedAt: new Date().toISOString(),
         attemptCount: result.metrics.attemptCount,
@@ -1127,7 +1279,7 @@ async function maybeRunLengthControl(
       warning: `Length-Control ${action} fehlgeschlagen: ${message}`,
       stage: createStageRun({
         status: "failed",
-        provider: adapter.provider,
+        provider: getStageProvider(adapter, "length_control"),
         modelName: adapter.modelName,
         updatedAt: new Date().toISOString(),
         targetWordsMin: options.targetSceneWordsMin,

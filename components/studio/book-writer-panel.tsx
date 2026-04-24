@@ -41,6 +41,7 @@ const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
   { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
+  { id: "duo", label: "Duo", detail: "Opus → GPT" },
   { id: "gemini", label: "Gemini", detail: "schnell" },
   { id: "groq", label: "Groq", detail: "test" }
 ];
@@ -101,6 +102,7 @@ export function BookWriterPanel({
   const [jobStatus, setJobStatus] = useState("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
   const [activePanelView, setActivePanelView] = useState<AiPanelView>("rewrite");
+  const [selectedJobId, setSelectedJobId] = useState("");
 
   useEffect(function () {
     const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
@@ -187,6 +189,24 @@ export function BookWriterPanel({
     return getDraftJobsForScene(story, sceneContext.scene.id);
   }, [sceneContext, story]);
 
+  useEffect(
+    function () {
+      if (!draftJobs.length) {
+        setSelectedJobId("");
+        return;
+      }
+
+      setSelectedJobId(function (currentJobId) {
+        const matchingJob = draftJobs.find(function (job) {
+          return job.id === currentJobId;
+        });
+
+        return matchingJob ? matchingJob.id : draftJobs[0].id;
+      });
+    },
+    [draftJobs]
+  );
+
   const firstSceneId = useMemo(function () {
     return findFirstSceneId(story);
   }, [story.acts]);
@@ -250,6 +270,10 @@ export function BookWriterPanel({
   const scene = sceneContext.scene;
   const liveWordCount = countSceneWords(scene);
   const latestJob = draftJobs[0] ?? null;
+  const activeJob =
+    draftJobs.find(function (job) {
+      return job.id === selectedJobId;
+    }) ?? latestJob;
   const sceneIndex = sceneContext.chapter.scenes.findIndex(function (candidate) {
     return candidate.id === scene.id;
   });
@@ -300,6 +324,7 @@ export function BookWriterPanel({
 
       setActivePanelView("rewrite");
       const job = payload.job as BookDraftJob;
+      setSelectedJobId(job.id);
       const executionLabel = formatExecutionModeLabel((payload.job as BookDraftJob).mode);
       setJobStatus(
         payload.warning
@@ -600,7 +625,7 @@ export function BookWriterPanel({
           <div className="book-writer-card__head">
             <div>
               <span className="scene-editor__eyebrow">AI Copilot</span>
-              <h4>OpenAI, Anthropic, Gemini, Groq</h4>
+              <h4>OpenAI, Anthropic, Duo, Gemini, Groq</h4>
             </div>
           </div>
 
@@ -782,17 +807,38 @@ export function BookWriterPanel({
               <span className="scene-editor__eyebrow">Output</span>
               <h4>Job für diese Szene</h4>
             </div>
-            {latestJob ? (
+            {activeJob ? (
               <div className="book-writer-job-meta">
-                <span>{formatProviderLabel(latestJob.provider)}</span>
-                <span>{formatExecutionModeLabel(latestJob.mode)}</span>
-                <span>{latestJob.status}</span>
+                <span>{formatProviderLabel(activeJob.provider)}</span>
+                <span>{formatExecutionModeLabel(activeJob.mode)}</span>
+                <span>{activeJob.status}</span>
               </div>
             ) : null}
           </div>
 
-          {latestJob ? (
+          {activeJob ? (
             <>
+              {draftJobs.length > 1 ? (
+                <div className="pill-group" aria-label="Job history">
+                  {draftJobs.map(function (job) {
+                    return (
+                      <button
+                        key={job.id}
+                        className={
+                          "pill-button" + (activeJob.id === job.id ? " pill-button--active" : "")
+                        }
+                        type="button"
+                        onClick={function () {
+                          setSelectedJobId(job.id);
+                        }}
+                      >
+                        {formatProviderLabel(job.provider)} · {formatJobTimestamp(job.updatedAt)}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+
               <div className="pill-group" aria-label="AI panel view">
                 {AI_PANEL_VIEWS.map(function (view) {
                   return (
@@ -814,7 +860,7 @@ export function BookWriterPanel({
 
               <div className="book-mini-list">
                 {BOOK_DRAFT_STAGE_SEQUENCE.map(function (stageId) {
-                  const stage = latestJob.stages[stageId];
+                  const stage = activeJob.stages[stageId];
 
                   return (
                     <article key={stageId} className="book-mini-card">
@@ -829,12 +875,12 @@ export function BookWriterPanel({
               </div>
 
               {activePanelView === "draft" ? (
-                <pre className="book-code-block book-writer-output">{latestJob.draftText}</pre>
+                <pre className="book-code-block book-writer-output">{activeJob.draftText}</pre>
               ) : activePanelView === "rewrite" ? (
-                <pre className="book-code-block book-writer-output">{latestJob.rewriteText}</pre>
+                <pre className="book-code-block book-writer-output">{activeJob.rewriteText}</pre>
               ) : activePanelView === "extract" ? (
                 <div className="book-mini-list">
-                  {buildExtractCards(latestJob).map(function (card) {
+                  {buildExtractCards(activeJob).map(function (card) {
                     return (
                       <article key={card.title} className="book-mini-card">
                         <strong>{card.title}</strong>
@@ -845,7 +891,7 @@ export function BookWriterPanel({
                 </div>
               ) : activePanelView === "continuity" ? (
                 <div className="book-mini-list">
-                  {buildContinuityCards(latestJob).map(function (card) {
+                  {buildContinuityCards(activeJob).map(function (card) {
                     return (
                       <article key={card.title} className="book-mini-card">
                         <strong>{card.title}</strong>
@@ -856,9 +902,9 @@ export function BookWriterPanel({
                 </div>
               ) : activePanelView === "notes" ? (
                 <div className="book-mini-list">
-                  {latestJob.rewriteNotes.map(function (note, index) {
+                  {activeJob.rewriteNotes.map(function (note, index) {
                     return (
-                      <article key={`${latestJob.id}_note_${index}`} className="book-mini-card">
+                      <article key={`${activeJob.id}_note_${index}`} className="book-mini-card">
                         <p>{note}</p>
                       </article>
                     );
@@ -866,9 +912,9 @@ export function BookWriterPanel({
                 </div>
               ) : (
                 <div className="book-mini-list">
-                  {latestJob.outline.map(function (step, index) {
+                  {activeJob.outline.map(function (step, index) {
                     return (
-                      <article key={`${latestJob.id}_outline_${index}`} className="book-mini-card">
+                      <article key={`${activeJob.id}_outline_${index}`} className="book-mini-card">
                         <strong>Beat {index + 1}</strong>
                         <p>{step}</p>
                       </article>
@@ -882,10 +928,10 @@ export function BookWriterPanel({
                   className="flat-button flat-button--active"
                   type="button"
                   onClick={function () {
-                    handleAcceptJob(latestJob.id);
+                    handleAcceptJob(activeJob.id);
                   }}
                 >
-                  {latestJob.status === "accepted"
+                  {activeJob.status === "accepted"
                     ? "Rewrite erneut übernehmen"
                     : "Rewrite übernehmen"}
                 </button>
@@ -1199,6 +1245,10 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
     return "Anthropic";
   }
 
+  if (provider === "duo") {
+    return "Duo";
+  }
+
   if (provider === "gemini") {
     return "Gemini";
   }
@@ -1222,6 +1272,8 @@ function getProviderTooltip(provider: BookJobProviderOption) {
       return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
     case "anthropic":
       return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
+    case "duo":
+      return "Claude Opus macht Vorarbeit und Erstfassung, GPT 5.5 schreibt den finalen Text.";
     case "gemini":
       return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
     case "groq":
@@ -1235,6 +1287,13 @@ function getProviderTooltip(provider: BookJobProviderOption) {
 
 function formatExecutionModeLabel(mode: BookDraftJob["mode"]) {
   return mode === "remote" ? "Remote" : "Lokaler Fallback";
+}
+
+function formatJobTimestamp(value: string) {
+  return new Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(value));
 }
 
 function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {

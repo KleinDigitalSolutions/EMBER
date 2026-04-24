@@ -2,7 +2,7 @@ import { createUuid } from "@/lib/id";
 
 export type StoryStatus = "draft" | "playtest" | "submitted";
 export type StoryMode = "book" | "branching";
-export type BookJobProvider = "openai" | "anthropic" | "gemini" | "groq" | "local";
+export type BookJobProvider = "openai" | "anthropic" | "gemini" | "groq" | "duo" | "local";
 export type BookJobMode = "remote" | "local_fallback";
 export type BookDraftStageId =
   | "context"

@@ -1,4 +1,4 @@
-export type BookJobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "groq" | "local";
+export type BookJobProviderOption = "auto" | "openai" | "anthropic" | "gemini" | "groq" | "duo" | "local";
 export type BookJobModelKey = "openai" | "anthropic" | "anthropicContinuity" | "gemini" | "groq";
 
 export type BookJobModelSelection = Record<BookJobModelKey, string>;
@@ -16,7 +16,7 @@ export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
 };
 
 export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
-  openai: ["gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
+  openai: ["gpt-5.5", "gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
   anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
   anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-7"],
   gemini: ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro"],
@@ -108,6 +108,7 @@ export function isBookJobProviderOption(value: string): value is BookJobProvider
     value === "openai" ||
     value === "anthropic" ||
     value === "gemini" ||
+    value === "duo" ||
     value === "groq" ||
     value === "local"
   );

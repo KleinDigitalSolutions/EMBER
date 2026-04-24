@@ -1714,6 +1714,7 @@ function normalizeProvider(value: unknown): BookDraftJob["provider"] {
     value === "openai" ||
     value === "anthropic" ||
     value === "gemini" ||
+    value === "duo" ||
     value === "groq" ||
     value === "local"
   ) {

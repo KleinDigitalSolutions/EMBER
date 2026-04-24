@@ -37,6 +37,11 @@ const MODEL_FIELD_COPY: Record<
   }
 };
 
+const DUO_DEFAULT_MODELS: Partial<Record<BookJobModelKey, string>> = {
+  anthropic: "claude-opus-4-7",
+  openai: "gpt-5.5"
+};
+
 export function BookJobModelFields(props: {
   provider: BookJobProviderOption;
   models: BookJobModelSelection;
@@ -56,15 +61,18 @@ export function BookJobModelFields(props: {
         <span>
           {props.provider === "auto"
             ? "Auto-Modus nutzt die Standardeinstellungen."
-            : "Wähle das Modell für diesen Provider aus."}
+            : props.provider === "duo"
+              ? "Opus macht Vorarbeit, GPT übernimmt den finalen Text."
+              : "Wähle das Modell für diesen Provider aus."}
         </span>
       </div>
 
       <div className="book-model-grid">
         {visibleKeys.map(function (key) {
-          const copy = MODEL_FIELD_COPY[key];
+          const copy = getModelFieldCopy(props.provider, key);
           const value = props.models[key];
           const presets = BOOK_JOB_MODEL_PRESETS[key];
+          const defaultValue = getDefaultModelForProvider(props.provider, key);
 
           return (
             <label key={key} className="editor-field book-model-field">
@@ -83,9 +91,9 @@ export function BookJobModelFields(props: {
                     }
                   }}
                 >
-                  <option value="default">{DEFAULT_BOOK_JOB_MODELS[key]}</option>
+                  <option value="default">{defaultValue}</option>
                   {presets.map(function (preset) {
-                    if (preset === DEFAULT_BOOK_JOB_MODELS[key]) {
+                    if (preset === defaultValue) {
                       return null;
                     }
 
@@ -107,6 +115,10 @@ export function BookJobModelFields(props: {
 }
 
 function getVisibleModelKeys(provider: BookJobProviderOption) {
+  if (provider === "duo") {
+    return ["anthropic", "openai"] as BookJobModelKey[];
+  }
+
   if (provider === "openai") {
     return ["openai"] as BookJobModelKey[];
   }
@@ -128,4 +140,36 @@ function getVisibleModelKeys(provider: BookJobProviderOption) {
   }
 
   return [];
+}
+
+function getDefaultModelForProvider(provider: BookJobProviderOption, key: BookJobModelKey) {
+  if (provider === "duo" && DUO_DEFAULT_MODELS[key]) {
+    return DUO_DEFAULT_MODELS[key] as string;
+  }
+
+  return DEFAULT_BOOK_JOB_MODELS[key];
+}
+
+function getModelFieldCopy(provider: BookJobProviderOption, key: BookJobModelKey) {
+  if (provider !== "duo") {
+    return MODEL_FIELD_COPY[key];
+  }
+
+  if (key === "anthropic") {
+    return {
+      label: "Opus Vorarbeit",
+      hint: "Beat-Plan und erster Szenendraft",
+      resetLabel: "Duo-Default"
+    };
+  }
+
+  if (key === "openai") {
+    return {
+      label: "GPT Finish",
+      hint: "Rewrite, Feinschliff und finale Fassung",
+      resetLabel: "Duo-Default"
+    };
+  }
+
+  return MODEL_FIELD_COPY[key];
 }
