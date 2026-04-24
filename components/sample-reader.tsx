@@ -82,6 +82,13 @@ export function SampleReader({
 
           {scenes.map(function (scene, index) {
             const nextScene = scenes[index + 1] ?? null;
+            const repeatsHeroLead =
+              index === 0 &&
+              scene.title === heroTitle &&
+              scene.summary === heroSummary &&
+              scene.kicker === "Buchprobe · Szene 1" &&
+              heroKicker.startsWith("Buchprobe · Szenen");
+
             return (
               <section
                 key={scene.id}
@@ -89,11 +96,13 @@ export function SampleReader({
                 className="sample-reader__scene-block"
                 aria-label={`${scene.kicker} – ${scene.title}`}
               >
-                <div className="sample-reader__hero">
-                  <p className="reader-eyebrow">{scene.kicker}</p>
-                  <h2>{scene.title}</h2>
-                  <p>{scene.summary}</p>
-                </div>
+                {repeatsHeroLead ? null : (
+                  <div className="sample-reader__hero">
+                    <p className="reader-eyebrow">{scene.kicker}</p>
+                    <h2>{scene.title}</h2>
+                    <p>{scene.summary}</p>
+                  </div>
+                )}
 
                 <section className="sample-reader__scene">
                   {scene.paragraphs.map(function (paragraph, paragraphIndex) {
