@@ -193,17 +193,16 @@
 
   const storefrontStories = [
     {
-      title: "Ich sehe dich",
-      subtitle: "Buchprobe",
-      description:
-        "Alltagsnaher Familienroman über eine alleinerziehende Mutter, ein Kind mit großem Bindungsbedürfnis und die unsichtbare Arbeit von Liebe unter Erschöpfung.",
-      tags: ["Familienroman", "Women's Fiction", "Care-Arbeit"],
-      status: "Leseprobe",
+      title: STORY.meta.appTitle,
+      subtitle: STORY.meta.storyTitle,
+      description: STORY.meta.storyDescription,
+      tags: STORY.meta.tags,
+      imageSrc: "/images/Dorf_Vallachei.png",
+      imageAlt: "Nebliges Dorf mit Kirche auf dem Hügel",
+      imagePosition: "center top",
+      status: "Aktiv",
       available: true,
-      action: "open-link",
-      href: "/samples/ich-sehe-dich",
-      buttonLabel: "Lesen",
-      progressLabel: "Szene 1 online"
+      action: "start"
     },
     {
       title: "Restrisiko",
@@ -211,9 +210,9 @@
       description:
         "Psychologischer Thriller um einen forensischen Gutachter, der an einem prominenten Fall und an der eigenen alten Fehlprognose entlang in seine blinden Flecken gerät.",
       tags: ["Psychothriller", "Forensik", "Literary Crime"],
-      imageSrc: "./Der_Auftrag.png",
-      imageAlt: "Aktenmappe und Schreibtischlicht im Morgengrau",
-      imagePosition: "center 12%",
+      imageSrc: "/images/restrisiko.png",
+      imageAlt: "Restrisiko Cover mit forensischem Gutachten, Verhörraum und Spiegelbild",
+      imagePosition: "center top",
       status: "Leseprobe",
       available: true,
       action: "open-link",
@@ -227,6 +226,9 @@
       description:
         "Domestic Suspense über eine Mutter, deren Kita dokumentiert, sie habe ihr Kind selbst abgeholt, obwohl sie sicher weiß, nie dort gewesen zu sein.",
       tags: ["Domestic Suspense", "Psychothriller", "Alltagsbeweise"],
+      imageSrc: "/images/die_falsche_abholung.png",
+      imageAlt: "Die falsche Abholung Cover mit Kita-Flur, Überwachungskamera und Abholprotokoll",
+      imagePosition: "center top",
       status: "Leseprobe",
       available: true,
       action: "open-link",
@@ -235,24 +237,13 @@
       progressLabel: "Szene 10 online"
     },
     {
-      title: STORY.meta.appTitle,
-      subtitle: STORY.meta.storyTitle,
-      description: STORY.meta.storyDescription,
-      tags: STORY.meta.tags,
-      imageSrc: "./Cover.png",
-      imageAlt: "Düstere Kapelle im Wald bei Kerzenlicht",
-      status: "Aktiv",
-      available: true,
-      action: "start"
-    },
-    {
       title: "Ascheprotokoll",
       subtitle: "Mystery Novella",
       description: "Eine Ermittlungsakte mit geschwärzten Seiten, gelöschten Namen und einem Brand ohne Quelle.",
       tags: ["Noir", "Archiv"],
       imageSrc: "./Ascheprotokoll.png",
       imageAlt: "Ascheprotokoll Cover mit verbrannter Ermittlungsakte",
-      imagePosition: "center 4%",
+      imagePosition: "center top",
       status: "Demnächst",
       available: false
     },
@@ -263,7 +254,7 @@
       tags: ["Thriller", "Isolation"],
       imageSrc: "./DasGlashaus.png",
       imageAlt: "Das Glashaus Cover mit Haus im Schnee und Kamera im Vordergrund",
-      imagePosition: "center 4%",
+      imagePosition: "center top",
       status: "Platzhalter",
       available: false
     },
@@ -274,7 +265,7 @@
       tags: ["Okkult", "Dorf"],
       imageSrc: "./DieverlasseneGlockeimNebel.png",
       imageAlt: "Die vierte Glocke Cover mit verlassenem Turm im Schneenebel",
-      imagePosition: "center 4%",
+      imagePosition: "center top",
       status: "Später",
       available: false
     }
@@ -317,7 +308,7 @@
       ? `<img class="store-card-media" src="${escapeHtml(story.imageSrc)}" alt="${escapeHtml(
           story.imageAlt || story.title
         )}" loading="${isFeatured ? "eager" : "lazy"}" style="object-position: ${escapeHtml(
-          story.imagePosition || "center"
+          story.imagePosition || "center top"
         )};" />`
       : '<div class="store-card-media store-card-media--placeholder" aria-hidden="true"></div>';
     const tagsMarkup = (story.tags || [])
@@ -360,6 +351,87 @@
           </div>
         </div>
       </article>
+    `;
+  }
+
+  function renderDesktopNav() {
+    return `
+      <details class="desktop-nav">
+        <summary class="desktop-nav-toggle" aria-label="Navigation öffnen">
+          <span class="desktop-nav-toggle-line" aria-hidden="true"></span>
+          <span class="desktop-nav-toggle-line" aria-hidden="true"></span>
+          <span class="desktop-nav-toggle-line" aria-hidden="true"></span>
+        </summary>
+        <button class="desktop-nav-backdrop" type="button" data-action="close-menu" aria-label="Navigation schließen"></button>
+        <aside class="desktop-nav-panel" aria-label="Desktop Navigation">
+          <div class="desktop-nav-header">
+            <div class="desktop-nav-kicker">Navigation</div>
+            <button class="desktop-nav-close" type="button" data-action="close-menu" aria-label="Navigation schließen">
+              <span class="desktop-nav-close-line" aria-hidden="true"></span>
+              <span class="desktop-nav-close-line" aria-hidden="true"></span>
+            </button>
+          </div>
+          <nav class="desktop-nav-list">
+            <button class="desktop-nav-item" type="button" data-action="close-menu">
+              <span class="desktop-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M3.5 10.5 12 4l8.5 6.5" />
+                  <path d="M6.5 9.5V20h11V9.5" />
+                  <path d="M10 20v-5h4v5" />
+                </svg>
+              </span>
+              <span class="desktop-nav-label">Home</span>
+            </button>
+            <button class="desktop-nav-item desktop-nav-item--active" type="button" data-action="close-menu" aria-current="page">
+              <span class="desktop-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="4" y="4" width="6" height="6" rx="1.5" />
+                  <rect x="14" y="4" width="6" height="6" rx="1.5" />
+                  <rect x="4" y="14" width="6" height="6" rx="1.5" />
+                  <rect x="14" y="14" width="6" height="6" rx="1.5" />
+                </svg>
+              </span>
+              <span class="desktop-nav-label">Store</span>
+            </button>
+            <button class="desktop-nav-item" type="button" data-action="close-menu">
+              <span class="desktop-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6.5 5.5h8.75A2.25 2.25 0 0 1 17.5 7.75V18.5H8.75A2.25 2.25 0 0 0 6.5 20.75Z" />
+                  <path d="M6.5 6v14.75" />
+                  <path d="M9.25 8.25h5.75" />
+                </svg>
+              </span>
+              <span class="desktop-nav-label">Bibliothek</span>
+            </button>
+            <button class="desktop-nav-item" type="button" data-action="studio">
+              <span class="desktop-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </span>
+              <span class="desktop-nav-label">Studio</span>
+            </button>
+            <button class="desktop-nav-item" type="button" data-action="close-menu">
+              <span class="desktop-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="8" r="3.25" />
+                  <path d="M5.5 19a6.5 6.5 0 0 1 13 0" />
+                </svg>
+              </span>
+              <span class="desktop-nav-label">Account</span>
+            </button>
+          </nav>
+          <div class="desktop-nav-footer">
+            <div class="desktop-nav-divider" aria-hidden="true"></div>
+            <div class="desktop-nav-footer-links">
+              <a class="desktop-nav-footer-link" href="#">Häufig gestellte Fragen</a>
+              <a class="desktop-nav-footer-link" href="#">Hilfe-Center</a>
+              <a class="desktop-nav-footer-link" href="#">Datenschutz</a>
+              <a class="desktop-nav-footer-link" href="#">Impressum</a>
+            </div>
+          </div>
+        </aside>
+      </details>
     `;
   }
 
@@ -431,6 +503,14 @@
     document.body.scrollTop = 0;
   }
 
+  function closeDesktopMenu() {
+    const desktopMenu = app.querySelector(".desktop-nav[open]")
+
+    if (desktopMenu) {
+      desktopMenu.removeAttribute("open")
+    }
+  }
+
   function scheduleChapterAdvance(sceneId) {
     clearChapterTimer();
     chapterTimerId = window.setTimeout(function () {
@@ -498,13 +578,15 @@
             <div class="store-hero-backdrop" aria-hidden="true">
               <img
                 class="store-hero-image"
-                src="./Cover.png"
-                alt="Düstere Kapelle im Wald bei Kerzenlicht"
+                src="${escapeHtml(featuredStory.imageSrc || "./Cover.png")}"
+                alt="${escapeHtml(featuredStory.imageAlt || featuredStory.title)}"
                 loading="eager"
+                style="object-position: ${escapeHtml(featuredStory.imagePosition || "center top")};"
               />
             </div>
             <header class="store-hero-topbar">
               <div class="store-wordmark">EMBER</div>
+              ${renderDesktopNav()}
             </header>
             <div class="store-hero-copy">
               <p class="eyebrow">EMBER Originals</p>
@@ -541,9 +623,6 @@
                 <p class="eyebrow">Auswahl</p>
                 <h2 class="store-section-title">Storys im Store</h2>
               </div>
-              <p class="store-section-copy">Drei Buchproben sind bereits lesbar. ${escapeHtml(
-                STORY.meta.appTitle
-              )} bleibt als interaktive Story der aktive Haupttitel.</p>
             </div>
             <div class="store-grid">${storeCards}</div>
           </section>
@@ -846,7 +925,13 @@
     }
 
     if (action === "studio") {
+      closeDesktopMenu();
       window.parent.location.href = "/studio";
+      return;
+    }
+
+    if (action === "close-menu") {
+      closeDesktopMenu();
       return;
     }
 
