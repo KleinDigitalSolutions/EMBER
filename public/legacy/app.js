@@ -218,7 +218,7 @@
       action: "open-link",
       href: "/samples/restrisiko",
       buttonLabel: "Lesen",
-      progressLabel: "Szene 1 online"
+      progressLabel: "4 von 10 Szenen online"
     },
     {
       title: "Die falsche Abholung",
@@ -234,7 +234,7 @@
       action: "open-link",
       href: "/samples/die-falsche-abholung",
       buttonLabel: "Lesen",
-      progressLabel: "Szene 10 online"
+      progressLabel: "16 von 42 Szenen online"
     },
     {
       title: "Ascheprotokoll",
@@ -564,6 +564,9 @@
     const featuredStory = storefrontStories[0];
     const storeCards = storefrontStories
       .slice(1)
+      .filter(function (story) {
+        return story.available;
+      })
       .map(function (story) {
         return renderStoreCard(story, false);
       })
