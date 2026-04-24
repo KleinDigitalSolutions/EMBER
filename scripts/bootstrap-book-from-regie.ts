@@ -1564,7 +1564,28 @@ function inferWorldBibleKind(
   title: string,
   lines: string[]
 ): WorldBibleEntry["kind"] {
+  const normalizedTitle = normalizeText(title)
+  const normalizedLines = normalizeText(lines.join(" "))
   const haystack = normalizeText(`${title} ${lines.join(" ")}`)
+
+  if (
+    [
+      "alltagsrealismus",
+      "soziale lage",
+      "zugriffssystem",
+      "wahrheit unter dem hook",
+      "eroeffnungsmechanik",
+      "mechanik fuer kapitel",
+      "hook",
+      "realismus anker",
+      "drucksystem",
+      "beziehungslogik"
+    ].some(function (token) {
+      return normalizedTitle.includes(token)
+    })
+  ) {
+    return "theme"
+  }
 
   if (
     [
@@ -1584,7 +1605,7 @@ function inferWorldBibleKind(
       "parkplatz",
       "spielplatz"
     ].some(function (token) {
-      return haystack.includes(token)
+      return normalizedTitle.includes(token)
     })
   ) {
     return "location"
@@ -1610,7 +1631,7 @@ function inferWorldBibleKind(
       "druckspur",
       "ausdruck"
     ].some(function (token) {
-      return haystack.includes(token)
+      return normalizedTitle.includes(token) || normalizedLines.includes(token)
     })
   ) {
     return "object"
@@ -1618,7 +1639,7 @@ function inferWorldBibleKind(
 
   if (
     ["figur", "charakter", "person"].some(function (token) {
-      return haystack.includes(token)
+      return normalizedTitle.includes(token) || normalizedLines.includes(token)
     })
   ) {
     return "character"

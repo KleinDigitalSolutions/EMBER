@@ -26,6 +26,11 @@ There is no formal automated test suite yet. Verify changes with `npm run build`
 
 For Studio save or pipeline changes, test both UI and DB behavior: edit a field, confirm the save indicator reaches `Gespeichert HH:MM`, reload `/studio`, and verify the value still exists.
 
+For Regie and prompt-pipeline changes, separate three checks:
+- parser check: `bootstrap-book-from-regie.ts --dry-run`
+- persistence check: fresh import into Supabase and reload via `loadStudioStory()`
+- dry prompt check: build `SceneContextPacket` plus the Anthropic/Opus prompt locally without making any remote API call
+
 ## Commit & Pull Request Guidelines
 Recent commits use short, direct messages such as `Die falsche abholung` or `piepline anpasuung`. Keep commit messages brief, imperative, and focused on one visible change. PRs should include a short summary, affected files, manual test notes, and screenshots for UI updates.
 
@@ -41,6 +46,8 @@ If you change Regie, check these files:
 - `lib/server/book-job-service.ts` for stable-prefix prompt blocks and provider-specific prompt assembly.
 - `lib/server/studio-story-service.ts` for Supabase load/save mappings of `master_brief`, `market_brief`, `book_scene_cards`, and related memory tables.
 
+When verifying what Opus/Anthropic will actually receive, do not rely on code reading alone. After import, inspect the reloaded story through `loadStudioStory()`, build the packet with `buildSceneContextPacket()`, and inspect the prompt blocks assembled by `lib/server/book-job-service.ts`. This dry inspection must work without API credits because it only builds local prompt text and does not call any provider.
+
 `Regie-Die-falsche-Abholung.md` is the reference Regie for future EMBER book imports. Treat its section layout and meta-notes as the baseline template for new `Regie-*.md` files. Its top-level headings are parser-relevant and should not be renamed casually.
 
 For prompt-critical Regie work, these sections are first-class inputs and not optional commentary:
@@ -51,6 +58,15 @@ For prompt-critical Regie work, these sections are first-class inputs and not op
 - `ACTS & KAPITEL — SCENE CARDS`
 
 If a rule must reliably reach the model, place it in one of those sections or directly in a Scene Card. Do not leave critical guidance only in prose comments outside recognized blocks.
+
+For `Regie-Die-falsche-Abholung.md`, the current dry-run expectation after a fresh import is:
+- `voicePackBlocks > 0` and currently `6`
+- `proofLadderBlocks > 0` and currently `8`
+- `worldBiblePrimer > 0` and currently `12`
+- scene-level `sceneDrive`, `povKnowledgeBoundary`, `relationshipPressure`, and `endStateHook` should be populated for `Kapitel 1 / Gestern`
+- `WORLD BIBLE` primer entries should classify global logic blocks such as `Alltagsrealismus-Anker`, `Die soziale Lage`, `Noras drei Zugriffssysteme`, `Die Wahrheit unter dem Hook`, and `Eröffnungsmechanik für Kapitel 1` as `theme`, not as `location`
+
+If those checks fail after a supposedly fresh import, assume the stored story is stale, the import did not run against the current parser, or the prompt-facing mapping regressed.
 
 Regie for strong book jobs should stay scene-bound and causal. Besides `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt`, and `alltagswaffe`, prefer these custom Scene Card keys when useful:
 - `szenenantrieb`: `Figur will X, tut Y, riskiert Z.`
