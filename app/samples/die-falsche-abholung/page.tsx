@@ -1002,7 +1002,7 @@ export default function DieFalscheAbholungSamplePage() {
     <SampleReader
       sampleId="die-falsche-abholung"
       title="Die falsche Abholung"
-      description="Szenen 1 bis 16 sind live. Die Leseprobe wird fortlaufend ergänzt."
+      description="Eine getrennt lebende Mutter sieht in der Kita-App den Vermerk, sie habe ihre Tochter bereits gestern abgeholt. Videoaufnahme, Unterschrift und vertraute Alltagsroutinen sprechen gegen ihre Erinnerung. Je genauer Eva prüft, desto klarer wird, dass nicht nur ihr Kind, sondern ihre Glaubwürdigkeit und ihre Rolle als Mutter angegriffen werden."
       heroKicker="Buchprobe · Szenen 1–16"
       heroTitle="Gestern"
       heroSummary="Eine verspätete Meldung in der Kita-App kippt Evas Alltag in wenigen Minuten aus der Bahn: Laut System hat sie ihre Tochter am Vortag selbst abgeholt. Der App-Eintrag ist noch kein Beweis, bis Petra ihr das Standbild zeigt, auf dem eine zweite Eva mit der Hand auf Milas Schulter stillsteht."
