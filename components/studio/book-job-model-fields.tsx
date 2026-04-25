@@ -62,7 +62,7 @@ export function BookJobModelFields(props: {
           {props.provider === "auto"
             ? "Auto-Modus nutzt die Standardeinstellungen."
             : props.provider === "duo"
-              ? "Opus macht Vorarbeit, GPT übernimmt den finalen Text."
+              ? "Opus schreibt die Erstfassung, GPT übernimmt Struktur-, Continuity-, Quality- und Friction-Pässe."
               : "Wähle das Modell für diesen Provider aus."}
         </span>
       </div>
@@ -157,16 +157,16 @@ function getModelFieldCopy(provider: BookJobProviderOption, key: BookJobModelKey
 
   if (key === "anthropic") {
     return {
-      label: "Opus Vorarbeit",
-      hint: "Beat-Plan und erster Szenendraft",
+      label: "Opus Writer",
+      hint: "Szenische Erstfassung mit Prosa, Dialog und Körperlichkeit",
       resetLabel: "Duo-Default"
     };
   }
 
   if (key === "openai") {
     return {
-      label: "GPT Finish",
-      hint: "Rewrite, Feinschliff und finale Fassung",
+      label: "GPT Prüfpässe",
+      hint: "Beat-Plan, Rewrite, Continuity, Quality und Literary Friction",
       resetLabel: "Duo-Default"
     };
   }

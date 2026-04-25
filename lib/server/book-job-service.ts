@@ -24,6 +24,7 @@ import {
   type BookDraftStageId,
   type BookDraftStageRuns,
   type DraftExtractionState,
+  type LiteraryFrictionReport,
   type StoryDocument,
   withDraftMemorySync
 } from "@/lib/story-schema";
@@ -76,6 +77,28 @@ const qualityEvalSchema = z.object({
   issues: z.array(z.string()).max(8)
 });
 
+const literaryFrictionSchema = z.object({
+  protect: z.array(z.string().min(1)).max(8),
+  cutCandidates: z.array(z.string().min(1)).max(8),
+  overExplanation: z.array(z.string().min(1)).max(8),
+  patternWarnings: z.array(z.string().min(1)).max(8),
+  abstractionFlags: z.array(z.string().min(1)).max(8),
+  endingAssessment: z.string().min(1).max(400),
+  microEdits: z.array(z.string().min(1)).max(8),
+  needsRevision: z.boolean(),
+  revisedText: z.string().nullable(),
+  scores: z.object({
+    imageStrength: z.number().int().min(1).max(5),
+    bodyTruth: z.number().int().min(1).max(5),
+    ambiguity: z.number().int().min(1).max(5),
+    antiExplanation: z.number().int().min(1).max(5),
+    sentenceVariety: z.number().int().min(1).max(5),
+    endingStrength: z.number().int().min(1).max(5),
+    antiSmoothness: z.number().int().min(1).max(5),
+    voiceSpecificity: z.number().int().min(1).max(5)
+  })
+});
+
 const ANTHROPIC_PROSE_MIN_TOKENS = 1800;
 const ANTHROPIC_PROSE_MAX_TOKENS = 10000;
 const OPENAI_PROSE_MIN_TOKENS = 1200;
@@ -86,6 +109,7 @@ const GROQ_PROSE_MIN_TOKENS = 1200;
 const GROQ_PROSE_MAX_TOKENS = 9000;
 const STRUCTURED_STAGE_MAX_TOKENS = 1400;
 const EXTRACT_STAGE_MAX_TOKENS = 900;
+const LITERARY_FRICTION_MAX_TOKENS = 5200;
 const EXTRACT_ARRAY_MAX_ITEMS = 3;
 const EXTRACT_REWRITE_NOTES_MAX_ITEMS = 4;
 const EXTRACT_STRING_MAX_LENGTH = 100;
@@ -101,6 +125,7 @@ type BeatPlanPayload = z.infer<typeof beatPlanSchema>;
 type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 type QualityEvalPayload = z.infer<typeof qualityEvalSchema>;
+type LiteraryFrictionPayload = z.infer<typeof literaryFrictionSchema>;
 
 type DraftGenerationOptions = {
   modelOverrides?: BookJobModelOverrides;
@@ -130,7 +155,12 @@ type TextStageResult = {
 };
 
 type LengthControlAction = "accept" | "expand" | "compress";
-type AnthropicStructuredStageName = "beat_plan" | "extract" | "continuity" | "quality_eval";
+type AnthropicStructuredStageName =
+  | "beat_plan"
+  | "extract"
+  | "continuity"
+  | "quality_eval"
+  | "literary_friction";
 
 type ScenePipelineAdapter = {
   provider: RemoteBookJobProvider;
@@ -158,6 +188,12 @@ type ScenePipelineAdapter = {
     rewriteText: string,
     extractedState: DraftExtractionState
   ) => Promise<StructuredStageResult<QualityEvalPayload>>;
+  runLiteraryFriction: (
+    beatPlan: BeatPlanPayload,
+    rewriteText: string,
+    extractedState: DraftExtractionState,
+    qualityEval: QualityEvalPayload
+  ) => Promise<StructuredStageResult<LiteraryFrictionPayload>>;
 };
 
 type DraftProviderResult = {
@@ -169,6 +205,9 @@ type DraftProviderResult = {
   rewriteNotes: string[];
   extractedState: DraftExtractionState;
   qualityEval: QualityEvalPayload;
+  literaryFrictionText?: string;
+  literaryFrictionNotes?: string[];
+  literaryFrictionReport?: LiteraryFrictionReport;
   stages: BookDraftStageRuns;
   warning?: string;
 };
@@ -421,6 +460,23 @@ async function generateWithOpenAI(
         systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
       });
+    },
+    runLiteraryFriction: function (beatPlan, rewriteText, extractedState, qualityEval) {
+      return requestOpenAIStructured({
+        client,
+        modelName,
+        schema: literaryFrictionSchema,
+        schemaName: "ember_book_literary_friction",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildLiteraryFrictionPrompt(
+          packet,
+          options,
+          beatPlan,
+          rewriteText,
+          extractedState,
+          qualityEval
+        )
+      });
     }
   });
 }
@@ -559,6 +615,24 @@ async function generateWithAnthropic(
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
       });
+    },
+    runLiteraryFriction: function (beatPlan, rewriteText, extractedState, qualityEval) {
+      return requestAnthropicStructured({
+        client,
+        stageName: "literary_friction",
+        modelName: continuityModelName,
+        maxTokens: LITERARY_FRICTION_MAX_TOKENS,
+        schema: literaryFrictionSchema,
+        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        userPrompt: buildLiteraryFrictionPrompt(
+          packet,
+          options,
+          beatPlan,
+          rewriteText,
+          extractedState,
+          qualityEval
+        )
+      });
     }
   });
 }
@@ -590,22 +664,23 @@ async function generateWithDuo(
     continuityModelName: openaiModelName,
     extractModelName: openaiModelName,
     stageProviders: {
-      beat_plan: "anthropic",
+      context: "openai",
+      beat_plan: "openai",
       draft: "anthropic",
       rewrite: "openai",
       length_control: "openai",
       extract: "openai",
       continuity: "openai",
-      quality_eval: "openai"
+      quality_eval: "openai",
+      literary_friction: "openai"
     },
     generateBeatPlan: function () {
-      return requestAnthropicStructured({
-        client: anthropicClient,
-        stageName: "beat_plan",
-        modelName: anthropicModelName,
-        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
+      return requestOpenAIStructured({
+        client: openAIClient,
+        modelName: openaiModelName,
         schema: beatPlanSchema,
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        schemaName: "ember_book_beat_plan",
+        systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildBeatPlanPrompt(packet, options)
       });
     },
@@ -685,6 +760,23 @@ async function generateWithDuo(
         schemaName: "ember_book_quality_eval",
         systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
+    },
+    runLiteraryFriction: function (beatPlan, rewriteText, extractedState, qualityEval) {
+      return requestOpenAIStructured({
+        client: openAIClient,
+        modelName: openaiModelName,
+        schema: literaryFrictionSchema,
+        schemaName: "ember_book_literary_friction",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildLiteraryFrictionPrompt(
+          packet,
+          options,
+          beatPlan,
+          rewriteText,
+          extractedState,
+          qualityEval
+        )
       });
     }
   });
@@ -793,6 +885,22 @@ async function generateWithGemini(
         schema: qualityEvalSchema,
         systemInstruction: buildSystemPrompt(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+      });
+    },
+    runLiteraryFriction: function (beatPlan, rewriteText, extractedState, qualityEval) {
+      return requestGeminiStructured({
+        client,
+        modelName,
+        schema: literaryFrictionSchema,
+        systemInstruction: buildSystemPrompt(packet),
+        userPrompt: buildLiteraryFrictionPrompt(
+          packet,
+          options,
+          beatPlan,
+          rewriteText,
+          extractedState,
+          qualityEval
+        )
       });
     }
   });
@@ -908,6 +1016,24 @@ async function generateWithGroq(
         systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState),
         maxOutputTokens: STRUCTURED_STAGE_MAX_TOKENS
+      });
+    },
+    runLiteraryFriction: function (beatPlan, rewriteText, extractedState, qualityEval) {
+      return requestGroqStructured({
+        client,
+        modelName,
+        schema: literaryFrictionSchema,
+        schemaName: "ember_book_literary_friction",
+        systemPrompt: buildSystemPrompt(packet),
+        userPrompt: buildLiteraryFrictionPrompt(
+          packet,
+          options,
+          beatPlan,
+          rewriteText,
+          extractedState,
+          qualityEval
+        ),
+        maxOutputTokens: LITERARY_FRICTION_MAX_TOKENS
       });
     }
   });
@@ -1151,6 +1277,76 @@ async function runScenePipeline(
     warnings.push(qualityStage.notes[0]);
   }
 
+  let literaryFrictionReport: LiteraryFrictionReport | undefined;
+  let literaryFrictionText: string | undefined;
+  let literaryFrictionNotes: string[] = [];
+  let literaryFrictionStage = createStageRun({
+    status: "skipped",
+    provider: getStageProvider(adapter, "literary_friction"),
+    modelName: adapter.continuityModelName ?? adapter.modelName,
+    updatedAt: new Date().toISOString(),
+    attemptCount: 0,
+    targetWordsMin: options.targetSceneWordsMin,
+    targetWordsMax: options.targetSceneWordsMax,
+    actualWords: countWords(lengthControl.text),
+    notes: ["Literary-Friction-Pass wurde nicht ausgeführt."]
+  });
+
+  try {
+    const frictionResult = await adapter.runLiteraryFriction(
+      beatPlan,
+      lengthControl.text,
+      extractedState,
+      qualityEval
+    );
+    literaryFrictionReport = sanitizeLiteraryFriction(
+      frictionResult.payload,
+      lengthControl.text
+    );
+    literaryFrictionText =
+      literaryFrictionReport.needsRevision && literaryFrictionReport.revisedText
+        ? sanitizeSceneText(literaryFrictionReport.revisedText)
+        : undefined;
+    literaryFrictionNotes = buildLiteraryFrictionNotes(literaryFrictionReport);
+    const frictionWarnings = buildLiteraryFrictionWarnings(literaryFrictionReport);
+
+    if (frictionWarnings.length) {
+      warnings.push(frictionWarnings.join(" | "));
+    }
+
+    literaryFrictionStage = createStageRun({
+      provider: getStageProvider(adapter, "literary_friction"),
+      modelName: frictionResult.metrics.modelName,
+      updatedAt: new Date().toISOString(),
+      attemptCount: frictionResult.metrics.attemptCount,
+      repairCount: frictionResult.metrics.repairCount,
+      durationMs: frictionResult.metrics.durationMs,
+      inputTokens: frictionResult.metrics.inputTokens,
+      outputTokens: frictionResult.metrics.outputTokens,
+      stopReason: frictionResult.metrics.stopReason,
+      targetWordsMin: options.targetSceneWordsMin,
+      targetWordsMax: options.targetSceneWordsMax,
+      actualWords: countWords(literaryFrictionText || lengthControl.text),
+      qualityScore: computeLiteraryFrictionScore(literaryFrictionReport),
+      qualityIssues: frictionWarnings,
+      notes: literaryFrictionNotes
+    });
+  } catch (error) {
+    literaryFrictionStage = createStageRun({
+      status: "failed",
+      provider: getStageProvider(adapter, "literary_friction"),
+      modelName: adapter.continuityModelName ?? adapter.modelName,
+      updatedAt: new Date().toISOString(),
+      targetWordsMin: options.targetSceneWordsMin,
+      targetWordsMax: options.targetSceneWordsMax,
+      actualWords: countWords(lengthControl.text),
+      notes: [
+        `Literary-Friction fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
+      ]
+    });
+    warnings.push(literaryFrictionStage.notes[0]);
+  }
+
   return {
     modelName: adapter.modelName,
     continuityModelName: adapter.continuityModelName,
@@ -1158,6 +1354,9 @@ async function runScenePipeline(
     draftText,
     rewriteText: lengthControl.text,
     rewriteNotes,
+    literaryFrictionText,
+    literaryFrictionNotes,
+    literaryFrictionReport,
     extractedState,
     qualityEval,
     stages: {
@@ -1201,7 +1400,8 @@ async function runScenePipeline(
       length_control: lengthControl.stage,
       extract: extractStage,
       continuity: continuityStage,
-      quality_eval: qualityStage
+      quality_eval: qualityStage,
+      literary_friction: literaryFrictionStage
     },
     warning: combineWarnings(warnings)
   };
@@ -1370,6 +1570,9 @@ function hydrateDraftJob(
     draftText: payload.draftText,
     rewriteText: payload.rewriteText,
     rewriteNotes: payload.rewriteNotes,
+    literaryFrictionText: payload.literaryFrictionText,
+    literaryFrictionNotes: payload.literaryFrictionNotes,
+    literaryFrictionReport: payload.literaryFrictionReport,
     extractedState: withDraftMemorySync(payload.extractedState, {
       fallbackCreatedAt: now,
       defaultStatus: "pending"
@@ -1826,7 +2029,11 @@ function normalizeJsonText(value: string) {
 }
 
 function buildSystemPrompt(packet: SceneContextPacket) {
-  return [buildCoreSystemPrompt()].concat(buildStablePrefixSections(packet)).join("\n\n");
+  const promptSections = [buildCoreSystemPrompt()]
+    .concat(buildGlobalTechniqueSections(packet))
+    .concat(buildStablePrefixSections(packet));
+
+  return promptSections.join("\n\n");
 }
 
 function buildCoreSystemPrompt() {
@@ -1841,6 +2048,53 @@ function buildCoreSystemPrompt() {
     "If context is insufficient, flag risk explicitly instead of inventing hidden facts.",
     "Show, don't explain. If an image, gesture, or action already carries meaning, no explanatory sentence follows.",
     "Forbidden patterns: 'Sie merkte, dass', 'Sie spürte, wie', 'Das war es, was', 'nicht X, sondern Y' as explanation. End the sentence where the action ends."
+  ].join("\n");
+}
+
+function buildGlobalTechniqueSections(packet: SceneContextPacket) {
+  const sections = [buildLlmOutputControlPrompt()];
+
+  if (isThrillerProject(packet)) {
+    sections.push(buildGlobalThrillerTechniquePrompt());
+  }
+
+  return sections;
+}
+
+function buildLlmOutputControlPrompt() {
+  return [
+    "LLM output control:",
+    "- Do not explain strong images after they already land.",
+    "- Do not round off scene endings into soft closure.",
+    "- Do not repeat the same emotional or evidentiary effect twice.",
+    "- Keep the antagonist early-stage socially plausible, never too cleanly exposed.",
+    "- Side figures need their own protection logic; they are not plot levers.",
+    "- Institutions act by procedure, risk, documentation, and scope, not convenience.",
+    "- Avoid object clutter: one strong proof object beats many decorative props.",
+    "- Cut inner commentary that only restates visible action.",
+    "- Suspense without concrete cost is weak suspense.",
+    "- Never let a chapter explain its own thematic purpose."
+  ].join("\n");
+}
+
+function buildGlobalThrillerTechniquePrompt() {
+  return [
+    "Global thriller engine:",
+    "Scene promise: every scene must satisfy 'the protagonist wants X, does Y, gains/loses Z, but B gets worse.'",
+    "Suspense stack: track main_question, pressure_clock, information_gap, false_reading, reversal, proof_object, cost, status_shift, new_question, ending_type, bad_version_risk, revision_focus.",
+    "Question-answer economy: each scene must partly answer one live reader question and replace it with a more dangerous one.",
+    "Reversal rule: rational action should expose a sharper danger.",
+    "Chapter endings end on a concrete turn: proof turn, access loss, social reframe, object intrusion, quiet countermove, child echo, institutional lock, moral reframe, physical proximity, or deadline shift.",
+    "Proof image before explanation: object, gesture, behavior, or administrative detail carries meaning; prose does not re-explain it.",
+    "Anti-redundancy: if scene A delivers shock, scene B must deliver consequence; if scene A delivers suspicion, scene B must deliver cost.",
+    "Red-herring protocol: false leads are false readings that remain partly true and cost the protagonist something real.",
+    "Capability rules: the counterforce needs a plausible channel, timeframe, risk, and residue for every bigger move.",
+    "One-weapon rule: one dominant weapon per scene, even if secondary weapons appear.",
+    "Counterforce cost rule: every larger success leaves a mistake, witness line, residue, tighter corridor, or system reaction.",
+    "Subtlety rule: early signs are only minimally too helpful, informed, early, calm, plausible, or fitting.",
+    "Supporting figures and institutions stay competent, bounded, and self-protective.",
+    "Global proof ladder: anomaly -> documented plausibility -> social/institutional effect -> pattern -> access -> replacement/reframing -> durable chain -> public or irreversible consequence.",
+    "Scene engine: enter under pressure, give the protagonist a concrete goal, let the world answer plausibly, force a mid-scene reversal, shift relation or power, end after the strongest turn."
   ].join("\n");
 }
 
@@ -1868,6 +2122,12 @@ function buildStablePrefixSections(packet: SceneContextPacket) {
 }
 
 function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
+  const globalTechniqueBlocks = buildGlobalTechniqueSections(packet).map(function (text) {
+    return {
+      type: "text" as const,
+      text
+    };
+  });
   const stablePrefixBlocks = buildStablePrefixSections(packet).map(function (text) {
     return {
       type: "text" as const,
@@ -1881,6 +2141,7 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
       type: "text" as const,
       text: buildCoreSystemPrompt()
     },
+    ...globalTechniqueBlocks,
     ...stablePrefixBlocks,
     {
       type: "text" as const,
@@ -1902,6 +2163,14 @@ function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {
 
 function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGenerationOptions) {
   const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
+  const thrillerRequirements = isThrillerProject(packet)
+    ? [
+        "- For thriller projects, build beats around the suspense stack: main question, pressure clock, information gap, false reading, reversal, proof object, cost, status shift, new question.",
+        "- At least one beat must carry the proof object or suspicious signal.",
+        "- At least one beat must show concrete cost or access loss.",
+        "- The final beat must land on a named ending type, not generic unease."
+      ]
+    : [];
 
   return [
     "Create a compact beat plan for one scene.",
@@ -1917,6 +2186,7 @@ function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGeneratio
     "- purpose should be one compact sentence.",
     "- mustLand should be one compact payoff sentence.",
     "- If present, prioritize Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook.",
+    ...thrillerRequirements,
     buildSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
@@ -1936,6 +2206,7 @@ function buildDraftProsePrompt(
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Hit every beat, but keep some sentences raw enough that a later rewrite can sharpen them.",
     "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
+    "Avoid post-image explanation, soft endings, repeated effects, object clutter, and thematic self-commentary.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
@@ -1955,6 +2226,7 @@ function buildRewriteProsePrompt(
     "Tighten rhythm, sharpen observation, improve dialogue subtext, and end on a stronger hook.",
     "Preserve canon and beat order. Expand pressure, not fluff.",
     "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
+    "LLM weakness checks: cut explanation after strong images, avoid rounded endings, avoid repeating the same effect, keep side figures non-functional, keep institutions procedurally plausible, reduce object clutter, reduce inner commentary, and never let the scene explain its own purpose.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
@@ -2043,6 +2315,7 @@ function buildContinuityAuditPrompt(
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
     "Keep every listed issue compact.",
+    "Also flag these LLM failure modes when present: explanation after image, overly smooth ending, repeated effect, antagonist too clear too early, side figures acting only as plot tools, institutions behaving too conveniently, object clutter, excess inner commentary, suspense without cost, scene explaining its own purpose.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Draft text: ${draftText}`,
@@ -2068,9 +2341,50 @@ function buildQualityEvalPrompt(
     `wordActual must equal the actual word count of the scene text.`,
     "Issues should be short, concrete, and user-facing.",
     "Keep every issue compact.",
+    "Check for: explanation after image, rounded ending, repeated effect, antagonist too explicit too early, functional side figures, convenient institutions, too many proof objects, excess inner commentary, tension without cost, and chapters that explain their own purpose.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Final rewrite: ${rewriteText}`
+  ].join("\n");
+}
+
+function buildLiteraryFrictionPrompt(
+  packet: SceneContextPacket,
+  options: DraftGenerationOptions,
+  beatPlan: BeatPlanPayload,
+  rewriteText: string,
+  extractedState: DraftExtractionState,
+  qualityEval: QualityEvalPayload
+) {
+  const thrillerNote = isThrillerProject(packet)
+    ? "Apply the global thriller rules strictly, especially proof image before explanation, question-answer economy, reversal, proof ladder, and anti-redundancy."
+    : "Apply the literary-friction pass without adding genre ornament."
+
+  return [
+    "Run a final literary friction pass on the finished scene.",
+    "Return only structured output matching the requested schema.",
+    "This is not a normal rewrite.",
+    "Do not make the prose prettier, more poetic, or more expansive.",
+    "Protect strong images, body detail, social ambivalence, and abrasive edges.",
+    "Do not add plot, motives, symbolism, or new explanation.",
+    "If revision is needed, revise at most 10 percent of the text and keep the same story events.",
+    "Assess:",
+    "- image protection and over-explanation",
+    "- retrospective explanation",
+    "- AI sentence patterns",
+    "- abstraction pressure",
+    "- ending strength",
+    "- ambiguity protection",
+    "- body truth",
+    "- dialogue friction",
+    "- LLM weaknesses: soft endings, repeated effects, over-clear antagonist, functional side figures, convenient institutions, too many objects, excess inner commentary, suspense without cost, chapter explaining itself",
+    thrillerNote,
+    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    buildSceneContextPrompt(packet),
+    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
+    `Quality issues: ${qualityEval.issues.join(" | ") || "none"}`,
     `Final rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -2175,6 +2489,32 @@ function buildContinuityContext(packet: SceneContextPacket) {
       })
       .join(" | ") || "none"}`
   ].join("\n");
+}
+
+function isThrillerProject(packet: SceneContextPacket) {
+  const haystack = normalizeText(
+    [
+      packet.stablePrefix.categoryLane,
+      packet.stablePrefix.marketHook,
+      packet.stablePrefix.readerPromise,
+      packet.stablePrefix.premise,
+      packet.stablePrefix.endingPromise
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+
+  return [
+    "thriller",
+    "suspense",
+    "crime",
+    "psychological",
+    "psychologisch",
+    "domestic",
+    "mystery"
+  ].some(function (needle) {
+    return haystack.includes(needle);
+  });
 }
 
 function formatPromptList(label: string, items: string[]) {
@@ -2546,6 +2886,105 @@ function buildQualityEvalNotes(payload: QualityEvalPayload, qualityScore: number
   return notes.concat(["Keine offenen Eval-Issues."]);
 }
 
+function sanitizeLiteraryFriction(
+  payload: LiteraryFrictionPayload,
+  sourceText: string
+): LiteraryFrictionReport {
+  const sanitizedReport: LiteraryFrictionReport = {
+    protect: dedupeStrings(payload.protect).slice(0, 8),
+    cutCandidates: dedupeStrings(payload.cutCandidates).slice(0, 8),
+    overExplanation: dedupeStrings(payload.overExplanation).slice(0, 8),
+    patternWarnings: dedupeStrings(payload.patternWarnings).slice(0, 8),
+    abstractionFlags: dedupeStrings(payload.abstractionFlags).slice(0, 8),
+    endingAssessment: truncateText(payload.endingAssessment.trim(), 400),
+    microEdits: dedupeStrings(payload.microEdits).slice(0, 8),
+    needsRevision: payload.needsRevision,
+    revisedText: payload.revisedText ? sanitizeSceneText(payload.revisedText) : null,
+    scores: {
+      imageStrength: clampNumber(payload.scores.imageStrength, 1, 5),
+      bodyTruth: clampNumber(payload.scores.bodyTruth, 1, 5),
+      ambiguity: clampNumber(payload.scores.ambiguity, 1, 5),
+      antiExplanation: clampNumber(payload.scores.antiExplanation, 1, 5),
+      sentenceVariety: clampNumber(payload.scores.sentenceVariety, 1, 5),
+      endingStrength: clampNumber(payload.scores.endingStrength, 1, 5),
+      antiSmoothness: clampNumber(payload.scores.antiSmoothness, 1, 5),
+      voiceSpecificity: clampNumber(payload.scores.voiceSpecificity, 1, 5)
+    }
+  };
+  const revisedText = sanitizedReport.revisedText;
+
+  if (!sanitizedReport.needsRevision || !revisedText) {
+    return {
+      ...sanitizedReport,
+      revisedText: null
+    };
+  }
+
+  const originalWords = Math.max(1, countWords(sourceText));
+  const revisedWords = countWords(revisedText);
+  const deltaRatio = Math.abs(revisedWords - originalWords) / originalWords;
+
+  if (!revisedText.trim() || deltaRatio > 0.1) {
+    return {
+      ...sanitizedReport,
+      needsRevision: false,
+      revisedText: null,
+      microEdits: dedupeStrings(
+        sanitizedReport.microEdits.concat(["Vorgeschlagene Revision überschritt den 10%-Rahmen und wurde verworfen."])
+      ).slice(0, 8)
+    };
+  }
+
+  return sanitizedReport;
+}
+
+function buildLiteraryFrictionNotes(report: LiteraryFrictionReport) {
+  const notes = [
+    `Friction-Scores: Bild ${report.scores.imageStrength}/5 · Anti-Erklärung ${report.scores.antiExplanation}/5 · Schluss ${report.scores.endingStrength}/5.`,
+    report.endingAssessment || "Kein separates Schluss-Assessment."
+  ];
+
+  if (report.microEdits.length) {
+    return notes.concat(report.microEdits.slice(0, 2));
+  }
+
+  return notes;
+}
+
+function buildLiteraryFrictionWarnings(report: LiteraryFrictionReport) {
+  const scoreValues = Object.values(report.scores);
+  const lowScoreCount = scoreValues.filter(function (score) {
+    return score < 4;
+  }).length;
+  const warnings: string[] = [];
+
+  if (lowScoreCount > 2) {
+    warnings.push("Friction-Warnung: mehr als zwei Scores liegen unter 4.")
+  }
+
+  if (report.scores.antiExplanation < 4) {
+    warnings.push("Friction-Warnung: Anti-Erklärung unter 4.")
+  }
+
+  if (report.scores.endingStrength < 4) {
+    warnings.push("Friction-Warnung: Schlusskraft unter 4.")
+  }
+
+  if (report.scores.sentenceVariety < 3) {
+    warnings.push("Friction-Warnung: Satzvariation unter 3.")
+  }
+
+  return warnings.concat(report.overExplanation.slice(0, 2)).slice(0, 8)
+}
+
+function computeLiteraryFrictionScore(report: LiteraryFrictionReport) {
+  const total = Object.values(report.scores).reduce(function (sum, score) {
+    return sum + score;
+  }, 0);
+
+  return Math.round((total / 8) * 2 * 10) / 10;
+}
+
 function buildExtractionNotes(rewriteNotes: string[], reviewNotes: string[]) {
   const notes = rewriteNotes.slice(0, 2).concat(reviewNotes);
   return notes.length ? notes : ["State-Extraktion abgeschlossen."];
@@ -2820,6 +3259,10 @@ function describeAnthropicStructuredStageDiscipline(stageName: AnthropicStructur
     return `- Extract discipline: rewriteNotes 1-${EXTRACT_REWRITE_NOTES_MAX_ITEMS}; every extractedState list 0-${EXTRACT_ARRAY_MAX_ITEMS}; every string <= ${EXTRACT_STRING_MAX_LENGTH} chars; plain strings only.`;
   }
 
+  if (stageName === "literary_friction") {
+    return "- Literary-friction discipline: keep arrays compact, scores 1-5, revisedText optional, and revise no more than 10 percent.";
+  }
+
   return "- Keep the object compact and schema-first.";
 }
 
@@ -2836,6 +3279,10 @@ function describeAnthropicStructuredStageContract(stageName: AnthropicStructured
     return '{"continuityRisks":["string"],"styleDriftNotes":["string"]}';
   }
 
+  if (stageName === "literary_friction") {
+    return '{"protect":["string"],"cutCandidates":["string"],"overExplanation":["string"],"patternWarnings":["string"],"abstractionFlags":["string"],"endingAssessment":"string","microEdits":["string"],"needsRevision":false,"revisedText":null,"scores":{"imageStrength":4,"bodyTruth":4,"ambiguity":4,"antiExplanation":4,"sentenceVariety":4,"endingStrength":4,"antiSmoothness":4,"voiceSpecificity":4}}';
+  }
+
   return '{"wordTargetMin":0,"wordTargetMax":0,"wordActual":0,"hookScore":0,"tensionScore":0,"dialogueScore":0,"specificityScore":0,"germanCleanlinessScore":0,"continuityScore":0,"marketFitScore":0,"povDisciplineScore":0,"readabilityScore":0,"issues":["string"]}';
 }
 
@@ -2850,6 +3297,10 @@ function repairAnthropicStructuredPayload(stageName: AnthropicStructuredStageNam
 
   if (stageName === "continuity") {
     return repairContinuityAuditPayload(payload);
+  }
+
+  if (stageName === "literary_friction") {
+    return repairLiteraryFrictionPayload(payload);
   }
 
   return repairQualityEvalPayload(payload);
@@ -2953,6 +3404,34 @@ function repairQualityEvalPayload(payload: unknown): QualityEvalPayload {
     povDisciplineScore: clampNumber(coerceInteger(root.povDisciplineScore, 0), 0, 10),
     readabilityScore: clampNumber(coerceInteger(root.readabilityScore, 0), 0, 10),
     issues: coerceStringArray(root.issues, 8)
+  };
+}
+
+function repairLiteraryFrictionPayload(payload: unknown): LiteraryFrictionPayload {
+  const root = isRecord(payload) ? payload : {};
+  const scores = isRecord(root.scores) ? root.scores : {};
+
+  return {
+    protect: coerceStringArray(root.protect, 8),
+    cutCandidates: coerceStringArray(root.cutCandidates, 8),
+    overExplanation: coerceStringArray(root.overExplanation, 8),
+    patternWarnings: coerceStringArray(root.patternWarnings, 8),
+    abstractionFlags: coerceStringArray(root.abstractionFlags, 8),
+    endingAssessment: truncateText(coerceString(root.endingAssessment, "Kein separates Schluss-Assessment."), 400),
+    microEdits: coerceStringArray(root.microEdits, 8),
+    needsRevision: typeof root.needsRevision === "boolean" ? root.needsRevision : false,
+    revisedText:
+      typeof root.revisedText === "string" && root.revisedText.trim() ? root.revisedText : null,
+    scores: {
+      imageStrength: clampNumber(coerceInteger(scores.imageStrength, 3), 1, 5),
+      bodyTruth: clampNumber(coerceInteger(scores.bodyTruth, 3), 1, 5),
+      ambiguity: clampNumber(coerceInteger(scores.ambiguity, 3), 1, 5),
+      antiExplanation: clampNumber(coerceInteger(scores.antiExplanation, 3), 1, 5),
+      sentenceVariety: clampNumber(coerceInteger(scores.sentenceVariety, 3), 1, 5),
+      endingStrength: clampNumber(coerceInteger(scores.endingStrength, 3), 1, 5),
+      antiSmoothness: clampNumber(coerceInteger(scores.antiSmoothness, 3), 1, 5),
+      voiceSpecificity: clampNumber(coerceInteger(scores.voiceSpecificity, 3), 1, 5)
+    }
   };
 }
 

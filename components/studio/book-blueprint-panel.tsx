@@ -1029,7 +1029,7 @@ export function BookBlueprintPanel({
           <div className="book-card__head">
             <div>
               <span className="book-card__label">Draft Engine</span>
-              <h4>Job-Flow: context → outline → draft → extract → continuity → rewrite</h4>
+              <h4>Job-Flow: context → beat plan → draft → rewrite → length control → extract → continuity → quality eval → literary friction</h4>
             </div>
             <div className="book-card__actions">
               <select
@@ -1759,6 +1759,10 @@ function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[numbe
 
   if (stageId === "continuity") {
     return "Continuity";
+  }
+
+  if (stageId === "literary_friction") {
+    return "Literary Friction";
   }
 
   return "Quality Eval";

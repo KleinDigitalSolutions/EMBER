@@ -118,7 +118,8 @@ export const BOOK_DRAFT_STAGE_SEQUENCE: BookDraftStageId[] = [
   "length_control",
   "extract",
   "continuity",
-  "quality_eval"
+  "quality_eval",
+  "literary_friction"
 ];
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
@@ -408,6 +409,7 @@ export function createDraftJobFromPacket(
     draftText,
     rewriteText,
     rewriteNotes,
+    literaryFrictionNotes: [],
     extractedState,
     stages: createCompletedDraftStageRuns({
       provider: "local",
@@ -531,6 +533,16 @@ export function createCompletedDraftStageRuns(params: {
         params.qualityIssues && params.qualityIssues.length
           ? params.qualityIssues
           : ["Keine offenen Quality-Eval-Probleme."]
+    }),
+    literary_friction: createStageRun({
+      status: "skipped",
+      provider: params.provider,
+      modelName: params.modelName,
+      updatedAt: params.updatedAt,
+      targetWordsMin: params.targetWordsMin ?? null,
+      targetWordsMax: params.targetWordsMax ?? null,
+      actualWords: params.rewriteWords ?? null,
+      notes: ["Kein separater Friction-Pass ausgeführt."]
     })
   };
 }
@@ -1228,7 +1240,10 @@ export function updateDraftJobMemorySyncKindStatus(
 
 export function acceptDraftJobToScene(
   story: StoryDocument,
-  jobId: string
+  jobId: string,
+  options?: {
+    source?: "rewrite" | "literary_friction";
+  }
 ): { story: StoryDocument; sceneId: string } | null {
   const job = story.book.draftEngine.jobs.find(function (candidate) {
     return candidate.id === jobId;
@@ -1238,8 +1253,14 @@ export function acceptDraftJobToScene(
     return null;
   }
 
+  const acceptedSource = options?.source === "literary_friction" ? "literary_friction" : "rewrite";
+  const acceptedText =
+    acceptedSource === "literary_friction" && job.literaryFrictionText?.trim()
+      ? job.literaryFrictionText
+      : job.rewriteText;
+
   const nextStory = updateSceneInStory(story, job.sceneId, function (scene) {
-    const paragraphs = splitIntoParagraphs(job.rewriteText);
+    const paragraphs = splitIntoParagraphs(acceptedText);
     const reusableBlockIds = scene.blocks.map(function (block) {
       return isUuid(block.id) ? block.id : createUuid();
     });
@@ -1273,7 +1294,11 @@ export function acceptDraftJobToScene(
               ...currentJob,
               status: "accepted",
               acceptedAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
+              literaryFrictionNotes:
+                acceptedSource === "literary_friction" && currentJob.literaryFrictionText
+                  ? (currentJob.literaryFrictionNotes ?? []).concat(["Friction-Draft wurde übernommen."])
+                  : currentJob.literaryFrictionNotes
             };
           })
         }

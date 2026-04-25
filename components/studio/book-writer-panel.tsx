@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
@@ -35,13 +35,20 @@ import {
   type StoryScene
 } from "@/lib/story-schema";
 
-type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "continuity";
+type AiPanelView =
+  | "draft"
+  | "rewrite"
+  | "friction"
+  | "outline"
+  | "notes"
+  | "extract"
+  | "continuity";
 
 const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
   { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
-  { id: "duo", label: "Duo", detail: "Opus → GPT" },
+  { id: "duo", label: "Duo", detail: "Opus schreibt · GPT prüft" },
   { id: "gemini", label: "Gemini", detail: "schnell" },
   { id: "groq", label: "Groq", detail: "test" }
 ];
@@ -50,12 +57,17 @@ const DIRECTOR_PRESETS = [
   "Spannung enger ziehen und mit klarer Eskalation enden.",
   "Mehr Innenleben und emotionale Reibung der Hauptfigur zeigen.",
   "Sinnliche Details und räumliche Klarheit stärker ausarbeiten.",
-  "Prosa straffen, Wiederholungen schneiden und Tempo erhöhen."
+  "Prosa straffen, Wiederholungen schneiden und Tempo erhöhen.",
+  "Starke Bilder schützen, Nachdeutungen streichen und weniger erklären.",
+  "KI-Glättung reduzieren: mehr Reibung, weniger perfekte Bedeutungssätze.",
+  "Szene früher nach dem stärksten Bild oder Turn enden lassen.",
+  "Abstrakte Emotionen durch konkrete Handlung, Objekt oder Körperdetail ersetzen."
 ];
 
 const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "draft", label: "Draft" },
   { id: "rewrite", label: "Rewrite" },
+  { id: "friction", label: "Friction" },
   { id: "extract", label: "Extract" },
   { id: "continuity", label: "Continuity" },
   { id: "notes", label: "Notes" },
@@ -338,13 +350,17 @@ export function BookWriterPanel({
     }
   }
 
-  function handleAcceptJob(jobId: string) {
+  function handleAcceptJob(jobId: string, source: "rewrite" | "literary_friction" = "rewrite") {
     onUpdateStory(function (currentStory) {
-      const result = acceptDraftJobToScene(currentStory, jobId);
+      const result = acceptDraftJobToScene(currentStory, jobId, { source });
       return result ? result.story : currentStory;
     });
 
-    setJobStatus("Rewrite in die aktuelle Szene übernommen.");
+    setJobStatus(
+      source === "literary_friction"
+        ? "Friction-Draft in die aktuelle Szene übernommen."
+        : "Rewrite in die aktuelle Szene übernommen."
+    );
   }
 
   function handleModelChange(key: BookJobModelKey, value: string) {
@@ -878,6 +894,8 @@ export function BookWriterPanel({
                 <pre className="book-code-block book-writer-output">{activeJob.draftText}</pre>
               ) : activePanelView === "rewrite" ? (
                 <pre className="book-code-block book-writer-output">{activeJob.rewriteText}</pre>
+              ) : activePanelView === "friction" ? (
+                <LiteraryFrictionPanel job={activeJob} />
               ) : activePanelView === "extract" ? (
                 <div className="book-mini-list">
                   {buildExtractCards(activeJob).map(function (card) {
@@ -928,12 +946,22 @@ export function BookWriterPanel({
                   className="flat-button flat-button--active"
                   type="button"
                   onClick={function () {
-                    handleAcceptJob(activeJob.id);
+                    handleAcceptJob(activeJob.id, "rewrite");
                   }}
                 >
                   {activeJob.status === "accepted"
                     ? "Rewrite erneut übernehmen"
                     : "Rewrite übernehmen"}
+                </button>
+                <button
+                  className="flat-button"
+                  type="button"
+                  disabled={!activeJob.literaryFrictionText}
+                  onClick={function () {
+                    handleAcceptJob(activeJob.id, "literary_friction");
+                  }}
+                >
+                  Friction Draft übernehmen
                 </button>
               </div>
             </>
@@ -1203,6 +1231,109 @@ function buildExtractCards(job: BookDraftJob) {
   ];
 }
 
+function LiteraryFrictionPanel({ job }: { job: BookDraftJob }) {
+  const report = job.literaryFrictionReport;
+
+  if (!report) {
+    return (
+      <article className="book-mini-card">
+        <strong>Kein Friction-Report</strong>
+        <p>Für diesen Job liegt noch kein separater Literary-Friction-Pass vor.</p>
+      </article>
+    );
+  }
+
+  const scoreCards = [
+    { title: "Image Strength", content: `${report.scores.imageStrength}/5` },
+    { title: "Body Truth", content: `${report.scores.bodyTruth}/5` },
+    { title: "Ambiguity", content: `${report.scores.ambiguity}/5` },
+    { title: "Anti-Explanation", content: `${report.scores.antiExplanation}/5` },
+    { title: "Sentence Variety", content: `${report.scores.sentenceVariety}/5` },
+    { title: "Ending Strength", content: `${report.scores.endingStrength}/5` },
+    { title: "Anti-Smoothness", content: `${report.scores.antiSmoothness}/5` },
+    { title: "Voice Specificity", content: `${report.scores.voiceSpecificity}/5` }
+  ];
+  const detailCards = [
+    {
+      title: "Schutzstellen",
+      content: report.protect.join(" | ") || "Keine Schutzstellen markiert."
+    },
+    {
+      title: "Streichkandidaten",
+      content: report.cutCandidates.join(" | ") || "Keine Streichkandidaten markiert."
+    },
+    {
+      title: "Übererklärung",
+      content: report.overExplanation.join(" | ") || "Keine offene Übererklärung markiert."
+    },
+    {
+      title: "Musterwarnungen",
+      content: report.patternWarnings.join(" | ") || "Keine Musterwarnungen markiert."
+    },
+    {
+      title: "Abstraktionsdruck",
+      content: report.abstractionFlags.join(" | ") || "Keine Abstraktionsmarker markiert."
+    },
+    {
+      title: "Schlussprüfung",
+      content: report.endingAssessment || "Kein separates Schluss-Assessment."
+    },
+    {
+      title: "Mikro-Eingriffe",
+      content: report.microEdits.join(" | ") || "Keine Mikro-Eingriffe notiert."
+    }
+  ];
+
+  return (
+    <div className="book-context-stack">
+      <strong>Quality Scores</strong>
+      <div className="book-mini-list">
+        {scoreCards.map(function (card) {
+          return (
+            <article key={card.title} className="book-mini-card">
+              <strong>{card.title}</strong>
+              <p>{card.content}</p>
+            </article>
+          );
+        })}
+      </div>
+
+      <strong>Friction Findings</strong>
+      <div className="book-mini-list">
+        {detailCards.map(function (card) {
+          return (
+            <article key={card.title} className="book-mini-card">
+              <strong>{card.title}</strong>
+              <p>{card.content}</p>
+            </article>
+          );
+        })}
+      </div>
+
+      <strong>Revision</strong>
+      <div className="book-mini-list">
+        <article className="book-mini-card">
+          <strong>Status</strong>
+          <p>{report.needsRevision ? "Revision empfohlen." : "Kein Text-Eingriff nötig."}</p>
+        </article>
+        {job.literaryFrictionNotes?.length ? (
+          <article className="book-mini-card">
+            <strong>Stage Notes</strong>
+            <p>{job.literaryFrictionNotes.join(" | ")}</p>
+          </article>
+        ) : null}
+      </div>
+
+      {job.literaryFrictionText ? (
+        <Fragment>
+          <strong>Friction Draft</strong>
+          <pre className="book-code-block book-writer-output">{job.literaryFrictionText}</pre>
+        </Fragment>
+      ) : null}
+    </div>
+  );
+}
+
 function buildContinuityCards(job: BookDraftJob) {
   return [
     {
@@ -1273,7 +1404,7 @@ function getProviderTooltip(provider: BookJobProviderOption) {
     case "anthropic":
       return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
     case "duo":
-      return "Claude Opus macht Vorarbeit und Erstfassung, GPT 5.5 schreibt den finalen Text.";
+      return "Claude Opus schreibt die szenische Erstfassung. GPT 5.5 übernimmt Struktur-, Continuity-, Quality- und Literary-Friction-Pass.";
     case "gemini":
       return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
     case "groq":
@@ -1323,6 +1454,10 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
 
   if (stageId === "continuity") {
     return "Kontinuität";
+  }
+
+  if (stageId === "literary_friction") {
+    return "Literary Friction";
   }
 
   return "Quality Eval";

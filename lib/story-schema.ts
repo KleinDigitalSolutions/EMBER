@@ -12,7 +12,8 @@ export type BookDraftStageId =
   | "length_control"
   | "extract"
   | "continuity"
-  | "quality_eval";
+  | "quality_eval"
+  | "literary_friction";
 export type BookDraftStageStatus = "completed" | "failed" | "skipped";
 export type BookDraftStageRun = {
   status: BookDraftStageStatus;
@@ -42,6 +43,29 @@ export type BookDraftStageRuns = {
   extract: BookDraftStageRun;
   continuity: BookDraftStageRun;
   quality_eval: BookDraftStageRun;
+  literary_friction: BookDraftStageRun;
+};
+
+export type LiteraryFrictionReport = {
+  protect: string[];
+  cutCandidates: string[];
+  overExplanation: string[];
+  patternWarnings: string[];
+  abstractionFlags: string[];
+  endingAssessment: string;
+  microEdits: string[];
+  needsRevision: boolean;
+  revisedText: string | null;
+  scores: {
+    imageStrength: number;
+    bodyTruth: number;
+    ambiguity: number;
+    antiExplanation: number;
+    sentenceVariety: number;
+    endingStrength: number;
+    antiSmoothness: number;
+    voiceSpecificity: number;
+  };
 };
 
 export const LEGACY_BOOK_WRITER_CONSTITUTION = [
@@ -232,6 +256,9 @@ export type BookDraftJob = {
   draftText: string;
   rewriteText: string;
   rewriteNotes: string[];
+  literaryFrictionText?: string;
+  literaryFrictionNotes?: string[];
+  literaryFrictionReport?: LiteraryFrictionReport;
   extractedState: DraftExtractionState;
   stages: BookDraftStageRuns;
   contextSnapshot: {
