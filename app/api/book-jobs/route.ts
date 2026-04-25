@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import type { BookJobModelOverrides } from "@/lib/book-job-models";
 import { generateBookDraftJob, type BookJobProvider } from "@/lib/server/book-job-service";
 import type { SceneContextPacket } from "@/lib/book-engine";
 import type { StoryDocument } from "@/lib/story-schema";
@@ -14,7 +13,6 @@ export async function POST(request: Request) {
       sceneId?: string;
       packet?: SceneContextPacket;
       provider?: BookJobProvider;
-      modelOverrides?: BookJobModelOverrides;
       targetSceneWordsMin?: number;
       targetSceneWordsMax?: number;
       directorNote?: string;
@@ -34,7 +32,6 @@ export async function POST(request: Request) {
       sceneId: body.sceneId,
       packet: body.packet,
       provider: body.provider,
-      modelOverrides: body.modelOverrides,
       targetSceneWordsMin: body.targetSceneWordsMin,
       targetSceneWordsMax: body.targetSceneWordsMax,
       directorNote: body.directorNote

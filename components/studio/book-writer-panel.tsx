@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
@@ -12,13 +11,8 @@ import {
 } from "@/lib/book-engine";
 import { createUuid } from "@/lib/id";
 import {
-  BOOK_JOB_MODEL_STORAGE_KEY,
   BOOK_JOB_PROVIDER_STORAGE_KEY,
-  buildBookJobModelOverrides,
-  createEmptyBookJobModelSelection,
   isBookJobProviderOption,
-  parseBookJobModelSelection,
-  type BookJobModelKey,
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
@@ -45,12 +39,8 @@ type AiPanelView =
   | "continuity";
 
 const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
-  { id: "auto", label: "Auto", detail: "empfohlen" },
-  { id: "openai", label: "OpenAI", detail: "präzise" },
-  { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
-  { id: "duo", label: "Duo", detail: "Opus schreibt · GPT prüft" },
-  { id: "gemini", label: "Gemini", detail: "schnell" },
-  { id: "groq", label: "Groq", detail: "test" }
+  { id: "anthropic", label: "Opus 4.7", detail: "Standard" },
+  { id: "duo", label: "Duo", detail: "später testen" }
 ];
 
 const DIRECTOR_PRESETS = [
@@ -109,8 +99,7 @@ export function BookWriterPanel({
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
   onOpenBranchEditor: () => void;
 }) {
-  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("auto");
-  const [jobModels, setJobModels] = useState(createEmptyBookJobModelSelection);
+  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("anthropic");
   const [jobStatus, setJobStatus] = useState("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
   const [activePanelView, setActivePanelView] = useState<AiPanelView>("rewrite");
@@ -119,13 +108,15 @@ export function BookWriterPanel({
   useEffect(function () {
     const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
 
-    if (storedProvider && isBookJobProviderOption(storedProvider)) {
+    if (
+      storedProvider &&
+      isBookJobProviderOption(storedProvider) &&
+      PROVIDER_OPTIONS.some(function (option) {
+        return option.id === storedProvider;
+      })
+    ) {
       setJobProvider(storedProvider);
     }
-
-    setJobModels(
-      parseBookJobModelSelection(window.localStorage.getItem(BOOK_JOB_MODEL_STORAGE_KEY))
-    );
   }, []);
 
   useEffect(
@@ -133,13 +124,6 @@ export function BookWriterPanel({
       window.localStorage.setItem(BOOK_JOB_PROVIDER_STORAGE_KEY, jobProvider);
     },
     [jobProvider]
-  );
-
-  useEffect(
-    function () {
-      window.localStorage.setItem(BOOK_JOB_MODEL_STORAGE_KEY, JSON.stringify(jobModels));
-    },
-    [jobModels]
   );
 
   const stats = useMemo(function () {
@@ -316,7 +300,6 @@ export function BookWriterPanel({
           sceneId: scene.id,
           packet: contextPacket,
           provider: jobProvider,
-          modelOverrides: buildBookJobModelOverrides(jobModels),
           targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
           targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
           directorNote
@@ -361,24 +344,6 @@ export function BookWriterPanel({
         ? "Friction-Draft in die aktuelle Szene übernommen."
         : "Rewrite in die aktuelle Szene übernommen."
     );
-  }
-
-  function handleModelChange(key: BookJobModelKey, value: string) {
-    setJobModels(function (currentModels) {
-      return {
-        ...currentModels,
-        [key]: value
-      };
-    });
-  }
-
-  function handleModelReset(key: BookJobModelKey) {
-    setJobModels(function (currentModels) {
-      return {
-        ...currentModels,
-        [key]: ""
-      };
-    });
   }
 
   return (
@@ -641,7 +606,7 @@ export function BookWriterPanel({
           <div className="book-writer-card__head">
             <div>
               <span className="scene-editor__eyebrow">AI Copilot</span>
-              <h4>OpenAI, Anthropic, Duo, Gemini, Groq</h4>
+              <h4>Opus 4.7</h4>
             </div>
           </div>
 
@@ -666,13 +631,6 @@ export function BookWriterPanel({
               );
             })}
           </div>
-
-          <BookJobModelFields
-            provider={jobProvider}
-            models={jobModels}
-            onChangeModel={handleModelChange}
-            onResetModel={handleModelReset}
-          />
 
           <div className="editor-grid">
             <label className="editor-field" title="Minimale Ziel-Wortzahl für diese Szene.">
@@ -1397,20 +1355,10 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
 
 function getProviderTooltip(provider: BookJobProviderOption) {
   switch (provider) {
-    case "auto":
-      return "Wählt automatisch das beste verfügbare Modell für die aktuelle Aufgabe.";
-    case "openai":
-      return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
     case "anthropic":
-      return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
+      return "Alle normalen Book-Job-Stufen laufen fest über Claude Opus 4.7.";
     case "duo":
       return "Claude Opus schreibt die szenische Erstfassung. GPT 5.5 übernimmt Struktur-, Continuity-, Quality- und Literary-Friction-Pass.";
-    case "gemini":
-      return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
-    case "groq":
-      return "Nutzt Groq für schnelle Testläufe über OpenAI-kompatible Chat-Completions.";
-    case "local":
-      return "Führt den Job lokal aus (nur für Tests oder bei fehlenden API-Keys).";
     default:
       return "";
   }

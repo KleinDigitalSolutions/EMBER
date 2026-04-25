@@ -9,8 +9,7 @@ import { z } from "zod";
 import {
   DEFAULT_BOOK_JOB_MODELS,
   resolveBookJobModelValue,
-  sanitizeGeminiModelId,
-  type BookJobModelOverrides
+  sanitizeGeminiModelId
 } from "@/lib/book-job-models";
 import {
   buildSceneContextPacket,
@@ -115,6 +114,7 @@ const EXTRACT_REWRITE_NOTES_MAX_ITEMS = 4;
 const EXTRACT_STRING_MAX_LENGTH = 100;
 const ANTHROPIC_CACHE_TTL = "1h" as const;
 const ANTHROPIC_CACHE_BETAS = ["extended-cache-ttl-2025-04-11"] as const;
+const FIXED_OPUS_MODEL = "claude-opus-4-7";
 const buildAnthropicCacheRequestOptions = () => ({
   headers: {
     "anthropic-beta": ANTHROPIC_CACHE_BETAS.join(",")
@@ -128,7 +128,6 @@ type QualityEvalPayload = z.infer<typeof qualityEvalSchema>;
 type LiteraryFrictionPayload = z.infer<typeof literaryFrictionSchema>;
 
 type DraftGenerationOptions = {
-  modelOverrides?: BookJobModelOverrides;
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
   directorNote: string;
@@ -228,7 +227,6 @@ export async function generateBookDraftJob(params: {
   sceneId: string;
   packet?: SceneContextPacket;
   provider?: BookJobProvider;
-  modelOverrides?: BookJobModelOverrides;
   targetSceneWordsMin?: number;
   targetSceneWordsMax?: number;
   directorNote?: string;
@@ -273,28 +271,21 @@ export async function generateBookDraftJob(params: {
       packet,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      "Kein OPENAI_API_KEY, ANTHROPIC_API_KEY oder GEMINI_API_KEY gesetzt; lokaler Fallback verwendet."
+      "Kein ANTHROPIC_API_KEY gesetzt; lokaler Fallback verwendet."
     );
   }
 
   try {
     const providerOptions: DraftGenerationOptions = {
-      modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
       directorNote
     };
 
     const result =
-      remoteProvider === "openai"
-        ? await generateWithOpenAI(packet, providerOptions)
-        : remoteProvider === "anthropic"
-          ? await generateWithAnthropic(packet, providerOptions)
-          : remoteProvider === "duo"
-            ? await generateWithDuo(packet, providerOptions)
-          : remoteProvider === "gemini"
-            ? await generateWithGemini(packet, providerOptions)
-            : await generateWithGroq(packet, providerOptions);
+      remoteProvider === "duo"
+        ? await generateWithDuo(packet, providerOptions)
+        : await generateWithAnthropic(packet, providerOptions);
 
     return {
       provider: remoteProvider,
@@ -319,42 +310,12 @@ export async function generateBookDraftJob(params: {
 }
 
 function resolveRemoteProvider(provider: BookJobProvider) {
-  if (provider === "openai" && process.env.OPENAI_API_KEY) {
-    return "openai" as const;
-  }
-
-  if (provider === "anthropic" && process.env.ANTHROPIC_API_KEY) {
-    return "anthropic" as const;
-  }
-
   if (provider === "duo" && process.env.ANTHROPIC_API_KEY && process.env.OPENAI_API_KEY) {
     return "duo" as const;
   }
 
-  if (provider === "gemini" && getGeminiApiKey()) {
-    return "gemini" as const;
-  }
-
-  if (provider === "groq" && getGroqApiKey()) {
-    return "groq" as const;
-  }
-
-  if (provider === "auto") {
-    if (process.env.OPENAI_API_KEY) {
-      return "openai" as const;
-    }
-
-    if (process.env.ANTHROPIC_API_KEY) {
-      return "anthropic" as const;
-    }
-
-    if (getGeminiApiKey()) {
-      return "gemini" as const;
-    }
-
-    if (getGroqApiKey()) {
-      return "groq" as const;
-    }
+  if (provider !== "duo" && process.env.ANTHROPIC_API_KEY) {
+    return "anthropic" as const;
   }
 
   return null;
@@ -365,7 +326,7 @@ async function generateWithOpenAI(
   options: DraftGenerationOptions
 ): Promise<DraftProviderResult> {
   const modelName = resolveBookJobModelValue(
-    options.modelOverrides?.openai,
+    undefined,
     process.env.OPENAI_BOOK_MODEL,
     DEFAULT_BOOK_JOB_MODELS.openai
   );
@@ -485,18 +446,8 @@ async function generateWithAnthropic(
   packet: SceneContextPacket,
   options: DraftGenerationOptions
 ): Promise<DraftProviderResult> {
-  const modelName = resolveBookJobModelValue(
-    options.modelOverrides?.anthropic,
-    process.env.ANTHROPIC_BOOK_MODEL,
-    DEFAULT_BOOK_JOB_MODELS.anthropic
-  );
-  const continuityModelName = normalizeAnthropicModelName(
-    resolveBookJobModelValue(
-      options.modelOverrides?.anthropicContinuity,
-      process.env.ANTHROPIC_CONTINUITY_MODEL,
-      DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
-    )
-  );
+  const modelName = FIXED_OPUS_MODEL;
+  const continuityModelName = FIXED_OPUS_MODEL;
   const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
@@ -641,16 +592,8 @@ async function generateWithDuo(
   packet: SceneContextPacket,
   options: DraftGenerationOptions
 ): Promise<DraftProviderResult> {
-  const anthropicModelName = resolveBookJobModelValue(
-    options.modelOverrides?.anthropic,
-    process.env.ANTHROPIC_BOOK_MODEL,
-    DEFAULT_BOOK_JOB_MODELS.anthropic
-  );
-  const openaiModelName = resolveBookJobModelValue(
-    options.modelOverrides?.openai,
-    process.env.OPENAI_BOOK_DUO_MODEL || process.env.OPENAI_BOOK_MODEL,
-    DEFAULT_DUO_OPENAI_MODEL
-  );
+  const anthropicModelName = FIXED_OPUS_MODEL;
+  const openaiModelName = DEFAULT_DUO_OPENAI_MODEL;
   const anthropicClient = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY
   });
@@ -794,7 +737,7 @@ async function generateWithGemini(
 
   const modelName = sanitizeGeminiModelId(
     resolveBookJobModelValue(
-      options.modelOverrides?.gemini,
+      undefined,
       process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
       DEFAULT_BOOK_JOB_MODELS.gemini
     )
@@ -917,7 +860,7 @@ async function generateWithGroq(
   }
 
   const modelName = resolveBookJobModelValue(
-    options.modelOverrides?.groq,
+    undefined,
     process.env.GROQ_BOOK_MODEL,
     DEFAULT_BOOK_JOB_MODELS.groq
   );
