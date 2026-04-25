@@ -44,9 +44,9 @@ async function main() {
     check("scene hard constraints in Opus prompt", packet.dynamicContext.sceneHardConstraints.every(function (constraint) {
       return allPromptText.includes(constraint) || beatPlanText.includes(constraint)
     }), packet.dynamicContext.sceneHardConstraints.length),
-    check("cached stable prefix blocks present", prompt.systemBlocks.filter(function (block) {
+    check("cache-control block limit respected", prompt.systemBlocks.filter(function (block) {
       return Boolean(block.cacheControl)
-    }).length >= 7, prompt.systemBlocks.filter(function (block) {
+    }).length <= 4, prompt.systemBlocks.filter(function (block) {
       return Boolean(block.cacheControl)
     }).length)
   ]

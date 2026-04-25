@@ -2065,33 +2065,48 @@ function buildStablePrefixSections(packet: SceneContextPacket) {
 }
 
 function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
-  const globalTechniqueBlocks = buildGlobalTechniqueSections(packet).map(function (text) {
-    return {
-      type: "text" as const,
-      text
-    };
-  });
-  const stablePrefixBlocks = buildStablePrefixSections(packet).map(function (text) {
-    return {
-      type: "text" as const,
-      text,
-      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
-    };
-  });
+  const stableSections = buildStablePrefixSections(packet);
 
   return [
-    {
-      type: "text" as const,
-      text: buildCoreSystemPrompt()
-    },
-    ...globalTechniqueBlocks,
-    ...stablePrefixBlocks,
-    {
-      type: "text" as const,
-      text: buildAnthropicDynamicContextPrompt(packet),
-      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
-    }
+    buildAnthropicCachedTextBlock(
+      [
+        "Cache block 1: core drafting discipline and global technique.",
+        buildCoreSystemPrompt(),
+        ...buildGlobalTechniqueSections(packet)
+      ].join("\n\n")
+    ),
+    buildAnthropicCachedTextBlock(
+      [
+        "Cache block 2: stable project foundation.",
+        stableSections[0],
+        stableSections[1],
+        stableSections[2]
+      ].join("\n\n")
+    ),
+    buildAnthropicCachedTextBlock(
+      [
+        "Cache block 3: prompt-critical Regie packs and world model.",
+        stableSections[3],
+        stableSections[4],
+        stableSections[5],
+        stableSections[6]
+      ].join("\n\n")
+    ),
+    buildAnthropicCachedTextBlock(
+      [
+        "Cache block 4: scene-bound context reused across this multi-stage job.",
+        buildAnthropicDynamicContextPrompt(packet)
+      ].join("\n\n")
+    )
   ];
+}
+
+function buildAnthropicCachedTextBlock(text: string) {
+  return {
+    type: "text" as const,
+    text,
+    cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+  };
 }
 
 export function buildAnthropicPromptInspection(packet: SceneContextPacket) {
