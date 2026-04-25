@@ -718,6 +718,8 @@ Für Thriller-Projekte sollen Scene Cards zusätzlich zu `objective`, `coreActio
 
 Diese Felder sind parserfreundlich und dürfen als zusätzliche Scene-Card-Keys geführt werden. Wenn sie fehlen, greift die globale Pipeline-Heuristik. Wenn sie vorhanden sind, geben sie dem Modell szenenscharfe Kontrolle.
 
+Hinweis zu `proof_object` und `beweisobjekt`: `proof_object` ist der globale Thriller-Technique-Key für neue Regien. `beweisobjekt` bleibt als deutschsprachiger Legacy-/Regie-Key erlaubt. Wenn beide gesetzt sind, sollen sie denselben Kern meinen oder `proof_object` die präzisere Pipeline-Fassung liefern.
+
 Für `Die falsche Abholung` sind viele dieser Funktionen bereits indirekt vorhanden:
 - `reader_pulse` entspricht oft `main_question`
 - `konkrete_folge` deckt oft `cost` und `status_shift`

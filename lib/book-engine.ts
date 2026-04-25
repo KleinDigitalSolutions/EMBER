@@ -1824,14 +1824,16 @@ function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
   }
 
   const directives = resolveSceneCardDirectives(sceneCard);
-  const customHints = directives.custom
-    .filter(function (entry) {
-      const key = normalizeText(entry.key);
-      return key === "beweisobjekt" || key === "alltagswaffe" || key === "ersetzungsmoment";
-    })
-    .map(function (entry) {
-      return `${entry.key}: ${entry.value}`;
-    });
+  const proofObject = resolveSceneDirectiveCustomValue(sceneCard, ["proof_object", "beweisobjekt"]);
+  const alltagswaffe = resolveSceneDirectiveCustomValue(sceneCard, ["alltagswaffe"]);
+  const ersetzungsmoment = resolveSceneDirectiveCustomValue(sceneCard, ["ersetzungsmoment"]);
+  const customHints = [
+    proofObject ? `proof_object: ${proofObject}` : null,
+    alltagswaffe ? `alltagswaffe: ${alltagswaffe}` : null,
+    ersetzungsmoment ? `ersetzungsmoment: ${ersetzungsmoment}` : null
+  ].filter(function (entry): entry is string {
+    return Boolean(entry);
+  });
   const hints = [directives.timeAnchor, directives.location]
     .map(function (value) {
       return value?.trim() || "";
@@ -1848,6 +1850,7 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
 
   const directives = resolveSceneCardDirectives(sceneCard);
   const hardConstraints: string[] = [];
+  const proofObject = resolveSceneDirectiveCustomValue(sceneCard, ["proof_object", "beweisobjekt"]);
 
   if (directives.pov) {
     hardConstraints.push(`POV ist ${directives.pov}. Bleib in dieser Perspektive.`)
@@ -1885,6 +1888,10 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
     hardConstraints.push(`Pflicht-Schlusssatz oder Schlussbild: ${directives.closingLine}`)
   }
 
+  if (proofObject) {
+    hardConstraints.push(`proof_object: ${proofObject}`)
+  }
+
   directives.custom.forEach(function (entry) {
     const normalizedKey = normalizeText(entry.key);
 
@@ -1893,11 +1900,14 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
       return
     }
 
+    if (normalizedKey === "proof_object" || normalizedKey === "beweisobjekt") {
+      return
+    }
+
     if (
       entry.key.endsWith("_moment") ||
       entry.key.endsWith("_plant") ||
       entry.key.endsWith("_payoff") ||
-      normalizedKey === "beweisobjekt" ||
       normalizedKey === "alltagswaffe" ||
       normalizedKey === "ersetzungsmoment" ||
       normalizedKey === "szenenantrieb" ||
