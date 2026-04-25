@@ -67,6 +67,7 @@ export type SceneContextPacket = {
     relevantCodex: CanonLedgerEntry[];
     relevantCharacterStates: CharacterStateEntry[];
     activeThreads: OpenThread[];
+    previousAcceptedProseTail: string;
     variables: Array<{
       key: string;
       label: string;
@@ -169,10 +170,25 @@ function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterSta
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
   if (story.book.memory.sceneCards.length) {
-    return story.book.memory.sceneCards;
+    return sortSceneCardsByStoryOrder(story.book.memory.sceneCards, story);
   }
 
   return deriveTimelineBeats(story);
+}
+
+function sortSceneCardsByStoryOrder(sceneCards: TimelineBeat[], story: StoryDocument) {
+  const sceneOrder = new Map<string, number>();
+
+  getAllScenes(story).forEach(function (scene, index) {
+    sceneOrder.set(scene.id, index);
+  });
+
+  return sceneCards.slice().sort(function (left, right) {
+    return (
+      (sceneOrder.get(left.sceneId) ?? Number.MAX_SAFE_INTEGER) -
+      (sceneOrder.get(right.sceneId) ?? Number.MAX_SAFE_INTEGER)
+    );
+  });
 }
 
 export function buildOpenThreads(story: StoryDocument): OpenThread[] {
@@ -296,6 +312,11 @@ export function buildSceneContextPacket(
       relevantCodex,
       relevantCharacterStates,
       activeThreads: activeThreads.slice(0, 4),
+      previousAcceptedProseTail: buildPreviousAcceptedProseTail(
+        syncedStory,
+        timeline,
+        sceneIndex
+      ),
       variables: syncedStory.variables.map(function (variable) {
         return {
           key: variable.key,
@@ -1818,6 +1839,49 @@ function buildSceneExcerpt(scene: StoryScene) {
   return clampText(text || scene.summary, 220);
 }
 
+function buildPreviousAcceptedProseTail(
+  story: StoryDocument,
+  timeline: TimelineBeat[],
+  sceneIndex: number
+) {
+  if (sceneIndex <= 0) {
+    return "";
+  }
+
+  const previousScenes = timeline
+    .slice(Math.max(0, sceneIndex - 3), sceneIndex)
+    .map(function (beat, index, beats) {
+      const sceneContext = findSceneContext(story, beat.sceneId);
+      const scene = sceneContext?.scene ?? null;
+
+      if (!scene) {
+        return "";
+      }
+
+      const prose = scene.blocks
+        .map(function (block) {
+          return block.text.trim();
+        })
+        .filter(Boolean)
+        .join("\n\n");
+
+      if (!prose) {
+        return "";
+      }
+
+      const isImmediatePreviousScene = index === beats.length - 1;
+      const tailLength = isImmediatePreviousScene ? 1800 : 700;
+
+      return [
+        `${beat.orderLabel || scene.label || scene.title}: ${scene.title}`,
+        clampTextFromEnd(prose, tailLength)
+      ].join("\n");
+    })
+    .filter(Boolean);
+
+  return clampTextFromEnd(previousScenes.join("\n\n---\n\n"), 3200);
+}
+
 function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
   if (!sceneCard) {
     return [];
@@ -2082,6 +2146,16 @@ function clampText(value: string, maxLength: number) {
   }
 
   return `${compact.slice(0, maxLength - 1).trim()}…`;
+}
+
+function clampTextFromEnd(value: string, maxLength: number) {
+  const compact = value.replace(/\s+/g, " ").trim();
+
+  if (compact.length <= maxLength) {
+    return compact;
+  }
+
+  return `…${compact.slice(compact.length - maxLength + 1).trim()}`;
 }
 
 function looksLikeOpenQuestion(value: string) {

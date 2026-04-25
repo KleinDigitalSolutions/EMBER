@@ -115,6 +115,7 @@ const EXTRACT_STRING_MAX_LENGTH = 100;
 const ANTHROPIC_CACHE_TTL = "1h" as const;
 const ANTHROPIC_CACHE_BETAS = ["extended-cache-ttl-2025-04-11"] as const;
 const FIXED_OPUS_MODEL = "claude-opus-4-7";
+const ENABLE_AUTOMATIC_LITERARY_FRICTION = false;
 const buildAnthropicCacheRequestOptions = () => ({
   headers: {
     "anthropic-beta": ANTHROPIC_CACHE_BETAS.join(",")
@@ -1235,59 +1236,73 @@ async function runScenePipeline(
     notes: ["Literary-Friction-Pass wurde nicht ausgeführt."]
   });
 
-  try {
-    const frictionResult = await adapter.runLiteraryFriction(
-      beatPlan,
-      lengthControl.text,
-      extractedState,
-      qualityEval
-    );
-    literaryFrictionReport = sanitizeLiteraryFriction(
-      frictionResult.payload,
-      lengthControl.text
-    );
-    literaryFrictionText =
-      literaryFrictionReport.needsRevision && literaryFrictionReport.revisedText
-        ? sanitizeSceneText(literaryFrictionReport.revisedText)
-        : undefined;
-    literaryFrictionNotes = buildLiteraryFrictionNotes(literaryFrictionReport);
-    const frictionWarnings = buildLiteraryFrictionWarnings(literaryFrictionReport);
-
-    if (frictionWarnings.length) {
-      warnings.push(frictionWarnings.join(" | "));
-    }
-
+  if (!ENABLE_AUTOMATIC_LITERARY_FRICTION) {
     literaryFrictionStage = createStageRun({
-      provider: getStageProvider(adapter, "literary_friction"),
-      modelName: frictionResult.metrics.modelName,
-      updatedAt: new Date().toISOString(),
-      attemptCount: frictionResult.metrics.attemptCount,
-      repairCount: frictionResult.metrics.repairCount,
-      durationMs: frictionResult.metrics.durationMs,
-      inputTokens: frictionResult.metrics.inputTokens,
-      outputTokens: frictionResult.metrics.outputTokens,
-      stopReason: frictionResult.metrics.stopReason,
-      targetWordsMin: options.targetSceneWordsMin,
-      targetWordsMax: options.targetSceneWordsMax,
-      actualWords: countWords(literaryFrictionText || lengthControl.text),
-      qualityScore: computeLiteraryFrictionScore(literaryFrictionReport),
-      qualityIssues: frictionWarnings,
-      notes: literaryFrictionNotes
-    });
-  } catch (error) {
-    literaryFrictionStage = createStageRun({
-      status: "failed",
+      status: "skipped",
       provider: getStageProvider(adapter, "literary_friction"),
       modelName: adapter.continuityModelName ?? adapter.modelName,
       updatedAt: new Date().toISOString(),
+      attemptCount: 0,
       targetWordsMin: options.targetSceneWordsMin,
       targetWordsMax: options.targetSceneWordsMax,
       actualWords: countWords(lengthControl.text),
-      notes: [
-        `Literary-Friction fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
-      ]
+      notes: ["Literary-Friction ist im driftarmen 23er Schreibmodus deaktiviert."]
     });
-    warnings.push(literaryFrictionStage.notes[0]);
+  } else {
+    try {
+      const frictionResult = await adapter.runLiteraryFriction(
+        beatPlan,
+        lengthControl.text,
+        extractedState,
+        qualityEval
+      );
+      literaryFrictionReport = sanitizeLiteraryFriction(
+        frictionResult.payload,
+        lengthControl.text
+      );
+      literaryFrictionText =
+        literaryFrictionReport.needsRevision && literaryFrictionReport.revisedText
+          ? sanitizeSceneText(literaryFrictionReport.revisedText)
+          : undefined;
+      literaryFrictionNotes = buildLiteraryFrictionNotes(literaryFrictionReport);
+      const frictionWarnings = buildLiteraryFrictionWarnings(literaryFrictionReport);
+
+      if (frictionWarnings.length) {
+        warnings.push(frictionWarnings.join(" | "));
+      }
+
+      literaryFrictionStage = createStageRun({
+        provider: getStageProvider(adapter, "literary_friction"),
+        modelName: frictionResult.metrics.modelName,
+        updatedAt: new Date().toISOString(),
+        attemptCount: frictionResult.metrics.attemptCount,
+        repairCount: frictionResult.metrics.repairCount,
+        durationMs: frictionResult.metrics.durationMs,
+        inputTokens: frictionResult.metrics.inputTokens,
+        outputTokens: frictionResult.metrics.outputTokens,
+        stopReason: frictionResult.metrics.stopReason,
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords: countWords(literaryFrictionText || lengthControl.text),
+        qualityScore: computeLiteraryFrictionScore(literaryFrictionReport),
+        qualityIssues: frictionWarnings,
+        notes: literaryFrictionNotes
+      });
+    } catch (error) {
+      literaryFrictionStage = createStageRun({
+        status: "failed",
+        provider: getStageProvider(adapter, "literary_friction"),
+        modelName: adapter.continuityModelName ?? adapter.modelName,
+        updatedAt: new Date().toISOString(),
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
+        actualWords: countWords(lengthControl.text),
+        notes: [
+          `Literary-Friction fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
+        ]
+      });
+      warnings.push(literaryFrictionStage.notes[0]);
+    }
   }
 
   return {
@@ -1972,11 +1987,7 @@ function normalizeJsonText(value: string) {
 }
 
 function buildSystemPrompt(packet: SceneContextPacket) {
-  const promptSections = [buildCoreSystemPrompt()]
-    .concat(buildGlobalTechniqueSections(packet))
-    .concat(buildStablePrefixSections(packet));
-
-  return promptSections.join("\n\n");
+  return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
 }
 
 function buildCoreSystemPrompt() {
@@ -2042,7 +2053,17 @@ function buildGlobalThrillerTechniquePrompt() {
 }
 
 function buildStablePrefixPrompt(packet: SceneContextPacket) {
-  return buildStablePrefixSections(packet).join("\n\n");
+  return [
+    `Premise: ${packet.stablePrefix.premise}`,
+    `Reader promise: ${packet.stablePrefix.readerPromise}`,
+    `Ending promise: ${packet.stablePrefix.endingPromise}`,
+    `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
+    `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
+    formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
+    formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
+    formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails)
+  ].join("\n");
 }
 
 function buildStablePrefixSections(packet: SceneContextPacket) {
@@ -2065,39 +2086,21 @@ function buildStablePrefixSections(packet: SceneContextPacket) {
 }
 
 function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
-  const stableSections = buildStablePrefixSections(packet);
-
   return [
-    buildAnthropicCachedTextBlock(
-      [
-        "Cache block 1: core drafting discipline and global technique.",
-        buildCoreSystemPrompt(),
-        ...buildGlobalTechniqueSections(packet)
-      ].join("\n\n")
-    ),
-    buildAnthropicCachedTextBlock(
-      [
-        "Cache block 2: stable project foundation.",
-        stableSections[0],
-        stableSections[1],
-        stableSections[2]
-      ].join("\n\n")
-    ),
-    buildAnthropicCachedTextBlock(
-      [
-        "Cache block 3: prompt-critical Regie packs and world model.",
-        stableSections[3],
-        stableSections[4],
-        stableSections[5],
-        stableSections[6]
-      ].join("\n\n")
-    ),
-    buildAnthropicCachedTextBlock(
-      [
-        "Cache block 4: scene-bound context reused across this multi-stage job.",
-        buildAnthropicDynamicContextPrompt(packet)
-      ].join("\n\n")
-    )
+    {
+      type: "text" as const,
+      text: buildCoreSystemPrompt()
+    },
+    {
+      type: "text" as const,
+      text: buildStablePrefixPrompt(packet),
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    },
+    {
+      type: "text" as const,
+      text: buildAnthropicDynamicContextPrompt(packet),
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    }
   ];
 }
 
@@ -2138,14 +2141,6 @@ function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {
 
 function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGenerationOptions) {
   const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
-  const thrillerRequirements = isThrillerProject(packet)
-    ? [
-        "- For thriller projects, build beats around the suspense stack: main question, pressure clock, information gap, false reading, reversal, proof object, cost, status shift, new question.",
-        "- At least one beat must carry the proof object or suspicious signal.",
-        "- At least one beat must show concrete cost or access loss.",
-        "- The final beat must land on a named ending type, not generic unease."
-      ]
-    : [];
 
   return [
     "Create a compact beat plan for one scene.",
@@ -2160,8 +2155,6 @@ function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGeneratio
     "- label should stay short.",
     "- purpose should be one compact sentence.",
     "- mustLand should be one compact payoff sentence.",
-    "- If present, prioritize Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook.",
-    ...thrillerRequirements,
     buildSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
@@ -2180,8 +2173,6 @@ function buildDraftProsePrompt(
     `Draft target range: ${draftTargets.min}-${draftTargets.max} words.`,
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Hit every beat, but keep some sentences raw enough that a later rewrite can sharpen them.",
-    "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
-    "Avoid post-image explanation, soft endings, repeated effects, object clutter, and thematic self-commentary.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
@@ -2200,11 +2191,8 @@ function buildRewriteProsePrompt(
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Tighten rhythm, sharpen observation, improve dialogue subtext, and end on a stronger hook.",
     "Preserve canon and beat order. Expand pressure, not fluff.",
-    "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
-    "LLM weakness checks: cut explanation after strong images, avoid rounded endings, avoid repeating the same effect, keep side figures non-functional, keep institutions procedurally plausible, reduce object clutter, reduce inner commentary, and never let the scene explain its own purpose.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current draft: ${draftText}`
   ].join("\n");
 }
@@ -2225,10 +2213,8 @@ function buildExpandPrompt(
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Only deepen up to two named beats. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
     `Preferred expansion beats: ${beatsToExpand.join(" | ") || "last two beats"}`,
-    "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -2244,10 +2230,8 @@ function buildCompressPrompt(
     "Return prose only.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
-    "Honor Scene drive, POV knowledge boundary, Relationship pressure, and End-state hook when provided.",
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none",
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -2385,9 +2369,6 @@ function buildAnthropicScenePrompt(params: {
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
-    `<voice_pack>${escapeXml(serializeGuidanceBlocks(params.packet.stablePrefix.voicePack))}</voice_pack>`,
-    `<proof_ladder>${escapeXml(serializeGuidanceBlocks(params.packet.stablePrefix.proofLadder))}</proof_ladder>`,
-    `<world_bible>${escapeXml(serializeWorldBiblePrimer(params.packet.stablePrefix.worldBiblePrimer))}</world_bible>`,
     `<scene_context>${sceneContext}</scene_context>`,
     `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
@@ -2418,6 +2399,8 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
+    `Previous accepted prose tail: ${packet.dynamicContext.previousAcceptedProseTail || "none"}`,
+    "Previous accepted prose tail is continuity context only; preserve concrete facts from it, but do not copy its wording and do not extract it as new state for the current scene.",
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
@@ -2462,7 +2445,8 @@ function buildContinuityContext(packet: SceneContextPacket) {
       .map(function (thread) {
         return `${thread.label}: ${thread.detail}`;
       })
-      .join(" | ") || "none"}`
+      .join(" | ") || "none"}`,
+    `Previous accepted prose tail: ${packet.dynamicContext.previousAcceptedProseTail || "none"}`
   ].join("\n");
 }
 

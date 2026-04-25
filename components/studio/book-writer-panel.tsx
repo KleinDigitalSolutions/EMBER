@@ -911,16 +911,6 @@ export function BookWriterPanel({
                     ? "Rewrite erneut übernehmen"
                     : "Rewrite übernehmen"}
                 </button>
-                <button
-                  className="flat-button"
-                  type="button"
-                  disabled={!activeJob.literaryFrictionText}
-                  onClick={function () {
-                    handleAcceptJob(activeJob.id, "literary_friction");
-                  }}
-                >
-                  Friction Draft übernehmen
-                </button>
               </div>
             </>
           ) : (
