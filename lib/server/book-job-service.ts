@@ -2094,6 +2094,23 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
   ];
 }
 
+export function buildAnthropicPromptInspection(packet: SceneContextPacket) {
+  return {
+    systemBlocks: buildAnthropicSystemPromptBlocks(packet).map(function (block) {
+      return {
+        text: block.text,
+        cacheControl: "cache_control" in block ? block.cache_control : null
+      };
+    }),
+    dynamicContextPrompt: buildAnthropicDynamicContextPrompt(packet),
+    beatPlanPrompt: buildBeatPlanPrompt(packet, {
+      targetSceneWordsMin: 1200,
+      targetSceneWordsMax: 1600,
+      directorNote: ""
+    })
+  };
+}
+
 function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {
   return [
     "Scene-bound dynamic context for this job:",
