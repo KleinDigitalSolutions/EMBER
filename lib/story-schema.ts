@@ -2,7 +2,7 @@ import { createUuid } from "@/lib/id";
 
 export type StoryStatus = "draft" | "playtest" | "submitted";
 export type StoryMode = "book" | "branching";
-export type BookJobProvider = "openai" | "anthropic" | "gemini" | "groq" | "duo" | "local";
+export type BookJobProvider = "openai" | "anthropic" | "gemini" | "groq" | "local";
 export type BookJobMode = "remote" | "local_fallback";
 export type BookDraftStageId =
   | "context"
@@ -12,8 +12,7 @@ export type BookDraftStageId =
   | "length_control"
   | "extract"
   | "continuity"
-  | "quality_eval"
-  | "literary_friction";
+  | "quality_eval";
 export type BookDraftStageStatus = "completed" | "failed" | "skipped";
 export type BookDraftStageRun = {
   status: BookDraftStageStatus;
@@ -43,29 +42,6 @@ export type BookDraftStageRuns = {
   extract: BookDraftStageRun;
   continuity: BookDraftStageRun;
   quality_eval: BookDraftStageRun;
-  literary_friction: BookDraftStageRun;
-};
-
-export type LiteraryFrictionReport = {
-  protect: string[];
-  cutCandidates: string[];
-  overExplanation: string[];
-  patternWarnings: string[];
-  abstractionFlags: string[];
-  endingAssessment: string;
-  microEdits: string[];
-  needsRevision: boolean;
-  revisedText: string | null;
-  scores: {
-    imageStrength: number;
-    bodyTruth: number;
-    ambiguity: number;
-    antiExplanation: number;
-    sentenceVariety: number;
-    endingStrength: number;
-    antiSmoothness: number;
-    voiceSpecificity: number;
-  };
 };
 
 export const LEGACY_BOOK_WRITER_CONSTITUTION = [
@@ -215,8 +191,6 @@ export type BookBlueprint = {
     endingPromise: string;
     thematicCore: string;
     storyArchitecture: string[];
-    voicePack: BookGuidanceBlock[];
-    proofLadder: BookGuidanceBlock[];
   };
   marketBrief: {
     amazonGoal: string;
@@ -256,9 +230,6 @@ export type BookDraftJob = {
   draftText: string;
   rewriteText: string;
   rewriteNotes: string[];
-  literaryFrictionText?: string;
-  literaryFrictionNotes?: string[];
-  literaryFrictionReport?: LiteraryFrictionReport;
   extractedState: DraftExtractionState;
   stages: BookDraftStageRuns;
   contextSnapshot: {
@@ -368,11 +339,6 @@ export type BookContextPack = {
   relevantCanonEntryIds: string[];
   relevantCharacterStateIds: string[];
   activeThreadIds: string[];
-};
-
-export type BookGuidanceBlock = {
-  title: string;
-  lines: string[];
 };
 
 export type DraftExtractionState = {
@@ -558,47 +524,6 @@ export function normalizeBookRuleList(value: unknown, fallback: readonly string[
   return nextRules;
 }
 
-export function normalizeBookGuidanceBlocks(
-  value: unknown,
-  fallback: readonly BookGuidanceBlock[] = []
-): BookGuidanceBlock[] {
-  const nextBlocks = Array.isArray(value)
-    ? value
-        .filter(function (entry): entry is BookGuidanceBlock {
-          return Boolean(entry) && typeof entry === "object";
-        })
-        .map(function (entry) {
-          return {
-            title: typeof entry.title === "string" ? entry.title.trim() : "",
-            lines: Array.isArray(entry.lines)
-              ? entry.lines
-                  .filter(function (line): line is string {
-                    return typeof line === "string";
-                  })
-                  .map(function (line) {
-                    return line.trim();
-                  })
-                  .filter(Boolean)
-              : []
-          };
-        })
-        .filter(function (entry) {
-          return Boolean(entry.title) && entry.lines.length > 0;
-        })
-    : [];
-
-  if (!nextBlocks.length) {
-    return fallback.map(function (entry) {
-      return {
-        title: entry.title,
-        lines: entry.lines.slice()
-      };
-    });
-  }
-
-  return nextBlocks;
-}
-
 export function createEmptyBookSceneCardDirectives(): BookSceneCardDirectives {
   return {
     pov: null,
@@ -734,9 +659,7 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       readerPromise: "",
       endingPromise: "",
       thematicCore: "",
-      storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice(),
-      voicePack: [],
-      proofLadder: []
+      storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
     },
     marketBrief: {
       amazonGoal: "",

@@ -38,13 +38,10 @@ export type SceneContextPacket = {
     endingPromise: string;
     thematicCore: string;
     storyArchitecture: string[];
-    voicePack: StoryDocument["book"]["masterBrief"]["voicePack"];
-    proofLadder: StoryDocument["book"]["masterBrief"]["proofLadder"];
     categoryLane: string;
     marketHook: string;
     publishingGuardrails: string[];
     writerConstitution: string[];
-    worldBiblePrimer: WorldBibleEntry[];
   };
   dynamicContext: {
     actTitle: string;
@@ -56,10 +53,6 @@ export type SceneContextPacket = {
     sceneCardLabel: string | null;
     sceneHeaderHints: string[];
     sceneHardConstraints: string[];
-    sceneDrive: string | null;
-    povKnowledgeBoundary: string | null;
-    relationshipPressure: string | null;
-    endStateHook: string | null;
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -67,7 +60,6 @@ export type SceneContextPacket = {
     relevantCodex: CanonLedgerEntry[];
     relevantCharacterStates: CharacterStateEntry[];
     activeThreads: OpenThread[];
-    previousAcceptedProseTail: string;
     variables: Array<{
       key: string;
       label: string;
@@ -119,8 +111,7 @@ export const BOOK_DRAFT_STAGE_SEQUENCE: BookDraftStageId[] = [
   "length_control",
   "extract",
   "continuity",
-  "quality_eval",
-  "literary_friction"
+  "quality_eval"
 ];
 
 export function buildCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
@@ -170,25 +161,10 @@ function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterSta
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
   if (story.book.memory.sceneCards.length) {
-    return sortSceneCardsByStoryOrder(story.book.memory.sceneCards, story);
+    return story.book.memory.sceneCards;
   }
 
   return deriveTimelineBeats(story);
-}
-
-function sortSceneCardsByStoryOrder(sceneCards: TimelineBeat[], story: StoryDocument) {
-  const sceneOrder = new Map<string, number>();
-
-  getAllScenes(story).forEach(function (scene, index) {
-    sceneOrder.set(scene.id, index);
-  });
-
-  return sceneCards.slice().sort(function (left, right) {
-    return (
-      (sceneOrder.get(left.sceneId) ?? Number.MAX_SAFE_INTEGER) -
-      (sceneOrder.get(right.sceneId) ?? Number.MAX_SAFE_INTEGER)
-    );
-  });
 }
 
 export function buildOpenThreads(story: StoryDocument): OpenThread[] {
@@ -230,7 +206,6 @@ export function buildSceneContextPacket(
   const canonLedger = buildCanonLedger(syncedStory);
   const characterLedger = buildCharacterLedger(syncedStory);
   const memory = syncedStory.book.memory;
-  const sceneBeat = timeline[sceneIndex] ?? null;
   const contextPack =
     memory.contextPacks.find(function (pack) {
       return pack.sceneId === sceneId;
@@ -268,13 +243,10 @@ export function buildSceneContextPacket(
       endingPromise: story.book.masterBrief.endingPromise,
       thematicCore: story.book.masterBrief.thematicCore,
       storyArchitecture: story.book.masterBrief.storyArchitecture,
-      voicePack: story.book.masterBrief.voicePack,
-      proofLadder: story.book.masterBrief.proofLadder,
       categoryLane: story.book.marketBrief.categoryLane,
       marketHook: story.book.marketBrief.hook,
       publishingGuardrails: story.book.marketBrief.publishingGuardrails,
-      writerConstitution: story.book.writerConstitution,
-      worldBiblePrimer: buildWorldBiblePrimer(story.worldBible)
+      writerConstitution: story.book.writerConstitution
     },
     dynamicContext: {
       actTitle: sceneContext.act.title,
@@ -282,29 +254,10 @@ export function buildSceneContextPacket(
       sceneTitle: sceneContext.scene.title,
       sceneSummary: sceneContext.scene.summary,
       sceneExcerpt: buildSceneExcerpt(sceneContext.scene),
-      sceneCardOutline: sceneBeat?.outline ?? [],
-      sceneCardLabel: sceneBeat?.orderLabel ?? null,
-      sceneHeaderHints: buildSceneHeaderHints(sceneBeat),
-      sceneHardConstraints: buildSceneHardConstraints(sceneBeat),
-      sceneDrive: resolveSceneDirectiveCustomValue(sceneBeat, [
-        "szenenantrieb",
-        "scene_drive",
-        "kausalzug"
-      ]),
-      povKnowledgeBoundary: resolveSceneDirectiveCustomValue(sceneBeat, [
-        "wissensgrenze",
-        "pov_knowledge_boundary",
-        "knowledge_boundary"
-      ]),
-      relationshipPressure: resolveSceneDirectiveCustomValue(sceneBeat, [
-        "beziehungsdruck",
-        "relationship_pressure"
-      ]),
-      endStateHook: resolveSceneDirectiveCustomValue(sceneBeat, [
-        "endzustand_hook",
-        "end_state_hook",
-        "hook_endzustand"
-      ]),
+      sceneCardOutline: timeline[sceneIndex]?.outline ?? [],
+      sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
+      sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
+      sceneHardConstraints: buildSceneHardConstraints(timeline[sceneIndex] ?? null),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -312,11 +265,6 @@ export function buildSceneContextPacket(
       relevantCodex,
       relevantCharacterStates,
       activeThreads: activeThreads.slice(0, 4),
-      previousAcceptedProseTail: buildPreviousAcceptedProseTail(
-        syncedStory,
-        timeline,
-        sceneIndex
-      ),
       variables: syncedStory.variables.map(function (variable) {
         return {
           key: variable.key,
@@ -335,36 +283,6 @@ export function buildSceneContextPacket(
       style_drift_notes: []
     }
   };
-}
-
-function buildWorldBiblePrimer(worldBible: StoryDocument["worldBible"]) {
-  const kindPriority: Record<WorldBibleEntry["kind"], number> = {
-    location: 0,
-    object: 1,
-    theme: 2,
-    character: 3
-  }
-
-  return worldBible
-    .map(function (entry, index) {
-      return {
-        entry,
-        index
-      }
-    })
-    .filter(function ({ entry }) {
-      return Boolean(entry.summary.trim())
-    })
-    .sort(function (left, right) {
-      return (
-        kindPriority[left.entry.kind] - kindPriority[right.entry.kind] ||
-        left.index - right.index
-      )
-    })
-    .map(function ({ entry }) {
-      return entry
-    })
-    .slice(0, 12)
 }
 
 export function getDraftJobsForScene(story: StoryDocument, sceneId: string) {
@@ -430,7 +348,6 @@ export function createDraftJobFromPacket(
     draftText,
     rewriteText,
     rewriteNotes,
-    literaryFrictionNotes: [],
     extractedState,
     stages: createCompletedDraftStageRuns({
       provider: "local",
@@ -554,16 +471,6 @@ export function createCompletedDraftStageRuns(params: {
         params.qualityIssues && params.qualityIssues.length
           ? params.qualityIssues
           : ["Keine offenen Quality-Eval-Probleme."]
-    }),
-    literary_friction: createStageRun({
-      status: "skipped",
-      provider: params.provider,
-      modelName: params.modelName,
-      updatedAt: params.updatedAt,
-      targetWordsMin: params.targetWordsMin ?? null,
-      targetWordsMax: params.targetWordsMax ?? null,
-      actualWords: params.rewriteWords ?? null,
-      notes: ["Kein separater Friction-Pass ausgeführt."]
     })
   };
 }
@@ -621,23 +528,21 @@ export function createStageRun(params: {
 }
 
 function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["memory"] {
-  const syncedAt = story.book.memory.lastSyncedAt || new Date().toISOString();
-  const canonLedger = buildCanonLedger(story);
-  const openThreads = buildOpenThreads(story);
-  const characterLedger = buildCharacterLedger(story);
+  const syncedAt = new Date().toISOString();
+  const canonLedger = deriveCanonLedger(story);
+  const openThreads = deriveOpenThreads(story);
+  const characterLedger = deriveCharacterLedger(story, canonLedger, openThreads, syncedAt);
   const sceneCards = story.book.memory.sceneCards.length
     ? story.book.memory.sceneCards
     : deriveTimelineBeats(story);
-  const contextPacks = story.book.memory.contextPacks.length
-    ? story.book.memory.contextPacks
-    : deriveContextPacks(
-        story,
-        syncedAt,
-        sceneCards,
-        canonLedger,
-        characterLedger,
-        openThreads
-      );
+  const contextPacks = deriveContextPacks(
+    story,
+    syncedAt,
+    sceneCards,
+    canonLedger,
+    characterLedger,
+    openThreads
+  );
   const continuityNotes = story.book.memory.continuityNotes.length
     ? story.book.memory.continuityNotes
     : story.book.draftEngine.jobs
@@ -1261,10 +1166,7 @@ export function updateDraftJobMemorySyncKindStatus(
 
 export function acceptDraftJobToScene(
   story: StoryDocument,
-  jobId: string,
-  options?: {
-    source?: "rewrite" | "literary_friction";
-  }
+  jobId: string
 ): { story: StoryDocument; sceneId: string } | null {
   const job = story.book.draftEngine.jobs.find(function (candidate) {
     return candidate.id === jobId;
@@ -1274,14 +1176,8 @@ export function acceptDraftJobToScene(
     return null;
   }
 
-  const acceptedSource = options?.source === "literary_friction" ? "literary_friction" : "rewrite";
-  const acceptedText =
-    acceptedSource === "literary_friction" && job.literaryFrictionText?.trim()
-      ? job.literaryFrictionText
-      : job.rewriteText;
-
   const nextStory = updateSceneInStory(story, job.sceneId, function (scene) {
-    const paragraphs = splitIntoParagraphs(acceptedText);
+    const paragraphs = splitIntoParagraphs(job.rewriteText);
     const reusableBlockIds = scene.blocks.map(function (block) {
       return isUuid(block.id) ? block.id : createUuid();
     });
@@ -1315,11 +1211,7 @@ export function acceptDraftJobToScene(
               ...currentJob,
               status: "accepted",
               acceptedAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              literaryFrictionNotes:
-                acceptedSource === "literary_friction" && currentJob.literaryFrictionText
-                  ? (currentJob.literaryFrictionNotes ?? []).concat(["Friction-Draft wurde übernommen."])
-                  : currentJob.literaryFrictionNotes
+              updatedAt: new Date().toISOString()
             };
           })
         }
@@ -1603,19 +1495,10 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
       story.book.masterBrief.storyArchitecture.join("|"),
-      story.book.masterBrief.voicePack.map(function (block) {
-        return `${block.title}:${block.lines[0] || ""}`
-      }).join("|"),
-      story.book.masterBrief.proofLadder.map(function (block) {
-        return `${block.title}:${block.lines[0] || ""}`
-      }).join("|"),
       story.book.marketBrief.categoryLane,
       story.book.marketBrief.hook,
       chapterGoal,
-      story.book.writerConstitution.join("|"),
-      story.worldBible.map(function (entry) {
-        return `${entry.kind}:${entry.title}`
-      }).join("|")
+      story.book.writerConstitution.join("|")
     ].join(" :: "),
     180
   );
@@ -1679,15 +1562,6 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       thread
         ? `Der offene Thread lautet im Kern: ${thread.label}. ${thread.detail}`
         : "Der Druck kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
-      packet.dynamicContext.sceneDrive
-        ? `Szenenantrieb: ${packet.dynamicContext.sceneDrive}`
-        : "",
-      packet.dynamicContext.povKnowledgeBoundary
-        ? `Wissensgrenze der POV-Figur: ${packet.dynamicContext.povKnowledgeBoundary}`
-        : "",
-      packet.dynamicContext.relationshipPressure
-        ? `Beziehungsdruck in der Szene: ${packet.dynamicContext.relationshipPressure}`
-        : "",
       "Die Figuren reagieren konkret, nicht essayistisch."
     ].join(" "),
     [
@@ -1697,9 +1571,6 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
         : "Die Szene soll bereits eine lesbare emotionale Verschiebung erzeugen.",
       packet.stablePrefix.categoryLane
         ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
-        : "",
-      packet.dynamicContext.endStateHook
-        ? `Pflicht-Nachhall am Szenenende: ${packet.dynamicContext.endStateHook}.`
         : "",
       nextBeat
         ? `Am Ende muss genug Zug in Richtung ${nextBeat.sceneTitle} bleiben.`
@@ -1839,72 +1710,19 @@ function buildSceneExcerpt(scene: StoryScene) {
   return clampText(text || scene.summary, 220);
 }
 
-function buildPreviousAcceptedProseTail(
-  story: StoryDocument,
-  timeline: TimelineBeat[],
-  sceneIndex: number
-) {
-  if (sceneIndex <= 0) {
-    return "";
-  }
-
-  const previousScenes = timeline
-    .slice(Math.max(0, sceneIndex - 3), sceneIndex)
-    .map(function (beat, index, beats) {
-      const sceneContext = findSceneContext(story, beat.sceneId);
-      const scene = sceneContext?.scene ?? null;
-
-      if (!scene) {
-        return "";
-      }
-
-      const prose = scene.blocks
-        .map(function (block) {
-          return block.text.trim();
-        })
-        .filter(Boolean)
-        .join("\n\n");
-
-      if (!prose) {
-        return "";
-      }
-
-      const isImmediatePreviousScene = index === beats.length - 1;
-      const tailLength = isImmediatePreviousScene ? 1800 : 700;
-
-      return [
-        `${beat.orderLabel || scene.label || scene.title}: ${scene.title}`,
-        clampTextFromEnd(prose, tailLength)
-      ].join("\n");
-    })
-    .filter(Boolean);
-
-  return clampTextFromEnd(previousScenes.join("\n\n---\n\n"), 3200);
-}
-
 function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
   if (!sceneCard) {
     return [];
   }
 
   const directives = resolveSceneCardDirectives(sceneCard);
-  const proofObject = resolveSceneDirectiveCustomValue(sceneCard, ["proof_object", "beweisobjekt"]);
-  const alltagswaffe = resolveSceneDirectiveCustomValue(sceneCard, ["alltagswaffe"]);
-  const ersetzungsmoment = resolveSceneDirectiveCustomValue(sceneCard, ["ersetzungsmoment"]);
-  const customHints = [
-    proofObject ? `proof_object: ${proofObject}` : null,
-    alltagswaffe ? `alltagswaffe: ${alltagswaffe}` : null,
-    ersetzungsmoment ? `ersetzungsmoment: ${ersetzungsmoment}` : null
-  ].filter(function (entry): entry is string {
-    return Boolean(entry);
-  });
   const hints = [directives.timeAnchor, directives.location]
     .map(function (value) {
       return value?.trim() || "";
     })
     .filter(Boolean);
 
-  return hints.concat(customHints).slice(0, 4);
+  return hints.slice(0, 2);
 }
 
 function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
@@ -1914,7 +1732,6 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
 
   const directives = resolveSceneCardDirectives(sceneCard);
   const hardConstraints: string[] = [];
-  const proofObject = resolveSceneDirectiveCustomValue(sceneCard, ["proof_object", "beweisobjekt"]);
 
   if (directives.pov) {
     hardConstraints.push(`POV ist ${directives.pov}. Bleib in dieser Perspektive.`)
@@ -1952,41 +1769,11 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
     hardConstraints.push(`Pflicht-Schlusssatz oder Schlussbild: ${directives.closingLine}`)
   }
 
-  if (proofObject) {
-    hardConstraints.push(`proof_object: ${proofObject}`)
-  }
-
   directives.custom.forEach(function (entry) {
-    const normalizedKey = normalizeText(entry.key);
-
-    if (normalizedKey === "director_note" || normalizedKey === "regieanweisung") {
-      hardConstraints.push(`Regieanweisung fuer diese Szene: ${entry.value}`)
-      return
-    }
-
-    if (normalizedKey === "proof_object" || normalizedKey === "beweisobjekt") {
-      return
-    }
-
     if (
       entry.key.endsWith("_moment") ||
       entry.key.endsWith("_plant") ||
       entry.key.endsWith("_payoff") ||
-      normalizedKey === "alltagswaffe" ||
-      normalizedKey === "ersetzungsmoment" ||
-      normalizedKey === "szenenantrieb" ||
-      normalizedKey === "scene_drive" ||
-      normalizedKey === "kausalzug" ||
-      normalizedKey === "wissensgrenze" ||
-      normalizedKey === "pov_knowledge_boundary" ||
-      normalizedKey === "knowledge_boundary" ||
-      normalizedKey === "beziehungsdruck" ||
-      normalizedKey === "relationship_pressure" ||
-      normalizedKey === "endzustand_hook" ||
-      normalizedKey === "end_state_hook" ||
-      normalizedKey === "hook_endzustand" ||
-      normalizedKey === "false_friend_signal" ||
-      normalizedKey === "payoff" ||
       entry.key === "setup" ||
       entry.key === "subtext" ||
       entry.key === "charakter_subtext" ||
@@ -2064,33 +1851,6 @@ function parseSceneCardOutlineFields(outline: string[]) {
   }, {} as Record<string, string>);
 }
 
-function resolveSceneDirectiveCustomValue(sceneCard: TimelineBeat | null, aliases: string[]) {
-  if (!sceneCard) {
-    return null;
-  }
-
-  const directives = resolveSceneCardDirectives(sceneCard);
-  const aliasSet = new Set(
-    aliases.map(function (alias) {
-      return normalizeText(alias);
-    })
-  );
-  const values = directives.custom
-    .filter(function (entry) {
-      return aliasSet.has(normalizeText(entry.key));
-    })
-    .map(function (entry) {
-      return entry.value.trim();
-    })
-    .filter(Boolean);
-
-  return uniqueStrings(values).join(" | ") || null;
-}
-
-function uniqueStrings(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)));
-}
-
 function buildSceneCardOutline(scene: StoryScene, chapterGoal: string, nextSceneTitle: string | null) {
   const summary = clampText(scene.summary || scene.title || "Die Szene braucht einen klaren Konflikt.", 140);
   const excerpt = buildSceneExcerpt(scene);
@@ -2127,15 +1887,8 @@ function deriveSceneSummary(job: BookDraftJob) {
 function normalizeText(value: string) {
   return value
     .toLowerCase()
-    .replace(/ä/g, "ae")
-    .replace(/ö/g, "oe")
-    .replace(/ü/g, "ue")
-    .replace(/ß/g, "ss")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9_\s-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function clampText(value: string, maxLength: number) {
@@ -2146,16 +1899,6 @@ function clampText(value: string, maxLength: number) {
   }
 
   return `${compact.slice(0, maxLength - 1).trim()}…`;
-}
-
-function clampTextFromEnd(value: string, maxLength: number) {
-  const compact = value.replace(/\s+/g, " ").trim();
-
-  if (compact.length <= maxLength) {
-    return compact;
-  }
-
-  return `…${compact.slice(compact.length - maxLength + 1).trim()}`;
 }
 
 function looksLikeOpenQuestion(value: string) {

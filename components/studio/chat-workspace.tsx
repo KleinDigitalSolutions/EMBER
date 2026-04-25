@@ -28,7 +28,6 @@ const QUICK_PROMPTS = [
   "Welche drei Risiken siehst du aktuell im Manuskript?",
   "Erstelle einen Regiebrief für den aktuellen Projektstand."
 ];
-const STUDIO_DISPLAY_TIME_ZONE = "Europe/Berlin";
 
 const CONTEXT_SCOPE_OPTIONS: Array<{
   id: AssistantContextScope;
@@ -560,8 +559,7 @@ function formatTimestamp(value: string) {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
-    minute: "2-digit",
-    timeZone: STUDIO_DISPLAY_TIME_ZONE
+    minute: "2-digit"
   }).format(timestamp);
 }
 

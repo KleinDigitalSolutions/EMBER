@@ -1,18 +1,23 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
-  buildTimelineBeats,
   buildSceneContextPacket,
   getDraftJobsForScene,
   upsertDraftJob
 } from "@/lib/book-engine";
 import { createUuid } from "@/lib/id";
 import {
+  BOOK_JOB_MODEL_STORAGE_KEY,
   BOOK_JOB_PROVIDER_STORAGE_KEY,
+  buildBookJobModelOverrides,
+  createEmptyBookJobModelSelection,
   isBookJobProviderOption,
+  parseBookJobModelSelection,
+  type BookJobModelKey,
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
@@ -29,35 +34,26 @@ import {
   type StoryScene
 } from "@/lib/story-schema";
 
-type AiPanelView =
-  | "draft"
-  | "rewrite"
-  | "friction"
-  | "outline"
-  | "notes"
-  | "extract"
-  | "continuity";
+type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "continuity";
 
 const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
-  { id: "anthropic", label: "Opus 4.7", detail: "Standard" },
-  { id: "duo", label: "Duo", detail: "später testen" }
+  { id: "auto", label: "Auto", detail: "empfohlen" },
+  { id: "openai", label: "OpenAI", detail: "präzise" },
+  { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
+  { id: "gemini", label: "Gemini", detail: "schnell" },
+  { id: "groq", label: "Groq", detail: "test" }
 ];
 
 const DIRECTOR_PRESETS = [
   "Spannung enger ziehen und mit klarer Eskalation enden.",
   "Mehr Innenleben und emotionale Reibung der Hauptfigur zeigen.",
   "Sinnliche Details und räumliche Klarheit stärker ausarbeiten.",
-  "Prosa straffen, Wiederholungen schneiden und Tempo erhöhen.",
-  "Starke Bilder schützen, Nachdeutungen streichen und weniger erklären.",
-  "KI-Glättung reduzieren: mehr Reibung, weniger perfekte Bedeutungssätze.",
-  "Szene früher nach dem stärksten Bild oder Turn enden lassen.",
-  "Abstrakte Emotionen durch konkrete Handlung, Objekt oder Körperdetail ersetzen."
+  "Prosa straffen, Wiederholungen schneiden und Tempo erhöhen."
 ];
 
 const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "draft", label: "Draft" },
   { id: "rewrite", label: "Rewrite" },
-  { id: "friction", label: "Friction" },
   { id: "extract", label: "Extract" },
   { id: "continuity", label: "Continuity" },
   { id: "notes", label: "Notes" },
@@ -99,24 +95,23 @@ export function BookWriterPanel({
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void;
   onOpenBranchEditor: () => void;
 }) {
-  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("anthropic");
+  const [jobProvider, setJobProvider] = useState<BookJobProviderOption>("auto");
+  const [jobModels, setJobModels] = useState(createEmptyBookJobModelSelection);
   const [jobStatus, setJobStatus] = useState("");
   const [isGeneratingJob, setIsGeneratingJob] = useState(false);
+  const [directorNote, setDirectorNote] = useState("");
   const [activePanelView, setActivePanelView] = useState<AiPanelView>("rewrite");
-  const [selectedJobId, setSelectedJobId] = useState("");
 
   useEffect(function () {
     const storedProvider = window.localStorage.getItem(BOOK_JOB_PROVIDER_STORAGE_KEY);
 
-    if (
-      storedProvider &&
-      isBookJobProviderOption(storedProvider) &&
-      PROVIDER_OPTIONS.some(function (option) {
-        return option.id === storedProvider;
-      })
-    ) {
+    if (storedProvider && isBookJobProviderOption(storedProvider)) {
       setJobProvider(storedProvider);
     }
+
+    setJobModels(
+      parseBookJobModelSelection(window.localStorage.getItem(BOOK_JOB_MODEL_STORAGE_KEY))
+    );
   }, []);
 
   useEffect(
@@ -124,6 +119,13 @@ export function BookWriterPanel({
       window.localStorage.setItem(BOOK_JOB_PROVIDER_STORAGE_KEY, jobProvider);
     },
     [jobProvider]
+  );
+
+  useEffect(
+    function () {
+      window.localStorage.setItem(BOOK_JOB_MODEL_STORAGE_KEY, JSON.stringify(jobModels));
+    },
+    [jobModels]
   );
 
   const stats = useMemo(function () {
@@ -185,43 +187,9 @@ export function BookWriterPanel({
     return getDraftJobsForScene(story, sceneContext.scene.id);
   }, [sceneContext, story]);
 
-  useEffect(
-    function () {
-      if (!draftJobs.length) {
-        setSelectedJobId("");
-        return;
-      }
-
-      setSelectedJobId(function (currentJobId) {
-        const matchingJob = draftJobs.find(function (job) {
-          return job.id === currentJobId;
-        });
-
-        return matchingJob ? matchingJob.id : draftJobs[0].id;
-      });
-    },
-    [draftJobs]
-  );
-
   const firstSceneId = useMemo(function () {
     return findFirstSceneId(story);
   }, [story.acts]);
-
-  const directorNote = useMemo(function () {
-    if (!sceneContext) {
-      return "";
-    }
-
-    const sceneCard = story.book.memory.sceneCards.find(function (entry) {
-      return entry.sceneId === sceneContext.scene.id;
-    });
-
-    const directorEntry = sceneCard?.directives.custom.find(function (entry) {
-      return entry.key === "director_note";
-    });
-
-    return directorEntry?.value ?? "";
-  }, [sceneContext, story.book.memory.sceneCards]);
 
   if (!sceneContext) {
     return (
@@ -266,10 +234,6 @@ export function BookWriterPanel({
   const scene = sceneContext.scene;
   const liveWordCount = countSceneWords(scene);
   const latestJob = draftJobs[0] ?? null;
-  const activeJob =
-    draftJobs.find(function (job) {
-      return job.id === selectedJobId;
-    }) ?? latestJob;
   const sceneIndex = sceneContext.chapter.scenes.findIndex(function (candidate) {
     return candidate.id === scene.id;
   });
@@ -300,6 +264,7 @@ export function BookWriterPanel({
           sceneId: scene.id,
           packet: contextPacket,
           provider: jobProvider,
+          modelOverrides: buildBookJobModelOverrides(jobModels),
           targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
           targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
           directorNote
@@ -319,7 +284,6 @@ export function BookWriterPanel({
 
       setActivePanelView("rewrite");
       const job = payload.job as BookDraftJob;
-      setSelectedJobId(job.id);
       const executionLabel = formatExecutionModeLabel((payload.job as BookDraftJob).mode);
       setJobStatus(
         payload.warning
@@ -333,17 +297,31 @@ export function BookWriterPanel({
     }
   }
 
-  function handleAcceptJob(jobId: string, source: "rewrite" | "literary_friction" = "rewrite") {
+  function handleAcceptJob(jobId: string) {
     onUpdateStory(function (currentStory) {
-      const result = acceptDraftJobToScene(currentStory, jobId, { source });
+      const result = acceptDraftJobToScene(currentStory, jobId);
       return result ? result.story : currentStory;
     });
 
-    setJobStatus(
-      source === "literary_friction"
-        ? "Friction-Draft in die aktuelle Szene übernommen."
-        : "Rewrite in die aktuelle Szene übernommen."
-    );
+    setJobStatus("Rewrite in die aktuelle Szene übernommen.");
+  }
+
+  function handleModelChange(key: BookJobModelKey, value: string) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: value
+      };
+    });
+  }
+
+  function handleModelReset(key: BookJobModelKey) {
+    setJobModels(function (currentModels) {
+      return {
+        ...currentModels,
+        [key]: ""
+      };
+    });
   }
 
   return (
@@ -606,7 +584,7 @@ export function BookWriterPanel({
           <div className="book-writer-card__head">
             <div>
               <span className="scene-editor__eyebrow">AI Copilot</span>
-              <h4>Opus 4.7</h4>
+              <h4>OpenAI, Anthropic, Gemini, Groq</h4>
             </div>
           </div>
 
@@ -631,6 +609,13 @@ export function BookWriterPanel({
               );
             })}
           </div>
+
+          <BookJobModelFields
+            provider={jobProvider}
+            models={jobModels}
+            onChangeModel={handleModelChange}
+            onResetModel={handleModelReset}
+          />
 
           <div className="editor-grid">
             <label className="editor-field" title="Minimale Ziel-Wortzahl für diese Szene.">
@@ -707,11 +692,7 @@ export function BookWriterPanel({
               value={directorNote}
               placeholder="Mehr Spannung, dichterer Stil, klarere Raumwahrnehmung."
               onChange={function (event) {
-                const nextDirectorNote = event.target.value;
-
-                onUpdateStory(function (currentStory) {
-                  return updateSceneCardDirectorNote(currentStory, scene.id, nextDirectorNote);
-                });
+                setDirectorNote(event.target.value);
               }}
             />
           </label>
@@ -724,9 +705,7 @@ export function BookWriterPanel({
                   className="book-writer-preset"
                   type="button"
                   onClick={function () {
-                    onUpdateStory(function (currentStory) {
-                      return updateSceneCardDirectorNote(currentStory, scene.id, preset);
-                    });
+                    setDirectorNote(preset);
                   }}
                 >
                   {preset}
@@ -781,38 +760,17 @@ export function BookWriterPanel({
               <span className="scene-editor__eyebrow">Output</span>
               <h4>Job für diese Szene</h4>
             </div>
-            {activeJob ? (
+            {latestJob ? (
               <div className="book-writer-job-meta">
-                <span>{formatProviderLabel(activeJob.provider)}</span>
-                <span>{formatExecutionModeLabel(activeJob.mode)}</span>
-                <span>{activeJob.status}</span>
+                <span>{formatProviderLabel(latestJob.provider)}</span>
+                <span>{formatExecutionModeLabel(latestJob.mode)}</span>
+                <span>{latestJob.status}</span>
               </div>
             ) : null}
           </div>
 
-          {activeJob ? (
+          {latestJob ? (
             <>
-              {draftJobs.length > 1 ? (
-                <div className="pill-group" aria-label="Job history">
-                  {draftJobs.map(function (job) {
-                    return (
-                      <button
-                        key={job.id}
-                        className={
-                          "pill-button" + (activeJob.id === job.id ? " pill-button--active" : "")
-                        }
-                        type="button"
-                        onClick={function () {
-                          setSelectedJobId(job.id);
-                        }}
-                      >
-                        {formatProviderLabel(job.provider)} · {formatJobTimestamp(job.updatedAt)}
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : null}
-
               <div className="pill-group" aria-label="AI panel view">
                 {AI_PANEL_VIEWS.map(function (view) {
                   return (
@@ -834,7 +792,7 @@ export function BookWriterPanel({
 
               <div className="book-mini-list">
                 {BOOK_DRAFT_STAGE_SEQUENCE.map(function (stageId) {
-                  const stage = activeJob.stages[stageId];
+                  const stage = latestJob.stages[stageId];
 
                   return (
                     <article key={stageId} className="book-mini-card">
@@ -849,14 +807,12 @@ export function BookWriterPanel({
               </div>
 
               {activePanelView === "draft" ? (
-                <pre className="book-code-block book-writer-output">{activeJob.draftText}</pre>
+                <pre className="book-code-block book-writer-output">{latestJob.draftText}</pre>
               ) : activePanelView === "rewrite" ? (
-                <pre className="book-code-block book-writer-output">{activeJob.rewriteText}</pre>
-              ) : activePanelView === "friction" ? (
-                <LiteraryFrictionPanel job={activeJob} />
+                <pre className="book-code-block book-writer-output">{latestJob.rewriteText}</pre>
               ) : activePanelView === "extract" ? (
                 <div className="book-mini-list">
-                  {buildExtractCards(activeJob).map(function (card) {
+                  {buildExtractCards(latestJob).map(function (card) {
                     return (
                       <article key={card.title} className="book-mini-card">
                         <strong>{card.title}</strong>
@@ -867,7 +823,7 @@ export function BookWriterPanel({
                 </div>
               ) : activePanelView === "continuity" ? (
                 <div className="book-mini-list">
-                  {buildContinuityCards(activeJob).map(function (card) {
+                  {buildContinuityCards(latestJob).map(function (card) {
                     return (
                       <article key={card.title} className="book-mini-card">
                         <strong>{card.title}</strong>
@@ -878,9 +834,9 @@ export function BookWriterPanel({
                 </div>
               ) : activePanelView === "notes" ? (
                 <div className="book-mini-list">
-                  {activeJob.rewriteNotes.map(function (note, index) {
+                  {latestJob.rewriteNotes.map(function (note, index) {
                     return (
-                      <article key={`${activeJob.id}_note_${index}`} className="book-mini-card">
+                      <article key={`${latestJob.id}_note_${index}`} className="book-mini-card">
                         <p>{note}</p>
                       </article>
                     );
@@ -888,9 +844,9 @@ export function BookWriterPanel({
                 </div>
               ) : (
                 <div className="book-mini-list">
-                  {activeJob.outline.map(function (step, index) {
+                  {latestJob.outline.map(function (step, index) {
                     return (
-                      <article key={`${activeJob.id}_outline_${index}`} className="book-mini-card">
+                      <article key={`${latestJob.id}_outline_${index}`} className="book-mini-card">
                         <strong>Beat {index + 1}</strong>
                         <p>{step}</p>
                       </article>
@@ -904,10 +860,10 @@ export function BookWriterPanel({
                   className="flat-button flat-button--active"
                   type="button"
                   onClick={function () {
-                    handleAcceptJob(activeJob.id, "rewrite");
+                    handleAcceptJob(latestJob.id);
                   }}
                 >
-                  {activeJob.status === "accepted"
+                  {latestJob.status === "accepted"
                     ? "Rewrite erneut übernehmen"
                     : "Rewrite übernehmen"}
                 </button>
@@ -957,57 +913,6 @@ export function BookWriterPanel({
       </div>
     </section>
   );
-}
-
-function updateSceneCardDirectorNote(
-  story: StoryDocument,
-  sceneId: string,
-  directorNote: string
-) {
-  const trimmedDirectorNote = directorNote.trim();
-  const nextSceneCards = (story.book.memory.sceneCards.length
-    ? story.book.memory.sceneCards
-    : buildTimelineBeats(story)
-  ).map(function (sceneCard) {
-    if (sceneCard.sceneId !== sceneId) {
-      return sceneCard;
-    }
-
-    const custom = sceneCard.directives.custom.filter(function (entry) {
-      return entry.key !== "director_note";
-    });
-    const outline = sceneCard.outline.filter(function (line) {
-      return !line.startsWith("director_note:");
-    });
-
-    if (trimmedDirectorNote) {
-      custom.push({
-        key: "director_note",
-        value: trimmedDirectorNote
-      });
-      outline.push(`director_note: ${trimmedDirectorNote}`);
-    }
-
-    return {
-      ...sceneCard,
-      directives: {
-        ...sceneCard.directives,
-        custom
-      },
-      outline
-    };
-  });
-
-  return {
-    ...story,
-    book: {
-      ...story.book,
-      memory: {
-        ...story.book.memory,
-        sceneCards: nextSceneCards
-      }
-    }
-  };
 }
 
 function BookActNav({
@@ -1179,109 +1084,6 @@ function buildExtractCards(job: BookDraftJob) {
   ];
 }
 
-function LiteraryFrictionPanel({ job }: { job: BookDraftJob }) {
-  const report = job.literaryFrictionReport;
-
-  if (!report) {
-    return (
-      <article className="book-mini-card">
-        <strong>Kein Friction-Report</strong>
-        <p>Für diesen Job liegt noch kein separater Literary-Friction-Pass vor.</p>
-      </article>
-    );
-  }
-
-  const scoreCards = [
-    { title: "Image Strength", content: `${report.scores.imageStrength}/5` },
-    { title: "Body Truth", content: `${report.scores.bodyTruth}/5` },
-    { title: "Ambiguity", content: `${report.scores.ambiguity}/5` },
-    { title: "Anti-Explanation", content: `${report.scores.antiExplanation}/5` },
-    { title: "Sentence Variety", content: `${report.scores.sentenceVariety}/5` },
-    { title: "Ending Strength", content: `${report.scores.endingStrength}/5` },
-    { title: "Anti-Smoothness", content: `${report.scores.antiSmoothness}/5` },
-    { title: "Voice Specificity", content: `${report.scores.voiceSpecificity}/5` }
-  ];
-  const detailCards = [
-    {
-      title: "Schutzstellen",
-      content: report.protect.join(" | ") || "Keine Schutzstellen markiert."
-    },
-    {
-      title: "Streichkandidaten",
-      content: report.cutCandidates.join(" | ") || "Keine Streichkandidaten markiert."
-    },
-    {
-      title: "Übererklärung",
-      content: report.overExplanation.join(" | ") || "Keine offene Übererklärung markiert."
-    },
-    {
-      title: "Musterwarnungen",
-      content: report.patternWarnings.join(" | ") || "Keine Musterwarnungen markiert."
-    },
-    {
-      title: "Abstraktionsdruck",
-      content: report.abstractionFlags.join(" | ") || "Keine Abstraktionsmarker markiert."
-    },
-    {
-      title: "Schlussprüfung",
-      content: report.endingAssessment || "Kein separates Schluss-Assessment."
-    },
-    {
-      title: "Mikro-Eingriffe",
-      content: report.microEdits.join(" | ") || "Keine Mikro-Eingriffe notiert."
-    }
-  ];
-
-  return (
-    <div className="book-context-stack">
-      <strong>Quality Scores</strong>
-      <div className="book-mini-list">
-        {scoreCards.map(function (card) {
-          return (
-            <article key={card.title} className="book-mini-card">
-              <strong>{card.title}</strong>
-              <p>{card.content}</p>
-            </article>
-          );
-        })}
-      </div>
-
-      <strong>Friction Findings</strong>
-      <div className="book-mini-list">
-        {detailCards.map(function (card) {
-          return (
-            <article key={card.title} className="book-mini-card">
-              <strong>{card.title}</strong>
-              <p>{card.content}</p>
-            </article>
-          );
-        })}
-      </div>
-
-      <strong>Revision</strong>
-      <div className="book-mini-list">
-        <article className="book-mini-card">
-          <strong>Status</strong>
-          <p>{report.needsRevision ? "Revision empfohlen." : "Kein Text-Eingriff nötig."}</p>
-        </article>
-        {job.literaryFrictionNotes?.length ? (
-          <article className="book-mini-card">
-            <strong>Stage Notes</strong>
-            <p>{job.literaryFrictionNotes.join(" | ")}</p>
-          </article>
-        ) : null}
-      </div>
-
-      {job.literaryFrictionText ? (
-        <Fragment>
-          <strong>Friction Draft</strong>
-          <pre className="book-code-block book-writer-output">{job.literaryFrictionText}</pre>
-        </Fragment>
-      ) : null}
-    </div>
-  );
-}
-
 function buildContinuityCards(job: BookDraftJob) {
   return [
     {
@@ -1324,10 +1126,6 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
     return "Anthropic";
   }
 
-  if (provider === "duo") {
-    return "Duo";
-  }
-
   if (provider === "gemini") {
     return "Gemini";
   }
@@ -1345,10 +1143,18 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
 
 function getProviderTooltip(provider: BookJobProviderOption) {
   switch (provider) {
+    case "auto":
+      return "Wählt automatisch das beste verfügbare Modell für die aktuelle Aufgabe.";
+    case "openai":
+      return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
     case "anthropic":
-      return "Alle normalen Book-Job-Stufen laufen fest über Claude Opus 4.7.";
-    case "duo":
-      return "Claude Opus schreibt die szenische Erstfassung. GPT 5.5 übernimmt Struktur-, Continuity-, Quality- und Literary-Friction-Pass.";
+      return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
+    case "gemini":
+      return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
+    case "groq":
+      return "Nutzt Groq für schnelle Testläufe über OpenAI-kompatible Chat-Completions.";
+    case "local":
+      return "Führt den Job lokal aus (nur für Tests oder bei fehlenden API-Keys).";
     default:
       return "";
   }
@@ -1356,13 +1162,6 @@ function getProviderTooltip(provider: BookJobProviderOption) {
 
 function formatExecutionModeLabel(mode: BookDraftJob["mode"]) {
   return mode === "remote" ? "Remote" : "Lokaler Fallback";
-}
-
-function formatJobTimestamp(value: string) {
-  return new Intl.DateTimeFormat("de-DE", {
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(new Date(value));
 }
 
 function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
@@ -1392,10 +1191,6 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
 
   if (stageId === "continuity") {
     return "Kontinuität";
-  }
-
-  if (stageId === "literary_friction") {
-    return "Literary Friction";
   }
 
   return "Quality Eval";

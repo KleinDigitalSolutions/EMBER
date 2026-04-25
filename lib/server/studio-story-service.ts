@@ -3,7 +3,6 @@ import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
-  normalizeBookGuidanceBlocks,
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
   normalizeAssistantWorkspace,
@@ -924,9 +923,6 @@ async function saveStudioStoryInternal(
         draft_text: job.draftText,
         rewrite_text: job.rewriteText,
         rewrite_notes: job.rewriteNotes,
-        literary_friction_text: job.literaryFrictionText ?? null,
-        literary_friction_notes: job.literaryFrictionNotes ?? [],
-        literary_friction_report: job.literaryFrictionReport ?? null,
         extracted_state: job.extractedState,
         stage_runs: job.stages,
         accepted_at: job.acceptedAt
@@ -1411,7 +1407,6 @@ function buildDraftJobs(params: {
     const modelName = typeof row.model_name === "string" ? row.model_name : null
     const updatedAt = (row.updated_at as string) ?? ""
     const rewriteNotes = normalizeStringArray(row.rewrite_notes)
-    const literaryFrictionNotes = normalizeStringArray(row.literary_friction_notes)
     const extractedState = normalizeExtractedState(row.extracted_state, {
       status: row.status,
       fallbackCreatedAt: updatedAt || ((row.created_at as string) ?? "")
@@ -1432,19 +1427,12 @@ function buildDraftJobs(params: {
       draftText: (row.draft_text as string) ?? "",
       rewriteText: (row.rewrite_text as string) ?? "",
       rewriteNotes,
-      literaryFrictionText:
-        typeof row.literary_friction_text === "string" && row.literary_friction_text.trim()
-          ? (row.literary_friction_text as string)
-          : undefined,
-      literaryFrictionNotes,
-      literaryFrictionReport: normalizeLiteraryFrictionReport(row.literary_friction_report),
       extractedState,
       stages: normalizeStageRuns(row.stage_runs, {
         provider,
         modelName,
         updatedAt,
         rewriteNotes,
-        literaryFrictionNotes,
         extractedState
       }),
       contextSnapshot: {
@@ -1578,9 +1566,7 @@ function normalizeMasterBrief(
       typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
     thematicCore:
       typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
-    storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture),
-    voicePack: normalizeBookGuidanceBlocks(record.voicePack, fallback.voicePack),
-    proofLadder: normalizeBookGuidanceBlocks(record.proofLadder, fallback.proofLadder)
+    storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture)
   }
 }
 
@@ -1725,7 +1711,6 @@ function normalizeProvider(value: unknown): BookDraftJob["provider"] {
     value === "openai" ||
     value === "anthropic" ||
     value === "gemini" ||
-    value === "duo" ||
     value === "groq" ||
     value === "local"
   ) {
@@ -1770,7 +1755,6 @@ function normalizeStageRuns(
     modelName: string | null
     updatedAt: string
     rewriteNotes: string[]
-    literaryFrictionNotes: string[]
     extractedState: BookDraftJob["extractedState"]
   }
 ): BookDraftStageRuns {
@@ -1788,9 +1772,6 @@ function normalizeStageRuns(
   fallbackRuns.rewrite.notes = fallback.rewriteNotes.length > 0
     ? fallback.rewriteNotes
     : fallbackRuns.rewrite.notes
-  fallbackRuns.literary_friction.notes = fallback.literaryFrictionNotes.length > 0
-    ? fallback.literaryFrictionNotes
-    : fallbackRuns.literary_friction.notes
 
   return {
     context: normalizeStageRun(record.context, fallbackRuns.context),
@@ -1800,46 +1781,7 @@ function normalizeStageRuns(
     length_control: normalizeStageRun(record.length_control, fallbackRuns.length_control),
     extract: normalizeStageRun(record.extract, fallbackRuns.extract),
     continuity: normalizeStageRun(record.continuity, fallbackRuns.continuity),
-    quality_eval: normalizeStageRun(record.quality_eval, fallbackRuns.quality_eval),
-    literary_friction: normalizeStageRun(
-      record.literary_friction,
-      fallbackRuns.literary_friction
-    )
-  }
-}
-
-function normalizeLiteraryFrictionReport(value: unknown): BookDraftJob["literaryFrictionReport"] {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return undefined
-  }
-
-  const record = toRecord(value)
-  const scores = toRecord(record.scores)
-
-  return {
-    protect: normalizeStringArray(record.protect),
-    cutCandidates: normalizeStringArray(record.cutCandidates),
-    overExplanation: normalizeStringArray(record.overExplanation),
-    patternWarnings: normalizeStringArray(record.patternWarnings),
-    abstractionFlags: normalizeStringArray(record.abstractionFlags),
-    endingAssessment:
-      typeof record.endingAssessment === "string" ? record.endingAssessment : "",
-    microEdits: normalizeStringArray(record.microEdits),
-    needsRevision: typeof record.needsRevision === "boolean" ? record.needsRevision : false,
-    revisedText:
-      typeof record.revisedText === "string" && record.revisedText.trim()
-        ? record.revisedText
-        : null,
-    scores: {
-      imageStrength: clampScore(scores.imageStrength),
-      bodyTruth: clampScore(scores.bodyTruth),
-      ambiguity: clampScore(scores.ambiguity),
-      antiExplanation: clampScore(scores.antiExplanation),
-      sentenceVariety: clampScore(scores.sentenceVariety),
-      endingStrength: clampScore(scores.endingStrength),
-      antiSmoothness: clampScore(scores.antiSmoothness),
-      voiceSpecificity: clampScore(scores.voiceSpecificity)
-    }
+    quality_eval: normalizeStageRun(record.quality_eval, fallbackRuns.quality_eval)
   }
 }
 
@@ -1882,14 +1824,6 @@ function normalizeIntegerOrNull(value: unknown, fallback: number | null) {
   }
 
   return fallback
-}
-
-function clampScore(value: unknown) {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    return 1
-  }
-
-  return Math.min(5, Math.max(1, Math.round(value)))
 }
 
 function normalizeStoryValue(value: unknown): boolean | string | number {

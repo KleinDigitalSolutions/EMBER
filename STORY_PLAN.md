@@ -87,7 +87,7 @@ Verwendet dasselbe Story-Dokument für:
 
 ### Schicht 4: AI Orchestration
 Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Book-Job-Service implementiert)
-- Eingabe: stabiler Buchkontext, promptwirksame Regie-Bloecke, szenischer Kontext und Ziel der Aktion
+- Eingabe: Story-Kontext, World Bible, Stilregeln, Ziel der Aktion
 - Ausgabe: strukturierter Vorschlag
 - Formen:
   - `suggestion`
@@ -181,23 +181,6 @@ Nicht ein einziger Mega-Prompt. Stattdessen modulare System-Prompts.
 
 `aktualisiert 2026-04-20`: Der Book-Drafting-Pfad läuft jetzt nicht mehr als ein kombiniertes Draft/Rewrite/Extract-Schema. Prosa und Metadaten sind getrennt, damit Wortbudget, Qualitätsmessung und nachgelagerte Korrekturen belastbar steuerbar bleiben.
 
-### Operative Regie fuer Book-Jobs
-Fuer starke Szenen braucht das Modell nicht mehr Gesamt-Lore, sondern scharfere szenische Verdichtung. Neben `objective`, `coreAction`, `dramaticBeat`, `ending`, `beweisobjekt` und `alltagswaffe` sollen Scene Cards deshalb wenn moeglich auch diese vier Felder tragen:
-- `szenenantrieb`: `Eva will X, tut Y, riskiert Z.`
-- `wissensgrenze`: Was die POV-Figur jetzt weiss, nur vermutet und noch nicht wissen darf.
-- `beziehungsdruck`: Die konkrete Reibung zwischen den wichtigsten Figuren in dieser Szene.
-- `endzustand_hook`: Welcher Nachhall oder welcher Druck am Szenenende zwingend stehen muss.
-
-Beispiel im bestehenden Scene-Card-Format:
-```txt
-szenenantrieb: Eva will Simon als Verbuendeten gewinnen, drueckt ihm den ersten belastbaren Beweis in die Hand und riskiert, dass er ihre Vorsicht wieder gegen sie wendet.
-wissensgrenze: Eva weiss, dass Nora reagiert hat; sie vermutet systematische Vorbereitung; sie darf noch nicht wissen, wie tief Nora in Simons Alltag steckt.
-beziehungsdruck: Eva braucht von Simon Glauben statt Verwaltung; Simon will Mila schuetzen, ohne seine eigene Fehlentscheidung zuzugeben.
-endzustand_hook: Simon kann Evas Logik nicht mehr wegwischen, aber sein Kippen kommt zu spaet, um den Druck sofort zu loesen.
-```
-
-`aktualisiert 2026-04-24`: Neben der Scene Card sind inzwischen auch `VOICE PACK`, `PROOF LADDER` und die strukturierte `WORLD BIBLE` echte First-Class-Inputs im Book-Pfad. Diese Bloecke werden nicht mehr nur als Referenztext behandelt, sondern ueber Regie-Import, Persistenz und Stable Prefix bis in den Job-Prompt getragen.
-
 ### Gemeinsamer Basis-Prompt
 - Rolle des Modells
 - klare Aufgabe
@@ -212,11 +195,7 @@ endzustand_hook: Simon kann Evas Logik nicht mehr wegwischen, aber sein Kippen k
 - Zielgruppe
 - gewünschter Ton
 - Perspektive
-- `WRITER CONSTITUTION`
-- `VOICE PACK`
-- `PROOF LADDER`
-- `WORLD BIBLE` als globaler Primer plus relevanter Szenenausschnitt
-- Publishing Guardrails / Marktbrief
+- Story Bible
 - aktuelle Szene oder Kapitelkontext
 - konkrete Aktion
 
@@ -395,7 +374,7 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
 - **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`OpenAI` / `Anthropic` / `Gemini` / `Local Fallback`) im Writer-Panel integriert.
-- **Stage Split UI / Job-Pipeline:** `aktualisiert 2026-04-24`. Der Book-Pfad arbeitet jetzt als mehrstufige Kette `context → beat_plan → draft → rewrite → length_control → extract → continuity → quality_eval`; UI und Telemetrie muessen diese Reihenfolge abbilden statt eines alten vereinfachten Draft/Rewrite-Flusses.
+- **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → outline → draft → extract → continuity → rewrite`.
 - **Assistant Workspace:** `erledigt 2026-04-19`. Thread-basierter Story-Chat mit serverseitiger Route, Provider-/Modellwahl, Scope (`Projekt` / `Act` / `Kapitel` / `Szene`) und strukturierten Outputs fuer Antwort oder Regie-Dokument.
 - **Studio Brainstormer:** RAG-basierter Ausbau des Assistant Workspace mit tieferer Codex-/Historien-Einbindung. `geplant`
 - **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
@@ -498,8 +477,8 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Anthropic Extract Split:** `aktualisiert 2026-04-21`. Der State-Extract im Anthropic-Pfad wurde bewusst von Opus auf `claude-haiku-4-5-20251001` verschoben. Grund: Opus ist stark fuer Prosa, aber zu kreativ fuer harte Structured-Extraktion; Haiku ist hier das passendere Tool. Parallel dazu wurde das Extract-Schema verkleinert, der Prompt haerter begrenzt und der alte Repair-Schritt durch eine frische Neugenerierung mit kleinerem Contract ersetzt.
 - **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `claude-opus-4-7` fuer den Hauptdraft und `claude-haiku-4-5-20251001` fuer Continuity. Deployment-spezifische Env-Werte koennen davon weiterhin abweichen.
 - **Gemini Probe-Lage:** `aktualisiert 2026-04-21`. Drei echte End-to-End-Probes gegen `gemini-2.5-flash` zeigen ein gemischtes Bild: ein Lauf blieb remote, zwei fielen wegen `503 / high demand` komplett auf `local_fallback`. In dem einen Remote-Lauf scheiterte zudem die Extract-Stage ebenfalls an `503`. Fazit: Gemini funktioniert prinzipiell, ist in der aktuellen Lastlage aber kein stabiler Referenzpfad fuer belastbare JSON- oder Qualitaetsvergleiche.
-- **Regie-zu-Blueprint Sync:** `aktualisiert 2026-04-24`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Der Ruecklese-Check umfasst inzwischen nicht nur `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs`, sondern auch strukturierte `voicePack`-/`proofLadder`-Bloecke im `master_brief` sowie generisch importierte `world_bible_entries`.
-- **Echo-Effekt Guardrail:** `erledigt 2026-04-21`, `bereinigt 2026-04-24`. Fuer `Der Echo-Effekt` wurde die fehlerhafte Kurzfassung aus Gemini (`premise: DNA-Falle`, `readerPromise: OSINT Tech Fokus`) durch den vollen lokalen Blueprint ersetzt. Der relevante Guardrail ist dabei nicht ein projektspezifisches Sonderfeld, sondern dass `SC_1_1` mit vollem Master Brief, kompletter Writer Constitution, relevanten Character States und den projektkritischen Scene-Card-Feldern im Prompt ankommt.
+- **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
+- **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde die fehlerhafte Kurzfassung aus Gemini (`premise: DNA-Falle`, `readerPromise: OSINT Tech Fokus`) durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
 - **Offene Grenze:** `aktualisiert 2026-04-21`. Der Anthropic-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Zusaetzlich bleibt Gemini aktuell durch Verfuegbarkeitsschwankungen (`503 / high demand`) als Vergleichspfad eingeschraenkt. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
 
@@ -536,50 +515,36 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
 - Draft Jobs inklusive Extract/Continuity-Notizen
 
 ### Kleiner Context Pack pro Schreibschritt
-- stabiler Prefix: `MASTER BRIEF`, `WRITER CONSTITUTION`, `VOICE PACK`, `PROOF LADDER`, Publishing Guardrails, Marktmerkmale, globaler `WORLD BIBLE`-Primer
+- stabiler Prefix: Brief, Constitution, Stilregeln, Kapitelziel
 - dynamischer Pack: aktuelle Szene, letzte 1 bis 2 Beats, relevante Canon Facts, relevante Character States, aktive Threads
 - optionaler Ausblick: naechster Beat oder Kapitelrichtung
 
 ### Regie-Import als Standard-Workflow
 - Eine neue Regie darf als Ausgangspunkt fuer ein neues Book dienen, aber nur in strukturierter Form statt als reiner Fliesstext.
-- `Regie-Die-falsche-Abholung.md` dient als Referenz-Regie fuer den aktuellen EMBER-Book-Pfad. Neue Regien sollen ihre Struktur als Basistemplate uebernehmen, nicht ihren Stoff.
-- Top-Level-Headings sind parserrelevant. Sektionen wie `MASTER BRIEF`, `MARKET BRIEF`, `WRITER CONSTITUTION`, `WORLD BIBLE`, `VOICE PACK`, `PROOF LADDER` und `ACTS & KAPITEL — SCENE CARDS` sollen nicht casual umbenannt werden.
 - Mindestbloecke fuer einen belastbaren Sync:
   - voller Master Brief
-  - voller Market Brief
   - Writer Constitution
-  - Voice Pack
-  - Proof Ladder
-  - World Bible
   - Character State Ledger
   - Scene Cards
   - Open Threads
 - Wenn eine Figur ueber eine Wunde motiviert ist, muss diese explizit und strukturiert im Character State stehen; sonst wird sie im Prompt zu weich.
 - Wenn eine Szene einen speziellen Trigger oder Manipulationsmoment hat, muss er als eigenes Scene-Card-Feld vorliegen, nicht nur implizit in Summary oder Freitext.
-- Wenn eine Mikro-Prosa-Regel oder Beweislogik sicher beim Modell landen soll, gehoert sie in `WRITER CONSTITUTION`, `VOICE PACK`, `PROOF LADDER` oder direkt in die `Scene Card`, nicht nur in Kommentartext.
 - Nach jedem Regie-Sync ist ein Ruecklese-Check Pflicht:
   - `book_projects.master_brief` muss vollstaendig sein, nicht nur Stichwoerter
-  - `book_projects.market_brief` muss Hook, Lane und Guardrails tragen
-  - `book_projects.master_brief.voicePack` muss strukturierte Voice-Blöcke tragen
-  - `book_projects.master_brief.proofLadder` muss strukturierte Proof-Blöcke tragen
   - `book_writer_rules` muss die komplette Regelbasis tragen
   - `book_character_states` muss die relevanten Figuren inklusive Wunden-Block enthalten
-  - `world_bible_entries` muss aus der Regie generisch befuellt sein, nicht nur aus projektfremden Platzhaltern
-  - `book_scene_cards` muss szenenspezifische Spezialfelder und die vier Hebel tragen, wenn sie in der Regie vorhanden sind
+  - `book_scene_cards` muss szenenspezifische Spezialfelder tragen
   - `book_context_packs` muss fuer jede Szene vorbereitet und referenzierbar sein
-- Fuer Kapitel 1 gilt als Guardrail: Das Context Pack fuer die erste Szene muss mindestens vollen Master Brief, komplette Writer Constitution, relevante Character States und die Scene Card mit projektkritischen Spezialfeldern wie `beweisobjekt`, `alltagswaffe` oder vergleichbaren Custom-Keys enthalten.
+- Fuer Kapitel 1 gilt als Guardrail: Das Context Pack fuer die erste Szene muss mindestens vollen Master Brief, komplette Writer Constitution, alle relevanten Character States mit Wunden-Block und die Scene Card mit Spezialfeldern wie `viktor_moment` enthalten.
 
 ### Pipeline pro Szene
 1. `composeContext(sceneId)`
-2. `beatPlan(sceneId) -> structured beats`
-3. `draftScene(sceneId)`
-4. `rewriteScene(sceneDraft, beatPlan)`
-5. `lengthControl(rewriteText) -> expand|compress|keep`
-6. `extractSceneState(finalRewrite) -> JSON`
-7. `runContinuityCheck(finalRewrite, extractedState)`
-8. `qualityEval(finalRewrite, extractedState)`
-9. `acceptDraft()`
-10. `updatePersistentCanonArtifacts()`
+2. `draftScene(sceneId)`
+3. `extractSceneState(sceneDraft) -> JSON`
+4. `runContinuityCheck(sceneDraft, extractedState)`
+5. `rewriteScene(sceneDraft, notes)`
+6. `acceptDraft()`
+7. `updatePersistentCanonArtifacts()`
 
 ### Harte Architekturregeln
 - Das Modell erinnert nicht das Buch. Die persistenten Story-Artefakte erinnern das Buch.

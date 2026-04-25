@@ -37,7 +37,6 @@ import {
   findSceneContext,
   isBranchingStory,
   normalizeBookDraftTargets,
-  normalizeBookGuidanceBlocks,
   normalizeBookRuleList,
   updateSceneInStory,
   type StoryAct,
@@ -57,13 +56,12 @@ type ViewMode = "grid" | "matrix" | "outline";
 type AuthorMode = "plan" | "book" | "write" | "playtest" | "patch" | "review";
 type SidebarMode = "library" | "chat" | "codex";
 type PlanLayoutMode = "split" | "focus";
-type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
+type SaveState = "idle" | "saving" | "saved" | "error";
 type StoryUpdateGuardMode = "none" | "book";
 
 const BOOK_AUTHOR_MODES: AuthorMode[] = ["plan", "book", "review"];
 const BRANCHING_AUTHOR_MODES: AuthorMode[] = ["write", "playtest", "patch", "review"];
 const VIEW_MODES: ViewMode[] = ["grid", "matrix", "outline"];
-const STUDIO_DISPLAY_TIME_ZONE = "Europe/Berlin";
 
 export function StudioWorkspace({
   story,
@@ -209,7 +207,6 @@ export function StudioWorkspace({
     ? getAssistantArtifact(draftStory, selectedAssistantArtifactId)
     : null;
   const footerStatus = latestDraftJob ? formatFooterStatus(latestDraftJob.mode) : null;
-  const displayedSavedAt = lastSavedAt ?? activeLibraryEntry?.updatedAt ?? null;
 
   useEffect(
     function () {
@@ -280,7 +277,7 @@ export function StudioWorkspace({
         return;
       }
 
-      setSaveState(isPersistingRef.current ? "saving" : "dirty");
+      setSaveState("saving");
       setSaveError(null);
 
       const timeoutId = window.setTimeout(function () {
@@ -1773,7 +1770,7 @@ export function StudioWorkspace({
               }
               title={saveError ?? undefined}
             >
-              {formatSaveState(displayedSavedAt, saveState, saveError)}
+              {formatSaveState(lastSavedAt, saveState, saveError)}
             </span>
             {isBranchingStory(draftStory) ? (
               <Link href="/story" className="flat-button topbar-link">
@@ -1813,7 +1810,7 @@ export function StudioWorkspace({
               story={draftStory}
               sceneContext={selectedSceneContext}
               selectedSceneId={selectedSceneId}
-              saveLabel={formatSaveState(displayedSavedAt, saveState, saveError)}
+              saveLabel={formatSaveState(lastSavedAt, saveState, saveError)}
               onSelectScene={setSelectedSceneId}
               onManualSave={handleManualSave}
               onCreateFirstScene={handleCreateFirstScene}
@@ -2464,10 +2461,6 @@ async function readJsonResponse(response: Response) {
 }
 
 function formatSaveState(lastSavedAt: string | null, saveState: SaveState, saveError?: string | null) {
-  if (saveState === "dirty") {
-    return "Ungespeicherte Änderungen";
-  }
-
   if (saveState === "saving") {
     return "Speichert nach Supabase...";
   }
@@ -2482,8 +2475,7 @@ function formatSaveState(lastSavedAt: string | null, saveState: SaveState, saveE
 
   const formatter = new Intl.DateTimeFormat("de-DE", {
     hour: "2-digit",
-    minute: "2-digit",
-    timeZone: STUDIO_DISPLAY_TIME_ZONE
+    minute: "2-digit"
   });
 
   return `Gespeichert ${formatter.format(new Date(lastSavedAt))}`;
@@ -2528,8 +2520,7 @@ function formatLibraryTimestamp(value: string) {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
-    minute: "2-digit",
-    timeZone: STUDIO_DISPLAY_TIME_ZONE
+    minute: "2-digit"
   }).format(timestamp);
 }
 
@@ -2908,14 +2899,6 @@ function normalizeBookBlueprint(
       storyArchitecture: normalizeBookRuleList(
         candidate.masterBrief?.storyArchitecture,
         fallback.masterBrief.storyArchitecture
-      ),
-      voicePack: normalizeBookGuidanceBlocks(
-        candidate.masterBrief?.voicePack,
-        fallback.masterBrief.voicePack
-      ),
-      proofLadder: normalizeBookGuidanceBlocks(
-        candidate.masterBrief?.proofLadder,
-        fallback.masterBrief.proofLadder
       )
     },
     marketBrief: {
