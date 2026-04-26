@@ -188,8 +188,9 @@ export default function StudioGuidePage() {
         <h1>So arbeitet der Book-Bereich</h1>
         <p className="intro">
           Der Book-Track ist kein normaler Texteditor. Du schärfst erst den Blueprint, dann
-          die Scene Cards, und erst danach startest du einen Draft-Job. So bleibt die
-          Pipeline für neue Nutzer nachvollziehbar.
+          die Scene Cards, und erst danach startest du einen Draft-Job. Der aktuelle
+          Standardpfad ist bewusst schlank: direkter Draft, danach nur Kontrolle und
+          Übernahme.
         </p>
       </header>
 
@@ -206,14 +207,14 @@ export default function StudioGuidePage() {
           <div className="grid-item rule-pos">
             <span className="label">Scene Cards</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Szene für Szene legst du harte Regie fest. Die Scene Card ist die operative
-              Einheit, nicht der Fliesstext.
+              Szene für Szene legst du klare Funktion, Objekte und Druck fest. Die Scene
+              Card ist die operative Einheit, nicht der Fliesstext.
             </p>
           </div>
           <div className="grid-item rule-pos">
             <span className="label">Joblauf</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Draft, Rewrite, Length Control, Extract, Continuity und Quality Eval laufen
+              Draft, Length Control, Extract, Continuity und Quality Eval laufen
               nacheinander. Danach entscheidest du über Accept und Save.
             </p>
           </div>
@@ -278,7 +279,7 @@ export default function StudioGuidePage() {
             </tr>
             <tr>
               <td><span className="code">objective</span> / <span className="code">ziel</span>, <span className="code">opening</span> / <span className="code">einstieg</span>, <span className="code">coreAction</span> / <span className="code">kern_aktion</span>, <span className="code">dramaticBeat</span> / <span className="code">beat</span>, <span className="code">ending</span> / <span className="code">ende</span></td>
-              <td>Die eigentliche Szenensteuerung für Prompt und Verlauf.</td>
+              <td>Handlungs- und Szenenführung. Wichtig, aber nicht als Satzdiktat zu lesen.</td>
             </tr>
             <tr>
               <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span>, <span className="code">object_anchor</span> / <span className="code">prop_anchor</span>, <span className="code">closingLine</span> / <span className="code">letzter_satz</span></td>
@@ -311,9 +312,7 @@ Scene Card
             <span className="label">Ablauf</span>
             <ol style={{ fontSize: "0.9rem", paddingLeft: "1.2rem" }}>
               <li>Context</li>
-              <li>Beat Plan</li>
               <li>Draft</li>
-              <li>Rewrite</li>
               <li>Length Control</li>
               <li>Extract</li>
               <li>Continuity</li>
@@ -348,13 +347,13 @@ Scene Card
           <div className="grid-item">
             <span className="label">1. Generate</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Startet den Job und legt Draft, Rewrite und Notes an.
+              Startet den Job und legt den Szenentext plus Notes an.
             </p>
           </div>
           <div className="grid-item">
             <span className="label">2. Accept</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Schreibt den Rewrite in die Szene, wenn keine Acceptance-Blocker mehr da sind.
+              Schreibt den finalen Job-Text in die Szene.
             </p>
           </div>
           <div className="grid-item">

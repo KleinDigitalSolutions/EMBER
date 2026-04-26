@@ -11,9 +11,9 @@ So gehst du in Ember vor
   3. Plane nicht in „300 Seiten“, sondern in Szenen. Für 300 Taschenbuchseiten bist du grob bei 75.000–90.000 Wörtern.
      In Ember heißt das meist 45–65 Szenen mit etwa 1.100–1.700 Wörtern.
   4. Gib jeder Szene eine belastbare Summary: Ziel, Widerstand, Wendung, Enddruck.
-  5. Setze pro Szene harte Regie: POV, objective, opening, dramaticBeat, ending.
+  5. Setze pro Szene klare Regie: POV, Ort, Zeitanker, coreAction und proof_object zuerst; weitere Felder nur als Orientierung.
   6. Nutze Director Note nur für den aktuellen Eingriff, nicht für die gesamte Poetik.
-  7. Erzeuge Jobs szenenweise, übernimm nur starke Rewrites, prüfe dann Review, offene Fäden und Kontinuität.
+  7. Erzeuge Jobs szenenweise, übernimm nur starke Drafts, prüfe dann Review, offene Fäden und Kontinuität.
 
 ## 1. Wofür der Book-Bereich da ist
 
@@ -28,7 +28,7 @@ Die Grundidee:
 
 - Du definierst zuerst die Leitplanken des Buchs.
 - Du strukturierst dann Akte, Kapitel und Szenen.
-- Für einzelne Szenen erzeugt EMBER Draft-Jobs mit `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity` und `quality_eval`.
+- Für einzelne Szenen erzeugt EMBER Draft-Jobs mit `context`, `draft`, `length_control`, `extract`, `continuity` und `quality_eval`.
 - Die Ergebnisse landen nicht nur als Text, sondern auch als nutzbarer Zustand für Kanon, Figuren, offene Fäden und spätere Szenenarbeit.
 
 ## 2. Die drei Modi oben links
@@ -58,7 +58,7 @@ Die effizienteste Reihenfolge ist fast immer:
 2. Akte, Kapitel und Szenen grob anlegen.
 3. Pro Szene eine belastbare Summary schreiben.
 4. Erst dann KI-Jobs im Writer starten.
-5. Gute Jobs übernehmen, schwache Jobs per Director Note nachschärfen.
+5. Gute Jobs übernehmen, schwache Jobs mit klarer Director Note neu ansetzen.
 6. Kontinuität und offene Threads regelmäßig prüfen.
 
 Wenn du zu früh generierst, bekommst du fast immer generischen oder zu weichen Output.
@@ -164,8 +164,8 @@ Die Summary ist der wichtigste direkte Arbeitsanker für die KI.
 Zusätzlich wichtig seit dem aktuellen Regie-Sync:
 
 - `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenregie
-- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending` und freie Spezialfelder
-- diese harten Szenen-Constraints haben Vorrang vor allgemeinen Stilregeln oder Modellgewohnheiten
+- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `coreAction`, `proof_object` und freie Spezialfelder für Objekt-, Kind- und Alltagsanker
+- Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` bleiben nützlich, sind aber Orientierung und kein Satzdiktat
 
 Praktisch heißt das:
 
@@ -252,7 +252,7 @@ Fehlt der Key für den gewählten Provider, fällt EMBER auf `local_fallback` zu
 
 #### Ziel-Länge
 
-Die Felder `Min` und `Max` steuern die gewünschte Rewrite-Länge der Szene.
+Die Felder `Min` und `Max` steuern die gewünschte Szenenlänge des direkten Prosa-Laufs.
 
 Praxiswerte:
 
@@ -294,32 +294,26 @@ Ein einzelner Job durchläuft diese Stufen:
 1. `Context`  
    Das System baut den Szenenkontext aus Blueprint, Szenenstruktur, Kanon, Figurenstatus und benachbarten Beats.
 
-2. `Beat Plan`  
-   Die Szene wird in operative Beats mit Wortbudgets und klaren Payoffs zerlegt.
+2. `Draft`  
+   Das Modell schreibt direkt die Szene.
 
-3. `Draft`  
-   Ein erster Szenenentwurf wird erzeugt.
-
-4. `Rewrite`  
-   Das Modell überarbeitet den Draft in Richtung Zielprosa und Zielkorridor.
-
-5. `Length Control`  
+3. `Length Control`  
    Wenn die Szene deutlich unter oder über dem Ziel liegt, greift ein eigener `expand`- oder `compress`-Pass.
 
-6. `Extract`  
-   Das System extrahiert neue Fakten, Figurenveränderungen, offene Fäden und Foreshadowing aus dem finalen Rewrite.
+4. `Extract`  
+   Das System extrahiert neue Fakten, Figurenveränderungen, offene Fäden und Foreshadowing aus dem finalen Text.
 
-7. `Continuity`  
-   Der Rewrite wird gegen Kanon, Stil und laufende Logik geprüft.
+5. `Continuity`  
+   Der Text wird gegen Kanon, Stil und laufende Logik geprüft.
 
-8. `Quality Eval`  
+6. `Quality Eval`  
    Die fertige Szene bekommt Wortmetriken, Scores und konkrete Issues.
 
 Das bedeutet:
 
 - Du bekommst nicht nur einen Text.
 - Du bekommst auch verwertbare Produktionsdaten für Folgearbeit.
-- Prosa und Metadaten konkurrieren nicht mehr im selben großen JSON-Output.
+- Die Prosa läuft bewusst schlanker als früher: kein separater Beat-Plan-Call, kein automatischer Rewrite-Pass, weniger Mikrosteuerung.
 
 ## 8. Wie du Job-Ergebnisse richtig liest
 
@@ -329,8 +323,7 @@ Nach einem Run zeigt der Writer:
 - Ausführungsmodus
 - Modellname
 - Stage-Status
-- Beat-Plan
-- Draft / Rewrite
+- Draft
 - Length-Control-Status
 - Rewrite Notes
 - Extract-Karten
@@ -359,8 +352,8 @@ Für den ersten Testlauf gilt deshalb:
 Der wichtigste UI-Punkt:
 
 - `Generate` startet nur den Draft-Job
-- der erzeugte Text liegt danach zunächst im Job (`draft` / `rewrite`)
-- erst `Accept` / `Übernehmen` schreibt den `rewriteText` in die eigentliche Szene
+- der erzeugte Text liegt danach zunächst im Job
+- erst `Accept` / `Übernehmen` schreibt den finalen Job-Text in die eigentliche Szene
 - erst nach erfolgreichem Speichern ist der Text sicher in Supabase und damit stabil in der UI
 
 Das bedeutet konkret:
@@ -376,7 +369,7 @@ Wenn du `Accept` gedrückt hast, aber der Save fehlschlägt, ist der Text nur lo
 
 ### Rewrite Notes
 
-Diese zeigen, was im überarbeiteten Text verändert oder geschärft wurde.
+Diese zeigen sichtbare Stärken, Schärfungen oder auffällige Punkte des finalen Textes.
 
 Gut:
 
@@ -391,8 +384,8 @@ Wenn die Notes generisch wirken, ist oft die Szene oder Director Note noch zu we
 Diese Stage ist neu wichtig.
 
 - `accept` bedeutet: Die Szene lag schon im brauchbaren Korridor.
-- `expand` bedeutet: Der Rewrite war zu kurz und wurde gezielt vertieft.
-- `compress` bedeutet: Der Rewrite war zu lang und wurde verdichtet.
+- `expand` bedeutet: Der Draft war zu kurz und wurde gezielt vertieft.
+- `compress` bedeutet: Der Draft war zu lang und wurde verdichtet.
 
 Für den ersten Lauf ist `accept` oder ein sauberer einzelner `expand`-/`compress`-Pass ein gutes Zeichen. Wiederholt harte Längenprobleme deuten meist auf eine zu schwache Summary oder eine unklare Director Note hin.
 
@@ -470,7 +463,7 @@ Besonders wichtig sind:
 5. Director Note nur für die aktuelle Szene schreiben.
 6. Job starten.
 7. Prüfen, ob der Lauf `remote` ist.
-8. Beat-Plan, Rewrite, Length Control, Notes und Continuity lesen.
+8. Draft, Length Control, Notes und Continuity lesen.
 9. Gute Fassung nur dann `Accept` / `Übernehmen`, wenn sie wirklich in die Szene soll.
 10. danach den Save-Status abwarten oder explizit `Speichern` drücken.
 11. erst dann die Szene in der UI oder DB als wirklich übernommen betrachten.
@@ -511,11 +504,10 @@ Wenn du deinen ersten echten Run machen willst, nimm diesen Minimalpfad:
 
 Danach prüfst du in dieser Reihenfolge:
 
-1. Ist der Beat-Plan plausibel?
-2. Trägt der Rewrite die Szene bis zum Endhaken?
-3. Musste `length_control` eingreifen?
-4. Gibt es echte Continuity-Risiken?
-5. Meldet `quality_eval` grobe Issues?
+1. Trägt der Draft die Szene bis zum Endhaken?
+2. Musste `length_control` eingreifen?
+3. Gibt es echte Continuity-Risiken?
+4. Meldet `quality_eval` grobe Issues?
 
 ## 13. Was regelmäßig schlechte Ergebnisse erzeugt
 
@@ -537,7 +529,7 @@ Nicht alle Provider verhalten sich gleich.
 
 - stärkere Modelle kosten mehr
 - längere Zieltexte kosten mehr
-- zusätzliche Repair- oder Continuity-Pässe kosten mehr
+- zusätzliche Length-Control- oder Continuity-Pässe kosten mehr
 - `length_control` und `quality_eval` sind zusätzliche Stufen und können Laufzeit erhöhen
 - bessere Qualität ist oft teurer, aber billiger als zehn unbrauchbare Billigläufe
 
@@ -554,7 +546,7 @@ Wenn du nur die wichtigste Arbeitsregel mitnehmen willst, dann diese:
 - Erst Blueprint scharf machen.
 - Dann pro Szene eine gute Summary schreiben.
 - Dann mit klarer Director Note und bewusstem Provider generieren.
-- Danach Beat-Plan, Rewrite, Length Control und Continuity lesen, nicht nur den ersten Textblock.
+- Danach Draft, Length Control und Continuity lesen, nicht nur den ersten Textblock.
 
 EMBER belohnt saubere Führung. Wer das Tool wie einen Chat benutzt, bekommt mittelmäßige Ergebnisse. Wer es wie ein Produktionssystem führt, bekommt deutlich bessere.
 
