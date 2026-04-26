@@ -656,6 +656,7 @@ Nora wirkt nur dann stark, wenn ihr Zugriff realistisch bleibt. Diese Map begren
 | Kapitel | Nora-Erfolg | Nutzen für Nora | Kosten / Restfehler | Späterer Payoff |
 | --- | --- | --- | --- | --- |
 | 1-2 | Falsche Abholung, Video, Unterschrift | Nora setzt früh die Lesart, dass dokumentierte Routine gegen Eva reicht | Das Material ist nur halb sauber; Gesicht und Stimme sind nicht voll eindeutig, die Unterschrift basiert auf älteren Gewohnheiten | Kapitel 25 und 37 verbinden alte Signatur, Zeitfenster und Verwaltungskette |
+| 3 | Holzer-Anruf und alte Liste als soziale Tarnung | Nora kann ihre Verfügbarkeit wie institutionell ausgelöste Fürsorge verkaufen | Es bleibt bewusst offen, ob Frau Holzer Nora wirklich angerufen hat oder ob Nora den Namen nur als plausible Tarnung benutzt | Später aktiv auflösen: echter Prozessfehler oder Nora-Lüge; sonst wirkt es wie ein Anschlussfehler |
 | 4-5 | Alte Notfallliste und Vollmacht bleiben wirksam | Frühere Legitimität schützt Noras Nähe vor sofortigem Alarm | Dieselben alten Listen beweisen später, wie lang Restzugriffe offenstanden | Kapitel 19, 27 und 37 machen den Altzugriff institutionell lesbar |
 | 8 | Menschliche Ambivalenz | Noras frühere Wunde macht ihre Verlässlichkeit für andere nachvollziehbar | Der Leser darf Nora hier fast verstehen; sie wird nicht als Monster geschützt | Kapitel 32 und 35 zeigen, wie aus Verlässlichkeit moralischer Besitz wurde |
 | 9 | Wohnung- und Schlüsselzugriff | Nora konnte Dinge kopieren, legen und nachsortieren | Der Schlosswechsel kappt künftigen physischen Zugriff | Kapitel 27 zeigt, wie legitime Hilfe zum Einfallstor wurde |
@@ -901,11 +902,12 @@ Scene Card
   szenenantrieb: Eva will Simon als Verbündeten halten und riskiert, dass Nora durch weichere Hilfe sofort plausibler wirkt.
   scene_promise: Eva will Simon als Verbündeten halten, drängt auf Vertrauen und verliert Deutungshoheit, aber Nora besetzt den Raum schneller und weicher als sie.
   wissensgrenze: Eva merkt, dass Nora im richtigen Moment zu verfügbar ist, kann aber noch nicht beweisen, dass darin Absicht liegt.
-  information_gap: Ist Nora nur gut vernetzt und aufmerksam, oder steht sie schon zu nah an Petras und Simons Informationsfluss?
+  information_gap: Ist Nora nur gut vernetzt und aufmerksam, oder benutzt sie Frau Holzer und die alte Liste schon als plausible Tarnung fuer ihre Naehe?
   pressure_clock: Wenn Simon jetzt in Verfahren statt in Beziehung denkt, wird Nora zur plausibleren Entlastungsfigur.
   beziehungsdruck: Eva braucht Vertrauen; Simon will Mila schützen; Nora will als natürliche Entlastung im Raum stehen.
   coreAction: Simon reagiert besorgt und verfahrensnah, Nora sofort warm und verfügbar, ohne schon etwas eindeutig Unmögliches zu sagen.
   false_reading: Nora wirkt zunächst bloß aufmerksam und gut informiert, nicht gefährlich.
+  payoff_note: Offenhalten, ob Frau Holzer Nora wirklich angerufen hat oder ob Nora den Namen nur als plausible Tarnung benutzt; spaeter aktiv aufloesen.
   dramaticBeat: Nora bietet genau die Art Hilfe an, die Simon gerade entlastet, und wirkt dadurch nützlicher als Evas Wahrheit.
   reversal: Aus warmer Hilfe wird eine soziale Alternative zu Eva, ohne dass Nora schon klar überführt wäre.
   konkrete_folge: Nora steht nicht mehr nur als Freundin im Raum, sondern als frühe Alternativstimme; Simon beginnt, die Lage in Verfahren statt in Beziehung zu denken.
