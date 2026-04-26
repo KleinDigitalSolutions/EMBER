@@ -315,6 +315,48 @@ word_target_max: 1950</div>
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <section>
+        <h2>5. Der Strategische Assistent (Chat)</h2>
+        <p>
+          Der EMBER Assistant ist kein gewöhnlicher Chatbot. Er ist ein integrierter Story-Stratege, 
+          der den gesamten Kontext deines Projekts kennt.
+        </p>
+
+        <div className="grid">
+          <div className="grid-item">
+            <span className="label">Context Scopes</span>
+            <p style={{ fontSize: '0.85rem' }}>
+              Du entscheidest, wie viel der Assistent „weiß“. Wähle zwischen 
+              <strong> Projekt</strong>, <strong>Act</strong>, <strong>Kapitel</strong> oder 
+              einer spezifischen <strong>Szene</strong>. 
+            </p>
+            <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: 'var(--text-faint)' }}>
+              Im Scope „Szene“ sieht er alle relevanten Charakter-Stände und offenen Threads.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Output Modi</span>
+            <p style={{ fontSize: '0.85rem' }}>
+              <strong>Antwort (Chat):</strong> Schnelles Brainstorming und Analyse.<br />
+              <strong>Regie (Dokument):</strong> Erzeugt einen formalen Regiebrief als persistentes Dokument (Artifact).
+            </p>
+          </div>
+        </div>
+
+        <div className="highlight-box">
+          <h3 style={{ marginTop: 0 }}>Was ein Regiebrief (Artifact) leistet</h3>
+          <p style={{ fontSize: '0.9rem' }}>
+            Wenn du den Modus auf „Regie“ stellst, analysiert der Assistent den **Pipeline-Fit** 
+            deiner Idee. Er erzeugt Dokumente mit:
+          </p>
+          <ul style={{ fontSize: '0.85rem' }}>
+            <li><strong>Strukturabgleich:</strong> Passt die Szene zum Master Brief?</li>
+            <li><strong>Stable Prefix:</strong> Zusammenfassung der unumstößlichen Buchwahrheiten.</li>
+            <li><strong>Nächste Schritte:</strong> Konkrete Aufgaben für die Writer-UI.</li>
+          </ul>
+        </div>
 
         <div className="error-box" style={{ background: 'rgba(224, 159, 102, 0.05)', borderLeftColor: 'var(--accent)' }}>
           <h4 style={{ color: 'var(--accent)' }}>Pro-Tipp: Die X-Ray Regel</h4>
