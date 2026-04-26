@@ -650,10 +650,9 @@ function parseRegie(
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
-  const writerSummariesSection = getOptionalTopLevelSection(
-    productionMarkdown,
-    "WRITER-SUMMARIES — KAPITEL 1 BIS 12"
-  )
+  const writerSummariesSection =
+    getOptionalTopLevelSection(productionMarkdown, "WRITER-SUMMARIES — KAPITEL 1 BIS 42") ||
+    getOptionalTopLevelSection(productionMarkdown, "WRITER-SUMMARIES — KAPITEL 1 BIS 12")
   const canonFacts = parseJsonBlock<{ canon_facts: Array<{ id: string; fact: string; status: string }> }>(
     getTopLevelSection(productionMarkdown, "CANON FACTS (Initial — Stand: vor Kapitel 1)")
   ).canon_facts.map(function (fact) {
