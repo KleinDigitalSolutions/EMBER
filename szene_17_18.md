@@ -70,13 +70,13 @@ Eva machte das Küchenlicht aus. Im dunklen Raum stand der gelbe Becher umgedreh
 
 neue szene 18
 
-Der Vorraum roch nach altem Teppich und Druckerwärme. Eva Berger setzte sich auf einen der Stühle, die in einer Reihe an der Wand standen, und legte die Tasche so neben sich ab, dass sie sie im Blick behielt. An der Pinnwand hingen Aushänge in pastelligen Farben. *Mediation bei Trennung. Beratung für Mütter im Übergang. Notrufnummer.* Sie las die Worte, ohne sie zu lesen.
+Der Vorraum roch nach altem Teppich und Druckerwärme. Eva Berger setzte sich auf einen der Stühle, die in einer Reihe an der Wand standen, und legte die Tasche so neben sich ab, dass sie sie im Blick behielt. An der Pinnwand hingen Aushänge in pastelligen Farben. Dazwischen ein schief getackerter Zettel: Schlüsselbund gefunden, bitte am Empfang abholen. *Mediation bei Trennung. Beratung für Mütter im Übergang. Notrufnummer.* Sie überflog die Worte und blieb nirgends hängen.
 
 Hinter dem Tresen tippte eine Frau in ein Telefon, ohne aufzusehen. Eva hatte ihren Namen genannt, ihren Termin, ihre Frage, und die Frau hatte mit dem Stift auf einen Zettel getippt und gesagt, sie solle Platz nehmen. Später Vormittag, hatte die Frau gesagt, sei eigentlich keine offene Sprechstunde, aber Frau Hennig habe noch ein Fenster.
 
-Eva legte die Hände auf die Knie und zwang sie, dort zu bleiben. Sie war nicht hier als Mutter. Sie war hier als jemand, der einen Namen mitbrachte. *Nora Seidel.* Der Name lag in ihrem Mund wie etwas, das sie nicht ausspucken konnte.
+Eva legte die Hände auf die Knie und zwang sie, dort zu bleiben. Sie war nicht hier als Mutter. Sie war hier als jemand, der einen Namen mitbrachte. Nora Seidel. Der Name lag in ihrem Mund wie etwas, das sie nicht ausspucken konnte.
 
-Neben ihr saß eine Frau mit Kinderwagen, in dem ein Säugling schlief, und blätterte in einer alten Zeitschrift, ohne zu lesen. Auf dem niedrigen Tisch lag ein Stapel Flyer, oben einer mit dem Titel *Wenn Sorge zu Kontrolle wird*. Eva sah weg. Sie hatte das Gefühl, dass jeder Aushang in diesem Vorraum heute persönlich an sie adressiert war.
+Neben ihr saß eine Frau mit Kinderwagen, in dem ein Säugling schlief, und blätterte in einer alten Zeitschrift, ohne bei einer Seite zu bleiben. Auf dem niedrigen Tisch lag ein Stapel Flyer, oben einer mit dem Titel *Wenn Sorge zu Kontrolle wird*. Eva sah weg. Sie hatte das Gefühl, dass jeder Aushang in diesem Vorraum heute persönlich an sie adressiert war.
 
 Eine Tür öffnete sich am Ende des Flurs. Die Frau, die heraustrat, war Anfang fünfzig, kurze graue Haare, eine Bluse, die einmal teuer gewesen war. Sie nickte der Empfangsfrau zu und blieb dann vor Eva stehen, ohne sich zu setzen.
 
@@ -176,6 +176,4 @@ Nora Seidel wollte nicht ein Kind. Sie wollte, dass jemand wieder eine Notiz sch
 
 Eva ging die Treppe zu Ende. Unten stand sie kurz still und drehte den Schlüsselbund in der Hand, bis ihre Finger den Anhänger fanden, das kleine Plastikherz, das Mila Berger ihr im Sommer in den Beutel gelegt hatte. Sie schloss die Hand darum.
 
-Der Kampf hieß nicht Abholung. Der Kampf hieß nicht App-Eintrag, nicht Video, nicht Unterschrift. Der Kampf hieß: Wer ist die, von der Akten sagen, dass das Kind bei ihr besser aufgehoben sei. Und er lief, seit Monaten, in einer Sprache, die Eva erst jetzt zu sprechen begann.
-
-Sie zog das Telefon aus der Tasche und öffnete den Kalender für die kommende Woche. Dort, wo Donnerstag stand, hatte jemand mitten in der Nacht eine Erinnerung an einen Kinderarzttermin hinzugefügt, den Eva nicht eingetragen hatte. Sie ließ den Daumen über dem Eintrag liegen, ohne ihn zu öffnen.
+Der Kampf hieß nicht Abholung. Der Kampf hieß nicht App-Eintrag, nicht Video, nicht Unterschrift. Der Kampf hieß: Wer ist die, von der Akten sagen, dass das Kind bei ihr besser aufgehoben sei. Sie zog das Telefon aus der Tasche und öffnete den Kalender für die kommende Woche. Dort, wo Donnerstag stand, hatte jemand mitten in der Nacht eine Erinnerung an einen Kinderarzttermin hinzugefügt, den Eva nicht eingetragen hatte. Sie ließ den Daumen über dem Eintrag liegen, ohne ihn zu öffnen.
