@@ -2,14 +2,12 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import {
   DEFAULT_BOOK_JOB_MODELS,
   resolveBookJobModelValue,
-  sanitizeGeminiModelId,
   type BookJobModelOverrides
 } from "@/lib/book-job-models";
 import {
@@ -80,10 +78,6 @@ const ANTHROPIC_PROSE_MIN_TOKENS = 1800;
 const ANTHROPIC_PROSE_MAX_TOKENS = 10000;
 const OPENAI_PROSE_MIN_TOKENS = 1200;
 const OPENAI_PROSE_MAX_TOKENS = 9000;
-const GEMINI_PROSE_MIN_TOKENS = 1200;
-const GEMINI_PROSE_MAX_TOKENS = 9000;
-const GROQ_PROSE_MIN_TOKENS = 1200;
-const GROQ_PROSE_MAX_TOKENS = 9000;
 const STRUCTURED_STAGE_MAX_TOKENS = 1400;
 const EXTRACT_STAGE_MAX_TOKENS = 900;
 const EXTRACT_ARRAY_MAX_ITEMS = 3;
@@ -173,8 +167,8 @@ type DraftProviderResult = {
   warning?: string;
 };
 
-export type BookJobProvider = "auto" | "openai" | "anthropic" | "gemini" | "groq" | "local";
-type RemoteBookJobProvider = Exclude<BookJobProvider, "auto" | "local">;
+export type BookJobProvider = "auto" | "openai" | "anthropic" | "local";
+type RemoteBookJobProvider = "openai" | "anthropic";
 
 export type BookJobExecution = {
   provider: Exclude<BookJobProvider, "auto">;
@@ -228,7 +222,7 @@ export async function generateBookDraftJob(params: {
       packet,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      "Kein OPENAI_API_KEY, ANTHROPIC_API_KEY oder GEMINI_API_KEY gesetzt; lokaler Fallback verwendet."
+      "Kein OPENAI_API_KEY oder ANTHROPIC_API_KEY gesetzt; lokaler Fallback verwendet."
     );
   }
 
@@ -244,11 +238,7 @@ export async function generateBookDraftJob(params: {
     const result =
       remoteProvider === "openai"
         ? await generateWithOpenAI(packet, providerOptions)
-        : remoteProvider === "anthropic"
-          ? await generateWithAnthropic(packet, providerOptions)
-          : remoteProvider === "gemini"
-            ? await generateWithGemini(packet, providerOptions)
-            : await generateWithGroq(packet, providerOptions);
+        : await generateWithAnthropic(packet, providerOptions);
 
     return {
       provider: remoteProvider,
@@ -281,14 +271,6 @@ function resolveRemoteProvider(provider: BookJobProvider) {
     return "anthropic" as const;
   }
 
-  if (provider === "gemini" && getGeminiApiKey()) {
-    return "gemini" as const;
-  }
-
-  if (provider === "groq" && getGroqApiKey()) {
-    return "groq" as const;
-  }
-
   if (provider === "auto") {
     if (process.env.OPENAI_API_KEY) {
       return "openai" as const;
@@ -298,13 +280,6 @@ function resolveRemoteProvider(provider: BookJobProvider) {
       return "anthropic" as const;
     }
 
-    if (getGeminiApiKey()) {
-      return "gemini" as const;
-    }
-
-    if (getGroqApiKey()) {
-      return "groq" as const;
-    }
   }
 
   return null;
@@ -547,229 +522,6 @@ async function generateWithAnthropic(
         schema: qualityEvalSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
         userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
-      });
-    }
-  });
-}
-
-async function generateWithGemini(
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions
-): Promise<DraftProviderResult> {
-  const apiKey = getGeminiApiKey();
-
-  if (!apiKey) {
-    throw new Error("Missing Gemini API key.");
-  }
-
-  const modelName = sanitizeGeminiModelId(
-    resolveBookJobModelValue(
-      options.modelOverrides?.gemini,
-      process.env.GEMINI_BOOK_MODEL || process.env.GOOGLE_GEMINI_BOOK_MODEL,
-      DEFAULT_BOOK_JOB_MODELS.gemini
-    )
-  );
-  const client = new GoogleGenAI({
-    apiKey
-  });
-
-  return runScenePipeline(packet, options, {
-    provider: "gemini",
-    modelName,
-    continuityModelName: modelName,
-    extractModelName: modelName,
-    generateBeatPlan: function () {
-      return requestGeminiStructured({
-        client,
-        modelName,
-        schema: beatPlanSchema,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildBeatPlanPrompt(packet, options)
-      });
-    },
-    writeDraft: function (beatPlan) {
-      return requestGeminiText({
-        client,
-        modelName,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
-        maxOutputTokens: resolveGeminiProseMaxTokens(resolveDraftWordTargets(options).max)
-      });
-    },
-    rewriteScene: function (beatPlan, draftText) {
-      return requestGeminiText({
-        client,
-        modelName,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
-        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    expandScene: function (beatPlan, rewriteText) {
-      return requestGeminiText({
-        client,
-        modelName,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
-        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    compressScene: function (beatPlan, rewriteText) {
-      return requestGeminiText({
-        client,
-        modelName,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
-        maxOutputTokens: resolveGeminiProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    extractSceneState: function (beatPlan, rewriteText) {
-      return requestGeminiStructured({
-        client,
-        modelName,
-        schema: stateExtractionSchema,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
-      });
-    },
-    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
-      return requestGeminiStructured({
-        client,
-        modelName,
-        schema: continuityAuditSchema,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildContinuityAuditPrompt(
-          packet,
-          options,
-          beatPlan,
-          draftText,
-          rewriteText,
-          extractedState
-        )
-      });
-    },
-    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
-      return requestGeminiStructured({
-        client,
-        modelName,
-        schema: qualityEvalSchema,
-        systemInstruction: buildSystemPrompt(packet),
-        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
-      });
-    }
-  });
-}
-
-async function generateWithGroq(
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions
-): Promise<DraftProviderResult> {
-  const apiKey = getGroqApiKey();
-
-  if (!apiKey) {
-    throw new Error("Missing Groq API key.");
-  }
-
-  const modelName = resolveBookJobModelValue(
-    options.modelOverrides?.groq,
-    process.env.GROQ_BOOK_MODEL,
-    DEFAULT_BOOK_JOB_MODELS.groq
-  );
-  const client = new OpenAI({
-    apiKey,
-    baseURL: "https://api.groq.com/openai/v1"
-  });
-
-  return runScenePipeline(packet, options, {
-    provider: "groq",
-    modelName,
-    continuityModelName: modelName,
-    extractModelName: modelName,
-    generateBeatPlan: function () {
-      return requestGroqStructured({
-        client,
-        modelName,
-        schema: beatPlanSchema,
-        schemaName: "ember_book_beat_plan",
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildBeatPlanPrompt(packet, options),
-        maxOutputTokens: STRUCTURED_STAGE_MAX_TOKENS
-      });
-    },
-    writeDraft: function (beatPlan) {
-      return requestGroqText({
-        client,
-        modelName,
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
-        maxOutputTokens: resolveGroqProseMaxTokens(resolveDraftWordTargets(options).max)
-      });
-    },
-    rewriteScene: function (beatPlan, draftText) {
-      return requestGroqText({
-        client,
-        modelName,
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
-        maxOutputTokens: resolveGroqProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    expandScene: function (beatPlan, rewriteText) {
-      return requestGroqText({
-        client,
-        modelName,
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
-        maxOutputTokens: resolveGroqProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    compressScene: function (beatPlan, rewriteText) {
-      return requestGroqText({
-        client,
-        modelName,
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
-        maxOutputTokens: resolveGroqProseMaxTokens(options.targetSceneWordsMax)
-      });
-    },
-    extractSceneState: function (beatPlan, rewriteText) {
-      return requestGroqStructured({
-        client,
-        modelName,
-        schema: stateExtractionSchema,
-        schemaName: "ember_book_state_extract",
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText),
-        maxOutputTokens: EXTRACT_STAGE_MAX_TOKENS
-      });
-    },
-    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
-      return requestGroqStructured({
-        client,
-        modelName,
-        schema: continuityAuditSchema,
-        schemaName: "ember_book_continuity_audit",
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildContinuityAuditPrompt(
-          packet,
-          options,
-          beatPlan,
-          draftText,
-          rewriteText,
-          extractedState
-        ),
-        maxOutputTokens: STRUCTURED_STAGE_MAX_TOKENS
-      });
-    },
-    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
-      return requestGroqStructured({
-        client,
-        modelName,
-        schema: qualityEvalSchema,
-        schemaName: "ember_book_quality_eval",
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState),
-        maxOutputTokens: STRUCTURED_STAGE_MAX_TOKENS
       });
     }
   });
@@ -1219,19 +971,6 @@ function computeRangePenalty(actualWords: number, options: DraftGenerationOption
   return 0;
 }
 
-function getGeminiApiKey() {
-  return (
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    process.env.GOOGLE_GEMINI_API_KEY ||
-    null
-  );
-}
-
-function getGroqApiKey() {
-  return process.env.GROQ_API_KEY || null;
-}
-
 function hydrateDraftJob(
   sceneId: string,
   packet: SceneContextPacket,
@@ -1423,139 +1162,6 @@ async function requestAnthropicText(params: {
   };
 }
 
-async function requestGeminiStructured<T>(params: {
-  client: GoogleGenAI;
-  modelName: string;
-  schema: z.ZodType<T>;
-  systemInstruction: string;
-  userPrompt: string;
-}) {
-  const startedAt = Date.now();
-  const response = await params.client.models.generateContent({
-    model: params.modelName,
-    contents: params.userPrompt,
-    config: {
-      systemInstruction: params.systemInstruction,
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(params.schema)
-    }
-  });
-
-  if (!response.text) {
-    throw new Error("Gemini returned no text output.");
-  }
-
-  return {
-    payload: params.schema.parse(JSON.parse(response.text)),
-    metrics: buildGeminiMetrics(response, params.modelName, startedAt)
-  };
-}
-
-async function requestGeminiText(params: {
-  client: GoogleGenAI;
-  modelName: string;
-  systemInstruction: string;
-  userPrompt: string;
-  maxOutputTokens: number;
-}) {
-  const startedAt = Date.now();
-  const response = await params.client.models.generateContent({
-    model: params.modelName,
-    contents: params.userPrompt,
-    config: {
-      systemInstruction: params.systemInstruction,
-      maxOutputTokens: params.maxOutputTokens
-    }
-  });
-  const text = response.text?.trim();
-
-  if (!text) {
-    throw new Error("Gemini returned no text output.");
-  }
-
-  return {
-    text,
-    metrics: buildGeminiMetrics(response, params.modelName, startedAt)
-  };
-}
-
-async function requestGroqStructured<T>(params: {
-  client: OpenAI;
-  modelName: string;
-  schema: z.ZodType<T>;
-  schemaName: string;
-  systemPrompt: string;
-  userPrompt: string;
-  maxOutputTokens: number;
-}) {
-  const startedAt = Date.now();
-  const schemaJson = z.toJSONSchema(params.schema);
-  const completion = await params.client.chat.completions.create({
-    model: params.modelName,
-    temperature: 0.2,
-    max_tokens: params.maxOutputTokens,
-    response_format: {
-      type: "json_object"
-    },
-    messages: [
-      {
-        role: "system",
-        content: [
-          params.systemPrompt,
-          "Return only valid JSON with no markdown, prose, or code fences.",
-          `Schema name: ${params.schemaName}`,
-          `JSON schema: ${JSON.stringify(schemaJson)}`
-        ].join("\n\n")
-      },
-      {
-        role: "user",
-        content: params.userPrompt
-      }
-    ]
-  });
-  const text = extractGroqMessageText(completion);
-
-  return {
-    payload: params.schema.parse(JSON.parse(normalizeJsonText(text))),
-    metrics: buildGroqMetrics(completion, params.modelName, startedAt)
-  };
-}
-
-async function requestGroqText(params: {
-  client: OpenAI;
-  modelName: string;
-  systemPrompt: string;
-  userPrompt: string;
-  maxOutputTokens: number;
-}) {
-  const startedAt = Date.now();
-  const completion = await params.client.chat.completions.create({
-    model: params.modelName,
-    temperature: 0.7,
-    max_tokens: params.maxOutputTokens,
-    messages: [
-      {
-        role: "system",
-        content: params.systemPrompt
-      },
-      {
-        role: "user",
-        content: params.userPrompt
-      }
-    ]
-  });
-  const text = extractGroqMessageText(completion).trim();
-
-  if (!text) {
-    throw new Error("Groq returned no text output.");
-  }
-
-  return {
-    text,
-    metrics: buildGroqMetrics(completion, params.modelName, startedAt)
-  };
-}
-
 function buildOpenAIInput(systemPrompt: string, userPrompt: string) {
   return [
     {
@@ -1610,54 +1216,6 @@ function buildAnthropicMetrics(
   };
 }
 
-function buildGeminiMetrics(
-  response: {
-    usageMetadata?: {
-      promptTokenCount?: number;
-      candidatesTokenCount?: number;
-    } | null;
-    candidates?: Array<{
-      finishReason?: string | null;
-    }> | null;
-  },
-  modelName: string,
-  startedAt: number
-): StageCallMetrics {
-  return {
-    modelName,
-    attemptCount: 1,
-    repairCount: 0,
-    durationMs: Date.now() - startedAt,
-    inputTokens: response.usageMetadata?.promptTokenCount ?? null,
-    outputTokens: response.usageMetadata?.candidatesTokenCount ?? null,
-    stopReason: response.candidates?.[0]?.finishReason ?? null
-  };
-}
-
-function buildGroqMetrics(
-  completion: {
-    usage?: {
-      prompt_tokens?: number;
-      completion_tokens?: number;
-    } | null;
-    choices?: Array<{
-      finish_reason?: string | null;
-    }> | null;
-  },
-  modelName: string,
-  startedAt: number
-): StageCallMetrics {
-  return {
-    modelName,
-    attemptCount: 1,
-    repairCount: 0,
-    durationMs: Date.now() - startedAt,
-    inputTokens: completion.usage?.prompt_tokens ?? null,
-    outputTokens: completion.usage?.completion_tokens ?? null,
-    stopReason: completion.choices?.[0]?.finish_reason ?? null
-  };
-}
-
 function resolveDraftWordTargets(options: DraftGenerationOptions) {
   const min = Math.max(250, Math.round(options.targetSceneWordsMin * 0.58));
   const max = Math.max(min + 120, Math.round(options.targetSceneWordsMax * 0.72));
@@ -1675,43 +1233,6 @@ function resolveAnthropicProseMaxTokens(targetWordMax: number) {
     ANTHROPIC_PROSE_MIN_TOKENS,
     ANTHROPIC_PROSE_MAX_TOKENS
   );
-}
-
-function resolveGeminiProseMaxTokens(targetWordMax: number) {
-  return clampNumber(Math.round(targetWordMax * 3.1), GEMINI_PROSE_MIN_TOKENS, GEMINI_PROSE_MAX_TOKENS);
-}
-
-function resolveGroqProseMaxTokens(targetWordMax: number) {
-  return clampNumber(Math.round(targetWordMax * 3.1), GROQ_PROSE_MIN_TOKENS, GROQ_PROSE_MAX_TOKENS);
-}
-
-function extractGroqMessageText(completion: {
-  choices?: Array<{
-    message?: {
-      content?: string | null;
-    } | null;
-  }> | null;
-}) {
-  const text = completion.choices?.[0]?.message?.content?.trim();
-
-  if (!text) {
-    throw new Error("Groq returned no text output.");
-  }
-
-  return text;
-}
-
-function normalizeJsonText(value: string) {
-  const trimmed = value.trim();
-
-  if (trimmed.startsWith("```")) {
-    return trimmed
-      .replace(/^```(?:json)?\s*/i, "")
-      .replace(/\s*```$/, "")
-      .trim();
-  }
-
-  return trimmed;
 }
 
 function buildSystemPrompt(packet: SceneContextPacket) {

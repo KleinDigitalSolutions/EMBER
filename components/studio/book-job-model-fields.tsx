@@ -24,16 +24,6 @@ const MODEL_FIELD_COPY: Record<
     label: "Anthropic Continuity-ID",
     hint: "Modell für Kontinuitäts-Checks",
     resetLabel: "Env/Default"
-  },
-  gemini: {
-    label: "Gemini Modell-ID",
-    hint: "Modell für schnelles Iterieren",
-    resetLabel: "Env/Default"
-  },
-  groq: {
-    label: "Groq Modell-ID",
-    hint: "Modell für schnelle Testläufe über Groq",
-    resetLabel: "Env/Default"
   }
 };
 
@@ -115,16 +105,8 @@ function getVisibleModelKeys(provider: BookJobProviderOption) {
     return ["anthropic", "anthropicContinuity"] as BookJobModelKey[];
   }
 
-  if (provider === "gemini") {
-    return ["gemini"] as BookJobModelKey[];
-  }
-
-  if (provider === "groq") {
-    return ["groq"] as BookJobModelKey[];
-  }
-
   if (provider === "auto") {
-    return ["openai", "anthropic", "anthropicContinuity", "gemini", "groq"] as BookJobModelKey[];
+    return ["openai", "anthropic", "anthropicContinuity"] as BookJobModelKey[];
   }
 
   return [];

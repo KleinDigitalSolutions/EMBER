@@ -19,8 +19,7 @@ const CHAT_PROVIDERS: Array<{
 }> = [
   { id: "auto", label: "Auto" },
   { id: "openai", label: "OpenAI" },
-  { id: "anthropic", label: "Anthropic" },
-  { id: "gemini", label: "Gemini" }
+  { id: "anthropic", label: "Anthropic" }
 ];
 
 const QUICK_PROMPTS = [
@@ -564,7 +563,7 @@ function formatTimestamp(value: string) {
 }
 
 function resolveProviderModelKey(provider: AssistantProvider) {
-  if (provider === "openai" || provider === "anthropic" || provider === "gemini") {
+  if (provider === "openai" || provider === "anthropic") {
     return provider;
   }
 

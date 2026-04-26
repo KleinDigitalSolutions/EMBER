@@ -2,7 +2,6 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
@@ -13,8 +12,7 @@ import {
 } from "@/lib/book-engine";
 import {
   DEFAULT_BOOK_JOB_MODELS,
-  resolveBookJobModelValue,
-  sanitizeGeminiModelId
+  resolveBookJobModelValue
 } from "@/lib/book-job-models";
 import type {
   AssistantArtifactKind,
@@ -44,7 +42,7 @@ const storyChatSchema = z.object({
 });
 
 type StoryChatPayload = z.infer<typeof storyChatSchema>;
-type RemoteStoryChatProvider = Exclude<AssistantProvider, "auto" | "local">;
+type RemoteStoryChatProvider = "openai" | "anthropic";
 type StoryChatDraftJob = StoryDocument["book"]["draftEngine"]["jobs"][number];
 
 const STORY_CHAT_STAGE_ORDER = [
@@ -116,7 +114,7 @@ export async function generateStoryChat(params: {
       thread.id,
       outputMode,
       contextSelection,
-      "Kein OPENAI_API_KEY, ANTHROPIC_API_KEY oder GEMINI_API_KEY gesetzt; lokaler Fallback verwendet."
+      "Kein OPENAI_API_KEY oder ANTHROPIC_API_KEY gesetzt; lokaler Fallback verwendet."
     );
   }
 
@@ -130,21 +128,13 @@ export async function generateStoryChat(params: {
             contextSelection,
             params.modelSelection
           )
-        : remoteProvider === "anthropic"
-          ? await generateWithAnthropic(
-              params.story,
-              thread.id,
-              outputMode,
-              contextSelection,
-              params.modelSelection
-            )
-          : await generateWithGemini(
-              params.story,
-              thread.id,
-              outputMode,
-              contextSelection,
-              params.modelSelection
-            );
+        : await generateWithAnthropic(
+            params.story,
+            thread.id,
+            outputMode,
+            contextSelection,
+            params.modelSelection
+          );
 
     return {
       provider: remoteProvider,
@@ -171,10 +161,6 @@ function resolveRemoteProvider(provider: AssistantProvider) {
     return "anthropic" as const;
   }
 
-  if (provider === "gemini" && getGeminiApiKey()) {
-    return "gemini" as const;
-  }
-
   if (provider === "auto") {
     if (process.env.OPENAI_API_KEY) {
       return "openai" as const;
@@ -184,9 +170,6 @@ function resolveRemoteProvider(provider: AssistantProvider) {
       return "anthropic" as const;
     }
 
-    if (getGeminiApiKey()) {
-      return "gemini" as const;
-    }
   }
 
   return null;
@@ -275,49 +258,6 @@ async function generateWithAnthropic(
   return {
     modelName,
     data: message.parsed_output
-  };
-}
-
-async function generateWithGemini(
-  story: StoryDocument,
-  threadId: string,
-  outputMode: AssistantOutputMode,
-  contextSelection: AssistantContextSelection,
-  modelSelection?: AssistantModelSelection
-) {
-  const apiKey = getGeminiApiKey();
-
-  if (!apiKey) {
-    throw new Error("Missing Gemini API key.");
-  }
-
-  const modelName = sanitizeGeminiModelId(
-    resolveBookJobModelValue(
-      modelSelection?.gemini,
-      process.env.GEMINI_STORY_CHAT_MODEL || process.env.GOOGLE_GEMINI_STORY_CHAT_MODEL,
-      DEFAULT_BOOK_JOB_MODELS.gemini
-    )
-  );
-  const client = new GoogleGenAI({
-    apiKey
-  });
-  const response = await client.models.generateContent({
-    model: modelName,
-    contents: buildUserPrompt(story, threadId, outputMode, contextSelection),
-    config: {
-      systemInstruction: buildSystemPrompt(story, outputMode),
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(storyChatSchema)
-    }
-  });
-
-  if (!response.text) {
-    throw new Error("Gemini lieferte keinen Text.");
-  }
-
-  return {
-    modelName,
-    data: storyChatSchema.parse(JSON.parse(response.text))
   };
 }
 
@@ -935,10 +875,6 @@ function deriveLocalThreadTitle(prompt: string, fallback: string) {
   }
 
   return cleaned.split(" ").slice(0, 6).join(" ");
-}
-
-function getGeminiApiKey() {
-  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || null;
 }
 
 function buildWriterConstitutionPrompt(rules: string[]) {

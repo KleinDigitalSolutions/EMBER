@@ -41,9 +41,7 @@ type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "cont
 const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
   { id: "openai", label: "OpenAI", detail: "präzise" },
-  { id: "anthropic", label: "Anthropic", detail: "nuanciert" },
-  { id: "gemini", label: "Gemini", detail: "schnell" },
-  { id: "groq", label: "Groq", detail: "test" }
+  { id: "anthropic", label: "Anthropic", detail: "nuanciert" }
 ];
 
 const DIRECTOR_PRESETS = [
@@ -1144,14 +1142,6 @@ function formatProviderLabel(provider: BookDraftJob["provider"] | BookJobProvide
     return "Anthropic";
   }
 
-  if (provider === "gemini") {
-    return "Gemini";
-  }
-
-  if (provider === "groq") {
-    return "Groq";
-  }
-
   if (provider === "local") {
     return "Lokal";
   }
@@ -1167,10 +1157,6 @@ function getProviderTooltip(provider: BookJobProviderOption) {
       return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
     case "anthropic":
       return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
-    case "gemini":
-      return "Nutzt Google Gemini Modelle für extrem schnelle Antworten und große Kontexte.";
-    case "groq":
-      return "Nutzt Groq für schnelle Testläufe über OpenAI-kompatible Chat-Completions.";
     case "local":
       return "Führt den Job lokal aus (nur für Tests oder bei fehlenden API-Keys).";
     default:

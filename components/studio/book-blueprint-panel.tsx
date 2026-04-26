@@ -1045,9 +1045,6 @@ export function BookBlueprintPanel({
                 <option value="auto">Auto</option>
                 <option value="openai">OpenAI</option>
                 <option value="anthropic">Anthropic</option>
-                <option value="gemini">Gemini</option>
-                <option value="groq">Groq</option>
-                <option value="local">Local</option>
               </select>
               <button
                 className="flat-button"
@@ -2024,14 +2021,6 @@ function formatProviderLabel(provider: BookDraftJob["provider"]) {
 
   if (provider === "anthropic") {
     return "Anthropic";
-  }
-
-  if (provider === "gemini") {
-    return "Gemini";
-  }
-
-  if (provider === "groq") {
-    return "Groq";
   }
 
   return "Local";

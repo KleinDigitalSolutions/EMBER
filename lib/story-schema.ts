@@ -2,7 +2,7 @@ import { createUuid } from "@/lib/id";
 
 export type StoryStatus = "draft" | "playtest" | "submitted";
 export type StoryMode = "book" | "branching";
-export type BookJobProvider = "openai" | "anthropic" | "gemini" | "groq" | "local";
+export type BookJobProvider = "openai" | "anthropic" | "local";
 export type BookJobMode = "remote" | "local_fallback";
 export type BookDraftStageId =
   | "context"
@@ -102,7 +102,7 @@ export type StoryDocument = {
   acts: StoryAct[];
 };
 
-export type AssistantProvider = "auto" | "openai" | "anthropic" | "gemini" | "local";
+export type AssistantProvider = "auto" | "openai" | "anthropic" | "local";
 export type AssistantOutputMode = "chat" | "regie";
 export type AssistantArtifactKind = "regie" | "note";
 export type AssistantContextScope = "project" | "act" | "chapter" | "scene";
@@ -115,7 +115,6 @@ export type AssistantContextSelection = {
 export type AssistantModelSelection = {
   openai: string;
   anthropic: string;
-  gemini: string;
 };
 
 export type AssistantWorkspace = {
@@ -604,8 +603,7 @@ export function createDefaultAssistantWorkspace(): AssistantWorkspace {
 export function createDefaultAssistantModelSelection(): AssistantModelSelection {
   return {
     openai: "",
-    anthropic: "",
-    gemini: ""
+    anthropic: ""
   };
 }
 
@@ -1349,7 +1347,6 @@ function normalizeAssistantProvider(value: unknown): AssistantProvider {
     value === "auto" ||
     value === "openai" ||
     value === "anthropic" ||
-    value === "gemini" ||
     value === "local"
   ) {
     return value;
@@ -1368,8 +1365,7 @@ function normalizeAssistantModelSelection(value: unknown): AssistantModelSelecti
 
   return {
     openai: typeof candidate?.openai === "string" ? candidate.openai : "",
-    anthropic: typeof candidate?.anthropic === "string" ? candidate.anthropic : "",
-    gemini: typeof candidate?.gemini === "string" ? candidate.gemini : ""
+    anthropic: typeof candidate?.anthropic === "string" ? candidate.anthropic : ""
   };
 }
 
