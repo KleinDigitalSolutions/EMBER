@@ -663,7 +663,9 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
   });
 
   story.book.draftEngine.jobs.forEach(function (job) {
-    getApprovedMemorySyncValues(job, "canon_fact").forEach(function (fact) {
+    getApprovedMemorySyncValues(job, "canon_fact").filter(function (fact) {
+      return !detectMemorySyncValueDrift(story, fact).length;
+    }).forEach(function (fact) {
       const parsed = parseLedgerFact(fact, createLocalId("scene_fact"), "scene_fact");
       mergeCanonFact(ledger, {
         ...parsed,
@@ -674,7 +676,9 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
       });
     });
 
-    getApprovedMemorySyncValues(job, "foreshadowing").forEach(function (fact) {
+    getApprovedMemorySyncValues(job, "foreshadowing").filter(function (fact) {
+      return !detectMemorySyncValueDrift(story, fact).length;
+    }).forEach(function (fact) {
       const parsed = parseLedgerFact(
         fact,
         createLocalId("foreshadow"),
@@ -795,9 +799,13 @@ function buildCharacterStateSnapshots(params: {
         return [];
       }
 
-      const updates = getApprovedMemorySyncValues(job, "character_state").filter(function (update) {
-        return normalizeText(update).includes(normalizeText(params.characterEntry.title));
-      });
+      const updates = getApprovedMemorySyncValues(job, "character_state")
+        .filter(function (update) {
+          return !detectMemorySyncValueDrift(params.story, update).length;
+        })
+        .filter(function (update) {
+          return normalizeText(update).includes(normalizeText(params.characterEntry.title));
+        });
 
       return updates.map(function (update, updateIndex) {
         return {
@@ -1395,6 +1403,16 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
     deterministicRisks.forEach(function (risk) {
       continuityBlockers.push(`${job.sceneTitle}: ${risk}`);
     });
+
+    job.extractedState.memorySync.items
+      .filter(function (item) {
+        return item.status === "approved";
+      })
+      .forEach(function (item) {
+        detectMemorySyncValueDrift(story, item.value).forEach(function (risk) {
+          continuityBlockers.push(`${job.sceneTitle}: Approved Extract blockiert: ${risk}`);
+        });
+      });
 
     if (job.extractedState.continuityRisks.length) {
       continuityBlockers.push(
@@ -2346,6 +2364,41 @@ export function auditSceneContinuityGuards(packet: SceneContextPacket, proseText
   });
 
   return dedupeStrings(issues).slice(0, 8);
+}
+
+function detectMemorySyncValueDrift(story: StoryDocument, value: string) {
+  const issues: string[] = [];
+  const proseAnchors = extractObjectColorAnchors([value]);
+
+  story.worldBible
+    .filter(function (entry) {
+      return entry.kind === "character";
+    })
+    .forEach(function (entry) {
+      const firstName = entry.title.trim().split(/\s+/).filter(Boolean)[0] ?? "";
+
+      if (!firstName) {
+        return;
+      }
+
+      findWrongSurnameMentions(value, firstName, entry.title).forEach(function (wrongName) {
+        issues.push(`Namensdrift: ${wrongName} muss ${entry.title} bleiben.`);
+      });
+    });
+
+  resolveStoryObjectColorAnchors(story).forEach(function (anchor) {
+    proseAnchors
+      .filter(function (candidate) {
+        return candidate.objectKey === anchor.objectKey && candidate.colorLabel !== anchor.colorLabel;
+      })
+      .forEach(function (candidate) {
+        issues.push(
+          `Farbdrift: ${anchor.objectLabel} ist ${anchor.colorLabel}, nicht ${candidate.colorLabel}.`
+        );
+      });
+  });
+
+  return dedupeStrings(issues);
 }
 
 function parseNameHardConstraints(values: string[]) {
