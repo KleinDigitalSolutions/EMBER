@@ -714,20 +714,20 @@ export function BookBlueprintPanel({
                   </span>
                 </div>
 
-                <strong>Persistierte Outline-Beats</strong>
+                <strong>Scene-Card Direktiven</strong>
                 <div className="book-mini-list">
                   {contextPacket.dynamicContext.sceneCardOutline.length ? (
                     contextPacket.dynamicContext.sceneCardOutline.map(function (step, index) {
                       return (
                         <article key={`${contextPacket.sceneId}_outline_${index}`} className="book-mini-card">
-                          <strong>Beat {index + 1}</strong>
+                          <strong>{formatSceneCardDirectiveLabel(step, index)}</strong>
                           <p>{step}</p>
                         </article>
                       );
                     })
                   ) : (
                     <article className="book-mini-card">
-                      <strong>Keine Outline-Beats vorhanden</strong>
+                      <strong>Keine Scene-Card Direktiven vorhanden</strong>
                       <p>Die Scene Card wird aktuell aus Summary, Excerpt und Kapitelziel abgeleitet.</p>
                     </article>
                   )}
@@ -1519,7 +1519,7 @@ function DraftJobCard({
 
           <strong>Outline</strong>
           <div className="book-mini-list">
-            {job.outline.map(function (step, index) {
+            {formatDraftOutlineForDisplay(job.outline).map(function (step, index) {
               return (
                 <article key={`${job.id}_outline_${index}`} className="book-mini-card">
                   <strong>Beat {index + 1}</strong>
@@ -1773,6 +1773,113 @@ function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[numbe
 
   return "Quality Eval";
 }
+
+function formatSceneCardDirectiveLabel(step: string, index: number) {
+  const separatorIndex = step.indexOf(":");
+
+  if (separatorIndex === -1) {
+    return `Direktive ${index + 1}`;
+  }
+
+  const key = normalizeOutlineDirectiveKey(step.slice(0, separatorIndex));
+  const label = SCENE_CARD_DIRECTIVE_LABELS[key];
+
+  return label || `Direktive ${index + 1}`;
+}
+
+function formatDraftOutlineForDisplay(outline: string[]) {
+  const steps = outline
+    .map(formatDraftOutlineStepForDisplay)
+    .filter(Boolean);
+
+  return steps.length ? steps : ["Keine erzählerische Outline gespeichert."];
+}
+
+function formatDraftOutlineStepForDisplay(step: string) {
+  const normalized = step
+    .trim()
+    .replace(/^Beat\s+\d+\s*:\s*/i, "")
+    .replace(/\s*\(\d+W,\s*Payoff:.+\)$/i, "")
+    .trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  const separatorIndex = normalized.indexOf(":");
+
+  if (separatorIndex === -1) {
+    return normalized;
+  }
+
+  const rawKey = normalized.slice(0, separatorIndex).trim();
+  const value = normalized.slice(separatorIndex + 1).trim();
+  const key = normalizeOutlineDirectiveKey(rawKey);
+
+  if (!value || OUTLINE_CONTEXT_ONLY_KEYS.has(key)) {
+    return "";
+  }
+
+  const label = OUTLINE_NARRATIVE_LABELS[key];
+
+  return label ? `${label}: ${value}` : `${rawKey}: ${value}`;
+}
+
+function normalizeOutlineDirectiveKey(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const OUTLINE_CONTEXT_ONLY_KEYS = new Set([
+  "pov",
+  "ort",
+  "location",
+  "uhrzeit",
+  "time_anchor",
+  "timeanchor",
+  "zeit",
+  "ziel",
+  "objective",
+  "setup"
+]);
+
+const OUTLINE_NARRATIVE_LABELS: Record<string, string> = {
+  oeffnung: "Oeffnung",
+  offnung: "Oeffnung",
+  opening: "Einstieg",
+  einstieg: "Einstieg",
+  druck: "Druck",
+  core_action: "Kernaktion",
+  coreaction: "Kernaktion",
+  kern_aktion: "Kernaktion",
+  kernaktion: "Kernaktion",
+  dramatic_beat: "Wendung",
+  dramaticbeat: "Wendung",
+  beat: "Wendung",
+  ending: "Ende",
+  ende: "Ende",
+  ausgang: "Ausgang",
+  closing_line: "Schlussbild",
+  closingline: "Schlussbild",
+  letzter_satz: "Schlussbild",
+  letztersatz: "Schlussbild"
+};
+
+const SCENE_CARD_DIRECTIVE_LABELS: Record<string, string> = {
+  pov: "POV",
+  ort: "Ort",
+  location: "Ort",
+  uhrzeit: "Zeit",
+  time_anchor: "Zeit",
+  timeanchor: "Zeit",
+  ziel: "Ziel",
+  objective: "Ziel",
+  ...OUTLINE_NARRATIVE_LABELS
+};
 
 function EditableStringListSection({
   label,

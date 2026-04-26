@@ -12,6 +12,7 @@ import {
 } from "@/lib/book-job-models";
 import {
   auditSceneContinuityGuards,
+  buildNarrativeSceneCardOutlineSteps,
   buildSceneContextPacket,
   createDraftJobFromPacket,
   createStageRun,
@@ -507,7 +508,7 @@ async function runScenePipeline(
     modelName: adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
-    notes: ["Beat-Plan deaktiviert. Fallback aus Scene Card verwendet."]
+    notes: ["Beat-Plan deaktiviert. Fallback aus erzählerischen Scene-Card-Ankern verwendet."]
   });
 
   const draftResult = await adapter.writeDraft(beatPlan);
@@ -1679,23 +1680,27 @@ function buildFallbackBeatPlan(
   packet: SceneContextPacket,
   options: DraftGenerationOptions
 ): BeatPlanPayload {
-  const source = packet.dynamicContext.sceneCardOutline.length
-    ? packet.dynamicContext.sceneCardOutline
+  const narrativeOutline = buildNarrativeSceneCardOutlineSteps(packet.dynamicContext.sceneCardOutline);
+  const source = narrativeOutline.length
+    ? narrativeOutline
     : [
         `${packet.dynamicContext.sceneTitle} startet unter Druck.`,
         packet.dynamicContext.sceneSummary,
         "Die Szene endet mit einer sichtbaren Verschiebung."
       ];
+  const selectedSource = source.slice(0, 5);
   const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
-  const perBeat = Math.max(90, Math.round(totalTarget / source.length));
+  const perBeat = Math.max(90, Math.round(totalTarget / selectedSource.length));
 
   return {
-    beats: source.slice(0, 5).map(function (entry, index) {
+    beats: selectedSource.map(function (entry, index) {
       return {
         label: `Beat ${index + 1}`,
         purpose: entry,
         targetWords: perBeat,
-        mustLand: entry
+        mustLand: index === selectedSource.length - 1
+          ? packet.dynamicContext.sceneHardConstraints.at(-1) || entry
+          : entry
       };
     })
   };

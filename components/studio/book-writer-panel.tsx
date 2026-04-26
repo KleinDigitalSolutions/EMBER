@@ -902,7 +902,7 @@ export function BookWriterPanel({
                 </div>
               ) : (
                 <div className="book-mini-list">
-                  {latestJob.outline.map(function (step, index) {
+                  {formatDraftOutlineForDisplay(latestJob.outline).map(function (step, index) {
                     return (
                       <article key={`${latestJob.id}_outline_${index}`} className="book-mini-card">
                         <strong>Beat {index + 1}</strong>
@@ -1300,6 +1300,88 @@ function formatHumanEditStatusLabel(status: BookHumanEditLearningStatus) {
 
   return "Learning aktiv";
 }
+
+function formatDraftOutlineForDisplay(outline: string[]) {
+  const steps = outline
+    .map(formatDraftOutlineStepForDisplay)
+    .filter(Boolean);
+
+  return steps.length ? steps : ["Keine erzählerische Outline gespeichert."];
+}
+
+function formatDraftOutlineStepForDisplay(step: string) {
+  const normalized = step
+    .trim()
+    .replace(/^Beat\s+\d+\s*:\s*/i, "")
+    .replace(/\s*\(\d+W,\s*Payoff:.+\)$/i, "")
+    .trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  const separatorIndex = normalized.indexOf(":");
+
+  if (separatorIndex === -1) {
+    return normalized;
+  }
+
+  const rawKey = normalized.slice(0, separatorIndex).trim();
+  const value = normalized.slice(separatorIndex + 1).trim();
+  const key = normalizeOutlineDirectiveKey(rawKey);
+
+  if (!value || OUTLINE_CONTEXT_ONLY_KEYS.has(key)) {
+    return "";
+  }
+
+  const label = OUTLINE_NARRATIVE_LABELS[key];
+
+  return label ? `${label}: ${value}` : `${rawKey}: ${value}`;
+}
+
+function normalizeOutlineDirectiveKey(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const OUTLINE_CONTEXT_ONLY_KEYS = new Set([
+  "pov",
+  "ort",
+  "location",
+  "uhrzeit",
+  "time_anchor",
+  "timeanchor",
+  "zeit",
+  "ziel",
+  "objective",
+  "setup"
+]);
+
+const OUTLINE_NARRATIVE_LABELS: Record<string, string> = {
+  oeffnung: "Oeffnung",
+  offnung: "Oeffnung",
+  opening: "Einstieg",
+  einstieg: "Einstieg",
+  druck: "Druck",
+  core_action: "Kernaktion",
+  coreaction: "Kernaktion",
+  kern_aktion: "Kernaktion",
+  kernaktion: "Kernaktion",
+  dramatic_beat: "Wendung",
+  dramaticbeat: "Wendung",
+  beat: "Wendung",
+  ending: "Ende",
+  ende: "Ende",
+  ausgang: "Ausgang",
+  closing_line: "Schlussbild",
+  closingline: "Schlussbild",
+  letzter_satz: "Schlussbild",
+  letztersatz: "Schlussbild"
+};
 
 function createBlockId() {
   return createUuid();

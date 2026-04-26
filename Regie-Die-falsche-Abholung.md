@@ -2737,3 +2737,133 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 ### Kommentar für den Regie-zu-Blueprint Sync
 - Diese Datei ist auf `scripts/bootstrap-book-from-regie.ts` zugeschnitten.
 - Besonders wichtig für Rücklese-Checks sind `Nora` als feste Täterfunktion, die `Writer Constitution`, die offenen Threads zur Ersetzung und die Spezialfelder in den Scene Cards wie `beweisobjekt`, `alltagswaffe`, `ersetzungsmoment`, `false_friend_signal`, `closing_line`.
+
+## SCHREIBREGIE — WIRKUNG UND AUSFUEHRUNG PRO SZENE
+
+> Diese Sektion ist fuer den Drafting-Moment gedacht. Sie ersetzt keine Scene Card und keine Writer Summary. Sie sagt dem Writer, wie die Szene wirken soll: Tempo, Ton, Leserzug, emotionale Temperatur und wichtigste Fehlspur-Vermeidung.
+
+### Kapitel 1 — „Gestern"
+Schreib vom normalen Arbeitstakt in den dokumentierten Schock hinein. Der Leser soll nicht ueber Vorerklaerung, sondern ueber eine ruhige App-Zeile hineingezogen werden, die unmoeglich stimmen kann. Eva bleibt zunaechst praktisch und kontrolliert; der Schrecken entsteht, weil System, Uhrzeit und Petra ruhiger sind als sie. Frankfurt ist ein harter Aktenanker, keine Rueckblendenflaeche. Ende auf dem Standbild der zweiten Eva, danach keine Deutung.
+
+### Kapitel 2 — „Das Bild"
+Die Szene soll beklemmend sachlich wirken. Das Material ist nicht perfekt, aber alltagstauglich genug, und genau das muss weh tun. Petra darf professionell bleiben; keine Anklage, keine Kaelte, kein Drama. Der Leser soll spueren, dass Wahrheit hier weniger zaehlt als Plausibilitaet. Ende nicht mit Evas Gefuehl, sondern mit Petras ruhiger Notwendigkeit, Simon einzubeziehen.
+
+### Kapitel 3 — „Bitte fahr nicht allein"
+Schreib die Szene als erstes Auseinanderlaufen der Hilfsangebote. Simon bietet Ordnung, Nora bietet Naehe; beides klingt plausibel und beides gefaehrdet Eva unterschiedlich. Nora darf noch nicht eindeutig ertappt wirken. Eva soll sich nicht hysterisch verteidigen, sondern gegen zwei gut gemeinte Lesarten kaempfen. Der kleine falsche Alltagsrest am Ende muss groesser wirken als jede Behauptung.
+
+### Kapitel 4 — „Die Liste"
+Die Szene soll Suchbewegung sein, keine Ermittlungsmontage. Eva sucht den einen banalen Fehler und findet stattdessen ein Netzwerk aus alten Resten. Nora dringt ueber Nuetzlichkeit ein, nicht ueber Drohung. Der Leser soll merken, wie schwer alte Schlampigkeit von aktueller Manipulation zu trennen ist. Das Ende braucht ein physisches Zeichen von Dopplung, still und nicht erklaert.
+
+### Kapitel 5 — „Schriftlich"
+Die Szene muss zeigen, wie Schutz zur Rechtfertigungspflicht wird. Schreib Petra und die Kita nicht als Gegner, sondern als vorsichtige Ordnung, die Eva ungewollt ausduennt. Die alte Vollmacht soll beschämen, nicht wie ein Thrillerfund knallen. Eva verliert hier keine Wahrheit, sondern die Selbstverstaendlichkeit, dass ihr Wort reicht. Ende auf Beobachtung statt Diskussion.
+
+### Kapitel 6 — „Verlegt"
+Die Wirkung kommt aus Kumulierung. Mehrere kleine Verschiebungen sollen sich wie ein zweiter Tag neben Evas Tag legen. Kein einzelner Fakt darf schon Masterplan schreien. Simon prueft mit, bleibt aber vorsichtig. Der Leser soll kurz hoffen, dass Sachlichkeit hilft, und dann merken, dass Sachlichkeit Eva nur in mehr Widersprueche fuehrt.
+
+### Kapitel 7 — „Stabil"
+Schreib diese Szene als soziale Verschiebung, nicht als Streit. Simon handelt aus Verantwortung, nicht aus Bosheit. Nora muss in genau der Temperatur erscheinen, die fuer andere beruhigend wirkt. Mila begruesst Wiederholung, nicht Ersatzmutter-Pathos. Der Leser soll verstehen, warum Stabilitaet fuer Simon attraktiv ist und fuer Eva wie Verlust klingt.
+
+### Kapitel 8 — „Die andere Seite"
+Die Szene soll Nora nicht entlarven, sondern gefaehrlich ambivalent machen. Eva bekommt keine bequeme Akte und keinen fertigen Schuldbeweis. Der menschliche Splitter aus Noras Vergangenheit soll Mitleid und Alarm gleichzeitig ausloesen. Die Brotdose am Ende muss die Information koerperlich machen. Kein Erklaerkapitel, sondern eine Verschiebung von Verdacht zu Material.
+
+### Kapitel 9 — „Der Ersatzschlüssel"
+Schreib keinen Einbruchsthriller. Die Spannung liegt darin, dass der fruehere Zutritt legitim war und deshalb tiefer reicht als ein Verbrechen. Eva handelt aktiv, aber der neue Zylinder darf sich nicht wie Sieg anfuehlen. Nora bleibt freundlich genug, dass Eva ihre eigene Alarmreaktion pruefen muss. Der Leser soll begreifen: Die Tuer ist nicht das Problem, sondern das Wissen dahinter.
+
+### Kapitel 10 — „Elternabend"
+Die Szene soll sozial kuehl und peinlich real sein. Andere Eltern sind vorsichtig, nicht gemein. Nora dominiert aus der Ferne ueber Vorabwissen und praktische Entlastung. Keine Mobbing-Szene, keine offene Demuetigung. Der Waldtag-Schlag funktioniert, weil er organisatorisch harmlos aussieht und trotzdem zeigt, dass Nora schneller im Alltag steht als Eva.
+
+### Kapitel 11 — „Die Stimme"
+Schreib das als Naehe-Szene, nicht als Technikbeweis. Eva soll begreifen, dass Imitation ohne Hightech plausibel waere, aber Nora hier noch nicht vollstaendig ueberfuehren. Der Ton muss still, rueckwirkend unangenehm und alltagsnah sein. Alte Aufnahmen sollen nicht nach Archivkiste, sondern nach missbrauchter Harmlosigkeit wirken. Ende mit Moeglichkeit, nicht Gewissheit.
+
+### Kapitel 12 — „Ein guter Vorschlag"
+Die Szene muss weh tun, weil Simons Vorschlag wirklich vernuenftig klingt. Schreib keinen boesen Ex und keine offene Parteinahme. Eva sieht klarer, wirkt aber fuer andere weniger praktikabel. Milas Satz soll die Normalisierung Noras haerter treffen als jedes Argument. Der Leser soll verstehen, dass Hilfe jetzt eine Form bekommt.
+
+### Kapitel 13 — „Dienstagstasche"
+Schreib den Act-2-Start koerpernah. Die Tasche ist nicht Symbolkitsch, sondern ein Raum von Mutterhandgriffen. Die Imitation soll fast richtig sein und gerade deshalb stoeren. Simon darf es kleiner lesen, weil es objektiv klein aussieht. Der Leser soll spueren, dass Ersetzung jetzt an Milas Koerper und Routinen kommt.
+
+### Kapitel 14 — „Protokoll"
+Die Szene soll aktiv und ordnend wirken. Eva denkt nicht nur, sie baut Gegenmacht aus Reihenfolge. Das Protokoll muss Spannung erzeugen, weil jeder Eintrag den Zufall unwahrscheinlicher macht. Der Druckerfund bleibt klein, zufaellig und schmutzig-materiell. Kein Detektivglanz; der Leser soll Ordnung als Waffe und als neue Verletzung zugleich erleben.
+
+### Kapitel 15 — „Der falsche Nachmittag"
+Schreib Kontrollverlust ohne Ausbruch. Simon nimmt Mila nicht weg, sondern zieht Zugriff aus Schutzgruenden zu sich. Petra nimmt Eva ernster, aber zu langsam. Die Szene muss kalt, plausibel und sozial nachvollziehbar sein. Nora am Ende nur leise sichtbar machen; der Leser soll die Luecke sehen, die Simon fuer sie oeffnet.
+
+### Kapitel 16 — „Die Woche bei Simon"
+Die Szene soll nach Distanz klingen, nicht nach Verlustdrama. Eva bekommt Bilder und Nachrichten, aber keine unmittelbare Mutternaehe. Nora wirkt ueber Filter, nicht ueber Auftritt. Der Schmerz liegt in Vermittlung: andere beruhigen, andere ordnen, andere berichten. Der Leser soll merken, dass Mila nicht weg ist und Eva trotzdem aus dem Zentrum rutscht.
+
+### Kapitel 17 — „Gespeicherter Alltag"
+Schreib das Fusionskapitel als Entdeckung eines Vorratslagers aus Vertrauen. Kein Hackerkino, keine Datenpanik. Hof, Waschkueche, Etiketten und Familienalbum muessen sich zu einer einzigen Erkenntnisbewegung verbinden. Eva muss am Ende real handeln und Zugriffe kappen. Der Leser soll begreifen, dass Nora alte Versionen des Alltags gegen die Gegenwart nutzt.
+
+### Kapitel 18 — „Die alte Mutter"
+Die Szene soll Noras Wunde schaerfen, nicht psychologisch abhandeln. Nur so viel Vergangenheit wie noetig. Die Beratungsstelle bleibt realistisch, begrenzt und nicht auskunftsfreudig. Der Satz ueber Stabilitaet muss Eva treffen, weil er ihre eigene Lage spiegelt. Der Leser soll Nora besser verstehen, ohne sie harmloser zu finden.
+
+### Kapitel 19 — „Zugang"
+Schreib Prozessspannung. Formulare, Mappen, Druckjobs und offene Elternkultur sollen ploetzlich riskant lesbar werden. Petra darf erschrecken, aber nicht dumm wirken. Der institutionelle Raum schliesst sich zum ersten Mal sichtbar. Der Leser soll spueren, dass gute Organisation ein Einfallstor sein kann, wenn Vertrauen liegenbleibt.
+
+### Kapitel 20 — „Der erste Fehler"
+Die Szene braucht einen kleinen Riss, keine Entlarvung. Nora macht keinen dummen Fehler, sondern einen fast entschuldbaren Versorgerfehler. Milas kindlicher Satz soll praeziser sein als jede Erwachsenenlogik. Simon glaubt Eva fuer einen Moment und rettet sich dann in Vorsicht. Der Leser soll den kurzen moeglichen Kipppunkt verlieren.
+
+### Kapitel 21 — „Nicht jetzt"
+Schreib die Polizei begrenzt und glaubhaft. Eva hat Recht, aber noch nicht das richtige amtliche Format. Die Szene soll zeigen, wie offizielle Vorsicht realen Schaden fortsetzt. Keine Institutionenkarikatur. Der Kinderaufkleber am Ende muss den abstrakten Schwellenwert wieder an Milas Alltag kleben.
+
+### Kapitel 22 — „Ersatzplan"
+Die Szene soll entschlossen, nicht cool wirken. Eva baut eine einfache Strategie aus Heft, Telefon, Farben und getrennten Kanälen. Kein Agentenplan, keine Selbstfeier. Die Spannung liegt darin, ob ein kleiner kontrollierter Fehler ueberhaupt sichtbar wird. Der Leser soll Eva endlich aktiv sehen, aber weiter unter Risiko.
+
+### Kapitel 23 — „Doppelte Versorgung"
+Schreib Versorgung als Macht. Praxis, Jacke und Brotdosen-Reserve sollen nicht addiert, sondern als eine Logik gefuehlt werden. Nora wirkt dort stark, wo sie nuetzlich aussieht. Mila bleibt Kind im Vollzug, keine These. Der Leser soll verstehen, warum doppelte Fuersorge fuer Aussenstehende besser aussieht als Evas Alarm.
+
+### Kapitel 24 — „Die Nacht vor Freitag"
+Die Szene soll von Schlaflosigkeit und Ueberwachung des eigenen Alltags leben. Keine Hausflur-Horrorinszenierung. Die Schlafhose ist intim genug, weil sie zeigt, dass selbst Koerpernaehe vorbereitet werden kann. Eva bleibt wach und geordnet, nicht panisch. Der Leser soll Druck vor der Beweisphase spueren.
+
+### Kapitel 25 — „Die Unterschrift"
+Schreib Routineanalyse, keine Forensikshow. Die Freundin hilft, aber sie wird nicht zur Expertin, die den Fall loest. Der Kern ist: alte Gewohnheit hat Form, und Nora kann Form nachbauen. Der Leser soll die Zeitverschiebung spüren, dass eine fruehere Eva gegen die heutige arbeitet. Ende auf unheimlicher Praezision, nicht auf Triumph.
+
+### Kapitel 26 — „Die Probe"
+Die Szene soll Spannung aus Warten und Reaktion holen. Eva testet einen Kanal, aber sie gewinnt noch keinen Sieg. Simon muss etwas sehen, ohne sofort alles zu tragen. Keine Genugtuung, kein "ich hab's dir gesagt". Der Leser soll merken, dass Sichtbarkeit teuer ist und Eva sich selbst damit exponiert.
+
+### Kapitel 27 — „Nicht unzuverlässig, sondern ersetzt"
+Schreib den Midpoint als Umbenennung der Bedrohung. Nicht mehr: Eva ist unzuverlaessig. Sondern: Eva wird ersetzt. Das Kapitel darf groesser atmen, aber nicht in Fallbesprechung kippen. Rueckwaertsarchiv, geschlossene Kanäle und Simons Mitsehen muessen zusammenlaufen. Der Leser soll mit einem neuen Begriff fuer den ganzen Roman herausgehen.
+
+### Kapitel 28 — „Die Generalprobe"
+Die Szene soll wie eine weiche Probe wirken, nicht wie ein gescheiterter Zugriff. Nora testet Wiederholung im Morgenablauf. Alles soll beinahe normal sein, damit Eva wie die Stoerung aussieht. Mila bleibt zwischen Abläufen, nicht zwischen Parteien. Der Leser soll spueren, wie gefaehrlich Routinen sind, wenn sie von der falschen Person beherrscht werden.
+
+### Kapitel 29 — „Das Wochenende danach"
+Schreib still und kindnah. Mila darf nichts beweisen muessen; ihre Worte zeigen nur, welche Beruhigungsrhythmen sich verschoben haben. Keine Loyalitaetsrede, keine Tränenlogik. Simon und Eva sollen die Verschiebung unterschiedlich lesen. Der Leser soll merken, dass Nora auch dort wirkt, wo sie nicht anwesend ist.
+
+### Kapitel 30 — „Abgemeldet"
+Die Szene soll organisatorisch kalt sein. Kein Hackerzauber, kein technischer Overkill. Eine plausible App-/Verwaltungsbewegung reicht, wenn sie Eva aus Information und Legitimation schiebt. Der Leser soll fühlen, dass Mutterrolle auch aus Zugriffen, Häkchen und Benachrichtigungen besteht. Der Eingriff muss persoenlich wirken, obwohl er technisch aussieht.
+
+### Kapitel 31 — „Petra"
+Schreib Petra als professionelle Verbündete, nicht als ploetzlich ruehrselige Retterin. Eva bringt Muster, nicht Lautstaerke. Der Raum soll von Vorsicht zu belastbarer Mitwirkung kippen. Trotzdem darf noch nichts geloest sein. Der Leser soll spueren, dass Institutionen langsam sind, aber wenn sie kippen, Gewicht haben.
+
+### Kapitel 32 — „Das ruhige Gesicht"
+Die Szene soll schwer auszuhalten sein, weil Nora so gut lesbar ruhig bleibt. Kein Boesewicht-Auftritt. Ihre Selbstkontrolle muss fuer andere wie Vernunft wirken und fuer Eva wie Angriff. Der Leser soll verstehen, warum Beschuldigung gegen eine ruhige Person so schnell instabil aussieht. Schreibe Spannung ueber Ton, Blick und Pause.
+
+### Kapitel 33 — „Simon sieht es"
+Schreib keinen Versoehnungshöhepunkt. Simon sieht ein kleines Unmoeglichkeitsfenster, und genau das macht es belastbar. Der Moment soll leise, fast beschämend sein, weil er so spät kommt. Eva bekommt nicht alles zurueck, aber sie verliert die komplette Einsamkeit. Der Leser soll den ersten echten Schulterschluss spueren, ohne Pathos.
+
+### Kapitel 34 — „Vor dem Ausflug"
+Die Szene soll diszipliniert und angespannt sein. Kein Heist, keine Cleverness-Pose. Eva und Simon ordnen Belege fuer einen Morgen, an dem keine zweite Chance bleibt. Noras Kalender-/Ausflugsnaehe muss als Absicht lesbar werden, aber noch nicht als Vollbeweis. Der Leser soll vor dem offiziellen Raum Luft anhalten.
+
+### Kapitel 35 — „Noras Wohnung"
+Schreib Nora moralisch konsequent, nicht monströs. Ihr Satz ueber Verlaesslichkeit ist der Kern. Die Wohnung darf erschrecken, aber nicht Gruselkabinett werden: Ordnung, Routinen, Formular, Selbstrechtfertigung. Eva findet Motiv und aktuellen Vorab-Beweis, aber nicht den bequemen Schluss. Der Leser soll sehen, dass Nora sich nicht als Täterin liest.
+
+### Kapitel 36 — „Keine Gestik"
+Die Szene soll hart kontrolliert sein. Nach der Konfrontation zerfaellt Eva nicht; sie verweigert Nora den verwertbaren Ausraster. Fotos, Metadaten und Reihenfolge sind ihre Gegenmacht. Schreib keine Entladung, keine Selbstmitleidsnacht. Der Leser soll spueren, dass Selbstbeherrschung hier Handlung ist.
+
+### Kapitel 37 — „Die Vorabmail"
+Schreib Beweiskette, nicht Sensation. Foto, Druckjob, Entwurfszeit und Raumzugang muessen sauber ineinandergreifen. Petra wird amtlich handlungsfaehig, nicht emotional ueberzeugt. Kein Geständnis, kein Wunderfund. Der Leser soll erleben, wie Verdacht endlich in eine belastbare Kette umschlaegt.
+
+### Kapitel 38 — „Rückholung"
+Die Szene ist der öffentliche Klimax, aber nicht laut. Nora kommt mit korrekt wirkenden Dingen; genau das ist ihre letzte Macht. Petra, Simon und Eva muessen sichtbar anders stehen als frueher. Mila entscheidet die Luft im Raum durch eine kleine Frage, nicht durch grosse Geste. Der Leser soll den Alltagssammelpunkt als Gerichtssaal ohne Gericht erleben.
+
+### Kapitel 39 — „Aussage"
+Schreib Nachhall mit Gewicht, nicht Aufloesungsliste. Die Aussagen muessen zeigen, wie lange Eva allein eine praezise Wahrnehmung trug. Die Beamtin darf nachtraeglich erkennen, aber nicht pathetisch entschuldigen. Nora bleibt still und kontrolliert. Der Leser soll spueren, dass Wahrheit ausserhalb von Eva endlich Form bekommt.
+
+### Kapitel 40 — „Der Hof"
+Die Szene soll nicht heilen. Der Hof bleibt lesend, peinlich und halb leer. Blicke, Gardinen und stockende Höflichkeit reichen; keine offene Feindseligkeit. Der alte Entwurf ist Noras Nachstimme im sozialen Raum. Der Leser soll merken, dass eine gestoppte Täterin nicht sofort aus allen Räumen verschwindet.
+
+### Kapitel 41 — „Keine Dopplung"
+Schreib Rückbau als konkrete Arbeit. Keine Aufräummontage, keine Symbolerklaerung. Jedes doppelte Ding soll zeigen, wie lange Hilfe als Harmlosigkeit durchging. Eva darf erkennen, aber nicht in Selbstanklage versinken. Der Leser soll im Bild der einen Jacke eine reale Ordnung zurueckbekommen.
+
+### Kapitel 42 — „Gelber Becher"
+Das Ende soll schlicht sein und gerade dadurch hart. Kein Schlussmonolog, keine These, keine grosse Versoehnung. Mila verlangt etwas Normales, und Eva kann wieder normal antworten. Der gelbe Becher darf Bedeutung tragen, ohne dass der Text sie benennt. Der Leser soll mit gelebter Alltagshoheit hinausgehen, nicht mit erklaertem Sieg.

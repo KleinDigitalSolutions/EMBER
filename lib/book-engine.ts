@@ -1628,10 +1628,95 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
   );
 }
 
+export function buildNarrativeSceneCardOutlineSteps(sceneCardOutline: string[]) {
+  const seen = new Set<string>();
+
+  return sceneCardOutline
+    .map(formatSceneCardOutlineStepForNarrative)
+    .filter(Boolean)
+    .filter(function (step) {
+      if (seen.has(step)) {
+        return false;
+      }
+
+      seen.add(step);
+      return true;
+    });
+}
+
+function formatSceneCardOutlineStepForNarrative(step: string) {
+  const trimmed = step.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  const separatorIndex = trimmed.indexOf(":");
+
+  if (separatorIndex === -1) {
+    return trimmed;
+  }
+
+  const rawKey = trimmed.slice(0, separatorIndex).trim();
+  const value = trimmed.slice(separatorIndex + 1).trim();
+  const key = normalizeSceneCardDirectiveKey(rawKey);
+
+  if (!value || SCENE_CARD_CONTEXT_ONLY_KEYS.has(key)) {
+    return "";
+  }
+
+  const label = SCENE_CARD_NARRATIVE_LABELS[key];
+
+  if (label) {
+    return `${label}: ${value}`;
+  }
+
+  return `${rawKey}: ${value}`;
+}
+
+function normalizeSceneCardDirectiveKey(value: string) {
+  return normalizeText(value)
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const SCENE_CARD_CONTEXT_ONLY_KEYS = new Set([
+  "pov",
+  "ort",
+  "location",
+  "uhrzeit",
+  "time_anchor",
+  "timeanchor",
+  "zeit",
+  "ziel",
+  "objective",
+  "setup"
+]);
+
+const SCENE_CARD_NARRATIVE_LABELS: Record<string, string> = {
+  oeffnung: "Oeffnung",
+  offnung: "Oeffnung",
+  opening: "Einstieg",
+  einstieg: "Einstieg",
+  druck: "Druck",
+  core_action: "Kernaktion",
+  coreaction: "Kernaktion",
+  kern_aktion: "Kernaktion",
+  kernaktion: "Kernaktion",
+  dramatic_beat: "Wendung",
+  dramaticbeat: "Wendung",
+  beat: "Wendung",
+  ending: "Ende",
+  ende: "Ende",
+  ausgang: "Ausgang",
+  closing_line: "Schlussbild",
+  closingline: "Schlussbild",
+  letzter_satz: "Schlussbild",
+  letztersatz: "Schlussbild"
+};
+
 function buildOutlineSteps(packet: SceneContextPacket) {
-  const sceneCardOutline = packet.dynamicContext.sceneCardOutline.map(function (step) {
-    return step.trim();
-  }).filter(Boolean);
+  const sceneCardOutline = buildNarrativeSceneCardOutlineSteps(packet.dynamicContext.sceneCardOutline);
   const steps = sceneCardOutline.length
     ? sceneCardOutline
     : [
