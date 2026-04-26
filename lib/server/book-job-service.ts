@@ -83,6 +83,8 @@ const EXTRACT_STAGE_MAX_TOKENS = 900;
 const EXTRACT_ARRAY_MAX_ITEMS = 3;
 const EXTRACT_SCENE_NOTES_MAX_ITEMS = 4;
 const EXTRACT_STRING_MAX_LENGTH = 100;
+const LENGTH_CONTROL_EMERGENCY_MIN_WORDS = 600;
+const LENGTH_CONTROL_EMERGENCY_MAX_WORDS = 2500;
 const ANTHROPIC_CACHE_TTL = "1h" as const;
 const ANTHROPIC_CACHE_BETAS = ["extended-cache-ttl-2025-04-11"] as const;
 const buildAnthropicCacheRequestOptions = () => ({
@@ -95,6 +97,14 @@ type BeatPlanPayload = z.infer<typeof beatPlanSchema>;
 type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 type QualityEvalPayload = z.infer<typeof qualityEvalSchema>;
+
+type SceneContractPayload = {
+  openingPressure: string;
+  proofObject: string;
+  turn: string;
+  finalImage: string;
+  forbiddenExposition: string[];
+};
 
 type DraftGenerationOptions = {
   modelOverrides?: BookJobModelOverrides;
@@ -828,11 +838,11 @@ async function maybeRunLengthControl(
 }
 
 function resolveLengthControlAction(actualWords: number, options: DraftGenerationOptions): LengthControlAction {
-  if (actualWords < Math.floor(options.targetSceneWordsMin * 0.92)) {
+  if (actualWords < LENGTH_CONTROL_EMERGENCY_MIN_WORDS) {
     return "expand";
   }
 
-  if (actualWords > Math.ceil(options.targetSceneWordsMax * 1.05)) {
+  if (actualWords > LENGTH_CONTROL_EMERGENCY_MAX_WORDS) {
     return "compress";
   }
 
@@ -1209,7 +1219,9 @@ function buildDraftProsePrompt(
   return [
     "Write the first draft of the selected scene.",
     "Return prose only. No JSON, no headings, no bullet points, no commentary.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "If the scene closes naturally before the preferred range or needs more space, follow the scene.",
+    "Do not pad the scene to satisfy length. Do not compress away necessary pressure.",
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Write the scene directly from the material at hand. Keep some sentences raw enough that the prose stays alive.",
     buildProseSceneContextPrompt(packet),
@@ -1226,7 +1238,8 @@ function buildExpandPrompt(
   return [
     "Expand the scene while preserving continuity and voice.",
     "Return prose only.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "This is an emergency length repair. Add only necessary scene substance, not padding.",
     "Deepen the existing scene movement. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
@@ -1242,7 +1255,8 @@ function buildCompressPrompt(
   return [
     "Compress the scene while preserving all essential story movement.",
     "Return prose only.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    "This is an emergency length repair. Cut only material that weakens scene pressure.",
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
@@ -1258,7 +1272,7 @@ function buildStateExtractionPrompt(
   return [
     "Extract scene state from the finished scene text.",
     "Return only structured output matching the requested schema.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Rules:",
     "- sceneNotes must describe visible strengths or editorial observations in plain compact language.",
     "- sceneNotes: 1 to 4 items, each under 100 characters.",
@@ -1270,7 +1284,7 @@ function buildStateExtractionPrompt(
     "- Prefer empty arrays over speculative entries.",
     "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
-    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
+    buildSceneContractPrompt(packet),
     `Final scene text: ${finalSceneText}`
   ].join("\n");
 }
@@ -1286,11 +1300,11 @@ function buildContinuityAuditPrompt(
   return [
     "Audit this scene for continuity and style drift only.",
     "Return only structured output matching the requested schema.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
     "Keep every listed issue compact.",
     buildSceneContextPrompt(packet),
-    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
+    buildSceneContractPrompt(packet),
     `Initial scene text: ${draftText}`,
     `Final scene text: ${finalSceneText}`,
     `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
@@ -1309,13 +1323,14 @@ function buildQualityEvalPrompt(
     "Evaluate the final scene quality.",
     "Return only structured output matching the requested schema.",
     "Score from 0 to 10.",
-    `wordTargetMin must equal ${options.targetSceneWordsMin}.`,
-    `wordTargetMax must equal ${options.targetSceneWordsMax}.`,
+    `wordTargetMin must equal the preferred lower range ${options.targetSceneWordsMin}.`,
+    `wordTargetMax must equal the preferred upper range ${options.targetSceneWordsMax}.`,
     `wordActual must equal the actual word count of the scene text.`,
+    "Do not penalize organic scene length inside normal bounds. Flag only if the scene feels underdeveloped or bloated.",
     "Issues should be short, concrete, and user-facing.",
     "Keep every issue compact.",
     buildSceneContextPrompt(packet),
-    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
+    buildSceneContractPrompt(packet),
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
     `Final scene text: ${finalSceneText}`
   ].join("\n");
@@ -1330,10 +1345,10 @@ function buildAnthropicScenePrompt(params: {
 }) {
   const modeInstruction =
     params.mode === "draft"
-      ? `Write the scene in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`
+      ? `Write the scene with a preferred range of ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words. If the scene closes naturally before that or needs more space, follow the scene. Do not pad for length.`
       : params.mode === "expand"
-        ? `Expand the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by deepening at most two beats.`
-        : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
+        ? `Emergency-expand the scene only enough to avoid an underdeveloped fragment. Add necessary pressure, not padding.`
+        : `Emergency-compress the scene only enough to avoid a bloated outlier. Preserve necessary pressure.`;
 
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
@@ -1393,6 +1408,7 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
+    buildSceneContractPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
@@ -1425,6 +1441,82 @@ function filterProseHardConstraints(constraints: string[]) {
       constraint.startsWith("Szenenziel:")
     );
   });
+}
+
+function buildSceneContractPrompt(packet: SceneContextPacket) {
+  const contract = buildSceneContract(packet);
+
+  return [
+    "Scene contract:",
+    `Opening pressure: ${contract.openingPressure}`,
+    `Proof object: ${contract.proofObject}`,
+    `Turn: ${contract.turn}`,
+    `Final image: ${contract.finalImage}`,
+    `Forbidden exposition: ${contract.forbiddenExposition.join(" | ")}`
+  ].join("\n");
+}
+
+function buildSceneContract(packet: SceneContextPacket): SceneContractPayload {
+  const constraints = packet.dynamicContext.sceneHardConstraints;
+  const outline = packet.dynamicContext.sceneCardOutline;
+  const summary = packet.dynamicContext.sceneSummary || packet.dynamicContext.sceneTitle;
+  const opening = findConstraintValue(constraints, "Pflicht-Einstieg:");
+  const objective = findConstraintValue(constraints, "Szenenziel:");
+  const proofObject =
+    findConstraintValue(constraints, "Pflicht-Beweisobjekt:") ||
+    findConstraintValue(constraints, "Pflicht-Objektanker:") ||
+    findConstraintValue(constraints, "Pflicht-Alltagswaffe:") ||
+    findConstraintValue(constraints, "Pflicht-Ersetzungsmoment:") ||
+    findConstraintValue(constraints, "Pflicht-Kindmoment:");
+  const coreAction = findConstraintValue(constraints, "Pflicht-Kernaktion:");
+  const dramaticBeat = findConstraintValue(constraints, "Pflicht-Beat:");
+  const ending = findConstraintValue(constraints, "Pflicht-Ende:");
+  const closingLine = findConstraintValue(constraints, "Pflicht-Schlusssatz oder Schlussbild:");
+  const firstOutline = outline[0] || "";
+  const lastOutline = outline[outline.length - 1] || "";
+
+  return {
+    openingPressure: cleanContractValue(opening || objective || firstOutline || summary),
+    proofObject: cleanContractValue(proofObject || "Use the concrete object, document, gesture, or physical trace that proves the scene pressure."),
+    turn: cleanContractValue(dramaticBeat || coreAction || ending || lastOutline || "Make the power, knowledge, or emotional pressure visibly shift."),
+    finalImage: cleanContractValue(closingLine || ending || lastOutline || "End on a concrete image, action, object, or sensory detail."),
+    forbiddenExposition: buildForbiddenExposition(packet)
+  };
+}
+
+function buildForbiddenExposition(packet: SceneContextPacket) {
+  return dedupeStrings([
+    "No recap of facts already visible in documents, objects, dialogue, or action.",
+    "No motive explanation after the image or gesture has carried the meaning.",
+    "No future summary, diagnosis, or theme sentence at the end.",
+    packet.stablePrefix.writerConstitution.some(function (rule) {
+      return /subtext|erkl.r|explain|show/i.test(rule);
+    })
+      ? "Honor subtext rules from the writer constitution; let pressure stay external where possible."
+      : ""
+  ]).filter(Boolean).slice(0, 4);
+}
+
+function findConstraintValue(constraints: string[], prefix: string) {
+  const match = constraints.find(function (constraint) {
+    return constraint.startsWith(prefix);
+  });
+
+  if (!match) {
+    return "";
+  }
+
+  return match.slice(prefix.length).trim();
+}
+
+function cleanContractValue(value: string) {
+  return truncateText(
+    value
+      .replace(/\s+/g, " ")
+      .replace(/\. (Die Szene darf|Dieses Beweisobjekt darf|Diese Alltagslogik muss|Diese Ersetzungslogik muss|Mila bleibt Kind|Farbe, Funktion).+$/u, ".")
+      .trim(),
+    260
+  );
 }
 
 function buildSceneContextXml(packet: SceneContextPacket) {
@@ -1563,14 +1655,6 @@ function buildOutlineFromBeatPlan(beatPlan: BeatPlanPayload) {
   return beatPlan.beats.map(function (beat) {
     return `${beat.label}: ${beat.purpose} (${beat.targetWords}W, Payoff: ${beat.mustLand})`;
   });
-}
-
-function formatSceneContractForPrompt(beatPlan: BeatPlanPayload) {
-  return beatPlan.beats
-    .map(function (beat, index) {
-      return `Scene movement ${index + 1} [${beat.targetWords}W] - ${beat.purpose} -> ${beat.mustLand}`;
-    })
-    .join(" | ");
 }
 
 function normalizeStateExtractionPayload(payload: StateExtractionPayload): StateExtractionPayload {

@@ -480,10 +480,10 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
 - **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde eine fehlerhafte Kurzfassung durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
-- **Offene Grenze:** `aktualisiert 2026-04-26`. Der Book-Pfad ist stabiler und schlanker, trifft aber hohe Zielbereiche fuer den finalen Job-Text noch nicht in jedem Lauf. Die naechste qualitative Stufe bleibt deshalb: bessere Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Laeufe.
+- **Offene Grenze:** `aktualisiert 2026-04-26`. Der Book-Pfad ist stabiler und schlanker. Wortziele sind jetzt bevorzugte Rahmen, keine harten Qualitätsziele; Length-Control greift nur noch als Notfallprüfung bei extrem kurzen oder extrem langen Szenen. Die naechste qualitative Stufe bleibt deshalb: organische Szenenlaenge ueber mehrere Remote-Laeufe benchmarken.
 
 ### Nächste technische Prioritäten
-1. **Length-Control Robustheit:** Expand-/Compress-Entscheidungen weiter schaerfen, damit der finale Job-Text hohe Zielbereiche wie `1350-1650` zuverlaessiger erreicht, ohne die Prosa zu verwaessern.
+1. **Length-Control Beobachtung:** Notfallgrenzen und organische Szenenlaengen ueber echte Remote-Laeufe pruefen, damit Length-Control nur technische Ausreisser korrigiert und keine gute Prosa glättet.
 2. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
 3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
 4. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.

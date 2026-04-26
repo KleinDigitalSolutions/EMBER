@@ -314,6 +314,8 @@ Das bedeutet:
 - Du bekommst nicht nur einen Text.
 - Du bekommst auch verwertbare Produktionsdaten für Folgearbeit.
 - Die Prosa läuft bewusst schlanker als früher: kein separater Beat-Plan-Call, kein automatischer Rewrite-Pass, weniger Mikrosteuerung.
+- Wortziele sind bevorzugte Rahmen. Wenn die Szene organisch früher schließt oder mehr Raum braucht, soll der Szenendruck Vorrang haben.
+- `length_control` ist nur noch eine Notfallprüfung gegen extreme Ausreißer, nicht das Qualitätsmaß der Szene.
 
 ## 8. Wie du Job-Ergebnisse richtig liest
 
@@ -528,8 +530,8 @@ Danach prüfst du in dieser Reihenfolge:
 Nicht alle Provider verhalten sich gleich.
 
 - stärkere Modelle kosten mehr
-- längere Zieltexte kosten mehr
-- zusätzliche Length-Control- oder Continuity-Pässe kosten mehr
+- längere bevorzugte Zielrahmen können mehr kosten
+- zusätzliche Notfall-Length-Control- oder Continuity-Pässe kosten mehr
 - `length_control` und `quality_eval` sind zusätzliche Stufen und können Laufzeit erhöhen
 - bessere Qualität ist oft teurer, aber billiger als zehn unbrauchbare Billigläufe
 
