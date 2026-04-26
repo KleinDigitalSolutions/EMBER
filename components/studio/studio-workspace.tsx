@@ -1184,6 +1184,16 @@ export function StudioWorkspace({
         >
           <span className="rail-icon rail-icon--book" />
         </button>
+
+        <div className="rail-spacer" />
+
+        <Link
+          href="/studio/guide"
+          className="rail-button"
+          title="Regie-Guide & Hilfe"
+        >
+          <span className="rail-icon rail-icon--help" />
+        </Link>
       </aside>
 
       <aside className="sidebar">
