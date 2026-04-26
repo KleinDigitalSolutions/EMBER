@@ -302,7 +302,7 @@ async function generateWithOpenAI(
         modelName,
         systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
-        maxOutputTokens: resolveOpenAIProseMaxTokens(resolveDraftWordTargets(options).max)
+        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
     },
     expandScene: function (beatPlan, rewriteText) {
@@ -392,7 +392,7 @@ async function generateWithAnthropic(
       return requestAnthropicText({
         client,
         modelName,
-        maxTokens: resolveAnthropicProseMaxTokens(resolveDraftWordTargets(options).max),
+        maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
         systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
         userPrompt: buildAnthropicScenePrompt({
           mode: "draft",
@@ -481,7 +481,6 @@ async function runScenePipeline(
   adapter: ScenePipelineAdapter
 ): Promise<DraftProviderResult> {
   const warnings: string[] = [];
-  const draftTargets = resolveDraftWordTargets(options);
   let beatPlan = buildFallbackBeatPlan(packet, options);
   let outlineNotes = buildOutlineFromBeatPlan(beatPlan);
   let beatPlanStage = createStageRun({
@@ -718,8 +717,8 @@ async function runScenePipeline(
         inputTokens: draftResult.metrics.inputTokens,
         outputTokens: draftResult.metrics.outputTokens,
         stopReason: draftResult.metrics.stopReason,
-        targetWordsMin: draftTargets.min,
-        targetWordsMax: draftTargets.max,
+        targetWordsMin: options.targetSceneWordsMin,
+        targetWordsMax: options.targetSceneWordsMax,
         actualWords: countWords(draftText),
         notes: [`Erster Prosa-Pass mit ${countWords(draftText)} Wörtern erstellt.`]
       }),
@@ -1111,13 +1110,6 @@ function buildAnthropicMetrics(
   };
 }
 
-function resolveDraftWordTargets(options: DraftGenerationOptions) {
-  const min = Math.max(250, Math.round(options.targetSceneWordsMin * 0.58));
-  const max = Math.max(min + 120, Math.round(options.targetSceneWordsMax * 0.72));
-
-  return { min, max };
-}
-
 function resolveOpenAIProseMaxTokens(targetWordMax: number) {
   return clampNumber(Math.round(targetWordMax * 3.2), OPENAI_PROSE_MIN_TOKENS, OPENAI_PROSE_MAX_TOKENS);
 }
@@ -1132,39 +1124,6 @@ function resolveAnthropicProseMaxTokens(targetWordMax: number) {
 
 function buildSystemPrompt(packet: SceneContextPacket) {
   return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
-}
-
-function buildStilankerReferenz(story: StoryDocument, packet: SceneContextPacket): string | undefined {
-  const povConstraint = packet.dynamicContext.sceneHardConstraints.find(function (c) {
-    return c.startsWith("POV ist ");
-  });
-  const pov = povConstraint ? povConstraint.replace(/^POV ist /, "").replace(/\. .+$/, "") : null;
-
-  const accepted = story.book.draftEngine.jobs
-    .filter(function (job) {
-      return job.status === "accepted" && job.rewriteText && job.sceneId !== packet.sceneId;
-    })
-    .filter(function (job) {
-      if (!pov) return true;
-      const jobPacket = buildSceneContextPacket(story, job.sceneId);
-      return jobPacket
-        ? jobPacket.dynamicContext.sceneHardConstraints.some(function (c) {
-            return c.startsWith(`POV ist ${pov}.`);
-          })
-        : false;
-    })
-    .sort(function (a, b) {
-      return (b.acceptedAt ?? b.updatedAt).localeCompare(a.acceptedAt ?? a.updatedAt);
-    })
-    .slice(0, 2);
-
-  if (!accepted.length) return undefined;
-
-  return accepted
-    .map(function (job) {
-      return job.rewriteText.split(/\s+/).slice(0, 280).join(" ");
-    })
-    .join("\n---\n");
 }
 
 const STIL_SENTENCE_THRESHOLD = 0.35;
@@ -1281,60 +1240,20 @@ function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {
   ].join("\n");
 }
 
-function buildBeatPlanPrompt(packet: SceneContextPacket, options: DraftGenerationOptions) {
-  const totalTarget = Math.round((options.targetSceneWordsMin + options.targetSceneWordsMax) / 2);
-
-  return [
-    "Create a compact beat plan for one scene.",
-    "Return only structured output matching the requested schema.",
-    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    `Preferred total beat budget: ${totalTarget} words.`,
-    "Requirements:",
-    "- 3 to 5 beats.",
-    "- Each beat must have a functional purpose and a concrete mustLand payoff.",
-    "- targetWords across all beats should roughly sum to the preferred total.",
-    "- Keep beats dramatic, not essayistic.",
-    "- label should stay short.",
-    "- purpose should be one compact sentence.",
-    "- mustLand should be one compact payoff sentence.",
-    buildSceneContextPrompt(packet),
-    options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
-  ].join("\n");
-}
-
 function buildDraftProsePrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload
 ) {
-  const draftTargets = resolveDraftWordTargets(options);
-
   return [
     "Write the first draft of the selected scene.",
     "Return prose only. No JSON, no headings, no bullet points, no commentary.",
-    `Draft target range: ${draftTargets.min}-${draftTargets.max} words.`,
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Write the scene directly from the material at hand. Keep some sentences raw enough that the prose stays alive.",
     buildProseSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
-}
-
-function buildRewriteProsePrompt(
-  packet: SceneContextPacket,
-  options: DraftGenerationOptions,
-  beatPlan: BeatPlanPayload,
-  draftText: string
-) {
-  return [
-    "Rewrite the scene into the final prose pass.",
-    "Return prose only. No JSON, no commentary.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Tighten rhythm, sharpen observation, and preserve the living texture of the draft.",
-    "Preserve canon and the scene movement. Remove explanation before you remove friction.",
-    buildProseSceneContextPrompt(packet),
-    `Current draft: ${draftText}`
-  ].filter(Boolean).join("\n");
 }
 
 function buildExpandPrompt(
@@ -1451,7 +1370,7 @@ function buildAnthropicScenePrompt(params: {
 }) {
   const modeInstruction =
     params.mode === "draft"
-      ? `Write a first-pass scene in ${resolveDraftWordTargets(params.options).min}-${resolveDraftWordTargets(params.options).max} words.`
+      ? `Write the scene in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`
       : params.mode === "rewrite"
         ? `Rewrite the scene into a final pass in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words while preserving the raw texture of the draft.`
         : params.mode === "expand"

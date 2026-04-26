@@ -8,30 +8,44 @@
 
 ## AGENT ONBOARDING — Lies das zuerst
 
-> Diese Sektion ist für neue Agents, neue Claude-Instanzen und alle, die neu ins Projekt einsteigen. Sie erklärt, wie diese Datei mit der EMBER-Pipeline zusammenarbeitet — ohne diese Sektion ist die Datei nur Dramaturgie, nicht Pipeline-Konfiguration.
+> Diese Sektion ist für neue Agents und alle, die neu ins Projekt einsteigen. Sie erklärt, wie diese Datei mit der aktuellen EMBER-Pipeline zusammenarbeitet. Ohne diese Sektion ist die Datei nur Dramaturgie; mit ihr wird sie zu einer belastbaren Produktionsgrundlage.
 
 ### Was diese Datei ist
 
 Diese Regie-Datei ist gleichzeitig:
 - **Narratives Steuerwerk**: Prämisse, Stil, Charaktere, Dramaturgie, Beweislogik
-- **Pipeline-Konfiguration**: Scene Cards steuern direkt, was Opus schreiben darf und muss
-- **Produktionswerkzeug**: Writer-Summaries und Operative Hinweise für den Szenen-Drafting-Lauf
+- **Produktionsgrundlage**: Scene Cards, Canon und Charakterzustände definieren, was eine gute Szene materiell und dramaturgisch tragen muss
+- **Agenten-Referenz**: Diese Datei ist das Paradebeispiel dafür, wie EMBER-Regie aussehen soll, wenn daraus gute Szenen entstehen sollen
 
-EMBER liest die Scene Cards maschinell. Der Rest der Datei ist menschlich lesbar und dient als Stilanker, Kontinuitätsreferenz und Dramaturgie-Regie.
+EMBER liest Teile dieser Datei maschinell. Der Rest bleibt menschlich lesbar und dient als Stilanker, Kontinuitätsreferenz und Dramaturgie-Regie. Die aktuelle Pipeline ist bewusst schlanker als frühere Versuche: kein aktiver Beat-Plan im Schreiblauf, kein automatischer Rewrite-Pass, keine mikrogesteuerte Satzregie. Gute Szenen entstehen deshalb nicht mehr aus eng geführter Prompt-Polizei, sondern aus sauberem Material, präziser Szenenfunktion und klaren Alltagsankern.
 
-### Welche Scene-Card-Felder die Pipeline direkt steuern
+### Was die aktuelle Pipeline wirklich mitnimmt
+
+Die aktuelle Standardpipeline arbeitet in dieser Reihenfolge:
+- Sie baut aus Story, Scene Card, Canon, Character Ledger und Open Threads einen schlanken Szenenkontext.
+- Sie generiert einen direkten Prosa-Draft ohne separaten Beat-Plan-Call und ohne Rewrite-Pass.
+- Danach folgen nur noch technische und qualitative Nachläufe: Length-Control, State-Extraction, Continuity-Audit, Quality-Eval.
+
+Wichtig daraus:
+- Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **klare Szenenfunktion mit harten Faktenankern**.
+- Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` sind **Orientierung**, nicht Formulierungsdiktat.
+- Gute Regie beschreibt deshalb nicht die perfekte spätere Prosa, sondern die **richtige Situation, das richtige Beweisobjekt, den richtigen sozialen Druck und den richtigen Verlust**.
+
+### Welche Scene-Card-Felder hart, weich oder rein menschlich sind
 
 | Feld | Pipeline-Funktion | Konsequenz bei Fehlen/Fehler |
 |---|---|---|
-| `proof_object` | **Pflicht-Beweisobjekt-Guard**: Der generierte Draft wird nicht akzeptiert, bis dieser Begriff im Prosatext erscheint. Matching ist deutsch-compound-aware. | Draft bleibt dauerhaft geblockt — Schlüsselbegriff muss wörtlich oder als Teilwort erscheinen. |
-| `word_target_min` | Unteres Wortziel. Überschreibt den Pipeline-Default von 1200 Wörtern. | Ohne dieses Feld: Pipeline fällt auf Default 1200 zurück. Fusionskapitel werden zu kurz. |
-| `word_target_max` | Oberes Wortziel. Überschreibt den Pipeline-Default von 1600 Wörtern. | Ohne dieses Feld: Pipeline fällt auf Default 1600 zurück. |
-| `coreAction` | Der nicht verhandelbare Handlungskern. Wird als harte Szenen-Constraint an Opus übergeben. | Fehlt er, fehlt der dramaturgische Kern im Prompt. |
-| `reversal` | Der Wendepunkt der Szene. Fließt in die Szenen-Directives ein. | Opus bekommt keinen klaren Pivot — Szene kann flach bleiben. |
-| `dramaticBeat` | Der zentrale Beat. Fließt in die Szenen-Directives ein. | Wie `reversal`: Fehlt die Verdichtung im Prompt. |
-| `pov` | POV-Constraint: wird zu „POV ist [EVA/NORA/SIMON]." als harte Constraint. | Ohne POV-Lock kann Opus die Perspektive wechseln. |
+| `pov` | Harte Laufzeit-Constraint. | Ohne POV-Lock droht Perspektivdrift. |
+| `ort` / `location` | Harte Laufzeit-Constraint. | Ohne klaren Ort wird die Szene räumlich weich. |
+| `uhrzeit` / `timeAnchor` | Harte Laufzeit-Constraint. | Fehlt sie, verliert der Ablauf Präzision. |
+| `proof_object` | Harter Materialanker plus Continuity-Guard. | Fehlt oder driftet, verliert die Szene ihren überprüfbaren Kern. |
+| `alltagswaffe`, `kindmoment`, `object_anchor`, `prop_anchor` | Harte Material-/Kindheitsanker. | Fehlen sie, wird Alltagsdruck zu abstrakt oder symbolisch. |
+| `word_target_min` / `word_target_max` | Wortzielsteuerung. | Fehlen sie, greift der Pipeline-Default. |
+| `coreAction` | Harte Handlungsorientierung. | Fehlt sie, fehlt der Handlungskern. |
+| `objective`, `reversal`, `dramaticBeat`, `opening`, `ending`, `closingLine` | Weiche Szenenführung. Dienen dem Verständnis der Szene, nicht dem Diktat einzelner Sätze. | Fehlen sie, wird die Szene oft ungenauer oder flacher, aber nicht automatisch unbrauchbar. |
+| `bad_version_risk`, `revision_focus`, `scene_promise`, `pressure_clock` usw. | Menschliche Produktionshilfe. | Hilft Agents, den Sinn der Szene zu verstehen und typische Fehlfassungen zu vermeiden. |
 
-**Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel brauchen zwingend `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card. Fehlen diese Felder, generiert die Pipeline Standard 1200–1600 Wörter und die Fusionskapitel werden zu kurz.
+**Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel brauchen zwingend `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card. Fehlen diese Felder, greift der Pipeline-Default und die Fusionskapitel werden zu kurz.
 
 ### Sections-Übersicht: Was wozu dient
 
@@ -50,9 +64,9 @@ EMBER liest die Scene Cards maschinell. Der Rest der Datei ist menschlich lesbar
 | NORA COST LEDGER | Nora-Erfolge mit Restfehlern und Payoffs pro Kapitel | Nein — Dramaturgie-Referenz |
 | OPEN THREADS | Dramaturgische Fragebögen mit Payoff-Acts | Nein — menschlich |
 | PROOF LADDER | Act-Struktur, Evidenz-Progression, interne Zeitachse | Nein — Dramaturgie-Referenz |
-| ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — direkter Pipeline-Input |
+| ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — zentrale Produktions- und Laufzeitgrundlage |
 | WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Nein — Human-Writer-Starthilfe |
-| OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | **Ja** — Copy-Paste in das „Director Note"-Feld der UI |
+| OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | Ja — operative Hilfe, aber kein Ersatz für gute Scene Cards |
 
 ### Wie CONTINUITY GUARDRAILS die Pipeline beeinflusst
 
@@ -61,7 +75,32 @@ Die Sektion `CONTINUITY GUARDRAILS` treibt den Guard `auditSceneContinuityGuards
 - **Farbdrift**: Werden Farbanker (z.B. gelber Becher) falsch verwendet?
 - **Proof-Object-Guard**: Ist das `proof_object` der Scene Card im Draft sichtbar?
 
-Wenn die CONTINUITY GUARDRAILS veraltete Figuren oder falsche Namen enthalten, blocken sie neue Szenen. Diese Sektion muss bei jedem neuen Buch vollständig ersetzt werden.
+Diese Guards sind heute in erster Linie **Qualitäts- und Kontinuitätssignale**. Sie sollen Probleme sichtbar machen, nicht Prosa ersetzen. Wenn die CONTINUITY GUARDRAILS veraltete Figuren oder falsche Namen enthalten, produzieren sie systematisch falsche Warnungen. Diese Sektion muss bei jedem neuen Buch vollständig ersetzt werden.
+
+### Wie gute Scene Cards im schlanken System aussehen
+
+Im aktuellen System gilt:
+- Schreibe keine Scene Card, die schon wie die fertige Szene klingt.
+- Schreibe eine Scene Card so, dass ein guter Agent sofort versteht:
+  - Was will die Figur in dieser Szene?
+  - Wodurch wird das konkret, überprüfbar und alltagsnah?
+  - Was kippt sozial, institutionell oder emotional?
+  - Was kostet die Szene Eva real?
+  - Welches Objekt oder welcher Routinedetaildruck macht die Szene unverwechselbar?
+
+Eine starke Scene Card liefert:
+- **klare Handlung**
+- **klare Verlust- oder Beweisbewegung**
+- **konkrete Alltagsobjekte**
+- **plausiblen sozialen Druck**
+- **genug Freiheit für lebendige Prosa**
+
+Eine schwache Scene Card liefert:
+- nur Stimmung
+- nur Erklärpsychologie
+- nur „spannende" Behauptungen ohne Objekt
+- einen perfekten Schlusssatz, statt eine belastbare Situation
+- zu viel Mikroregie auf Satzebene
 
 ### Template-Anleitung für ein neues Buch
 
@@ -75,16 +114,19 @@ Kopiere diese Datei und gehe in dieser Reihenfolge vor:
 6. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
 7. **NORA CAPABILITY MAP / COST LEDGER** durch eine äquivalente Antagonisten-Map ersetzen.
 8. **PROOF LADDER** neu strukturieren: Was weiß wer in welchem Act?
-9. **SCENE CARDS** neu schreiben. Pflichtfelder pro Karte: `id`, `pov`, `coreAction`, `proof_object`, `reversal`, `dramaticBeat`. Für Fusionskapitel zusätzlich: `word_target_min`, `word_target_max`.
-10. **OPERATIVE HINWEISE FUER EMBER**: Globalen Director-Note-Block anpassen; kapitelweise Copy-Paste-Anweisungen zuletzt ergänzen.
+9. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object`. Für Fusionskapitel zusätzlich: `word_target_min`, `word_target_max`.
+10. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
+11. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
 
 ### Häufige Fehlerquellen für neue Agents
 
 - **`proof_object` zu abstrakt**: Wenn der Wert ein Konzept statt eines konkreten Dings/Namens/Dokuments ist (z.B. „Vertrauen" statt „Namensetiketten und alter Freigabelink"), kann der Guard nicht matchen. Immer konkrete, suchbare Begriffe verwenden.
-- **`word_target_min`/`word_target_max` vergessen**: Ohne diese Felder in der Scene Card verwendet die Pipeline Standard 1200–1600. Fusionskapitel werden dann zu kurz und werden nicht aufgrund des Wortziels geblockt, sondern sind einfach zu knapp.
-- **CONTINUITY GUARDRAILS nicht aktualisiert**: Diese Sektion enthält die alten Figurnamen des letzten Buchs — sie blockiert neue Szenen mit falschen Guard-Fehlern.
+- **`word_target_min`/`word_target_max` vergessen**: Ohne diese Felder in der Scene Card greift der Pipeline-Default. Fusionskapitel werden dann zu kurz.
+- **CONTINUITY GUARDRAILS nicht aktualisiert**: Diese Sektion enthält sonst alte Figurnamen und produziert falsche Warnungen.
 - **Scene Cards nicht als Fenced-Code-Block**: Die Pipeline parsed Scene Cards als Key-Value-Blöcke innerhalb von ` ``` `…` ``` `. Einrückung (2 Spaces) und `: ` als Trennzeichen müssen konsistent sein.
-- **Director Note vs. Scene Card verwechseln**: Die `directorNote` in der Writer-UI ist ein freies Laufkommentar für diesen einen Generierungslauf. Die Scene Card ist die dauerhafte Konfiguration. Änderungen gehören in die Scene Card, nicht nur in die Director Note.
+- **Director Note vs. Scene Card verwechseln**: Die `directorNote` in der Writer-UI ist nur Zusatzsteuerung für einen Lauf. Die Scene Card bleibt die eigentliche Produktionsgrundlage.
+- **zu schöne Scene Cards schreiben**: Wenn eine Karte bereits wie perfekte Prosa klingt, wird sie als Regie oft schlechter, nicht besser. Agents brauchen präzise Situation, nicht vorgefertigte Literatur.
+- **fehlender Alltagsdruck**: Ohne reale Routinen, Gegenstände, Listen, Kleidung, Kinderlogik oder institutionelle Kleinmechanik verliert das System genau das Material, aus dem gute Szenen entstehen.
 
 ---
 
@@ -739,7 +781,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ---
 ## ACTS & KAPITEL — SCENE CARDS
 
-> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Die Felder `proof_object`, `coreAction`, `reversal`, `dramaticBeat` und `pov` steuern direkt den Opus-Prompt. Das Feld `proof_object` erzeugt einen harten Accept-Guard — der Draft wird erst akzeptiert, wenn der Begriff im Prosatext erscheint. Die Felder `word_target_min`/`word_target_max` überschreiben den Pipeline-Default (1200–1600). Alle anderen Felder sind dramaturgie-lesbar, aber nicht direkt prompt-aktiv. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
+> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Im aktuellen System sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` und harte Objekt-/Kindanker die wichtigsten Laufzeitfaktoren. `opening`, `reversal`, `dramaticBeat`, `ending` und `closingLine` bleiben wichtige Regiehilfen, sollen aber nicht als Formulierungszwang missverstanden werden. `word_target_min`/`word_target_max` überschreiben den Pipeline-Default. Alle weiteren Felder helfen Agents, die Szene richtig zu lesen und Fehlfassungen zu vermeiden. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
 
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
@@ -2469,7 +2511,8 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 1. Passende `Scene Card` prüfen.
 2. Relevante Alltagsbeweise und Trigger in den `Canon Facts` prüfen.
 3. Diese Objekte explizit in `Summary` und `Scene Card` halten.
-4. Nur laufbezogene Feinkorrekturen in `Director Note` setzen.
+4. Nur dann eine `Director Note` setzen, wenn wirklich laufbezogene Feinkorrekturen nötig sind.
+5. Keine Director Note verwenden, um fehlende Scene-Card-Substanz zu überdecken.
 
 ### Copy-Paste Writer Constitution (geschärft)
 - Nahe dritte Person auf Eva. Keine allwissende Erklärstimme.
@@ -2492,10 +2535,14 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 - Im letzten Drittel keine Triumphprosa und keine Dämonisierung. Beweise schlagen härter als Lautstärke.
 - Kurze bis mittlere Kapitel bevorzugen. 1000-1500 Wörter sind Normalbereich; einzelne Schlüsselszenen dürfen bis etwa 1700 gehen, Kapitel 17, 23 und 27 als Fusionskapitel bei Bedarf auf etwa 1700-1950 Wörter.
 
-### Copy-Paste Director Note (globaler Lauf-Block)
-`Straffe die Szene auf Zug statt Vollständigkeit. Steige spät ein, gehe früh raus. Nach Beweisbild, Objekt-Schlag oder klarer Machtverschiebung endet die Szene sofort. Keine Nachwirkung erklären. Keine dritte Atmosphärenbeobachtung vor dem eigentlichen Schlag. Im Mittelteil nicht die dritte reine Beweisszene hintereinander schreiben: spätestens dann braucht es eine reale Folge für Zugriff, Loyalität, Institution oder Kinderroutine. Prüfe jeden Anschluss auf Kausalität: passt eher deshalb oder aber als und dann? Nora bleibt sozial plausibel und nicht zu perfekt kuratiert. Jeder grössere Zug hinterlässt Restfehler oder Gegendruck. Eva bleibt präzise, aber unter Druck leicht gebrochen. Objektspannung vor Reflexion.`
+### Minimaler Director-Note-Block
+> Nur verwenden, wenn der Lauf sichtbar zu breit, zu erklärend oder zu laut wird. Dieser Block ist Zusatzsteuerung, nicht Standardersatz für gute Regie.
+
+`Straffe auf Zug statt Vollständigkeit. Steige spät ein, gehe früh raus. Keine Nachdeutung nach Beweisbild, Objekt-Schlag oder Machtverschiebung. Objektspannung vor Reflexion. Nora sozial plausibel, Eva präzise unter Druck.`
 
 ### Copy-Paste Regieanweisungen für die Writer-UI
+
+> Diese Anweisungen sind kapitelweise Nachschärfungen. Sie sollen den Lauf justieren, nicht die Scene Card umschreiben. Wenn eine Szene nur mit langer Director Note funktioniert, ist die Scene Card noch nicht sauber genug.
 
 #### Kapitel 1 — „Gestern"
 `Schreibe die Szene ohne Vorgeschichte. Kein langsames psychologisches Vorspiel. Der Schock entsteht daraus, wie normal und sicher die Kita in ihrer Behauptung klingt. Keine Hysterie. Alltagsrealismus zuerst.`
