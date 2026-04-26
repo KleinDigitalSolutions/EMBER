@@ -4,6 +4,90 @@
 > Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads
 > Hinweis: Diese Regie ist auf Regie-zu-Blueprint Sync ausgelegt. Namen und Orte können später geändert werden, die Funktionslogik der Figuren aber nicht.
 
+---
+
+## AGENT ONBOARDING — Lies das zuerst
+
+> Diese Sektion ist für neue Agents, neue Claude-Instanzen und alle, die neu ins Projekt einsteigen. Sie erklärt, wie diese Datei mit der EMBER-Pipeline zusammenarbeitet — ohne diese Sektion ist die Datei nur Dramaturgie, nicht Pipeline-Konfiguration.
+
+### Was diese Datei ist
+
+Diese Regie-Datei ist gleichzeitig:
+- **Narratives Steuerwerk**: Prämisse, Stil, Charaktere, Dramaturgie, Beweislogik
+- **Pipeline-Konfiguration**: Scene Cards steuern direkt, was Opus schreiben darf und muss
+- **Produktionswerkzeug**: Writer-Summaries und Operative Hinweise für den Szenen-Drafting-Lauf
+
+EMBER liest die Scene Cards maschinell. Der Rest der Datei ist menschlich lesbar und dient als Stilanker, Kontinuitätsreferenz und Dramaturgie-Regie.
+
+### Welche Scene-Card-Felder die Pipeline direkt steuern
+
+| Feld | Pipeline-Funktion | Konsequenz bei Fehlen/Fehler |
+|---|---|---|
+| `proof_object` | **Pflicht-Beweisobjekt-Guard**: Der generierte Draft wird nicht akzeptiert, bis dieser Begriff im Prosatext erscheint. Matching ist deutsch-compound-aware. | Draft bleibt dauerhaft geblockt — Schlüsselbegriff muss wörtlich oder als Teilwort erscheinen. |
+| `word_target_min` | Unteres Wortziel. Überschreibt den Pipeline-Default von 1200 Wörtern. | Ohne dieses Feld: Pipeline fällt auf Default 1200 zurück. Fusionskapitel werden zu kurz. |
+| `word_target_max` | Oberes Wortziel. Überschreibt den Pipeline-Default von 1600 Wörtern. | Ohne dieses Feld: Pipeline fällt auf Default 1600 zurück. |
+| `coreAction` | Der nicht verhandelbare Handlungskern. Wird als harte Szenen-Constraint an Opus übergeben. | Fehlt er, fehlt der dramaturgische Kern im Prompt. |
+| `reversal` | Der Wendepunkt der Szene. Fließt in die Szenen-Directives ein. | Opus bekommt keinen klaren Pivot — Szene kann flach bleiben. |
+| `dramaticBeat` | Der zentrale Beat. Fließt in die Szenen-Directives ein. | Wie `reversal`: Fehlt die Verdichtung im Prompt. |
+| `pov` | POV-Constraint: wird zu „POV ist [EVA/NORA/SIMON]." als harte Constraint. | Ohne POV-Lock kann Opus die Perspektive wechseln. |
+
+**Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel brauchen zwingend `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card. Fehlen diese Felder, generiert die Pipeline Standard 1200–1600 Wörter und die Fusionskapitel werden zu kurz.
+
+### Sections-Übersicht: Was wozu dient
+
+| Sektion | Zweck | Pipeline-relevant? |
+|---|---|---|
+| MASTER BRIEF | Prämisse, Genre, POV-Strategie | Nein — menschlicher Kontext |
+| MARKET BRIEF | Vermarktungsziele, Comp Titles | Nein — menschlicher Kontext |
+| WRITER CONSTITUTION | Stilregeln Positiv/Negativ | Nein — Stilanker für Reviews |
+| WORLD BIBLE | Setting, Soziale Lage, Noras Zugriffslogik | Nein — Stilanker und Continuity-Referenz |
+| CANON FACTS | Unveränderliche Buchwahrheiten mit IDs | Indirekt — Continuity-Basis |
+| CHARACTER STATE LEDGER | Wunde, Arc, Speech Pattern pro Figur | Nein — Stilanker |
+| VOICE PACK | Satzebene-Führung pro Figur mit Positiv/Verboten-Mustern | Nein — Stilanker |
+| PROSA BENCHMARK | Konkrete Prosabeispiele als Stilanker | Nein — Stilanker |
+| CONTINUITY GUARDRAILS | Namensschutz, Produktionsregeln | **Ja** — treibt `auditSceneContinuityGuards` live |
+| NORA CAPABILITY MAP | Plausibilitätsgrenzen für Noras Zugriff | Nein — menschlich |
+| NORA COST LEDGER | Nora-Erfolge mit Restfehlern und Payoffs pro Kapitel | Nein — Dramaturgie-Referenz |
+| OPEN THREADS | Dramaturgische Fragebögen mit Payoff-Acts | Nein — menschlich |
+| PROOF LADDER | Act-Struktur, Evidenz-Progression, interne Zeitachse | Nein — Dramaturgie-Referenz |
+| ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — direkter Pipeline-Input |
+| WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Nein — Human-Writer-Starthilfe |
+| OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | **Ja** — Copy-Paste in das „Director Note"-Feld der UI |
+
+### Wie CONTINUITY GUARDRAILS die Pipeline beeinflusst
+
+Die Sektion `CONTINUITY GUARDRAILS` treibt den Guard `auditSceneContinuityGuards` direkt. Dieser Guard läuft nach jeder Draft-Generierung und prüft:
+- **Namensdrift**: Erscheinen die Kernfiguren unter falschen Namen?
+- **Farbdrift**: Werden Farbanker (z.B. gelber Becher) falsch verwendet?
+- **Proof-Object-Guard**: Ist das `proof_object` der Scene Card im Draft sichtbar?
+
+Wenn die CONTINUITY GUARDRAILS veraltete Figuren oder falsche Namen enthalten, blocken sie neue Szenen. Diese Sektion muss bei jedem neuen Buch vollständig ersetzt werden.
+
+### Template-Anleitung für ein neues Buch
+
+Kopiere diese Datei und gehe in dieser Reihenfolge vor:
+
+1. **MASTER BRIEF + MARKET BRIEF** vollständig ersetzen.
+2. **WORLD BIBLE** neu schreiben: Setting, soziale Konstellation, Bedrohungslogik des neuen Antagonisten.
+3. **CHARACTER STATE LEDGER + VOICE PACK + PROSA BENCHMARK** für neue Figuren neu schreiben.
+4. **CANON FACTS** mit den unveränderlichen Wahrheiten des neuen Buchs befüllen.
+5. **OPEN THREADS** mit den zentralen dramaturgischen Fragebögen neu schreiben.
+6. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
+7. **NORA CAPABILITY MAP / COST LEDGER** durch eine äquivalente Antagonisten-Map ersetzen.
+8. **PROOF LADDER** neu strukturieren: Was weiß wer in welchem Act?
+9. **SCENE CARDS** neu schreiben. Pflichtfelder pro Karte: `id`, `pov`, `coreAction`, `proof_object`, `reversal`, `dramaticBeat`. Für Fusionskapitel zusätzlich: `word_target_min`, `word_target_max`.
+10. **OPERATIVE HINWEISE FUER EMBER**: Globalen Director-Note-Block anpassen; kapitelweise Copy-Paste-Anweisungen zuletzt ergänzen.
+
+### Häufige Fehlerquellen für neue Agents
+
+- **`proof_object` zu abstrakt**: Wenn der Wert ein Konzept statt eines konkreten Dings/Namens/Dokuments ist (z.B. „Vertrauen" statt „Namensetiketten und alter Freigabelink"), kann der Guard nicht matchen. Immer konkrete, suchbare Begriffe verwenden.
+- **`word_target_min`/`word_target_max` vergessen**: Ohne diese Felder in der Scene Card verwendet die Pipeline Standard 1200–1600. Fusionskapitel werden dann zu kurz und werden nicht aufgrund des Wortziels geblockt, sondern sind einfach zu knapp.
+- **CONTINUITY GUARDRAILS nicht aktualisiert**: Diese Sektion enthält die alten Figurnamen des letzten Buchs — sie blockiert neue Szenen mit falschen Guard-Fehlern.
+- **Scene Cards nicht als Fenced-Code-Block**: Die Pipeline parsed Scene Cards als Key-Value-Blöcke innerhalb von ` ``` `…` ``` `. Einrückung (2 Spaces) und `: ` als Trennzeichen müssen konsistent sein.
+- **Director Note vs. Scene Card verwechseln**: Die `directorNote` in der Writer-UI ist ein freies Laufkommentar für diesen einen Generierungslauf. Die Scene Card ist die dauerhafte Konfiguration. Änderungen gehören in die Scene Card, nicht nur in die Director Note.
+
+---
+
 ## MASTER BRIEF
 
 | Feld | Inhalt |
@@ -655,6 +739,8 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ---
 ## ACTS & KAPITEL — SCENE CARDS
 
+> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Die Felder `proof_object`, `coreAction`, `reversal`, `dramaticBeat` und `pov` steuern direkt den Opus-Prompt. Das Feld `proof_object` erzeugt einen harten Accept-Guard — der Draft wird erst akzeptiert, wenn der Begriff im Prosatext erscheint. Die Felder `word_target_min`/`word_target_max` überschreiben den Pipeline-Default (1200–1600). Alle anderen Felder sind dramaturgie-lesbar, aber nicht direkt prompt-aktiv. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
+
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
 
@@ -1232,6 +1318,8 @@ Scene Card
 Scene Card
   id: SC_2_2
   pov: EVA
+  word_target_min: 1700
+  word_target_max: 1950
   ort: Innenhof / Fenster / Waschküche / Cloud-Album / Küchentisch
   uhrzeit: Abend bis Nacht
   ziel: Beobachtung und digitalen Restzugriff zu einem gespeicherten Alltag bündeln.
@@ -1441,6 +1529,8 @@ Scene Card
 Scene Card
   id: SC_2_8
   pov: EVA
+  word_target_min: 1700
+  word_target_max: 1950
   ort: Kinderarztpraxis / Simon Flur / Milas Sachen
   uhrzeit: Donnerstagmittag bis Abend
   ziel: Vertrauensraum und materielles Duplikat zu einem Statusverlust bündeln.
@@ -1581,6 +1671,8 @@ Scene Card
 Scene Card
   id: SC_2_12
   pov: EVA
+  word_target_min: 1700
+  word_target_max: 1950
   ort: Chatverläufe / Ausdrucke / Simon Wohnzimmer
   uhrzeit: Samstag Tag und Abend
   ziel: Rückwärtsarchiv und Midpoint-Erkenntnis zu einem Umschaltmoment verschmelzen.
