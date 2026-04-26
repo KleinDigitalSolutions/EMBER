@@ -53,6 +53,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-2",
     kicker: "Das Video",
     title: "Das Bild",
+    summary: "",
     paragraphs: [
       "Der Monitor stand schräg auf Petra Löwens Schreibtisch, so, dass beide hineinsehen konnten, ohne dass eine von ihnen aufstehen musste. Petra hatte den Stuhl nicht verschoben, als Eva sich gesetzt hatte. Sie hatte nur die Tür geschlossen, das Fenster der Software geöffnet, die Datei gesucht, die Datei gefunden, und die Maus über die Zeitleiste gezogen.",
       "\"Ich zeige es Ihnen einmal komplett\", sagte Petra. \"Dann noch einmal langsam.\"",
@@ -109,6 +110,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-3",
     kicker: "Auf dem Parkplatz",
     title: "Bitte fahr nicht allein",
+    summary: "",
     paragraphs: [
       "Um 17:05 Uhr stand sein Wagen schon auf dem Parkplatz, schräg eingeparkt, als hätte er die letzten Meter nicht mehr ausgerichtet. Eva sah Simon Berger an der Fahrertür lehnen, das Telefon am Ohr, den Blick auf den Eingang der Kita gerichtet, als könnte das Gebäude jeden Moment etwas hergeben.",
       "Sie ging über den Asphalt, langsamer, als sie wollte. Sich nicht zu beeilen war eine Entscheidung. Wer rannte, sah aus wie jemand, der etwas verloren hatte.",
