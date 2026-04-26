@@ -902,12 +902,12 @@ Scene Card
   szenenantrieb: Eva will Simon als Verbündeten halten und riskiert, dass Nora durch weichere Hilfe sofort plausibler wirkt.
   scene_promise: Eva will Simon als Verbündeten halten, drängt auf Vertrauen und verliert Deutungshoheit, aber Nora besetzt den Raum schneller und weicher als sie.
   wissensgrenze: Eva merkt, dass Nora im richtigen Moment zu verfügbar ist, kann aber noch nicht beweisen, dass darin Absicht liegt.
-  information_gap: Ist Nora nur gut vernetzt und aufmerksam, oder benutzt sie Frau Holzer und die alte Liste schon als plausible Tarnung fuer ihre Naehe?
+  information_gap: Ist Nora nur gut vernetzt und aufmerksam, oder benutzt sie Frau Holzer und die alte Liste schon als plausible Tarnung für ihre Nähe?
   pressure_clock: Wenn Simon jetzt in Verfahren statt in Beziehung denkt, wird Nora zur plausibleren Entlastungsfigur.
   beziehungsdruck: Eva braucht Vertrauen; Simon will Mila schützen; Nora will als natürliche Entlastung im Raum stehen.
   coreAction: Simon reagiert besorgt und verfahrensnah, Nora sofort warm und verfügbar, ohne schon etwas eindeutig Unmögliches zu sagen.
   false_reading: Nora wirkt zunächst bloß aufmerksam und gut informiert, nicht gefährlich.
-  payoff_note: Offenhalten, ob Frau Holzer Nora wirklich angerufen hat oder ob Nora den Namen nur als plausible Tarnung benutzt; spaeter aktiv aufloesen.
+  payoff_note: Offenhalten, ob Frau Holzer Nora wirklich angerufen hat oder ob Nora den Namen nur als plausible Tarnung benutzt; später aktiv auflösen.
   dramaticBeat: Nora bietet genau die Art Hilfe an, die Simon gerade entlastet, und wirkt dadurch nützlicher als Evas Wahrheit.
   reversal: Aus warmer Hilfe wird eine soziale Alternative zu Eva, ohne dass Nora schon klar überführt wäre.
   konkrete_folge: Nora steht nicht mehr nur als Freundin im Raum, sondern als frühe Alternativstimme; Simon beginnt, die Lage in Verfahren statt in Beziehung zu denken.
