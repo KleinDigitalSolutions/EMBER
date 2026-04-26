@@ -8,6 +8,8 @@ import {
   normalizeAssistantWorkspace,
   withDraftMemorySync,
   type BookDraftJob,
+  type BookHumanEditExample,
+  type BookHumanEditLearningStatus,
   type BookDraftStageRun,
   type BookDraftStageRuns,
   type StoryDocument,
@@ -49,6 +51,20 @@ export async function createStudioStory(workspaceId?: string | null) {
   }
 }
 
+export async function loadHumanEditExamplesForWorkspace(workspaceId: string) {
+  const result = await supabaseAdmin
+    .from("book_human_edit_examples")
+    .select("*")
+    .eq("workspace_id", workspaceId)
+    .eq("learning_status", "included")
+    .order("updated_at", { ascending: false })
+    .limit(80)
+
+  assertNoError("book_human_edit_examples workspace", result.error)
+
+  return (result.data ?? []).map(mapHumanEditExampleRow)
+}
+
 export async function deleteStudioStory(storyId: string) {
   const result = await supabaseAdmin.from("stories").delete().eq("id", storyId)
   assertNoError("stories delete", result.error)
@@ -86,7 +102,8 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
     openThreadsResult,
     sceneCardsResult,
     contextPacksResult,
-    draftJobsResult
+    draftJobsResult,
+    humanEditExamplesResult
   ] = await Promise.all([
     supabaseAdmin.from("acts").select("*").eq("story_id", storyId).order("sort_order"),
     supabaseAdmin.from("chapters").select("*").eq("story_id", storyId).order("sort_order"),
@@ -115,7 +132,12 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
     supabaseAdmin.from("book_context_packs").select("*").eq("story_id", storyId).order("created_at"),
     supabaseAdmin.from("book_draft_jobs").select("*").eq("story_id", storyId).order("updated_at", {
       ascending: false
-    })
+    }),
+    supabaseAdmin
+      .from("book_human_edit_examples")
+      .select("*")
+      .eq("story_id", storyId)
+      .order("captured_at", { ascending: false })
   ])
 
   assertNoError("acts", actsResult.error)
@@ -136,6 +158,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
   assertNoError("book_scene_cards", sceneCardsResult.error)
   assertNoError("book_context_packs", contextPacksResult.error)
   assertNoError("book_draft_jobs", draftJobsResult.error)
+  assertNoError("book_human_edit_examples", humanEditExamplesResult.error)
 
   const canonFacts = canonFactsResult.data ?? []
   const contextPacks = contextPacksResult.data ?? []
@@ -416,7 +439,8 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
                 .filter(Boolean)
             }
           }),
-          continuityNotes: []
+          continuityNotes: [],
+          humanEditExamples: (humanEditExamplesResult.data ?? []).map(mapHumanEditExampleRow)
         },
         draftEngine: {
           mode: "local" as const,
@@ -512,7 +536,7 @@ async function saveStudioStoryInternal(
     isRollback?: boolean
   }
 ) {
-  const nextStory = syncStoryBookArtifacts(story)
+  let nextStory = syncStoryBookArtifacts(story)
   const rollbackStory =
     options?.isRollback
       ? null
@@ -571,6 +595,30 @@ async function saveStudioStoryInternal(
       preserveOpenThreads ||
       preserveSceneCards
     )
+
+  const existingHumanEditExamplesResult = await supabaseAdmin
+    .from("book_human_edit_examples")
+    .select("*")
+    .eq("story_id", nextStory.id)
+    .order("captured_at", { ascending: false })
+  assertNoError("book_human_edit_examples", existingHumanEditExamplesResult.error)
+  const existingHumanEditExamples = (existingHumanEditExamplesResult.data ?? []).map(
+    mapHumanEditExampleRow
+  )
+  nextStory = {
+    ...nextStory,
+    book: {
+      ...nextStory.book,
+      memory: {
+        ...nextStory.book.memory,
+        humanEditExamples: mergeHumanEditExamples(
+          existingHumanEditExamples,
+          nextStory.book.memory.humanEditExamples,
+          captureHumanEditExamples(nextStory, existingHumanEditExamples)
+        )
+      }
+    }
+  }
   const meta = {
     ...nextStory.meta,
     assistant: nextStory.assistant,
@@ -929,6 +977,31 @@ async function saveStudioStoryInternal(
       }
     })
 
+    const bookHumanEditExamples = nextStory.book.memory.humanEditExamples.map(function (example) {
+      return {
+        id: example.id,
+        workspace_id: nextStory.workspaceId,
+        story_id: nextStory.id,
+        scene_id: example.sceneId,
+        scene_title: example.sceneTitle,
+        draft_job_id: example.draftJobId,
+        provider: example.provider,
+        model_name: example.modelName,
+        category_lane: example.categoryLane,
+        source_text: example.sourceText,
+        edited_text: example.editedText,
+        source_word_count: example.sourceWordCount,
+        edited_word_count: example.editedWordCount,
+        diff_summary: example.diffSummary,
+        edit_tags: example.editTags,
+        learning_status: example.learningStatus,
+        excluded_reason: example.excludedReason,
+        learning_weight: example.learningWeight,
+        accepted_at: example.acceptedAt,
+        captured_at: example.capturedAt
+      }
+    })
+
     await insertRows("acts", acts)
     await insertRows("chapters", chapters)
     await insertRows("scenes", scenes)
@@ -966,6 +1039,7 @@ async function saveStudioStoryInternal(
     if (!preserveDraftJobs) {
       await upsertRows("book_draft_jobs", bookDraftJobs, "id")
     }
+    await upsertRows("book_human_edit_examples", bookHumanEditExamples, "id")
 
     return nextStory
   } catch (error) {
@@ -1463,6 +1537,211 @@ function buildDraftJobs(params: {
   })
 }
 
+function captureHumanEditExamples(
+  story: StoryDocument,
+  existingExamples: BookHumanEditExample[]
+): BookHumanEditExample[] {
+  const existingKeys = new Set(
+    existingExamples
+      .concat(story.book.memory.humanEditExamples)
+      .map(function (example) {
+        return `${example.draftJobId}:${example.acceptedAt || ""}`
+      })
+  )
+  const scenesById = new Map(
+    story.acts.flatMap(function (act) {
+      return act.chapters.flatMap(function (chapter) {
+        return chapter.scenes
+      })
+    }).map(function (scene) {
+      return [scene.id, scene] as const
+    })
+  )
+  const now = new Date().toISOString()
+
+  const capturedExamples: BookHumanEditExample[] = []
+
+  story.book.draftEngine.jobs
+    .filter(function (job) {
+      return job.status === "accepted" && Boolean(job.acceptedAt) && Boolean(job.rewriteText.trim())
+    })
+    .forEach(function (job) {
+      const key = `${job.id}:${job.acceptedAt || ""}`
+      const scene = scenesById.get(job.sceneId)
+
+      if (!scene || existingKeys.has(key)) {
+        return
+      }
+
+      const sourceText = normalizeEditText(job.rewriteText)
+      const editedText = normalizeEditText(
+        scene.blocks.map(function (block) {
+          return block.text
+        }).join("\n\n")
+      )
+      const diffSummary = buildHumanEditDiffSummary(sourceText, editedText)
+
+      if (!isMeaningfulHumanEdit(sourceText, editedText, diffSummary.changedChars)) {
+        return
+      }
+
+      capturedExamples.push({
+        id: createUuid(),
+        sceneId: job.sceneId,
+        sceneTitle: scene.title || job.sceneTitle,
+        draftJobId: job.id,
+        provider: job.provider,
+        modelName: job.modelName,
+        categoryLane: story.book.marketBrief.categoryLane,
+        sourceText,
+        editedText,
+        sourceWordCount: countWordsLocal(sourceText),
+        editedWordCount: countWordsLocal(editedText),
+        diffSummary,
+        editTags: inferHumanEditTags(sourceText, editedText, diffSummary.wordDelta),
+        learningStatus: "included" as const,
+        excludedReason: null,
+        learningWeight: 1,
+        acceptedAt: job.acceptedAt,
+        capturedAt: now,
+        updatedAt: now
+      })
+    })
+
+  return capturedExamples
+}
+
+function mergeHumanEditExamples(
+  existingExamples: BookHumanEditExample[],
+  clientExamples: BookHumanEditExample[],
+  capturedExamples: BookHumanEditExample[]
+) {
+  const byId = new Map<string, BookHumanEditExample>()
+
+  existingExamples.forEach(function (example) {
+    byId.set(example.id, example)
+  })
+  clientExamples.forEach(function (example) {
+    byId.set(example.id, {
+      ...(byId.get(example.id) ?? example),
+      learningStatus: normalizeHumanEditLearningStatus(example.learningStatus),
+      excludedReason: example.excludedReason,
+      learningWeight: typeof example.learningWeight === "number" ? example.learningWeight : 1,
+      updatedAt: new Date().toISOString()
+    })
+  })
+  capturedExamples.forEach(function (example) {
+    byId.set(example.id, example)
+  })
+
+  return Array.from(byId.values()).sort(function (a, b) {
+    return b.capturedAt.localeCompare(a.capturedAt)
+  })
+}
+
+function buildHumanEditDiffSummary(sourceText: string, editedText: string): BookHumanEditExample["diffSummary"] {
+  const sourceWords = countWordsLocal(sourceText)
+  const editedWords = countWordsLocal(editedText)
+
+  return {
+    summary: summarizeHumanEdit(sourceText, editedText, editedWords - sourceWords),
+    changedChars: estimateChangedChars(sourceText, editedText),
+    wordDelta: editedWords - sourceWords,
+    sourcePreview: truncateTextLocal(sourceText, 260),
+    editedPreview: truncateTextLocal(editedText, 260)
+  }
+}
+
+function summarizeHumanEdit(sourceText: string, editedText: string, wordDelta: number) {
+  const tags = inferHumanEditTags(sourceText, editedText, wordDelta)
+
+  if (tags.length) {
+    return `Human edit: ${tags.join(", ")}.`
+  }
+
+  return "Human edit: scene wording and structure changed after AI handoff."
+}
+
+function inferHumanEditTags(sourceText: string, editedText: string, wordDelta: number) {
+  const tags: string[] = []
+  const sourceLower = sourceText.toLowerCase()
+  const editedLower = editedText.toLowerCase()
+
+  if (wordDelta <= -30) tags.push("length_reduced")
+  if (wordDelta >= 30) tags.push("length_expanded")
+  if (estimateChangedChars(firstParagraph(sourceText), firstParagraph(editedText)) > 80) {
+    tags.push("opening_changed")
+  }
+  if (estimateChangedChars(lastParagraph(sourceText), lastParagraph(editedText)) > 80) {
+    tags.push("final_image_changed")
+  }
+  if (countPattern(sourceLower, /\bweil\b|\bdenn\b|\bdadurch\b|\bdeshalb\b/g) > countPattern(editedLower, /\bweil\b|\bdenn\b|\bdadurch\b|\bdeshalb\b/g)) {
+    tags.push("cut_explanation")
+  }
+  if (countPattern(sourceLower, /fühlte|spürte|merkte|erkannte|wusste/g) > countPattern(editedLower, /fühlte|spürte|merkte|erkannte|wusste/g)) {
+    tags.push("interiority_tightened")
+  }
+
+  return Array.from(new Set(tags)).slice(0, 8)
+}
+
+function isMeaningfulHumanEdit(sourceText: string, editedText: string, changedChars: number) {
+  if (sourceText === editedText) {
+    return false
+  }
+
+  return changedChars >= 200 || Math.abs(countWordsLocal(editedText) - countWordsLocal(sourceText)) >= 25
+}
+
+function estimateChangedChars(a: string, b: string) {
+  if (a === b) return 0
+
+  let start = 0
+  while (start < a.length && start < b.length && a[start] === b[start]) {
+    start += 1
+  }
+
+  let endA = a.length - 1
+  let endB = b.length - 1
+  while (endA >= start && endB >= start && a[endA] === b[endB]) {
+    endA -= 1
+    endB -= 1
+  }
+
+  return Math.max(endA - start + 1, 0) + Math.max(endB - start + 1, 0)
+}
+
+function firstParagraph(value: string) {
+  return value.split(/\n{2,}/)[0] ?? ""
+}
+
+function lastParagraph(value: string) {
+  const paragraphs = value.split(/\n{2,}/).filter(Boolean)
+  return paragraphs[paragraphs.length - 1] ?? ""
+}
+
+function normalizeEditText(value: string) {
+  return value
+    .split(/\n{2,}/)
+    .map(function (paragraph) {
+      return paragraph.replace(/\s+/g, " ").trim()
+    })
+    .filter(Boolean)
+    .join("\n\n")
+}
+
+function countWordsLocal(value: string) {
+  return value.trim().match(/\S+/g)?.length ?? 0
+}
+
+function countPattern(value: string, pattern: RegExp) {
+  return value.match(pattern)?.length ?? 0
+}
+
+function truncateTextLocal(value: string, maxLength: number) {
+  return value.length <= maxLength ? value : `${value.slice(0, maxLength - 3).trim()}...`
+}
+
 function findWorldBibleSourceId(worldBible: WorldBibleEntry[], fact: StoryDocument["book"]["memory"]["canonLedger"][number]) {
   return (
     worldBible.find(function (entry) {
@@ -1716,6 +1995,46 @@ function normalizeProvider(value: unknown): BookDraftJob["provider"] {
   }
 
   return "local"
+}
+
+function mapHumanEditExampleRow(row: Row): BookHumanEditExample {
+  const diffSummary = toRecord(row.diff_summary)
+
+  return {
+    id: (row.id as string) ?? "",
+    sceneId: (row.scene_id as string) ?? "",
+    sceneTitle: (row.scene_title as string) ?? "",
+    draftJobId: (row.draft_job_id as string) ?? "",
+    provider: normalizeProvider(row.provider),
+    modelName: typeof row.model_name === "string" ? row.model_name : null,
+    categoryLane: (row.category_lane as string) ?? "",
+    sourceText: (row.source_text as string) ?? "",
+    editedText: (row.edited_text as string) ?? "",
+    sourceWordCount: toNumber(row.source_word_count, 0),
+    editedWordCount: toNumber(row.edited_word_count, 0),
+    diffSummary: {
+      summary: typeof diffSummary.summary === "string" ? diffSummary.summary : "",
+      changedChars: toNumber(diffSummary.changedChars, 0),
+      wordDelta: toNumber(diffSummary.wordDelta, 0),
+      sourcePreview: typeof diffSummary.sourcePreview === "string" ? diffSummary.sourcePreview : "",
+      editedPreview: typeof diffSummary.editedPreview === "string" ? diffSummary.editedPreview : ""
+    },
+    editTags: normalizeStringArray(row.edit_tags),
+    learningStatus: normalizeHumanEditLearningStatus(row.learning_status),
+    excludedReason: typeof row.excluded_reason === "string" ? row.excluded_reason : null,
+    learningWeight: toNumber(row.learning_weight, 1),
+    acceptedAt: typeof row.accepted_at === "string" ? row.accepted_at : null,
+    capturedAt: (row.captured_at as string) ?? (row.created_at as string) ?? "",
+    updatedAt: (row.updated_at as string) ?? (row.captured_at as string) ?? ""
+  }
+}
+
+function normalizeHumanEditLearningStatus(value: unknown): BookHumanEditLearningStatus {
+  if (value === "excluded" || value === "needs_review") {
+    return value
+  }
+
+  return "included"
 }
 
 function normalizeExtractedState(

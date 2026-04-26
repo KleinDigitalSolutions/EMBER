@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { BookJobModelOverrides } from "@/lib/book-job-models";
 import { generateBookDraftJob, type BookJobProvider } from "@/lib/server/book-job-service";
+import { loadHumanEditExamplesForWorkspace } from "@/lib/server/studio-story-service";
 import type { SceneContextPacket } from "@/lib/book-engine";
 import type { StoryDocument } from "@/lib/story-schema";
 
@@ -11,6 +12,7 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
       story?: StoryDocument;
+      workspaceId?: string;
       sceneId?: string;
       packet?: SceneContextPacket;
       provider?: BookJobProvider;
@@ -18,6 +20,10 @@ export async function POST(request: Request) {
       targetSceneWordsMin?: number;
       targetSceneWordsMax?: number;
       directorNote?: string;
+      humanEditLearningStatuses?: Array<{
+        id: string;
+        learningStatus: "included" | "excluded" | "needs_review";
+      }>;
     };
 
     if (!body.sceneId || (!body.packet && !body.story)) {
@@ -29,6 +35,28 @@ export async function POST(request: Request) {
       );
     }
 
+    const workspaceId = body.workspaceId || body.story?.workspaceId || "";
+    const humanEditExamples = workspaceId
+      ? await loadHumanEditExamplesForWorkspace(workspaceId)
+      : [];
+    const learningStatusesById = new Map(
+      (body.humanEditLearningStatuses ?? []).map(function (entry) {
+        return [entry.id, entry.learningStatus] as const;
+      })
+    );
+    const effectiveHumanEditExamples = humanEditExamples.map(function (example) {
+      const learningStatus = learningStatusesById.get(example.id);
+
+      return learningStatus
+        ? {
+            ...example,
+            learningStatus
+          }
+        : example;
+    }).filter(function (example) {
+      return example.learningStatus === "included";
+    });
+
     const result = await generateBookDraftJob({
       story: body.story,
       sceneId: body.sceneId,
@@ -37,7 +65,8 @@ export async function POST(request: Request) {
       modelOverrides: body.modelOverrides,
       targetSceneWordsMin: body.targetSceneWordsMin,
       targetSceneWordsMax: body.targetSceneWordsMax,
-      directorNote: body.directorNote
+      directorNote: body.directorNote,
+      humanEditExamples: effectiveHumanEditExamples
     });
 
     return NextResponse.json(result);

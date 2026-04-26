@@ -406,7 +406,8 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       openThreads,
       sceneCards,
       contextPacks,
-      continuityNotes: []
+      continuityNotes: [],
+      humanEditExamples: []
     },
     draftEngine: {
       ...blueprint.draftEngine,

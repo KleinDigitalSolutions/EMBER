@@ -242,6 +242,36 @@ export type BookDraftJob = {
   };
 };
 
+export type BookHumanEditLearningStatus = "included" | "excluded" | "needs_review";
+
+export type BookHumanEditExample = {
+  id: string;
+  sceneId: string;
+  sceneTitle: string;
+  draftJobId: string;
+  provider: BookJobProvider;
+  modelName: string | null;
+  categoryLane: string;
+  sourceText: string;
+  editedText: string;
+  sourceWordCount: number;
+  editedWordCount: number;
+  diffSummary: {
+    summary: string;
+    changedChars: number;
+    wordDelta: number;
+    sourcePreview: string;
+    editedPreview: string;
+  };
+  editTags: string[];
+  learningStatus: BookHumanEditLearningStatus;
+  excludedReason: string | null;
+  learningWeight: number;
+  acceptedAt: string | null;
+  capturedAt: string;
+  updatedAt: string;
+};
+
 export type BookMemoryBackbone = {
   lastSyncedAt: string | null;
   canonLedger: BookCanonFact[];
@@ -250,6 +280,7 @@ export type BookMemoryBackbone = {
   sceneCards: BookSceneCard[];
   contextPacks: BookContextPack[];
   continuityNotes: string[];
+  humanEditExamples: BookHumanEditExample[];
 };
 
 export type BookCanonFact = {
@@ -584,7 +615,8 @@ export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
     openThreads: [],
     sceneCards: [],
     contextPacks: [],
-    continuityNotes: []
+    continuityNotes: [],
+    humanEditExamples: []
   };
 }
 

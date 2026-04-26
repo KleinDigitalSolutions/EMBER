@@ -22,6 +22,7 @@ import {
   type BookDraftJob,
   type BookDraftStageRuns,
   type DraftExtractionState,
+  type BookHumanEditExample,
   type StoryDocument,
   withDraftMemorySync
 } from "@/lib/story-schema";
@@ -111,6 +112,7 @@ type DraftGenerationOptions = {
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
   directorNote: string;
+  humanEditProfile: string;
 };
 
 type StageCallMetrics = {
@@ -193,6 +195,7 @@ export async function generateBookDraftJob(params: {
   targetSceneWordsMin?: number;
   targetSceneWordsMax?: number;
   directorNote?: string;
+  humanEditExamples?: BookHumanEditExample[];
 }): Promise<BookJobExecution> {
   const provider = params.provider ?? "auto";
   const packet =
@@ -209,6 +212,10 @@ export async function generateBookDraftJob(params: {
   const targetSceneWordsMin = normalizedTargets.targetSceneWordsMin;
   const targetSceneWordsMax = normalizedTargets.targetSceneWordsMax;
   const directorNote = params.directorNote?.trim() || "";
+  const humanEditProfile = buildHumanEditProfilePrompt(
+    (params.humanEditExamples ?? []).concat(params.story?.book.memory.humanEditExamples ?? []),
+    packet
+  );
 
   if (provider === "local") {
     return createLocalExecution(
@@ -235,7 +242,8 @@ export async function generateBookDraftJob(params: {
       modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      directorNote
+      directorNote,
+      humanEditProfile
     };
 
     const result =
@@ -310,7 +318,7 @@ async function generateWithOpenAI(
       return requestOpenAIText({
         client,
         modelName,
-        systemPrompt: buildSystemPrompt(packet),
+        systemPrompt: buildSystemPrompt(packet, options),
         userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
@@ -319,7 +327,7 @@ async function generateWithOpenAI(
       return requestOpenAIText({
         client,
         modelName,
-        systemPrompt: buildSystemPrompt(packet),
+        systemPrompt: buildSystemPrompt(packet, options),
         userPrompt: buildExpandPrompt(packet, options, beatPlan, finalSceneText),
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
@@ -328,7 +336,7 @@ async function generateWithOpenAI(
       return requestOpenAIText({
         client,
         modelName,
-        systemPrompt: buildSystemPrompt(packet),
+        systemPrompt: buildSystemPrompt(packet, options),
         userPrompt: buildCompressPrompt(packet, options, beatPlan, finalSceneText),
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
@@ -403,7 +411,7 @@ async function generateWithAnthropic(
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet, options),
         userPrompt: buildAnthropicScenePrompt({
           mode: "draft",
           packet,
@@ -417,7 +425,7 @@ async function generateWithAnthropic(
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet, options),
         userPrompt: buildAnthropicScenePrompt({
           mode: "expand",
           packet,
@@ -432,7 +440,7 @@ async function generateWithAnthropic(
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet, options),
         userPrompt: buildAnthropicScenePrompt({
           mode: "compress",
           packet,
@@ -1133,8 +1141,81 @@ function resolveAnthropicProseMaxTokens(targetWordMax: number) {
   );
 }
 
-function buildSystemPrompt(packet: SceneContextPacket) {
-  return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
+function buildHumanEditProfilePrompt(
+  examples: BookHumanEditExample[],
+  packet: SceneContextPacket
+) {
+  const included = dedupeHumanEditExamples(examples)
+    .filter(function (example) {
+      return example.learningStatus === "included";
+    })
+    .sort(function (a, b) {
+      const laneA = a.categoryLane === packet.stablePrefix.categoryLane ? 1 : 0;
+      const laneB = b.categoryLane === packet.stablePrefix.categoryLane ? 1 : 0;
+
+      if (laneA !== laneB) {
+        return laneB - laneA;
+      }
+
+      return b.updatedAt.localeCompare(a.updatedAt);
+    })
+    .slice(0, 12);
+
+  if (!included.length) {
+    return "";
+  }
+
+  const tagCounts = new Map<string, number>();
+  included.forEach(function (example) {
+    example.editTags.forEach(function (tag) {
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + Math.max(0.5, example.learningWeight));
+    });
+  });
+  const dominantTags = Array.from(tagCounts.entries())
+    .sort(function (a, b) {
+      return b[1] - a[1];
+    })
+    .slice(0, 8)
+    .map(function ([tag]) {
+      return tag;
+    });
+
+  return [
+    "Human Edit Memory:",
+    "Use these as preference signals from previous accepted human edits. Do not copy old plot content, sentences, names, or scene events.",
+    dominantTags.length
+      ? `Dominant edit tendencies: ${dominantTags.join(", ")}.`
+      : "Dominant edit tendencies: none detected yet.",
+    "Apply the pattern only when it improves this scene:",
+    ...included.slice(0, 8).map(function (example, index) {
+      const tags = example.editTags.length ? ` Tags: ${example.editTags.join(", ")}.` : "";
+      const delta = example.diffSummary.wordDelta === 0 ? "no word delta" : `${example.diffSummary.wordDelta > 0 ? "+" : ""}${example.diffSummary.wordDelta} words`;
+
+      return [
+        `${index + 1}. ${example.sceneTitle || "Untitled scene"}: ${example.diffSummary.summary} (${delta}).${tags}`,
+        `Before pattern: ${truncateText(example.diffSummary.sourcePreview, 180)}`,
+        `After pattern: ${truncateText(example.diffSummary.editedPreview, 180)}`
+      ].join("\n");
+    })
+  ].join("\n");
+}
+
+function dedupeHumanEditExamples(examples: BookHumanEditExample[]) {
+  const byId = new Map<string, BookHumanEditExample>();
+
+  examples.forEach(function (example) {
+    byId.set(example.id, example);
+  });
+
+  return Array.from(byId.values());
+}
+
+function buildSystemPrompt(packet: SceneContextPacket, options?: DraftGenerationOptions) {
+  return [
+    buildCoreSystemPrompt(),
+    buildStablePrefixPrompt(packet),
+    options?.humanEditProfile || ""
+  ].filter(Boolean).join("\n\n");
 }
 
 function buildCoreSystemPrompt() {
@@ -1187,8 +1268,8 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
   ];
 }
 
-function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket) {
-  return [
+function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket, options: DraftGenerationOptions) {
+  const blocks = [
     {
       type: "text" as const,
       text: buildCoreSystemPrompt()
@@ -1199,6 +1280,15 @@ function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket) {
       cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
     }
   ];
+
+  if (options.humanEditProfile) {
+    blocks.push({
+      type: "text" as const,
+      text: options.humanEditProfile
+    });
+  }
+
+  return blocks;
 }
 
 function buildAnthropicDynamicContextPrompt(packet: SceneContextPacket) {

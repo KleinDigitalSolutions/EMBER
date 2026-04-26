@@ -24,11 +24,14 @@ EMBER liest Teile dieser Datei maschinell. Der Rest bleibt menschlich lesbar und
 Die aktuelle Standardpipeline arbeitet in dieser Reihenfolge:
 - Sie baut aus Story, Scene Card, Canon, Character Ledger und Open Threads einen schlanken Szenenkontext.
 - Sie generiert einen direkten Prosa-Draft ohne separaten Beat-Plan-Call und ohne Rewrite-Pass.
-- Danach folgen nur noch technische und qualitative Nachläufe: Length-Control, State-Extraction, Continuity-Audit, Quality-Eval.
+- Danach folgen nur noch technische und qualitative Nachläufe: Notfall-Length-Control, State-Extraction, Continuity-Audit, Quality-Eval.
 
 Wichtig daraus:
 - Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **klare Szenenfunktion mit harten Faktenankern**.
 - Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` sind **Orientierung**, nicht Formulierungsdiktat.
+- Aus diesen Feldern baut EMBER einen **Scene Contract**: `openingPressure`, `proofObject`, `turn`, `finalImage`, `forbiddenExposition`.
+- Wortziele sind **bevorzugte Szenenrahmen**, keine harten Qualitätsziele. Die Szene darf organisch kürzer oder länger werden.
+- `length_control` greift nur als Notfallbremse bei extrem kurzen oder extrem langen Szenen. Es soll keine gute Szene auf eine Zahl zwingen.
 - Gute Regie beschreibt deshalb nicht die perfekte spätere Prosa, sondern die **richtige Situation, das richtige Beweisobjekt, den richtigen sozialen Druck und den richtigen Verlust**.
 
 ### Welche Scene-Card-Felder hart, weich oder rein menschlich sind
@@ -40,12 +43,26 @@ Wichtig daraus:
 | `uhrzeit` / `timeAnchor` | Harte Laufzeit-Constraint. | Fehlt sie, verliert der Ablauf Präzision. |
 | `proof_object` | Harter Materialanker plus Continuity-Guard. | Fehlt oder driftet, verliert die Szene ihren überprüfbaren Kern. |
 | `alltagswaffe`, `kindmoment`, `object_anchor`, `prop_anchor` | Harte Material-/Kindheitsanker. | Fehlen sie, wird Alltagsdruck zu abstrakt oder symbolisch. |
-| `word_target_min` / `word_target_max` | Wortzielsteuerung. | Fehlen sie, greift der Pipeline-Default. |
+| `word_target_min` / `word_target_max` | Bevorzugter Szenenrahmen und Budget-Hinweis. | Fehlen sie, greift der Default; die Länge bleibt trotzdem organisch. |
 | `coreAction` | Harte Handlungsorientierung. | Fehlt sie, fehlt der Handlungskern. |
-| `objective`, `reversal`, `dramaticBeat`, `opening`, `ending`, `closingLine` | Weiche Szenenführung. Dienen dem Verständnis der Szene, nicht dem Diktat einzelner Sätze. | Fehlen sie, wird die Szene oft ungenauer oder flacher, aber nicht automatisch unbrauchbar. |
+| `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` | Scene-Contract-Material. Dient der Szenenfunktion, nicht dem Diktat einzelner Sätze. | Fehlen sie, wird `openingPressure`, `turn` oder `finalImage` schwächer und muss aus Summary/Outline erraten werden. |
 | `bad_version_risk`, `revision_focus`, `scene_promise`, `pressure_clock` usw. | Menschliche Produktionshilfe. | Hilft Agents, den Sinn der Szene zu verstehen und typische Fehlfassungen zu vermeiden. |
 
-**Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel brauchen zwingend `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card. Fehlen diese Felder, greift der Pipeline-Default und die Fusionskapitel werden zu kurz.
+**Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel sollten `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card tragen, damit der bevorzugte Rahmen die doppelte Szenenfunktion sichtbar macht. Das ist ein Rahmen, kein Zwang; die Szene folgt weiterhin ihrer organischen Dichte.
+
+### Scene Contract: Was EMBER aus guten Scene Cards macht
+
+Der aktuelle Draft-Prompt liest nicht mehr "Beat Plan", sondern einen Scene Contract. Neue Agents müssen deshalb die Scene Cards so schreiben, dass diese fünf Felder automatisch stark werden:
+
+| Contract-Feld | Wird abgeleitet aus | Was ein Agent liefern muss |
+|---|---|---|
+| `openingPressure` | `opening`, sonst `objective`, erste Outline-Zeile oder Summary | Der konkrete Druck am Szenenanfang, nicht Stimmung. |
+| `proofObject` | `proof_object`, `beweisobjekt`, `object_anchor`, `prop_anchor`, `alltagswaffe`, `kindmoment` | Ein suchbares Ding, Dokument, Satz, Ort, Kleidungsstück, Routinedetail oder digitaler Rest. |
+| `turn` | `dramaticBeat`, `coreAction`, `ending`, letzte Outline-Zeile | Der Moment, in dem Macht, Wissen, Zugriff oder Status kippt. |
+| `finalImage` | `closingLine`, sonst `ending`, letzte Outline-Zeile | Ein konkretes Schlussbild oder eine Handlung, keine These. |
+| `forbiddenExposition` | Writer Constitution + Systemregeln | Was die Szene nicht erklären darf: Motivmonolog, Recap, Diagnose, Zukunftszusammenfassung. |
+
+Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroht" sagen, muss der Agent daraus ein `proof_object`, einen sozialen Druck und einen `turn` machen. Ohne diese Übersetzung entsteht schwacher Output.
 
 ### Sections-Übersicht: Was wozu dient
 
@@ -93,6 +110,7 @@ Eine starke Scene Card liefert:
 - **klare Verlust- oder Beweisbewegung**
 - **konkrete Alltagsobjekte**
 - **plausiblen sozialen Druck**
+- **einen starken Scene Contract**
 - **genug Freiheit für lebendige Prosa**
 
 Eine schwache Scene Card liefert:
@@ -104,24 +122,45 @@ Eine schwache Scene Card liefert:
 
 ### Template-Anleitung für ein neues Buch
 
-Kopiere diese Datei und gehe in dieser Reihenfolge vor:
+Wenn ein neuer Chat ohne Kontext startet, muss der Agent rohe Gedanken und Notizen des Autors in diese Struktur übersetzen. Vorgehen:
 
-1. **MASTER BRIEF + MARKET BRIEF** vollständig ersetzen.
-2. **WORLD BIBLE** neu schreiben: Setting, soziale Konstellation, Bedrohungslogik des neuen Antagonisten.
-3. **CHARACTER STATE LEDGER + VOICE PACK + PROSA BENCHMARK** für neue Figuren neu schreiben.
-4. **CANON FACTS** mit den unveränderlichen Wahrheiten des neuen Buchs befüllen.
-5. **OPEN THREADS** mit den zentralen dramaturgischen Fragebögen neu schreiben.
-6. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
-7. **NORA CAPABILITY MAP / COST LEDGER** durch eine äquivalente Antagonisten-Map ersetzen.
-8. **PROOF LADDER** neu strukturieren: Was weiß wer in welchem Act?
-9. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object`. Für Fusionskapitel zusätzlich: `word_target_min`, `word_target_max`.
-10. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
-11. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
+1. **Autornotizen sichern**: Nichts wegwerfen. Unklare, widersprüchliche oder rohe Gedanken zuerst als Material sammeln.
+2. **Hook und Versprechen destillieren**: Aus den Notizen einen einzeiligen Commercial Hook, Reader Promise und Ending Promise bauen.
+3. **Funktionslogik festlegen**: Wer greift wen wodurch an? Welche Alltagsmechanik, Institution, Beziehung oder Gewohnheit wird zur Waffe?
+4. **MASTER BRIEF + MARKET BRIEF** vollständig ersetzen.
+5. **WORLD BIBLE** neu schreiben: Setting, soziale Konstellation, Bedrohungslogik des neuen Antagonisten oder Konflikts.
+6. **CHARACTER STATE LEDGER + VOICE PACK + PROSA BENCHMARK** für neue Figuren neu schreiben.
+7. **CANON FACTS** mit den unveränderlichen Wahrheiten des neuen Buchs befüllen.
+8. **OPEN THREADS** mit den zentralen dramaturgischen Fragebögen neu schreiben.
+9. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
+10. **Antagonisten-/Drucksystem ersetzen**: `NORA CAPABILITY MAP / COST LEDGER` durch eine äquivalente Map des neuen Drucksystems ersetzen.
+11. **PROOF LADDER** neu strukturieren: Was weiß wer in welchem Act, und welcher Beweis verändert Zugriff, Status oder Glaubwürdigkeit?
+12. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` oder ein äquivalenter Materialanker.
+13. **Scene Contract pro Szene prüfen**: Jede Karte muss `openingPressure`, `proofObject`, `turn`, `finalImage` und `forbiddenExposition` ableitbar machen.
+14. **Wortbereiche setzen, nicht erzwingen**: `word_target_min`/`word_target_max` nur setzen, wenn die Szene bewusst kurz, normal, lang oder fusioniert sein soll.
+15. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
+16. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
+
+### Rohnotizen in systemfähige Regie übersetzen
+
+Agents sollen beim Aufbau eines neuen Buchprojekts nicht einfach schöne Absätze schreiben. Sie müssen Autorengedanken in systemfähige Bausteine verwandeln:
+
+| Rohnotiz des Autors | Agent übersetzt nach |
+|---|---|
+| "Eine Mutter wird ersetzt" | Prämisse, Reader Promise, zentrale Verlustlogik, Open Thread |
+| "Die Kita glaubt ihr nicht" | Institutioneller Druck, WORLD BIBLE, Scene Card `coreAction`, `proof_object` |
+| "Die andere Frau kennt zu viel" | Antagonisten-Capability, Cost Ledger, Proof Ladder |
+| "Das Kind verhält sich komisch" | Kindmoment, Character State, Scene Contract `turn` |
+| "Es soll sich real anfühlen" | Alltagsrealismus-Anker, konkrete Objekte, verbotene Übertreibungen |
+| "Am Ende soll man alles rückwirkend verstehen" | Ending Promise, Proof Ladder, Payoff-Szenen, Canon Facts |
+
+Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen oder eine plausible Materialliste vorschlagen. Gute EMBER-Regie übersetzt abstrakte Emotion immer in Handlung, Objekt, Dokument, Ort, Zugriff oder soziale Konsequenz.
 
 ### Häufige Fehlerquellen für neue Agents
 
 - **`proof_object` zu abstrakt**: Wenn der Wert ein Konzept statt eines konkreten Dings/Namens/Dokuments ist (z.B. „Vertrauen" statt „Namensetiketten und alter Freigabelink"), kann der Guard nicht matchen. Immer konkrete, suchbare Begriffe verwenden.
-- **`word_target_min`/`word_target_max` vergessen**: Ohne diese Felder in der Scene Card greift der Pipeline-Default. Fusionskapitel werden dann zu kurz.
+- **`word_target_min`/`word_target_max` missverstehen**: Diese Werte sind bevorzugte Rahmen, keine harte Längenvorgabe. Sie helfen Rhythmus und Budget, dürfen aber keine organisch gute Szene kaputtsteuern.
+- **Scene Contract nicht ableitbar**: Wenn aus einer Karte kein `openingPressure`, `proofObject`, `turn` oder `finalImage` lesbar ist, muss die Karte nachgeschärft werden.
 - **CONTINUITY GUARDRAILS nicht aktualisiert**: Diese Sektion enthält sonst alte Figurnamen und produziert falsche Warnungen.
 - **Scene Cards nicht als Fenced-Code-Block**: Die Pipeline parsed Scene Cards als Key-Value-Blöcke innerhalb von ` ``` `…` ``` `. Einrückung (2 Spaces) und `: ` als Trennzeichen müssen konsistent sein.
 - **Director Note vs. Scene Card verwechseln**: Die `directorNote` in der Writer-UI ist nur Zusatzsteuerung für einen Lauf. Die Scene Card bleibt die eigentliche Produktionsgrundlage.
@@ -781,7 +820,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 ---
 ## ACTS & KAPITEL — SCENE CARDS
 
-> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Im aktuellen System sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` und harte Objekt-/Kindanker die wichtigsten Laufzeitfaktoren. `opening`, `reversal`, `dramaticBeat`, `ending` und `closingLine` bleiben wichtige Regiehilfen, sollen aber nicht als Formulierungszwang missverstanden werden. `word_target_min`/`word_target_max` überschreiben den Pipeline-Default. Alle weiteren Felder helfen Agents, die Szene richtig zu lesen und Fehlfassungen zu vermeiden. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
+> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Im aktuellen System sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` und harte Objekt-/Kindanker die wichtigsten Laufzeitfaktoren. Aus `opening`, `objective`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` und den Objektankern baut EMBER den Scene Contract. Diese Felder sind Regiehilfen für Szenenfunktion und Material, kein Formulierungszwang. `word_target_min`/`word_target_max` setzen nur einen bevorzugten Rahmen; Length-Control bleibt eine Notfallprüfung gegen extreme Ausreißer. Alle weiteren Felder helfen Agents, die Szene richtig zu lesen und Fehlfassungen zu vermeiden. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
 
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
@@ -2533,7 +2572,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 - Dialog darf nie bloss atmosphärisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
 - Bedrohung bleibt alltagsnah, institutionell plausibel und ohne Thrillerlärm.
 - Im letzten Drittel keine Triumphprosa und keine Dämonisierung. Beweise schlagen härter als Lautstärke.
-- Kurze bis mittlere Kapitel bevorzugen. 1000-1500 Wörter sind Normalbereich; einzelne Schlüsselszenen dürfen bis etwa 1700 gehen, Kapitel 17, 23 und 27 als Fusionskapitel bei Bedarf auf etwa 1700-1950 Wörter.
+- Kurze bis mittlere Kapitel bevorzugen. 1000-1500 Wörter sind Normalbereich; einzelne Schlüsselszenen dürfen bis etwa 1700 gehen, Kapitel 17, 23 und 27 als Fusionskapitel bei Bedarf auf etwa 1700-1950 Wörter. Diese Werte sind bevorzugte Rahmen, keine harte Zielerfüllung.
 
 ### Minimaler Director-Note-Block
 > Nur verwenden, wenn der Lauf sichtbar zu breit, zu erklärend oder zu laut wird. Dieser Block ist Zusatzsteuerung, nicht Standardersatz für gute Regie.

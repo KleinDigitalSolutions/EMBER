@@ -3164,7 +3164,11 @@ function normalizeBookMemoryBackbone(
     contextPacks:
       Array.isArray(candidate.contextPacks) ? candidate.contextPacks : fallback.contextPacks,
     continuityNotes:
-      Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes
+      Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes,
+    humanEditExamples:
+      Array.isArray(candidate.humanEditExamples)
+        ? candidate.humanEditExamples
+        : fallback.humanEditExamples
   };
 }
 

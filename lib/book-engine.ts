@@ -623,7 +623,8 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
     openThreads,
     sceneCards,
     contextPacks,
-    continuityNotes
+    continuityNotes,
+    humanEditExamples: story.book.memory.humanEditExamples
   };
 }
 

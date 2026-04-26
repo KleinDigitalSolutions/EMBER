@@ -29,6 +29,7 @@ import {
   countWords,
   normalizeBookDraftTargets,
   type BookDraftJob,
+  type BookHumanEditLearningStatus,
   type SceneContext,
   type StoryAct,
   type StoryChapter,
@@ -53,7 +54,7 @@ const DIRECTOR_PRESETS = [
 
 const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "draft", label: "Draft" },
-  { id: "rewrite", label: "Rewrite" },
+  { id: "rewrite", label: "Final" },
   { id: "extract", label: "Extract" },
   { id: "continuity", label: "Continuity" },
   { id: "notes", label: "Notes" },
@@ -234,6 +235,9 @@ export function BookWriterPanel({
   const scene = sceneContext.scene;
   const liveWordCount = countSceneWords(scene);
   const latestJob = draftJobs[0] ?? null;
+  const humanEditExamples = story.book.memory.humanEditExamples.filter(function (example) {
+    return example.sceneId === scene.id;
+  });
   const sceneIndex = sceneContext.chapter.scenes.findIndex(function (candidate) {
     return candidate.id === scene.id;
   });
@@ -263,11 +267,18 @@ export function BookWriterPanel({
         body: JSON.stringify({
           sceneId: scene.id,
           packet: contextPacket,
+          workspaceId: story.workspaceId,
           provider: jobProvider,
           modelOverrides: buildBookJobModelOverrides(jobModels),
           targetSceneWordsMin: normalizedDraftTargets.targetSceneWordsMin,
           targetSceneWordsMax: normalizedDraftTargets.targetSceneWordsMax,
-          directorNote
+          directorNote,
+          humanEditLearningStatuses: story.book.memory.humanEditExamples.map(function (example) {
+            return {
+              id: example.id,
+              learningStatus: example.learningStatus
+            };
+          })
         })
       });
       const payload = await response.json();
@@ -317,9 +328,40 @@ export function BookWriterPanel({
 
     setJobStatus(
       accepted
-        ? "Rewrite in die aktuelle Szene übernommen."
-        : blockers[0] || "Rewrite wurde nicht übernommen."
+        ? "Finaler Job-Text in die aktuelle Szene übernommen. Human Edit Memory wird beim Speichern erfasst, wenn du danach bearbeitest."
+        : blockers[0] || "Job-Text wurde nicht übernommen."
     );
+  }
+
+  function handleHumanEditLearningStatus(
+    exampleId: string,
+    learningStatus: BookHumanEditLearningStatus
+  ) {
+    const now = new Date().toISOString();
+
+    onUpdateStory(function (currentStory) {
+      return {
+        ...currentStory,
+        book: {
+          ...currentStory.book,
+          memory: {
+            ...currentStory.book.memory,
+            humanEditExamples: currentStory.book.memory.humanEditExamples.map(function (example) {
+              if (example.id !== exampleId) {
+                return example;
+              }
+
+              return {
+                ...example,
+                learningStatus,
+                excludedReason: learningStatus === "excluded" ? "Manuell ausgeschlossen." : null,
+                updatedAt: now
+              };
+            })
+          }
+        }
+      };
+    });
   }
 
   function handleModelChange(key: BookJobModelKey, value: string) {
@@ -880,10 +922,59 @@ export function BookWriterPanel({
                   }}
                 >
                   {latestJob.status === "accepted"
-                    ? "Rewrite erneut übernehmen"
-                    : "Rewrite übernehmen"}
+                    ? "Final erneut übernehmen"
+                    : "Final übernehmen"}
                 </button>
               </div>
+
+              <section className="book-mini-card">
+                <strong>Human Edit Memory</strong>
+                <p>
+                  Wird beim Speichern aus dem Unterschied zwischen übernommenem Job-Text und
+                  deinem finalen Szenentext erfasst.
+                </p>
+                {humanEditExamples.length ? (
+                  <div className="book-mini-list">
+                    {humanEditExamples.map(function (example) {
+                      const isIncluded = example.learningStatus === "included";
+
+                      return (
+                        <article key={example.id} className="book-thread-card">
+                          <strong>{formatHumanEditStatusLabel(example.learningStatus)}</strong>
+                          <p>{example.diffSummary.summary}</p>
+                          <p>
+                            {example.diffSummary.wordDelta > 0 ? "+" : ""}
+                            {example.diffSummary.wordDelta} Wörter ·{" "}
+                            {example.editTags.length ? example.editTags.join(", ") : "keine Tags"}
+                          </p>
+                          <div className="book-card__actions">
+                            <button
+                              className={"flat-button" + (isIncluded ? " flat-button--active" : "")}
+                              type="button"
+                              onClick={function () {
+                                handleHumanEditLearningStatus(example.id, "included");
+                              }}
+                            >
+                              Lernen aktiv
+                            </button>
+                            <button
+                              className={"flat-button" + (!isIncluded ? " flat-button--active" : "")}
+                              type="button"
+                              onClick={function () {
+                                handleHumanEditLearningStatus(example.id, "excluded");
+                              }}
+                            >
+                              Nicht lernen
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p>Noch kein gespeichertes Human-Edit-Beispiel für diese Szene.</p>
+                )}
+              </section>
             </>
           ) : (
             <article className="book-thread-card book-thread-card--empty">
@@ -1196,6 +1287,18 @@ function formatStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[number]) {
   }
 
   return "Quality Eval";
+}
+
+function formatHumanEditStatusLabel(status: BookHumanEditLearningStatus) {
+  if (status === "excluded") {
+    return "Vom Learning ausgeschlossen";
+  }
+
+  if (status === "needs_review") {
+    return "Review nötig";
+  }
+
+  return "Learning aktiv";
 }
 
 function createBlockId() {
