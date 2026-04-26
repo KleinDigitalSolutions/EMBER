@@ -95,11 +95,11 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
   - `branch_options`
   - `continuity_report`
   - `submission_report`
-- Rewrite-Length Control v2 ist im Book-Job-Service umgesetzt `aktualisiert 2026-04-20`:
-  - `beat_plan` als eigener strukturierter Planungs-Schritt
-  - `draft` und `rewrite` als getrennte reine Prosa-Calls
-  - `length_control` mit `expand` oder `compress` statt pauschalem Gesamtrepair
-  - separate Struktur-Calls für `extract`, `continuity` und `quality_eval`
+- Der aktuelle Book-Schreiblauf ist bewusst schlank `aktualisiert 2026-04-26`:
+  - kein aktiver `beat_plan`-Call mehr im Schreiblauf
+  - kein aktiver `rewrite`-Pass mehr als Standard
+  - der erste `draft` ist direkt der Szenentext
+  - danach nur `length_control`, `extract`, `continuity` und `quality_eval`
   - Stage-Runs mit Telemetrie statt nur statischen Notes
 
 ## Studio-Oberfläche
@@ -179,7 +179,7 @@ Optional später:
 ## Prompt-Architektur
 Nicht ein einziger Mega-Prompt. Stattdessen modulare System-Prompts.
 
-`aktualisiert 2026-04-20`: Der Book-Drafting-Pfad läuft jetzt nicht mehr als ein kombiniertes Draft/Rewrite/Extract-Schema. Prosa und Metadaten sind getrennt, damit Wortbudget, Qualitätsmessung und nachgelagerte Korrekturen belastbar steuerbar bleiben.
+`aktualisiert 2026-04-26`: Der Book-Drafting-Pfad läuft nicht mehr als kombiniertes Draft/Rewrite/Extract-Schema und auch nicht mehr mit aktivem Beat-Plan-Call. Prosa und Metadaten sind getrennt; der Standardlauf ist `draft -> length_control -> extract -> continuity -> quality_eval`.
 
 ### Gemeinsamer Basis-Prompt
 - Rolle des Modells
@@ -273,7 +273,8 @@ Story-Inhalt nicht nur als ein riesiges JSON-Feld speichern. Zusätzlich normali
 
 ### Book-Drafting V2
 - `book_draft_jobs.stage_runs` speichert seit `2026-04-20` Wortziel, Wort-Ist, Attempts, Repairs, Tokens, Dauer, Stop-Grund, Quality-Score und Issues.
-- Die Stage-Reihenfolge im Remote-Book-Pfad ist jetzt `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity`, `quality_eval`.
+- Der aktive Remote-Book-Pfad ist jetzt `context`, `draft`, `length_control`, `extract`, `continuity`, `quality_eval`.
+- Legacy-Stage-Slots fuer `beat_plan` und `rewrite` koennen in Stage-Runs weiter auftauchen, laufen aber standardmaessig nur noch als deaktivierte Kompatibilitaetsmarken.
 - `draftEngine` trägt zusätzlich `styleProfileVersion` und `marketProfileVersion`, damit Stil- und Marktprofile versioniert nachvollziehbar bleiben.
 
 ## Backend-Entscheidungen
@@ -374,7 +375,7 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
 - **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`Auto` / `OpenAI` / `Anthropic`) im Writer-Panel integriert; `local_fallback` bleibt nur die Runtime-Sicherung bei fehlenden Keys oder Remote-Fehlern.
-- **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → beat_plan → draft → rewrite → length_control → extract → continuity → quality_eval`.
+- **Stage Split UI:** `aktualisiert 2026-04-26`. Writer- und Blueprint-Panel erklaeren den aktuellen Standardlauf als `context → draft → length_control → extract → continuity → quality_eval`; `beat_plan` und `rewrite` sind nicht mehr der aktive Schreibstandard.
 - **Assistant Workspace:** `erledigt 2026-04-19`. Thread-basierter Story-Chat mit serverseitiger Route, Provider-/Modellwahl, Scope (`Projekt` / `Act` / `Kapitel` / `Szene`) und strukturierten Outputs fuer Antwort oder Regie-Dokument.
 - **Studio Brainstormer:** RAG-basierter Ausbau des Assistant Workspace mit tieferer Codex-/Historien-Einbindung. `geplant`
 - **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
@@ -437,7 +438,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 
 ### Phase 3: Draft Engine `erledigt 2026-04-18`
 - Szenenweises Drafting `erledigt`
-- getrennte Jobs bzw. Stufen fuer Context, Beat Plan, Draft, Rewrite, Length Control, Extract, Continuity und Quality Eval `erledigt` im Datenmodell, Persistenzlayer und UI-Flow
+- aktiver Schreiblauf mit Context, Draft, Length Control, Extract, Continuity und Quality Eval `erledigt`; Beat Plan und Rewrite bleiben nur noch als deaktivierte Kompatibilitaetsstufen im Datenmodell
 - strukturierte Rueckgaben statt Freitext-Only `erledigt`
 - Modellrouting fuer starkes Hauptmodell plus sauberen Remote-Fallback `erledigt` als initialer Provider-Flow; aktuell OpenAI und Anthropic plus lokaler Fallback
 - stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`; Anthropic nutzt fuer den stabilen Prefix Prompt Caching
@@ -466,7 +467,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Assistant Schema:** `erledigt 2026-04-19`. `StoryDocument` traegt jetzt Assistant-Praeferenzen, Threads, Nachrichten und Artefakte inklusive Normalisierung fuer Legacy-Daten.
 - **Schema & Persistence:** `erledigt`. `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
 - **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
-- **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; Draft, Rewrite, Extract, Continuity und Quality-Eval laufen im selben Providerpfad und koennen ueber separate Draft- und Continuity-Model-Overrides gesteuert werden.
+- **Anthropic Routing:** `aktualisiert 2026-04-26`. Stabiler Prefix wird gecacht; Draft, Length Control, Extract, Continuity und Quality-Eval laufen im selben Providerpfad. Der fruehere Rewrite-Standardpfad ist entfernt.
 - **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind OpenAI- und Anthropic-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
 - **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
@@ -474,15 +475,15 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-20`
 - **Anthropic Book Hardening:** `erledigt 2026-04-20`. Der serverseitige Anthropic-Pfad in `BookJobService` arbeitet nicht mehr mit einem starren kleinen Tokenlimit und blindem Auto-Parse, sondern mit dynamischem Output-Budget, robuster JSON-Extraktion, Retry bei unvollstaendigem Output und einem gezielten Repair-Pass fuer Qualitaetsverletzungen.
 - **Remote Stability:** `erledigt 2026-04-20`. Echte End-to-End-Läufe ueber `/api/book-jobs` mit `claude-opus-4-7` bleiben nun im Modus `remote`, statt systematisch auf `local_fallback` zu kippen. Der Pfad ist damit fuer den alltäglichen Einsatz deutlich belastbarer.
-- **Structured Stage Split:** `aktualisiert 2026-04-21`. Der Book-Job ist in `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity` und `quality_eval` gegliedert. Die strukturierten Stufen laufen nicht mehr als separater Billig-Provider-Pfad, sondern im selben Provider-/Model-Setup wie der Job selbst.
+- **Structured Stage Split:** `aktualisiert 2026-04-26`. Der aktive Book-Job laeuft als `context`, `draft`, `length_control`, `extract`, `continuity` und `quality_eval`. Legacy-Slots fuer `beat_plan` und `rewrite` bleiben nur zur Kompatibilitaet in Stage-Runs sichtbar, sind aber kein aktiver Schreibpfad mehr.
 - **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `gpt-5.4-pro` fuer OpenAI und `claude-opus-4-7` fuer Anthropic, jeweils mit per-Job-Override und Env-Override als hoeheren Ebenen.
 - **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
 - **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde eine fehlerhafte Kurzfassung durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
-- **Offene Grenze:** `aktualisiert 2026-04-26`. Der Book-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
+- **Offene Grenze:** `aktualisiert 2026-04-26`. Der Book-Pfad ist stabiler und schlanker, trifft aber hohe Zielbereiche fuer den finalen Job-Text noch nicht in jedem Lauf. Die naechste qualitative Stufe bleibt deshalb: bessere Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Laeufe.
 
 ### Nächste technische Prioritäten
-1. **Rewrite-Length Control:** Zweiten gezielten Expand-/Repair-Pass einführen, damit `rewriteText` hohe Zielbereiche wie `1350-1650` zuverlässiger erreicht, ohne die Prosa zu verwässern.
+1. **Length-Control Robustheit:** Expand-/Compress-Entscheidungen weiter schaerfen, damit der finale Job-Text hohe Zielbereiche wie `1350-1650` zuverlaessiger erreicht, ohne die Prosa zu verwaessern.
 2. **Workspace & Roles:** RLS in Supabase finalisieren, damit Autoren nur ihre eigenen Workspaces sehen.
 3. **Memory Sync UI:** Interface für die manuelle Bestätigung von extrahierten Canon-Facts und Character-Shifts.
 4. **Temporal State / Progressions:** Logik für zustandsabhängiges Drafting implementieren.
@@ -541,11 +542,12 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
 ### Pipeline pro Szene
 1. `composeContext(sceneId)`
 2. `draftScene(sceneId)`
-3. `extractSceneState(sceneDraft) -> JSON`
-4. `runContinuityCheck(sceneDraft, extractedState)`
-5. `rewriteScene(sceneDraft, notes)`
-6. `acceptDraft()`
-7. `updatePersistentCanonArtifacts()`
+3. `runLengthControl(sceneDraft) -> finalSceneText`
+4. `extractSceneState(finalSceneText) -> JSON`
+5. `runContinuityCheck(finalSceneText, extractedState)`
+6. `runQualityEval(finalSceneText, extractedState)`
+7. `acceptDraft()`
+8. `updatePersistentCanonArtifacts()`
 
 ### Harte Architekturregeln
 - Das Modell erinnert nicht das Buch. Die persistenten Story-Artefakte erinnern das Buch.

@@ -41,7 +41,7 @@ const beatPlanSchema = z.object({
 });
 
 const stateExtractionSchema = z.object({
-  rewriteNotes: z.array(z.string().min(1).max(100)).min(1).max(4),
+  sceneNotes: z.array(z.string().min(1).max(100)).min(1).max(4),
   extractedState: z.object({
     newCanonFacts: z.array(z.string().min(1).max(100)).max(3),
     characterStateUpdates: z.array(z.string().min(1).max(100)).max(3),
@@ -81,7 +81,7 @@ const OPENAI_PROSE_MAX_TOKENS = 9000;
 const STRUCTURED_STAGE_MAX_TOKENS = 1400;
 const EXTRACT_STAGE_MAX_TOKENS = 900;
 const EXTRACT_ARRAY_MAX_ITEMS = 3;
-const EXTRACT_REWRITE_NOTES_MAX_ITEMS = 4;
+const EXTRACT_SCENE_NOTES_MAX_ITEMS = 4;
 const EXTRACT_STRING_MAX_LENGTH = 100;
 const ANTHROPIC_CACHE_TTL = "1h" as const;
 const ANTHROPIC_CACHE_BETAS = ["extended-cache-ttl-2025-04-11"] as const;
@@ -132,21 +132,21 @@ type ScenePipelineAdapter = {
   continuityModelName: string | null;
   extractModelName: string | null;
   writeDraft: (beatPlan: BeatPlanPayload) => Promise<TextStageResult>;
-  expandScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
-  compressScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
+  expandScene: (beatPlan: BeatPlanPayload, finalSceneText: string) => Promise<TextStageResult>;
+  compressScene: (beatPlan: BeatPlanPayload, finalSceneText: string) => Promise<TextStageResult>;
   extractSceneState: (
     beatPlan: BeatPlanPayload,
-    rewriteText: string
+    finalSceneText: string
   ) => Promise<StructuredStageResult<StateExtractionPayload>>;
   auditContinuity: (
     beatPlan: BeatPlanPayload,
     draftText: string,
-    rewriteText: string,
+    finalSceneText: string,
     extractedState: DraftExtractionState
   ) => Promise<StructuredStageResult<ContinuityAuditPayload>>;
   evaluateQuality: (
     beatPlan: BeatPlanPayload,
-    rewriteText: string,
+    finalSceneText: string,
     extractedState: DraftExtractionState
   ) => Promise<StructuredStageResult<QualityEvalPayload>>;
 };
@@ -156,8 +156,8 @@ type DraftProviderResult = {
   continuityModelName: string | null;
   beatPlan: BeatPlanPayload;
   draftText: string;
-  rewriteText: string;
-  rewriteNotes: string[];
+  finalSceneText: string;
+  sceneNotes: string[];
   extractedState: DraftExtractionState;
   qualityEval: QualityEvalPayload;
   stages: BookDraftStageRuns;
@@ -305,35 +305,35 @@ async function generateWithOpenAI(
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
     },
-    expandScene: function (beatPlan, rewriteText) {
+    expandScene: function (beatPlan, finalSceneText) {
       return requestOpenAIText({
         client,
         modelName,
         systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildExpandPrompt(packet, options, beatPlan, rewriteText),
+        userPrompt: buildExpandPrompt(packet, options, beatPlan, finalSceneText),
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
     },
-    compressScene: function (beatPlan, rewriteText) {
+    compressScene: function (beatPlan, finalSceneText) {
       return requestOpenAIText({
         client,
         modelName,
         systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildCompressPrompt(packet, options, beatPlan, rewriteText),
+        userPrompt: buildCompressPrompt(packet, options, beatPlan, finalSceneText),
         maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
     },
-    extractSceneState: function (beatPlan, rewriteText) {
+    extractSceneState: function (beatPlan, finalSceneText) {
       return requestOpenAIStructured({
         client,
         modelName,
         schema: stateExtractionSchema,
         schemaName: "ember_book_state_extract",
         systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, finalSceneText)
       });
     },
-    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+    auditContinuity: function (beatPlan, draftText, finalSceneText, extractedState) {
       return requestOpenAIStructured({
         client,
         modelName,
@@ -345,19 +345,19 @@ async function generateWithOpenAI(
           options,
           beatPlan,
           draftText,
-          rewriteText,
+          finalSceneText,
           extractedState
         )
       });
     },
-    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+    evaluateQuality: function (beatPlan, finalSceneText, extractedState) {
       return requestOpenAIStructured({
         client,
         modelName,
         schema: qualityEvalSchema,
         schemaName: "ember_book_quality_eval",
         systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, finalSceneText, extractedState)
       });
     }
   });
@@ -402,7 +402,7 @@ async function generateWithAnthropic(
         })
       });
     },
-    expandScene: function (beatPlan, rewriteText) {
+    expandScene: function (beatPlan, finalSceneText) {
       return requestAnthropicText({
         client,
         modelName,
@@ -413,11 +413,11 @@ async function generateWithAnthropic(
           packet,
           options,
           beatPlan,
-          rewriteText
+          finalSceneText
         })
       });
     },
-    compressScene: function (beatPlan, rewriteText) {
+    compressScene: function (beatPlan, finalSceneText) {
       return requestAnthropicText({
         client,
         modelName,
@@ -428,11 +428,11 @@ async function generateWithAnthropic(
           packet,
           options,
           beatPlan,
-          rewriteText
+          finalSceneText
         })
       });
     },
-    extractSceneState: function (beatPlan, rewriteText) {
+    extractSceneState: function (beatPlan, finalSceneText) {
       return requestAnthropicStructured({
         client,
         stageName: "extract",
@@ -440,10 +440,10 @@ async function generateWithAnthropic(
         maxTokens: EXTRACT_STAGE_MAX_TOKENS,
         schema: stateExtractionSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, rewriteText)
+        userPrompt: buildStateExtractionPrompt(packet, options, beatPlan, finalSceneText)
       });
     },
-    auditContinuity: function (beatPlan, draftText, rewriteText, extractedState) {
+    auditContinuity: function (beatPlan, draftText, finalSceneText, extractedState) {
       return requestAnthropicStructured({
         client,
         stageName: "continuity",
@@ -456,12 +456,12 @@ async function generateWithAnthropic(
           options,
           beatPlan,
           draftText,
-          rewriteText,
+          finalSceneText,
           extractedState
         )
       });
     },
-    evaluateQuality: function (beatPlan, rewriteText, extractedState) {
+    evaluateQuality: function (beatPlan, finalSceneText, extractedState) {
       return requestAnthropicStructured({
         client,
         stageName: "quality_eval",
@@ -469,7 +469,7 @@ async function generateWithAnthropic(
         maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
         schema: qualityEvalSchema,
         systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, rewriteText, extractedState)
+        userPrompt: buildQualityEvalPrompt(packet, options, beatPlan, finalSceneText, extractedState)
       });
     }
   });
@@ -498,17 +498,18 @@ async function runScenePipeline(
   if (!draftText) {
     throw new Error("Draft stage returned no prose.");
   }
-  const rewrittenText = draftText;
-  const lengthControl = await maybeRunLengthControl(packet, options, adapter, beatPlan, rewrittenText);
+  const initialSceneText = draftText;
+  const lengthControl = await maybeRunLengthControl(packet, options, adapter, beatPlan, initialSceneText);
+  const finalSceneText = lengthControl.text;
 
   if (lengthControl.warning) {
     warnings.push(lengthControl.warning);
   }
-  let rewriteNotes: string[] = [];
+  let sceneNotes: string[] = [];
   let extractedState: DraftExtractionState = withDraftMemorySync(
     buildFallbackStateExtraction(
       packet,
-      lengthControl.text,
+      finalSceneText,
       beatPlan
     ).extractedState,
     {
@@ -526,16 +527,16 @@ async function runScenePipeline(
   });
 
   try {
-    const extractionResult = await adapter.extractSceneState(beatPlan, lengthControl.text);
+    const extractionResult = await adapter.extractSceneState(beatPlan, finalSceneText);
     const normalizedExtraction = normalizeStateExtractionPayload(extractionResult.payload);
     const sanitizedExtraction = sanitizeSceneStateExtraction(packet, normalizedExtraction);
     extractedState = withDraftMemorySync(sanitizedExtraction.payload.extractedState, {
       fallbackCreatedAt: new Date().toISOString(),
       defaultStatus: "pending"
     });
-    rewriteNotes = normalizeRewriteNotes(
-      sanitizedExtraction.payload.rewriteNotes,
-      lengthControl.text,
+    sceneNotes = normalizeSceneNotes(
+      sanitizedExtraction.payload.sceneNotes,
+      finalSceneText,
       beatPlan
     );
 
@@ -553,13 +554,13 @@ async function runScenePipeline(
       inputTokens: extractionResult.metrics.inputTokens,
       outputTokens: extractionResult.metrics.outputTokens,
       stopReason: extractionResult.metrics.stopReason,
-      notes: buildExtractionNotes(rewriteNotes, sanitizedExtraction.notes)
+      notes: buildExtractionNotes(sceneNotes, sanitizedExtraction.notes)
     });
   } catch (error) {
-    const fallbackExtraction = buildFallbackStateExtraction(packet, lengthControl.text, beatPlan);
+    const fallbackExtraction = buildFallbackStateExtraction(packet, finalSceneText, beatPlan);
     const message = error instanceof Error ? error.message : "unknown error";
     const fallbackNote = `State-Extraktion fehlgeschlagen; konservativer Fallback verwendet. ${message}`;
-    rewriteNotes = normalizeRewriteNotes(fallbackExtraction.rewriteNotes, lengthControl.text, beatPlan);
+    sceneNotes = normalizeSceneNotes(fallbackExtraction.sceneNotes, finalSceneText, beatPlan);
     extractedState = withDraftMemorySync(fallbackExtraction.extractedState, {
       fallbackCreatedAt: new Date().toISOString(),
       defaultStatus: "pending"
@@ -570,7 +571,7 @@ async function runScenePipeline(
       provider: adapter.provider,
       modelName: adapter.extractModelName || adapter.modelName,
       updatedAt: new Date().toISOString(),
-      notes: [fallbackNote].concat(buildExtractionNotes(rewriteNotes, []))
+      notes: [fallbackNote].concat(buildExtractionNotes(sceneNotes, []))
     });
   }
 
@@ -587,7 +588,7 @@ async function runScenePipeline(
     const continuityResult = await adapter.auditContinuity(
       beatPlan,
       draftText,
-      lengthControl.text,
+      finalSceneText,
       extractedState
     );
     extractedState = mergeContinuityAudit(extractedState, continuityResult.payload);
@@ -619,7 +620,7 @@ async function runScenePipeline(
     warnings.push(continuityStage.notes[0]);
   }
 
-  const guardContinuityRisks = auditSceneContinuityGuards(packet, lengthControl.text);
+  const guardContinuityRisks = auditSceneContinuityGuards(packet, finalSceneText);
 
   if (guardContinuityRisks.length) {
     extractedState = mergeContinuityAudit(extractedState, {
@@ -640,7 +641,7 @@ async function runScenePipeline(
     warnings.push(`Continuity-Guard: ${guardContinuityRisks.join(" | ")}`);
   }
 
-  let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
+  let qualityEval = createFallbackQualityEval(options, countWords(finalSceneText));
   let qualityStage = createStageRun({
     status: "skipped",
     provider: adapter.provider,
@@ -654,8 +655,8 @@ async function runScenePipeline(
   });
 
   try {
-    const qualityResult = await adapter.evaluateQuality(beatPlan, lengthControl.text, extractedState);
-    qualityEval = sanitizeQualityEval(qualityResult.payload, options, countWords(lengthControl.text));
+    const qualityResult = await adapter.evaluateQuality(beatPlan, finalSceneText, extractedState);
+    qualityEval = sanitizeQualityEval(qualityResult.payload, options, countWords(finalSceneText));
     const qualityScore = computeQualityScore(qualityEval);
     qualityStage = createStageRun({
       provider: adapter.provider,
@@ -682,7 +683,7 @@ async function runScenePipeline(
       updatedAt: new Date().toISOString(),
       targetWordsMin: options.targetSceneWordsMin,
       targetWordsMax: options.targetSceneWordsMax,
-      actualWords: countWords(lengthControl.text),
+      actualWords: countWords(finalSceneText),
       notes: [
         `Quality-Eval fehlgeschlagen: ${error instanceof Error ? error.message : "unknown error"}`
       ]
@@ -695,8 +696,8 @@ async function runScenePipeline(
     continuityModelName: adapter.continuityModelName,
     beatPlan,
     draftText,
-    rewriteText: lengthControl.text,
-    rewriteNotes,
+    finalSceneText,
+    sceneNotes,
     extractedState,
     qualityEval,
     stages: {
@@ -730,8 +731,8 @@ async function runScenePipeline(
         attemptCount: 0,
         targetWordsMin: options.targetSceneWordsMin,
         targetWordsMax: options.targetSceneWordsMax,
-        actualWords: countWords(rewrittenText),
-        notes: [`Rewrite-Pass deaktiviert. Draft direkt mit ${countWords(rewrittenText)} Wörtern übernommen.`]
+        actualWords: countWords(initialSceneText),
+        notes: [`Rewrite-Pass deaktiviert. Draft direkt mit ${countWords(initialSceneText)} Wörtern übernommen.`]
       }),
       length_control: lengthControl.stage,
       extract: extractStage,
@@ -747,14 +748,14 @@ async function maybeRunLengthControl(
   options: DraftGenerationOptions,
   adapter: ScenePipelineAdapter,
   beatPlan: BeatPlanPayload,
-  rewriteText: string
+  currentSceneText: string
 ) {
-  const actualWords = countWords(rewriteText);
+  const actualWords = countWords(currentSceneText);
   const action = resolveLengthControlAction(actualWords, options);
 
   if (action === "accept") {
     return {
-      text: rewriteText,
+      text: currentSceneText,
       warning: undefined,
       stage: createStageRun({
         status: "skipped",
@@ -773,17 +774,17 @@ async function maybeRunLengthControl(
   try {
     const result =
       action === "expand"
-        ? await adapter.expandScene(beatPlan, rewriteText)
-        : await adapter.compressScene(beatPlan, rewriteText);
+        ? await adapter.expandScene(beatPlan, currentSceneText)
+        : await adapter.compressScene(beatPlan, currentSceneText);
     const candidateText = sanitizeSceneText(result.text);
-    const finalText = selectBetterLengthCandidate(rewriteText, candidateText, options);
+    const finalText = selectBetterLengthCandidate(currentSceneText, candidateText, options);
     const finalWords = countWords(finalText);
     const notes =
       action === "expand"
         ? [`Expand-Pass abgeschlossen. Wortstand: ${finalWords}.`]
         : [`Compress-Pass abgeschlossen. Wortstand: ${finalWords}.`];
     const warning =
-      finalText === rewriteText
+      finalText === currentSceneText
         ? `Length-Control ${action} lieferte keine bessere Fassung und wurde verworfen.`
         : undefined;
 
@@ -810,7 +811,7 @@ async function maybeRunLengthControl(
     const message = error instanceof Error ? error.message : "unknown error";
 
     return {
-      text: rewriteText,
+      text: currentSceneText,
       warning: `Length-Control ${action} fehlgeschlagen: ${message}`,
       stage: createStageRun({
         status: "failed",
@@ -890,8 +891,8 @@ function hydrateDraftJob(
     acceptedAt: null,
     outline: buildOutlineFromBeatPlan(payload.beatPlan),
     draftText: payload.draftText,
-    rewriteText: payload.rewriteText,
-    rewriteNotes: payload.rewriteNotes,
+    rewriteText: payload.finalSceneText,
+    rewriteNotes: payload.sceneNotes,
     extractedState: withDraftMemorySync(payload.extractedState, {
       fallbackCreatedAt: now,
       defaultStatus: "pending"
@@ -1220,15 +1221,15 @@ function buildExpandPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload,
-  rewriteText: string
+  finalSceneText: string
 ) {
   return [
     "Expand the scene while preserving continuity and voice.",
     "Return prose only.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Deepen the existing scene movement. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
     buildProseSceneContextPrompt(packet),
-    `Current rewrite: ${rewriteText}`
+    `Current scene text: ${finalSceneText}`
   ].join("\n");
 }
 
@@ -1236,15 +1237,15 @@ function buildCompressPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload,
-  rewriteText: string
+  finalSceneText: string
 ) {
   return [
     "Compress the scene while preserving all essential story movement.",
     "Return prose only.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
     buildProseSceneContextPrompt(packet),
-    `Current rewrite: ${rewriteText}`
+    `Current scene text: ${finalSceneText}`
   ].join("\n");
 }
 
@@ -1252,15 +1253,15 @@ function buildStateExtractionPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload,
-  rewriteText: string
+  finalSceneText: string
 ) {
   return [
-    "Extract scene state from the finished rewrite.",
+    "Extract scene state from the finished scene text.",
     "Return only structured output matching the requested schema.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Rules:",
-    "- rewriteNotes must describe visible revisions or strengths in plain compact language.",
-    "- rewriteNotes: 1 to 4 items, each under 100 characters.",
+    "- sceneNotes must describe visible strengths or editorial observations in plain compact language.",
+    "- sceneNotes: 1 to 4 items, each under 100 characters.",
     "- Every extractedState list: 0 to 3 items, each under 100 characters.",
     "- Every extractedState entry must be a plain string. No objects.",
     "- extractedState must stay conservative: explicit facts only.",
@@ -1269,8 +1270,8 @@ function buildStateExtractionPrompt(
     "- Prefer empty arrays over speculative entries.",
     "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    `Final rewrite: ${rewriteText}`
+    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
+    `Final scene text: ${finalSceneText}`
   ].join("\n");
 }
 
@@ -1279,19 +1280,19 @@ function buildContinuityAuditPrompt(
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload,
   draftText: string,
-  rewriteText: string,
+  finalSceneText: string,
   extractedState: DraftExtractionState
 ) {
   return [
     "Audit this scene for continuity and style drift only.",
     "Return only structured output matching the requested schema.",
-    `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
+    `Target scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
     "Keep every listed issue compact.",
     buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
-    `Draft text: ${draftText}`,
-    `Rewrite text: ${rewriteText}`,
+    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
+    `Initial scene text: ${draftText}`,
+    `Final scene text: ${finalSceneText}`,
     `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
     `Existing style drift notes: ${extractedState.styleDriftNotes.join(" | ") || "none"}`
   ].join("\n");
@@ -1301,7 +1302,7 @@ function buildQualityEvalPrompt(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
   beatPlan: BeatPlanPayload,
-  rewriteText: string,
+  finalSceneText: string,
   extractedState: DraftExtractionState
 ) {
   return [
@@ -1314,9 +1315,9 @@ function buildQualityEvalPrompt(
     "Issues should be short, concrete, and user-facing.",
     "Keep every issue compact.",
     buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    `Scene contract: ${formatSceneContractForPrompt(beatPlan)}`,
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
-    `Final rewrite: ${rewriteText}`
+    `Final scene text: ${finalSceneText}`
   ].join("\n");
 }
 
@@ -1325,7 +1326,7 @@ function buildAnthropicScenePrompt(params: {
   packet: SceneContextPacket;
   options: DraftGenerationOptions;
   beatPlan: BeatPlanPayload;
-  rewriteText?: string;
+  finalSceneText?: string;
 }) {
   const modeInstruction =
     params.mode === "draft"
@@ -1342,7 +1343,7 @@ function buildAnthropicScenePrompt(params: {
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
       : "",
-    params.rewriteText ? `<current_rewrite>${escapeXml(params.rewriteText)}</current_rewrite>` : "",
+    params.finalSceneText ? `<current_scene_text>${escapeXml(params.finalSceneText)}</current_scene_text>` : "",
     `<output_contract>${escapeXml(`${modeInstruction} Return prose only in German. No headings, no JSON, no commentary.`)}</output_contract>`
   ]
     .filter(Boolean)
@@ -1564,17 +1565,17 @@ function buildOutlineFromBeatPlan(beatPlan: BeatPlanPayload) {
   });
 }
 
-function formatBeatPlanForPrompt(beatPlan: BeatPlanPayload) {
+function formatSceneContractForPrompt(beatPlan: BeatPlanPayload) {
   return beatPlan.beats
-    .map(function (beat) {
-      return `${beat.label} [${beat.targetWords}W] - ${beat.purpose} -> ${beat.mustLand}`;
+    .map(function (beat, index) {
+      return `Scene movement ${index + 1} [${beat.targetWords}W] - ${beat.purpose} -> ${beat.mustLand}`;
     })
     .join(" | ");
 }
 
 function normalizeStateExtractionPayload(payload: StateExtractionPayload): StateExtractionPayload {
   return {
-    rewriteNotes: dedupeStrings(payload.rewriteNotes).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS),
+    sceneNotes: dedupeStrings(payload.sceneNotes).slice(0, EXTRACT_SCENE_NOTES_MAX_ITEMS),
     extractedState: {
       newCanonFacts: dedupeStrings(payload.extractedState.newCanonFacts).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
       characterStateUpdates: dedupeStrings(payload.extractedState.characterStateUpdates).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
@@ -1587,20 +1588,20 @@ function normalizeStateExtractionPayload(payload: StateExtractionPayload): State
   };
 }
 
-function normalizeRewriteNotes(
+function normalizeSceneNotes(
   notes: string[],
-  rewriteText: string,
+  finalSceneText: string,
   beatPlan: BeatPlanPayload
 ) {
-  const sanitized = dedupeStrings(notes).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS);
+  const sanitized = dedupeStrings(notes).slice(0, EXTRACT_SCENE_NOTES_MAX_ITEMS);
 
   if (sanitized.length) {
     return sanitized;
   }
 
   return [
-    `Beat-Folge ${beatPlan.beats[0]?.label || "Beat 1"} bis ${beatPlan.beats[beatPlan.beats.length - 1]?.label || "Finale"} sichtbar gehalten.`,
-    `Rewrite auf ${countWords(rewriteText)} Wörter im Zielkorridor stabilisiert.`
+    `Szenenbewegung ${beatPlan.beats.length || 1} Abschnitte sichtbar gehalten.`,
+    `Finaler Szenentext auf ${countWords(finalSceneText)} Wörter stabilisiert.`
   ];
 }
 
@@ -1666,7 +1667,7 @@ function sanitizeSceneStateExtraction(
 
   return {
     payload: {
-      rewriteNotes: payload.rewriteNotes,
+      sceneNotes: payload.sceneNotes,
       extractedState: {
         ...payload.extractedState,
         newCanonFacts: dedupeStrings(filteredCanonFacts).slice(0, EXTRACT_ARRAY_MAX_ITEMS),
@@ -1761,8 +1762,8 @@ function buildQualityEvalNotes(payload: QualityEvalPayload, qualityScore: number
   return notes.concat(["Keine offenen Eval-Issues."]);
 }
 
-function buildExtractionNotes(rewriteNotes: string[], reviewNotes: string[]) {
-  const notes = rewriteNotes.slice(0, 2).concat(reviewNotes);
+function buildExtractionNotes(sceneNotes: string[], reviewNotes: string[]) {
+  const notes = sceneNotes.slice(0, 2).concat(reviewNotes);
   return notes.length ? notes : ["State-Extraktion abgeschlossen."];
 }
 
@@ -2032,7 +2033,7 @@ function buildAnthropicStructuredRetryPrompt(
 
 function describeAnthropicStructuredStageDiscipline(stageName: AnthropicStructuredStageName) {
   if (stageName === "extract") {
-    return `- Extract discipline: rewriteNotes 1-${EXTRACT_REWRITE_NOTES_MAX_ITEMS}; every extractedState list 0-${EXTRACT_ARRAY_MAX_ITEMS}; every string <= ${EXTRACT_STRING_MAX_LENGTH} chars; plain strings only.`;
+    return `- Extract discipline: sceneNotes 1-${EXTRACT_SCENE_NOTES_MAX_ITEMS}; every extractedState list 0-${EXTRACT_ARRAY_MAX_ITEMS}; every string <= ${EXTRACT_STRING_MAX_LENGTH} chars; plain strings only.`;
   }
 
   return "- Keep the object compact and schema-first.";
@@ -2044,7 +2045,7 @@ function describeAnthropicStructuredStageContract(stageName: AnthropicStructured
   }
 
   if (stageName === "extract") {
-    return '{"rewriteNotes":["string"],"extractedState":{"newCanonFacts":[],"characterStateUpdates":[],"openThreadsCreated":[],"openThreadsResolved":[],"foreshadowingAdded":[],"continuityRisks":[],"styleDriftNotes":[]}}';
+    return '{"sceneNotes":["string"],"extractedState":{"newCanonFacts":[],"characterStateUpdates":[],"openThreadsCreated":[],"openThreadsResolved":[],"foreshadowingAdded":[],"continuityRisks":[],"styleDriftNotes":[]}}';
   }
 
   if (stageName === "continuity") {
@@ -2092,9 +2093,9 @@ function repairStateExtractionPayload(payload: unknown): StateExtractionPayload 
   const extractedState = isRecord(root.extractedState) ? root.extractedState : {};
 
   return {
-    rewriteNotes: coerceStringArray(root.rewriteNotes, EXTRACT_REWRITE_NOTES_MAX_ITEMS, [
-      "Rewrite-Fassung automatisch extrahiert und konservativ normalisiert."
-    ], EXTRACT_STRING_MAX_LENGTH).slice(0, EXTRACT_REWRITE_NOTES_MAX_ITEMS),
+    sceneNotes: coerceStringArray(root.sceneNotes ?? root.rewriteNotes, EXTRACT_SCENE_NOTES_MAX_ITEMS, [
+      "Finaler Szenentext automatisch extrahiert und konservativ normalisiert."
+    ], EXTRACT_STRING_MAX_LENGTH).slice(0, EXTRACT_SCENE_NOTES_MAX_ITEMS),
     extractedState: {
       newCanonFacts: coerceStringArray(
         extractedState.newCanonFacts,
@@ -2173,18 +2174,18 @@ function repairQualityEvalPayload(payload: unknown): QualityEvalPayload {
 
 function buildFallbackStateExtraction(
   packet: SceneContextPacket,
-  rewriteText: string,
+  finalSceneText: string,
   beatPlan: BeatPlanPayload
 ): StateExtractionPayload["extractedState"] extends infer _Unused
   ? {
-      rewriteNotes: string[];
+      sceneNotes: string[];
       extractedState: Omit<DraftExtractionState, "memorySync">;
     }
   : never {
   return {
-    rewriteNotes: [
-      "Structured Extractor fiel aus; konservativer Fallback aus Rewrite und Packet verwendet.",
-      `Rewrite auf ${countWords(rewriteText)} Wörter stabil gehalten.`
+    sceneNotes: [
+      "Structured Extractor fiel aus; konservativer Fallback aus Szenentext und Packet verwendet.",
+      `Finaler Szenentext auf ${countWords(finalSceneText)} Wörter stabil gehalten.`
     ],
     extractedState: {
       newCanonFacts: [],
@@ -2196,7 +2197,7 @@ function buildFallbackStateExtraction(
         "Structured Extractor fiel aus; neue Canon-Fakten und Thread-Aenderungen manuell pruefen."
       ],
       styleDriftNotes: [
-        `Fallback-Extraktion aktiv; Beat-Folge ${beatPlan.beats[0]?.label || "Beat 1"} bis ${beatPlan.beats[beatPlan.beats.length - 1]?.label || "Finale"} nur konservativ ausgewertet.`
+        `Fallback-Extraktion aktiv; Szenenbewegung mit ${beatPlan.beats.length || 1} Abschnitten nur konservativ ausgewertet.`
       ]
     }
   };
