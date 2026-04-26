@@ -239,6 +239,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-5",
     kicker: "Schriftlich",
     title: "Schriftlich",
+    summary: "",
     paragraphs: [
       "Petra Löwen schloss die Tür hinter Eva, nicht hörbar, aber so, dass das Geräusch im Raum blieb. Der Schreibtisch war frei geräumt bis auf einen Schnellhefter, ein Formular und einen Kugelschreiber, der schon aufgeschraubt dalag.",
       "\"Setzen Sie sich.\"",
@@ -301,6 +302,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-6",
     kicker: "Die Spur",
     title: "Verlegt",
+    summary: "",
     paragraphs: [
       "Eva legte das Telefon flach auf die Arbeitsplatte, neben den Notizblock, auf dem schon zwei Spalten standen: links, was sie wusste, rechts, was sie überprüfen musste. Die Kita war abgehakt, mit einem Fragezeichen, das größer war als die Spalte selbst. Sie wollte sehen, ob es dabei blieb.",
       "Sie wählte die Praxisnummer, die sie seit Milas zweitem Lebensjahr im Kopf hatte. Es klingelte zweimal, dann meldete sich die Stimme, die immer am Empfang saß, freundlich, etwas zu schnell.",
@@ -372,6 +374,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-7",
     kicker: "Klare Linie",
     title: "Der Spielplatz",
+    summary: "",
     paragraphs: [
       "Simon öffnete die Tür mit einem Geschirrtuch über der Schulter, und Eva sah sofort, dass sie zu früh dran war. In der Küche lief das Radio leise, und auf der Arbeitsplatte lag ein Brett mit halbierten Gurken, daneben eine Scheibe Brot, von der jemand mit dem Messer einen Halbkreis abgeschnitten hatte. Mila kniete am Wohnzimmertisch über einem Ausmalbild und hob den Kopf nur kurz.",
       "„Mama.“",
@@ -460,6 +463,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-8",
     kicker: "Die andere Seite",
     title: "Verlässlich",
+    summary: "",
     paragraphs: [
       "Das Café an der Ecke zur Reichenberger hatte um diese Zeit nur noch zwei Tische besetzt, einer davon ihrer. Eva hatte den Platz hinten an der Wand gewählt, weil die Wand half, wenn man telefonieren musste, ohne dass die eigene Stimme im Raum stand. Vor ihr ein Glas Wasser, daneben das Handy mit dem Display nach oben, daneben der Notizblock, auf dem bisher nichts stand außer einem Datum und dem Wort *Nora*, zweimal unterstrichen, einmal wieder durchgestrichen.",
       "Sie hatte sich vorgenommen, in dieser Reihenfolge zu fragen: zuerst, ob sie überreagierte. Dann, ob jemand sie kannte. Dann erst, ob etwas dran war.",
