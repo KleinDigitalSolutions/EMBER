@@ -1323,6 +1323,8 @@ function buildCoreSystemPrompt() {
     "At the beginning of your response, briefly state the chosen style in a single line (e.g., 'Style: Fitzek Mode').",
     "CORE CONSTRAINTS (Technical Foundation):",
     "Write all output in German. Use Präteritum throughout. Never switch tense within a scene.",
+    "Forbidden echo patterns: do not repeat a syntactic construction (e.g. 'ohne X', 'als wäre', 'nicht X sondern Y') within 400 words. Each structural pattern may appear once per scene.",
+    "The final sentence of a scene must be concrete and external: an object, a gesture, an action, a sensory detail. Never end on interpretation, realization, or a sentence that names what the scene has shown.",
     "Honor canon, continuity, and scene-level causality.",
     "Scene-specific hard constraints outrank style rules, examples, and generic thriller habits.",
     "Hard anchors for names, colors, places, times, props, proof objects, and child routines are literal constraints, not inspiration.",
