@@ -1,4 +1,5 @@
 import {
+  createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
   type BookDraftStageId,
   countWords,
@@ -637,13 +638,32 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
       story.book.memory.continuityGuardrails.length > 0
         ? story.book.memory.continuityGuardrails
         : story.book.writerRulesRuntime.continuityGuardrails,
-    proseTechniqueProfile:
-      story.book.memory.proseTechniqueProfile?.techniqueRules?.length > 0
-        ? story.book.memory.proseTechniqueProfile
-        : story.book.writerRulesRuntime.proseTechniqueProfile,
+    proseTechniqueProfile: resolveSyncedProseTechniqueProfile(story),
     continuityNotes,
     humanEditExamples: story.book.memory.humanEditExamples
   };
+}
+
+function resolveSyncedProseTechniqueProfile(story: StoryDocument) {
+  const candidates = [
+    story.book.writerRulesRuntime.proseTechniqueProfile,
+    story.book.memory.proseTechniqueProfile,
+    story.book.masterBriefRuntime.proseTechniqueProfile
+  ];
+
+  return (
+    candidates.find(function (profile) {
+      return !isDefaultProseTechniqueProfile(profile);
+    }) ??
+    story.book.memory.proseTechniqueProfile ??
+    story.book.writerRulesRuntime.proseTechniqueProfile
+  );
+}
+
+function isDefaultProseTechniqueProfile(
+  profile: StoryDocument["book"]["memory"]["proseTechniqueProfile"]
+) {
+  return JSON.stringify(profile) === JSON.stringify(createDefaultBookProseTechniqueProfile());
 }
 
 function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {

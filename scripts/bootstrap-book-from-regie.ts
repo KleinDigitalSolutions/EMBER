@@ -179,19 +179,32 @@ async function patchExistingStoryRuntimeOnly(storyId: string, parsed: ParsedRegi
     throw new Error(`Story ${storyId} wurde nicht gefunden.`)
   }
 
-  const runtimeContext = {
+  const incomingRuntimeContext = {
     lockedFacts: parsed.lockedFacts,
     continuityGuardrails: parsed.continuityGuardrails,
     proseTechniqueProfile: parsed.proseTechniqueProfile
   }
+  const masterRuntimeContext = mergeBookRuntimeContext(
+    story.book.masterBriefRuntime,
+    incomingRuntimeContext
+  )
+  const writerRuntimeContext = mergeBookRuntimeContext(
+    story.book.writerRulesRuntime,
+    incomingRuntimeContext
+  )
+  const threatLockedFacts = mergeBookLockedFacts(
+    story.book.threatModel.lockedFacts,
+    parsed.lockedFacts
+  )
 
   const bookProjectUpdate = await supabaseAdmin
     .from("book_projects")
     .update({
-      master_brief_runtime: runtimeContext,
-      writer_rules_runtime: runtimeContext,
+      master_brief_runtime: masterRuntimeContext,
+      writer_rules_runtime: writerRuntimeContext,
       threat_model: {
-        lockedFacts: parsed.lockedFacts
+        ...story.book.threatModel,
+        lockedFacts: threatLockedFacts
       }
     })
     .eq("story_id", storyId)
@@ -200,24 +213,28 @@ async function patchExistingStoryRuntimeOnly(storyId: string, parsed: ParsedRegi
     throw new Error(`book_projects update: ${bookProjectUpdate.error.message}`)
   }
 
-  const contextPackUpdate = await supabaseAdmin
-    .from("book_context_packs")
-    .update({
-      runtime_context: runtimeContext
-    })
-    .eq("story_id", storyId)
+  await Promise.all(story.book.memory.contextPacks.map(async function (pack) {
+    const contextPackUpdate = await supabaseAdmin
+      .from("book_context_packs")
+      .update({
+        runtime_context: mergeBookRuntimeContext(pack.runtimeContext, incomingRuntimeContext)
+      })
+      .eq("story_id", storyId)
+      .eq("id", pack.id)
 
-  if (contextPackUpdate.error) {
-    throw new Error(`book_context_packs update: ${contextPackUpdate.error.message}`)
-  }
+    if (contextPackUpdate.error) {
+      throw new Error(`book_context_packs update ${pack.id}: ${contextPackUpdate.error.message}`)
+    }
+  }))
 
   return {
     mode: "patch-runtime-only",
     storyId,
     title: story.title,
-    lockedFacts: parsed.lockedFacts,
-    continuityGuardrailsUpdated: parsed.continuityGuardrails.length,
-    proseTechniqueProfile: parsed.proseTechniqueProfile
+    lockedFacts: writerRuntimeContext.lockedFacts,
+    continuityGuardrailsUpdated: writerRuntimeContext.continuityGuardrails.length,
+    contextPacksUpdated: story.book.memory.contextPacks.length,
+    proseTechniqueProfile: writerRuntimeContext.proseTechniqueProfile
   }
 }
 
@@ -1557,6 +1574,49 @@ function applyLockedFactOverrides(
       evaAlibiWindow: overrides.evaAlibiWindow || parsed.lockedFacts.evaAlibiWindow
     }
   }
+}
+
+function mergeBookRuntimeContext(
+  existing: StoryDocument["book"]["writerRulesRuntime"],
+  incoming: StoryDocument["book"]["writerRulesRuntime"]
+) {
+  return {
+    lockedFacts: mergeBookLockedFacts(existing.lockedFacts, incoming.lockedFacts),
+    continuityGuardrails: uniqueStrings(
+      existing.continuityGuardrails.concat(incoming.continuityGuardrails)
+    ),
+    proseTechniqueProfile: mergeProseTechniqueProfile(
+      existing.proseTechniqueProfile,
+      incoming.proseTechniqueProfile
+    )
+  }
+}
+
+function mergeBookLockedFacts(existing: BookLockedFacts, incoming: BookLockedFacts) {
+  const empty = createEmptyBookLockedFacts()
+  const merged = { ...empty }
+  const keys = Object.keys(empty) as Array<keyof BookLockedFacts>
+
+  keys.forEach(function (key) {
+    merged[key] = incoming[key] || existing[key] || null
+  })
+
+  return merged
+}
+
+function mergeProseTechniqueProfile(
+  existing: BookProseTechniqueProfile,
+  incoming: BookProseTechniqueProfile
+) {
+  if (isDefaultProseTechniqueProfile(incoming) && !isDefaultProseTechniqueProfile(existing)) {
+    return existing
+  }
+
+  return incoming
+}
+
+function isDefaultProseTechniqueProfile(profile: BookProseTechniqueProfile) {
+  return JSON.stringify(profile) === JSON.stringify(createDefaultBookProseTechniqueProfile())
 }
 
 function pickRelevantCharacterStateIds(
