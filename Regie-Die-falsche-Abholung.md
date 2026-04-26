@@ -845,7 +845,7 @@ Diese Treppe ordnet nicht den Plot nach Beweisobjekten, sondern den fortschreite
 #### Kapitel 1: „Gestern"
 ```
 Scene Card
-  id: SC_1_1
+  id: SC_001
   pov: EVA
   ort: Büro / Auto / Kita-Eingang
   uhrzeit: 16:18 Uhr
@@ -882,7 +882,7 @@ Scene Card
 #### Kapitel 2: „Das Bild"
 ```
 Scene Card
-  id: SC_1_2
+  id: SC_002
   pov: EVA
   ort: Kita-Leitungsbüro
   uhrzeit: 16:42 Uhr
@@ -918,7 +918,7 @@ Scene Card
 #### Kapitel 3: „Bitte fahr nicht allein"
 ```
 Scene Card
-  id: SC_1_3
+  id: SC_003
   pov: EVA
   ort: Parkplatz vor der Kita / Auto
   uhrzeit: 17:05 Uhr
@@ -952,7 +952,7 @@ Scene Card
 #### Kapitel 4: „Die Liste"
 ```
 Scene Card
-  id: SC_1_4
+  id: SC_004
   pov: EVA
   ort: Wohnung / Küchentisch / Innenhof
   uhrzeit: Abend
@@ -987,7 +987,7 @@ Scene Card
 #### Kapitel 5: „Schriftlich"
 ```
 Scene Card
-  id: SC_1_5
+  id: SC_005
   pov: EVA
   ort: Kita / Büro Petra Löwen
   uhrzeit: nächster Morgen
@@ -1022,7 +1022,7 @@ Scene Card
 #### Kapitel 6: „Verlegt"
 ```
 Scene Card
-  id: SC_1_6
+  id: SC_006
   pov: EVA
   ort: Wohnung / Telefon / Apotheke / Supermarkt
   uhrzeit: Mittag bis früher Abend
@@ -1057,7 +1057,7 @@ Scene Card
 #### Kapitel 7: „Stabil"
 ```
 Scene Card
-  id: SC_1_7
+  id: SC_007
   pov: EVA
   ort: Simon Wohnung / Spielplatz davor
   uhrzeit: später Nachmittag
@@ -1092,7 +1092,7 @@ Scene Card
 #### Kapitel 8: „Die andere Seite"
 ```
 Scene Card
-  id: SC_1_8
+  id: SC_008
   pov: EVA
   ort: Café / Handyrecherche / Anruf mit Beratungsumfeld
   uhrzeit: Abend
@@ -1127,7 +1127,7 @@ Scene Card
 #### Kapitel 9: „Der Ersatzschlüssel"
 ```
 Scene Card
-  id: SC_1_9
+  id: SC_009
   pov: EVA
   ort: Wohnung / Keller / Hausflur
   uhrzeit: später Abend
@@ -1162,7 +1162,7 @@ Scene Card
 #### Kapitel 10: „Elternabend"
 ```
 Scene Card
-  id: SC_1_10
+  id: SC_010
   pov: EVA
   ort: Kita / Elternabendraum / alter Helferchat
   uhrzeit: zwei Tage später, 19:30 Uhr
@@ -1198,34 +1198,34 @@ Scene Card
 #### Kapitel 11: „Die Stimme"
 ```
 Scene Card
-  id: SC_1_11
+  id: SC_011
   pov: EVA
   ort: Wohnung / Handy / Innenhofbank
   uhrzeit: Nacht
   ziel: Die stimmliche Plausibilität der falschen Abholung alltagsrealistisch erklären.
-  reader_pulse: Wie viel von Eva hat Nora gesammelt, ohne dass es auffiel?
-  main_question: Wie viel von Eva hat Nora gesammelt, ohne dass es auffiel?
+  reader_pulse: Wie leicht könnte Eva ohne Technik stimmlich plausibel werden?
+  main_question: Wie leicht könnte Eva ohne Technik stimmlich plausibel werden?
   objective: Eva will verstehen, warum die Erzieherinnen sich so sicher mit dem Wiedererkennen waren.
-  szenenantrieb: Eva will die stimmliche Gewissheit entkräften und riskiert, dass gesammelte Intimität schlimmer wirkt als Technik.
-  scene_promise: Eva will die stimmliche Gewissheit entkräften, durchsucht alte Aufnahmen und verliert die Entlastung eines technischen Tricks, aber missbrauchte Vertrautheit macht Nora noch näher.
-  wissensgrenze: Eva weiß, dass Nora keine Hightech braucht, aber noch nicht alle Quellen ihrer Alltagssätze.
-  information_gap: Welche alltäglichen Sprachreste und Wiederholungen hat Nora über Jahre von Eva gesammelt?
-  pressure_clock: Wenn Eva diese Quelle nicht versteht, bleibt Noras Wiedererkennen wie Magie statt wie nachvollziehbarer Alltagseingriff.
-  beziehungsdruck: Eva kämpft gegen die Erkenntnis, wie oft sie selbst Material geliefert hat.
+  szenenantrieb: Eva will die stimmliche Gewissheit entkräften und riskiert, dass schon normale Nähe eine Imitation plausibel macht.
+  scene_promise: Eva will die stimmliche Gewissheit entkräften, durchsucht alte Aufnahmen und verliert die Entlastung eines technischen Tricks, aber vertraute Alltagssätze machen Nora als mögliche Quelle gefährlich nah.
+  wissensgrenze: Eva erkennt, dass eine Imitation keine Hightech bräuchte, aber sie kennt weder alle Quellen noch Noras vollständigen Weg.
+  information_gap: Welche alltäglichen Sprachreste und Wiederholungen könnten genug Nähe erzeugen, damit die falsche Abholung glaubhaft klang?
+  pressure_clock: Wenn Eva diese Möglichkeit nicht versteht, bleibt Noras Wiedererkennen wie Magie statt wie nachvollziehbarer Alltagseingriff.
+  beziehungsdruck: Eva kämpft gegen die Erkenntnis, wie oft sie selbst verwertbare Nähe geliefert haben könnte.
   coreAction: Eva hört alte Voicemails, Hofvideos und Weiterleitungsnachrichten ab.
   false_reading: Eine so präzise Imitation müsste technisch oder außergewöhnlich raffiniert erzeugt worden sein.
-  dramaticBeat: In einer alten Aufnahme bittet Nora sie, einen Kita-Satz „nur kurz noch einmal“ zu sagen.
-  reversal: Aus möglicher Technik wird rückwirkend gesammelte Harmlosigkeit als Waffe.
-  konkrete_folge: Aus Noras Nähe wird eine nachvollziehbare Stimmquelle; die falsche Abholung wirkt nicht mehr wie Wundertrick, sondern wie missbrauchte Harmlosigkeit.
+  dramaticBeat: In einer alten Aufnahme wiederholt Eva einen Kita-Satz beiläufig, während Nora in der Nähe ist und die Aufnahme damals harmlos wirkt.
+  reversal: Aus möglicher Technik wird rückwirkend normale Harmlosigkeit als plausible Waffe.
+  konkrete_folge: Aus Noras Nähe wird eine nachvollziehbare Möglichkeit für Stimmähnlichkeit; die falsche Abholung wirkt nicht mehr wie Wundertrick, sondern wie missbrauchbare Harmlosigkeit.
   cost: Eva verliert den Trost, dass das Ganze nur mit besonderem Trick möglich gewesen wäre.
-  status_shift: Nora rückt von unheimlicher Ausnahme zu alltagsnaher, geduldiger Sammlerin auf.
-  ending: Im Abholprotokoll steht genau einer dieser kurzen Sätze.
+  status_shift: Nora rückt von unheimlicher Ausnahme zu alltagsnaher möglicher Imitatorin auf.
+  ending: Im Abholprotokoll steht ein kurzer Satz, der plötzlich wie eine dieser harmlosen Alltagsformeln klingt.
   ending_type: Proof Turn
-  new_question: Wenn Nora sogar Evas Satzreste archiviert hat, welche anderen Mikrospuren von ihr benutzt sie noch?
+  new_question: Wenn eine Imitation ohne Technik möglich war, welche anderen Mikrospuren von Eva könnten noch gegen sie arbeiten?
   bad_version_risk: Die Szene würde schwach, wenn sie wie Tech-Thriller klingt statt wie missbrauchte Nähe und Wiederholung.
   revision_focus: Sprachreste, Stimme und Harmlosigkeit zusammenführen; keine Technikmystik aufbauen.
-  proof_object: Alte Sprachnachricht mit Originalsatz
-  beweisobjekt: Alte Sprachnachricht mit Originalsatz
+  proof_object: Alte Sprachnachricht mit ähnlicher Alltagsformel
+  beweisobjekt: Alte Sprachnachricht mit ähnlicher Alltagsformel
   alltagswaffe: Vertrautheit wird zur Stimmvorlage
   setup: CF004, CF006, OT001, OT002
 ```
@@ -1233,7 +1233,7 @@ Scene Card
 #### Kapitel 12: „Ein guter Vorschlag"
 ```
 Scene Card
-  id: SC_1_12
+  id: SC_012
   pov: EVA
   ort: Telefonate / Simon Küche / Hof
   uhrzeit: nächster Morgen
@@ -1269,12 +1269,13 @@ Scene Card
 ---
 
 ### ACT 2 — „Die Probe"
-> Eröffnungs-Dokument: Simons brauchbarer Vorschlag, Nora als kontrollierte Reserve mitzudenken. Ab hier wird nicht weiter eingerichtet; ab hier verliert Eva Alltagszeichen, Zugriff und soziale Selbstverständlichkeit.
+> Kapitel 13-27: Eva verliert nicht mehr nur Glaubwürdigkeit, sondern Alltagszeichen, direkten Zugriff und Deutungshoheit.
+> Eröffnungs-Dokument: Simons brauchbarer Vorschlag, Nora als kontrollierte Reserve mitzudenken. Ab hier wird nicht weiter eingerichtet; ab hier beginnt die Verlustleiter körpernah und praktisch.
 
 #### Kapitel 13: „Dienstagstasche"
 ```
 Scene Card
-  id: SC_1_13
+  id: SC_013
   pov: EVA
   ort: Simon Wohnung / Kinderzimmer
   uhrzeit: Abend
@@ -1309,7 +1310,7 @@ Scene Card
 #### Kapitel 14: „Protokoll"
 ```
 Scene Card
-  id: SC_1_14
+  id: SC_014
   pov: EVA
   ort: Küchentisch / Laptop / Homeoffice-Drucker
   uhrzeit: tiefe Nacht
@@ -1344,7 +1345,7 @@ Scene Card
 #### Kapitel 15: „Der falsche Nachmittag"
 ```
 Scene Card
-  id: SC_1_15
+  id: SC_015
   pov: EVA
   ort: Kita / Wohnung / Simon Auto
   uhrzeit: Freitag
@@ -1369,9 +1370,9 @@ Scene Card
   ending_type: Access Loss
   new_question: Was macht Nora mit dem offenen Alltag, den Simon nun aus Schutzgründen gegen Eva gebaut hat?
   bad_version_risk: Die Szene würde schwach, wenn sie als Verwaltungsbeschluss endet statt als kalter Alltagsentzug mit Noras stiller Anwesenheit.
-  revision_focus: Act-Ende über direkten Zugriffsverlust, gelben Becher und Noras leisen Nachblick tragen; keine Zusatz-Erklärung.
+  revision_focus: Verlustschlag über direkten Zugriffsverlust, gelben Becher und Noras leisen Nachblick tragen; keine Zusatz-Erklärung.
   proof_object: Chronologie-Protokoll plus gelber Becher im Autofenster
-  endzustand_hook: Der Act muss auf direktem Kontrollverlust plus Noras stiller Anwesenheit enden, nicht auf einem administrativen Beschluss.
+  endzustand_hook: Das Kapitel muss auf direktem Kontrollverlust plus Noras stiller Anwesenheit enden, nicht auf einem administrativen Beschluss.
   payoff: OT003
   setup: CF005, CF008, OT001, OT003, OT004
 ```
@@ -1381,7 +1382,7 @@ Scene Card
 #### Kapitel 16: „Die Woche bei Simon"
 ```
 Scene Card
-  id: SC_2_1
+  id: SC_016
   pov: EVA
   ort: leere Wohnung / Büro / Sprachnachrichten
   uhrzeit: Montagmorgen
@@ -1416,7 +1417,7 @@ Scene Card
 #### Kapitel 17: „Gespeicherter Alltag"
 ```
 Scene Card
-  id: SC_2_2
+  id: SC_017
   pov: EVA
   word_target_min: 1700
   word_target_max: 1950
@@ -1455,7 +1456,7 @@ Scene Card
 #### Kapitel 18: „Die alte Mutter"
 ```
 Scene Card
-  id: SC_2_3
+  id: SC_018
   pov: EVA
   ort: Beratungsstelle / Vorraum
   uhrzeit: später Vormittag
@@ -1489,7 +1490,7 @@ Scene Card
 #### Kapitel 19: „Zugang"
 ```
 Scene Card
-  id: SC_2_4
+  id: SC_019
   pov: EVA
   ort: Kita-Büro / Formularschrank
   uhrzeit: Mittag
@@ -1523,7 +1524,7 @@ Scene Card
 #### Kapitel 20: „Der erste Fehler"
 ```
 Scene Card
-  id: SC_2_5
+  id: SC_020
   pov: EVA
   ort: Simon Wohnung / Küche
   uhrzeit: Abend
@@ -1559,7 +1560,7 @@ Scene Card
 #### Kapitel 21: „Nicht jetzt"
 ```
 Scene Card
-  id: SC_2_6
+  id: SC_021
   pov: EVA
   ort: Polizeidienststelle / Auto
   uhrzeit: später Abend
@@ -1593,7 +1594,7 @@ Scene Card
 #### Kapitel 22: „Ersatzplan"
 ```
 Scene Card
-  id: SC_2_7
+  id: SC_022
   pov: EVA
   ort: Büro / Schreibwarenladen / Wohnung
   uhrzeit: nächster Tag
@@ -1627,7 +1628,7 @@ Scene Card
 #### Kapitel 23: „Doppelte Versorgung"
 ```
 Scene Card
-  id: SC_2_8
+  id: SC_023
   pov: EVA
   word_target_min: 1700
   word_target_max: 1950
@@ -1666,7 +1667,7 @@ Scene Card
 #### Kapitel 24: „Die Nacht vor Freitag"
 ```
 Scene Card
-  id: SC_2_9
+  id: SC_024
   pov: EVA
   ort: Wohnung / Treppenhaus / Hof
   uhrzeit: späte Nacht
@@ -1700,7 +1701,7 @@ Scene Card
 #### Kapitel 25: „Die Unterschrift"
 ```
 Scene Card
-  id: SC_2_10
+  id: SC_025
   pov: EVA
   ort: Steuerbüro Freundin / Kaffeeküche
   uhrzeit: Freitagvormittag
@@ -1734,7 +1735,7 @@ Scene Card
 #### Kapitel 26: „Die Probe"
 ```
 Scene Card
-  id: SC_2_11
+  id: SC_026
   pov: EVA
   ort: Simon Auto / Handy / Parkplatz
   uhrzeit: Freitagnachmittag
@@ -1769,7 +1770,7 @@ Scene Card
 #### Kapitel 27: „Nicht unzuverlässig, sondern ersetzt"
 ```
 Scene Card
-  id: SC_2_12
+  id: SC_027
   pov: EVA
   word_target_min: 1700
   word_target_max: 1950
@@ -1812,7 +1813,7 @@ Scene Card
 #### Kapitel 28: „Die Generalprobe"
 ```
 Scene Card
-  id: SC_3_1
+  id: SC_028
   pov: EVA
   ort: Schulweg-Vorbereitung / Innenhof / Straße vor dem Haus
   uhrzeit: früher Montagmorgen
@@ -1846,7 +1847,7 @@ Scene Card
 #### Kapitel 29: „Das Wochenende danach"
 ```
 Scene Card
-  id: SC_3_2
+  id: SC_029
   pov: EVA
   ort: Simon Wohnung / Balkon
   uhrzeit: später Vormittag
@@ -1880,7 +1881,7 @@ Scene Card
 #### Kapitel 30: „Abgemeldet"
 ```
 Scene Card
-  id: SC_3_3
+  id: SC_030
   pov: EVA
   ort: Handy / Kita-App / Büro
   uhrzeit: Mittag
@@ -1914,7 +1915,7 @@ Scene Card
 #### Kapitel 31: „Petra"
 ```
 Scene Card
-  id: SC_3_4
+  id: SC_031
   pov: EVA
   ort: Kita-Leitungsbüro
   uhrzeit: Nachmittag
@@ -1948,7 +1949,7 @@ Scene Card
 #### Kapitel 32: „Das ruhige Gesicht"
 ```
 Scene Card
-  id: SC_3_5
+  id: SC_032
   pov: EVA
   ort: neutrales Dreiergespräch in der Kita
   uhrzeit: später Nachmittag
@@ -1983,7 +1984,7 @@ Scene Card
 #### Kapitel 33: „Simon sieht es"
 ```
 Scene Card
-  id: SC_3_6
+  id: SC_033
   pov: EVA
   ort: Simon Auto / Parkplatz vor dem Supermarkt
   uhrzeit: Abend
@@ -2017,7 +2018,7 @@ Scene Card
 #### Kapitel 34: „Vor dem Ausflug"
 ```
 Scene Card
-  id: SC_3_7
+  id: SC_034
   pov: EVA
   ort: Küchentisch / Copyshop / Simon Büro
   uhrzeit: nächster Morgen
@@ -2051,7 +2052,7 @@ Scene Card
 #### Kapitel 35: „Noras Wohnung"
 ```
 Scene Card
-  id: SC_3_8
+  id: SC_035
   pov: EVA
   ort: Noras Wohnung
   uhrzeit: Abend
@@ -2089,7 +2090,7 @@ Scene Card
 #### Kapitel 36: „Keine Gestik"
 ```
 Scene Card
-  id: SC_3_9
+  id: SC_036
   pov: EVA
   ort: Hausflur / Bad / Küche
   uhrzeit: Nacht
@@ -2123,7 +2124,7 @@ Scene Card
 #### Kapitel 37: „Die Vorabmail"
 ```
 Scene Card
-  id: SC_3_10
+  id: SC_037
   pov: EVA
   ort: Kita / Druckerraum / Petra Büro
   uhrzeit: früher Morgen
@@ -2158,7 +2159,7 @@ Scene Card
 #### Kapitel 38: „Rückholung"
 ```
 Scene Card
-  id: SC_3_11
+  id: SC_038
   pov: EVA
   ort: Kita / Ausflugssammelpunkt
   uhrzeit: 07:30 Uhr
@@ -2194,7 +2195,7 @@ Scene Card
 #### Kapitel 39: „Aussage"
 ```
 Scene Card
-  id: SC_3_12
+  id: SC_039
   pov: EVA
   ort: Polizeidienststelle / Besprechungsraum
   uhrzeit: später Vormittag
@@ -2227,7 +2228,7 @@ Scene Card
 #### Kapitel 40: „Der Hof"
 ```
 Scene Card
-  id: SC_3_13
+  id: SC_040
   pov: EVA
   ort: Innenhof
   uhrzeit: später Abend
@@ -2261,7 +2262,7 @@ Scene Card
 #### Kapitel 41: „Keine Dopplung"
 ```
 Scene Card
-  id: SC_3_14
+  id: SC_041
   pov: EVA
   ort: Wohnung / Flur / Kinderzimmer
   uhrzeit: nächster Morgen
@@ -2295,7 +2296,7 @@ Scene Card
 #### Kapitel 42: „Gelber Becher"
 ```
 Scene Card
-  id: SC_3_15
+  id: SC_042
   pov: EVA
   ort: Wohnung / Bad / Küche
   uhrzeit: Morgen
@@ -2386,10 +2387,10 @@ Eva geht zum Elternabend, weil normale Sichtbarkeit ihre Position stabilisieren 
 
 ### Kapitel 11 — „Die Stimme"
 **Writer Summary**
-Eva untersucht, warum die Erzieherinnen die angebliche Abholung nicht nur gesehen, sondern auch stimmlich für plausibel hielten. Alte Voicemails, Hofvideos und beiläufige Aufnahmen zeigen, wie oft Nora über normale Nähe an Evas Formulierungen gekommen ist. Der Schrecken liegt darin, dass nichts davon wie Vorbereitung wirkte, als es passierte. Es geht hier nicht um Technik oder Fälschungszauber, sondern um gesammelte Alltagssätze, wiederholte Kurzformeln und vertraute Tonlagen. Wichtig ist, dass der Leser spürt: Nora hat keine Stimme gebaut, sondern Harmlosigkeit archiviert. Diese Szene muss das alltagsrealistisch und kühl machen. Sie endet mit dem Wiederauftauchen genau eines passenden Satzes im Abholprotokoll.
+Eva untersucht, warum die Erzieherinnen die angebliche Abholung nicht nur gesehen, sondern auch stimmlich für plausibel hielten. Alte Voicemails, Hofvideos und beiläufige Aufnahmen zeigen, wie oft normale Nähe Evas Formulierungen, Tonlagen und Kita-Sätze zugänglich gemacht haben könnte. Der Schrecken liegt darin, dass nichts davon wie Vorbereitung wirkte, als es passierte. Es geht hier nicht um Technik oder Fälschungszauber, sondern um Alltagssätze, wiederholte Kurzformeln und vertraute Tonlagen. Wichtig ist, dass der Leser spürt: Eva findet genug, um Imitation ohne Hightech für möglich zu halten, aber noch keinen endgültigen Schuldbeweis. Diese Szene muss das alltagsrealistisch und kühl machen. Sie endet mit einem Protokollsatz, der plötzlich wie eine dieser harmlosen Alltagsformeln klingt.
 
 **Director Note**
-Keine Technikszene. Nähe, Wiederholung und der Missbrauch früherer Selbstverständlichkeit tragen die Wirkung.
+Keine Technikszene und keine frühe Überführung. Nähe, Wiederholung und der Missbrauch früherer Selbstverständlichkeit tragen die Wirkung.
 
 ### Kapitel 12 — „Ein guter Vorschlag"
 **Writer Summary**
@@ -2633,7 +2634,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 `Der Elternabend darf sozial kalt werden, aber nicht mobbig. Andere Eltern reagieren vorsichtig, nicht boshaft. Nora bleibt aus dem Raum heraus präsent und wirkt über praktische Entlastung mächtiger als über offenen Druck. Der Schlag ist Vorabwissen, nicht grosses Drama.`
 
 #### Kapitel 11 — „Die Stimme"
-`Das ist keine Technikszene, sondern eine Nähe-Szene. Nora hat keine Hightech-Maschinerie, sondern Evas Alltag gesammelt. Fokus auf Wiederholung, Stimme, Vertrauen und den Missbrauch früherer Harmlosigkeit.`
+`Das ist keine Technikszene, sondern eine Nähe-Szene. Eva soll Imitation ohne Hightech für plausibel halten können, ohne Nora hier schon vollständig zu überführen. Fokus auf Wiederholung, Stimme, Vertrauen und den Missbrauch früherer Harmlosigkeit.`
 
 #### Kapitel 12 — „Ein guter Vorschlag"
 `Keine melodramatische Szene zwischen Eva und Simon. Der Schmerz liegt darin, dass der Vorschlag für einen Aussenstehenden wirklich gut klingt und dadurch Noras Rolle formalisiert.`
