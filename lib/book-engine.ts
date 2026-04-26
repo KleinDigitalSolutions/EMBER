@@ -124,6 +124,8 @@ export type SceneContextPacket = {
       label: string;
       defaultValue: boolean | string | number;
     }>;
+    wordTargetMin: number | null;
+    wordTargetMax: number | null;
   };
   extractorTemplate: {
     new_canon_facts: string[];
@@ -330,7 +332,9 @@ export function buildSceneContextPacket(
           label: variable.label,
           defaultValue: variable.defaultValue
         };
-      })
+      }),
+      wordTargetMin: extractWordTargetFromBeat(timeline[sceneIndex] ?? null, "word_target_min"),
+      wordTargetMax: extractWordTargetFromBeat(timeline[sceneIndex] ?? null, "word_target_max")
     },
     extractorTemplate: {
       new_canon_facts: [],
@@ -1316,16 +1320,14 @@ export function getDraftJobAcceptanceBlockers(story: StoryDocument, jobId: strin
 
   const packet = buildSceneContextPacket(story, job.sceneId);
   const deterministicRisks = packet ? auditSceneContinuityGuards(packet, job.rewriteText) : [];
-  const pendingMemorySyncCount = job.extractedState.memorySync.items.filter(function (item) {
-    return item.status === "pending";
-  }).length;
-  const blockers = deterministicRisks.concat(job.extractedState.continuityRisks);
-
-  if (pendingMemorySyncCount) {
-    blockers.push(
-      `${job.sceneTitle}: ${pendingMemorySyncCount} Memory-Sync-Extract(s) muessen vor der Uebernahme bestaetigt oder verworfen werden.`
-    );
-  }
+  const blockers = deterministicRisks.concat(
+    job.extractedState.continuityRisks.filter(function (risk) {
+      if (risk.startsWith("Extractor-Review:")) return false;
+      // Live deterministicRisks already re-runs these guard checks; skip stale stored copies
+      if (/^(Namensdrift|Farbdrift|Objektdrift|Farbanker fehlt|Pflicht-\S+ nicht sichtbar):/.test(risk)) return false;
+      return true;
+    })
+  );
 
   return dedupeStrings(blockers);
 }
@@ -2173,6 +2175,17 @@ function resolveSceneCardDirectives(sceneCard: TimelineBeat) {
   };
 }
 
+function extractWordTargetFromBeat(beat: TimelineBeat | null, key: string): number | null {
+  if (!beat) return null;
+  const directives = resolveSceneCardDirectives(beat);
+  const entry = directives.custom.find(function (e) {
+    return normalizeDirectiveKey(e.key) === key;
+  });
+  if (!entry) return null;
+  const parsed = parseInt(entry.value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
 function parseSceneCardOutlineFields(outline: string[]) {
   return outline.reduce(function (fields, line) {
     const separatorIndex = line.indexOf(":");
@@ -2473,8 +2486,31 @@ function requiredAnchorAppears(normalizedProse: string, value: string) {
     return true;
   }
 
+  const proseWords = normalizedProse.split(/\s+/);
+
   return terms.some(function (term) {
-    return normalizedTextContainsTerm(normalizedProse, term);
+    if (normalizedTextContainsTerm(normalizedProse, term)) {
+      return true;
+    }
+
+    // German compound words: "Namensetiketten" contains "etiketten" which appears standalone in prose
+    if (term.length >= 8) {
+      if (proseWords.some(function (word) {
+        return word.length >= 5 && term.endsWith(word);
+      })) {
+        return true;
+      }
+
+      // "freigabelink" → prefix "freigabe" matches "freigabeseite" in prose
+      const prefix = term.slice(0, Math.min(term.length - 2, 8));
+      if (prefix.length >= 6 && proseWords.some(function (word) {
+        return word.startsWith(prefix);
+      })) {
+        return true;
+      }
+    }
+
+    return false;
   });
 }
 

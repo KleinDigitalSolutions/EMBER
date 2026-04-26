@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
@@ -302,16 +303,18 @@ export function BookWriterPanel({
     let accepted = false;
     let blockers: string[] = [];
 
-    onUpdateStory(function (currentStory) {
-      blockers = getDraftJobAcceptanceBlockers(currentStory, jobId);
+    flushSync(function () {
+      onUpdateStory(function (currentStory) {
+        blockers = getDraftJobAcceptanceBlockers(currentStory, jobId);
 
-      if (blockers.length) {
-        return currentStory;
-      }
+        if (blockers.length) {
+          return currentStory;
+        }
 
-      const result = acceptDraftJobToScene(currentStory, jobId);
-      accepted = Boolean(result);
-      return result ? result.story : currentStory;
+        const result = acceptDraftJobToScene(currentStory, jobId);
+        accepted = Boolean(result);
+        return result ? result.story : currentStory;
+      });
     });
 
     setJobStatus(

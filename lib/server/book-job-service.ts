@@ -107,6 +107,7 @@ type DraftGenerationOptions = {
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
   directorNote: string;
+  stilreferenz?: string;
 };
 
 type StageCallMetrics = {
@@ -195,17 +196,21 @@ export async function generateBookDraftJob(params: {
   const provider = params.provider ?? "auto";
   const packet =
     params.packet ?? (params.story ? buildSceneContextPacket(params.story, params.sceneId) : null);
-  const normalizedTargets = normalizeBookDraftTargets(
-    params.targetSceneWordsMin ?? 1200,
-    params.targetSceneWordsMax ?? 1600
-  );
-  const targetSceneWordsMin = normalizedTargets.targetSceneWordsMin;
-  const targetSceneWordsMax = normalizedTargets.targetSceneWordsMax;
-  const directorNote = params.directorNote?.trim() || "";
 
   if (!packet) {
     throw new Error("Scene context could not be built.");
   }
+
+  const normalizedTargets = normalizeBookDraftTargets(
+    packet.dynamicContext.wordTargetMin ?? params.targetSceneWordsMin ?? 1200,
+    packet.dynamicContext.wordTargetMax ?? params.targetSceneWordsMax ?? 1600
+  );
+  const targetSceneWordsMin = normalizedTargets.targetSceneWordsMin;
+  const targetSceneWordsMax = normalizedTargets.targetSceneWordsMax;
+  const directorNote = params.directorNote?.trim() || "";
+  const stilreferenz = params.story
+    ? buildStilankerReferenz(params.story, packet)
+    : undefined;
 
   if (provider === "local") {
     return createLocalExecution(
@@ -232,7 +237,8 @@ export async function generateBookDraftJob(params: {
       modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      directorNote
+      directorNote,
+      stilreferenz
     };
 
     const result =
@@ -971,6 +977,19 @@ async function runScenePipeline(
     warnings.push(`Continuity-Guard: ${guardContinuityRisks.join(" | ")}`);
   }
 
+  if (options.stilreferenz) {
+    const referenceTexts = options.stilreferenz.split("\n---\n").filter(Boolean);
+    const driftNotes = computeStilAnkerDrift(lengthControl.text, referenceTexts);
+
+    if (driftNotes.length) {
+      extractedState = mergeContinuityAudit(extractedState, {
+        continuityRisks: [],
+        styleDriftNotes: driftNotes
+      });
+      warnings.push(`Stil-Anker: ${driftNotes.join(" | ")}`);
+    }
+  }
+
   let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
   let qualityStage = createStageRun({
     status: "skipped",
@@ -1699,6 +1718,79 @@ function buildSystemPrompt(packet: SceneContextPacket) {
   return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
 }
 
+function buildStilankerReferenz(story: StoryDocument, packet: SceneContextPacket): string | undefined {
+  const povConstraint = packet.dynamicContext.sceneHardConstraints.find(function (c) {
+    return c.startsWith("POV ist ");
+  });
+  const pov = povConstraint ? povConstraint.replace(/^POV ist /, "").replace(/\. .+$/, "") : null;
+
+  const accepted = story.book.draftEngine.jobs
+    .filter(function (job) {
+      return job.status === "accepted" && job.rewriteText && job.sceneId !== packet.sceneId;
+    })
+    .filter(function (job) {
+      if (!pov) return true;
+      const jobPacket = buildSceneContextPacket(story, job.sceneId);
+      return jobPacket
+        ? jobPacket.dynamicContext.sceneHardConstraints.some(function (c) {
+            return c.startsWith(`POV ist ${pov}.`);
+          })
+        : false;
+    })
+    .sort(function (a, b) {
+      return (b.acceptedAt ?? b.updatedAt).localeCompare(a.acceptedAt ?? a.updatedAt);
+    })
+    .slice(0, 2);
+
+  if (!accepted.length) return undefined;
+
+  return accepted
+    .map(function (job) {
+      return job.rewriteText.split(/\s+/).slice(0, 280).join(" ");
+    })
+    .join("\n---\n");
+}
+
+const STIL_SENTENCE_THRESHOLD = 0.35;
+const STIL_DIALOGUE_THRESHOLD = 0.15;
+
+function computeStyleMetrics(text: string): { avgSentenceLen: number; dialogueRatio: number } {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [];
+  const avgSentenceLen = sentences.length
+    ? sentences.reduce(function (sum, s) { return sum + s.trim().split(/\s+/).length; }, 0) / sentences.length
+    : 0;
+  const dialogueMatches = text.match(/„[^"]+"/g) ?? [];
+  const totalLines = text.split(/\n+/).filter(Boolean).length || 1;
+  return { avgSentenceLen, dialogueRatio: dialogueMatches.length / totalLines };
+}
+
+function computeStilAnkerDrift(newText: string, referenceTexts: string[]): string[] {
+  if (!referenceTexts.length) return [];
+  const newMetrics = computeStyleMetrics(newText);
+  const refMetrics = referenceTexts.map(computeStyleMetrics);
+  const avgRefSentLen =
+    refMetrics.reduce(function (s, m) { return s + m.avgSentenceLen; }, 0) / refMetrics.length;
+  const avgRefDialogue =
+    refMetrics.reduce(function (s, m) { return s + m.dialogueRatio; }, 0) / refMetrics.length;
+  const notes: string[] = [];
+
+  if (avgRefSentLen > 0 && Math.abs(newMetrics.avgSentenceLen - avgRefSentLen) > avgRefSentLen * STIL_SENTENCE_THRESHOLD) {
+    const dir = newMetrics.avgSentenceLen > avgRefSentLen ? "länger" : "kürzer";
+    notes.push(
+      `Stil-Anker: Satzkomplexität ${dir} als POV-Referenz (${newMetrics.avgSentenceLen.toFixed(1)} vs ${avgRefSentLen.toFixed(1)} W/Satz).`
+    );
+  }
+
+  if (Math.abs(newMetrics.dialogueRatio - avgRefDialogue) > STIL_DIALOGUE_THRESHOLD) {
+    const dir = newMetrics.dialogueRatio > avgRefDialogue ? "höher" : "niedriger";
+    notes.push(
+      `Stil-Anker: Dialoganteil ${dir} als POV-Referenz (${(newMetrics.dialogueRatio * 100).toFixed(0)}% vs ${(avgRefDialogue * 100).toFixed(0)}%).`
+    );
+  }
+
+  return notes;
+}
+
 function buildCoreSystemPrompt() {
   return [
     "You are the drafting engine for EMBER Book Studio.",
@@ -1810,10 +1902,13 @@ function buildRewriteProsePrompt(
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Tighten rhythm, sharpen observation, improve dialogue subtext, and end on a stronger hook.",
     "Preserve canon and beat order. Expand pressure, not fluff.",
+    options.stilreferenz
+      ? `Stilreferenz (letzte akzeptierte Szenen, gleiches POV – Ton und Rhythmus beibehalten):\n${options.stilreferenz}`
+      : null,
     buildSceneContextPrompt(packet),
     `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
     `Current draft: ${draftText}`
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 }
 
 function buildExpandPrompt(
@@ -1950,6 +2045,9 @@ function buildAnthropicScenePrompt(params: {
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
     `<scene_context>${sceneContext}</scene_context>`,
     `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
+    params.options.stilreferenz
+      ? `<stilreferenz>${escapeXml(params.options.stilreferenz)}</stilreferenz>`
+      : "",
     `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
@@ -2199,7 +2297,7 @@ function sanitizeSceneStateExtraction(
   const filteredCharacterUpdates = payload.extractedState.characterStateUpdates.filter(function (value) {
     const keep = isConservativeExtractorEntry(value, evidenceTerms, knownEntities, {
       requireEntity: true,
-      minimumOverlap: 2
+      minimumOverlap: 1
     });
 
     if (!keep) {
