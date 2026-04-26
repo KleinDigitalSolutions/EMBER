@@ -6,6 +6,7 @@ import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
   buildSceneContextPacket,
+  getDraftJobAcceptanceBlockers,
   getDraftJobsForScene,
   upsertDraftJob
 } from "@/lib/book-engine";
@@ -298,12 +299,26 @@ export function BookWriterPanel({
   }
 
   function handleAcceptJob(jobId: string) {
+    let accepted = false;
+    let blockers: string[] = [];
+
     onUpdateStory(function (currentStory) {
+      blockers = getDraftJobAcceptanceBlockers(currentStory, jobId);
+
+      if (blockers.length) {
+        return currentStory;
+      }
+
       const result = acceptDraftJobToScene(currentStory, jobId);
+      accepted = Boolean(result);
       return result ? result.story : currentStory;
     });
 
-    setJobStatus("Rewrite in die aktuelle Szene übernommen.");
+    setJobStatus(
+      accepted
+        ? "Rewrite in die aktuelle Szene übernommen."
+        : blockers[0] || "Rewrite wurde nicht übernommen."
+    );
   }
 
   function handleModelChange(key: BookJobModelKey, value: string) {

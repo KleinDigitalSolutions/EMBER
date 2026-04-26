@@ -13,6 +13,7 @@ import {
   type BookJobModelOverrides
 } from "@/lib/book-job-models";
 import {
+  auditSceneContinuityGuards,
   buildSceneContextPacket,
   createDraftJobFromPacket,
   createStageRun,
@@ -949,6 +950,27 @@ async function runScenePipeline(
     warnings.push(continuityStage.notes[0]);
   }
 
+  const guardContinuityRisks = auditSceneContinuityGuards(packet, lengthControl.text);
+
+  if (guardContinuityRisks.length) {
+    extractedState = mergeContinuityAudit(extractedState, {
+      continuityRisks: guardContinuityRisks,
+      styleDriftNotes: []
+    });
+    continuityStage = {
+      ...continuityStage,
+      status: continuityStage.status === "skipped" ? "completed" : continuityStage.status,
+      notes: dedupeStrings(
+        continuityStage.notes
+          .filter(function (note) {
+            return note !== "Keine offenen Continuity-Hinweise.";
+          })
+          .concat(guardContinuityRisks)
+      ).slice(0, 10)
+    };
+    warnings.push(`Continuity-Guard: ${guardContinuityRisks.join(" | ")}`);
+  }
+
   let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
   let qualityStage = createStageRun({
     status: "skipped",
@@ -1683,6 +1705,7 @@ function buildCoreSystemPrompt() {
     "Write all output in German.",
     "Honor canon, continuity, and scene-level causality.",
     "Scene-specific hard constraints outrank style rules, examples, and generic thriller habits.",
+    "Hard anchors for names, colors, places, times, props, proof objects, and child routines are literal constraints, not inspiration.",
     "Never reuse literal timestamps, locations, headers, or props from examples unless they appear in the current scene constraints.",
     "Do not imitate real authors or copyrighted prose.",
     "Favor commercial readability, tension, subtext, concrete observation, and clean scene movement.",
@@ -1848,6 +1871,8 @@ function buildStateExtractionPrompt(
     "- Every extractedState list: 0 to 3 items, each under 100 characters.",
     "- Every extractedState entry must be a plain string. No objects.",
     "- extractedState must stay conservative: explicit facts only.",
+    "- Extracted facts are review candidates, not canon; do not promote guesses or renamed entities.",
+    "- Any mismatch against hard names, colors, proof objects, places, or times belongs in continuityRisks.",
     "- Prefer empty arrays over speculative entries.",
     "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
@@ -1984,6 +2009,7 @@ function buildContinuityContext(packet: SceneContextPacket) {
         return `${entry.title}: ${entry.summary}`;
       })
       .join(" | ") || "none"}`,
+    `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" | ") || "none"}`,
     `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
       .map(function (entry) {
         return formatCharacterStatePrompt(entry);

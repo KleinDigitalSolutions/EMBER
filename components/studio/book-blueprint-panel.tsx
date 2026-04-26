@@ -12,6 +12,7 @@ import {
   buildOpenThreads,
   buildSceneContextPacket,
   buildTimelineBeats,
+  getDraftJobAcceptanceBlockers,
   getDraftJobsForScene,
   updateDraftJobMemorySyncKindStatus,
   updateDraftJobMemorySyncStatus,
@@ -1222,10 +1223,25 @@ export function BookBlueprintPanel({
                     key={job.id}
                     job={job}
                     onAccept={function () {
+                      let accepted = false;
+                      let blockers: string[] = [];
+
                       onUpdateStory(function (currentStory) {
+                        blockers = getDraftJobAcceptanceBlockers(currentStory, job.id);
+
+                        if (blockers.length) {
+                          return currentStory;
+                        }
+
                         const result = acceptDraftJobToScene(currentStory, job.id);
+                        accepted = Boolean(result);
                         return result ? result.story : currentStory;
                       });
+                      setJobStatus(
+                        accepted
+                          ? "Rewrite in Szene uebernommen."
+                          : blockers[0] || "Rewrite wurde nicht uebernommen."
+                      );
                     }}
                   />
                 );

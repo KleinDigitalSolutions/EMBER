@@ -1739,12 +1739,7 @@ function normalizeExtractedState(
     styleDriftNotes: normalizeStringArray(record.styleDriftNotes)
   }, {
     fallbackCreatedAt: options.fallbackCreatedAt,
-    defaultStatus:
-      options.status === "accepted"
-        ? "approved"
-        : options.status === "rejected"
-          ? "rejected"
-          : "pending"
+    defaultStatus: "pending"
   })
 }
 

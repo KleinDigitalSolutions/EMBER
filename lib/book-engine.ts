@@ -29,6 +29,65 @@ export type OpenThread = StoryDocument["book"]["memory"]["openThreads"][number];
 type ContextPack = StoryDocument["book"]["memory"]["contextPacks"][number];
 
 type CanonImportance = CanonLedgerEntry["importance"];
+type ObjectColorAnchor = {
+  objectLabel: string;
+  objectKey: string;
+  colorLabel: string;
+  phrase: string;
+  sceneIds: string[];
+  protectedHit: boolean;
+};
+
+const HARD_CUSTOM_DIRECTIVE_KEYS = new Set([
+  "proof_object",
+  "beweisobjekt",
+  "alltagswaffe",
+  "ersetzungsmoment",
+  "false_friend_signal",
+  "mila_kindmoment",
+  "kindmoment",
+  "object_anchor",
+  "prop_anchor"
+]);
+
+const COLOR_WORD_PATTERN =
+  "gelb\\p{L}*|rosa|pink\\p{L}*|lila|violett\\p{L}*|rot\\p{L}*|blau\\p{L}*|gruen\\p{L}*|grun\\p{L}*|grün\\p{L}*|schwarz\\p{L}*|grau\\p{L}*|braun\\p{L}*|orange\\p{L}*";
+
+const CONTINUITY_GUARD_STOPWORDS = new Set([
+  "aber",
+  "alle",
+  "alles",
+  "ander",
+  "andere",
+  "anderen",
+  "beim",
+  "beide",
+  "dabei",
+  "damit",
+  "dann",
+  "darf",
+  "durch",
+  "einer",
+  "einem",
+  "einen",
+  "eines",
+  "fuer",
+  "hier",
+  "kein",
+  "keine",
+  "nicht",
+  "noch",
+  "oder",
+  "ohne",
+  "sich",
+  "sind",
+  "ueber",
+  "unter",
+  "wenn",
+  "wie",
+  "wird",
+  "wurde"
+]);
 
 export type SceneContextPacket = {
   sceneId: string;
@@ -257,7 +316,7 @@ export function buildSceneContextPacket(
       sceneCardOutline: timeline[sceneIndex]?.outline ?? [],
       sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
       sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
-      sceneHardConstraints: buildSceneHardConstraints(timeline[sceneIndex] ?? null),
+      sceneHardConstraints: buildSceneHardConstraints(syncedStory, timeline[sceneIndex] ?? null),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -587,6 +646,19 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
       sceneIds,
       importance: getCanonImportance(mentionCount),
       status: mentionCount ? "active" : "watch"
+    });
+  });
+
+  resolveStoryObjectColorAnchors(story).forEach(function (anchor) {
+    mergeCanonFact(ledger, {
+      entryId: createLocalId("object_color_anchor"),
+      title: anchor.phrase,
+      kind: "object",
+      summary: `Kanon-Objektanker: ${anchor.objectLabel} bleibt ${anchor.colorLabel}; Farbe und Requisite duerfen nicht ersetzt werden.`,
+      mentionCount: Math.max(2, anchor.sceneIds.length),
+      sceneIds: anchor.sceneIds,
+      importance: "high",
+      status: "active"
     });
   });
 
@@ -1176,6 +1248,10 @@ export function acceptDraftJobToScene(
     return null;
   }
 
+  if (getDraftJobAcceptanceBlockers(story, jobId).length) {
+    return null;
+  }
+
   const nextStory = updateSceneInStory(story, job.sceneId, function (scene) {
     const paragraphs = splitIntoParagraphs(job.rewriteText);
     const reusableBlockIds = scene.blocks.map(function (block) {
@@ -1219,6 +1295,31 @@ export function acceptDraftJobToScene(
     }),
     sceneId: job.sceneId
   };
+}
+
+export function getDraftJobAcceptanceBlockers(story: StoryDocument, jobId: string): string[] {
+  const job = story.book.draftEngine.jobs.find(function (candidate) {
+    return candidate.id === jobId;
+  });
+
+  if (!job) {
+    return ["Draft-Job wurde nicht gefunden."];
+  }
+
+  const packet = buildSceneContextPacket(story, job.sceneId);
+  const deterministicRisks = packet ? auditSceneContinuityGuards(packet, job.rewriteText) : [];
+  const pendingMemorySyncCount = job.extractedState.memorySync.items.filter(function (item) {
+    return item.status === "pending";
+  }).length;
+  const blockers = deterministicRisks.concat(job.extractedState.continuityRisks);
+
+  if (pendingMemorySyncCount) {
+    blockers.push(
+      `${job.sceneTitle}: ${pendingMemorySyncCount} Memory-Sync-Extract(s) muessen vor der Uebernahme bestaetigt oder verworfen werden.`
+    );
+  }
+
+  return dedupeStrings(blockers);
 }
 
 function getApprovedMemorySyncValues(
@@ -1288,6 +1389,13 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
   }
 
   jobs.forEach(function (job) {
+    const packet = buildSceneContextPacket(story, job.sceneId);
+    const deterministicRisks = packet ? auditSceneContinuityGuards(packet, job.rewriteText) : [];
+
+    deterministicRisks.forEach(function (risk) {
+      continuityBlockers.push(`${job.sceneTitle}: ${risk}`);
+    });
+
     if (job.extractedState.continuityRisks.length) {
       continuityBlockers.push(
         `${job.sceneTitle}: ${job.extractedState.continuityRisks.join(" ")}`
@@ -1725,7 +1833,7 @@ function buildSceneHeaderHints(sceneCard: TimelineBeat | null) {
   return hints.slice(0, 2);
 }
 
-function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
+function buildSceneHardConstraints(story: StoryDocument, sceneCard: TimelineBeat | null) {
   if (!sceneCard) {
     return [];
   }
@@ -1744,6 +1852,14 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
   if (directives.timeAnchor) {
     hardConstraints.push(`Zeit der Szene: ${directives.timeAnchor}. Verwende keine andere konkrete Uhrzeit.`)
   }
+
+  buildSceneCharacterNameHardConstraints(story, sceneCard).forEach(function (constraint) {
+    hardConstraints.push(constraint);
+  });
+
+  buildSceneObjectColorHardConstraints(story, sceneCard).forEach(function (constraint) {
+    hardConstraints.push(constraint);
+  });
 
   if (directives.objective) {
     hardConstraints.push(`Szenenziel: ${directives.objective}. Die Szene darf nicht in einen anderen Zweck abdriften.`)
@@ -1770,20 +1886,232 @@ function buildSceneHardConstraints(sceneCard: TimelineBeat | null) {
   }
 
   directives.custom.forEach(function (entry) {
+    const normalizedKey = normalizeDirectiveKey(entry.key);
+
+    if (HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey)) {
+      hardConstraints.push(formatHardCustomDirective(normalizedKey, entry.value));
+      return;
+    }
+
     if (
-      entry.key.endsWith("_moment") ||
-      entry.key.endsWith("_plant") ||
-      entry.key.endsWith("_payoff") ||
-      entry.key === "setup" ||
-      entry.key === "subtext" ||
-      entry.key === "charakter_subtext" ||
-      entry.key === "buch2_hinweis"
+      normalizedKey.endsWith("_moment") ||
+      normalizedKey.endsWith("_plant") ||
+      normalizedKey.endsWith("_payoff") ||
+      normalizedKey === "setup" ||
+      normalizedKey === "subtext" ||
+      normalizedKey === "charakter_subtext" ||
+      normalizedKey === "buch2_hinweis"
     ) {
       hardConstraints.push(`${entry.key}: ${entry.value}`)
     }
   });
 
-  return hardConstraints.slice(0, 12);
+  return dedupeStrings(hardConstraints).slice(0, 20);
+}
+
+function formatHardCustomDirective(normalizedKey: string, value: string) {
+  if (normalizedKey === "proof_object" || normalizedKey === "beweisobjekt") {
+    return `Pflicht-Beweisobjekt: ${value}. Dieses Beweisobjekt darf nicht ersetzt, umgefaerbt oder weggelassen werden.`;
+  }
+
+  if (normalizedKey === "alltagswaffe") {
+    return `Pflicht-Alltagswaffe: ${value}. Diese Alltagslogik muss konkret sichtbar bleiben.`;
+  }
+
+  if (normalizedKey === "ersetzungsmoment") {
+    return `Pflicht-Ersetzungsmoment: ${value}. Die Szene darf diese Ersetzungslogik nicht verwischen.`;
+  }
+
+  if (normalizedKey === "mila_kindmoment" || normalizedKey === "kindmoment") {
+    return `Pflicht-Kindmoment: ${value}. Mila bleibt Kind; das Objekt oder die Handlung darf nicht symbolisch umgebaut werden.`;
+  }
+
+  if (normalizedKey === "object_anchor" || normalizedKey === "prop_anchor") {
+    return `Pflicht-Objektanker: ${value}. Farbe, Funktion und Besitzlogik duerfen nicht driften.`;
+  }
+
+  return `Pflicht-False-Friend-Signal: ${value}. Das Hilfssignal muss plausibel bleiben und darf nicht villainhaft werden.`;
+}
+
+function buildSceneCharacterNameHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
+  const sceneText = normalizeGuardText(collectSceneCardTextEntries(sceneCard).join(" "));
+
+  return story.worldBible
+    .filter(function (entry) {
+      return entry.kind === "character";
+    })
+    .map(function (entry) {
+      const nameParts = entry.title.trim().split(/\s+/).filter(Boolean);
+      const firstName = nameParts[0] ?? "";
+
+      if (nameParts.length < 2 || firstName.length < 3) {
+        return "";
+      }
+
+      if (
+        normalizedTextContainsTerm(sceneText, firstName) ||
+        normalizedTextContainsTerm(sceneText, entry.title)
+      ) {
+        return `Kanon-Name: ${firstName} heisst vollstaendig ${entry.title}. Keine anderen Nachnamen verwenden.`;
+      }
+
+      return "";
+    })
+    .filter(Boolean);
+}
+
+function buildSceneObjectColorHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
+  const sceneText = normalizeGuardText(collectSceneCardTextEntries(sceneCard).join(" "));
+
+  return resolveStoryObjectColorAnchors(story)
+    .filter(function (anchor) {
+      return normalizedTextContainsTerm(sceneText, anchor.objectLabel);
+    })
+    .map(function (anchor) {
+      return `Kanon-Objektanker: ${anchor.objectLabel} bleibt ${anchor.colorLabel}. Keine andere Farbe oder Ersatz-Requisite verwenden.`;
+    });
+}
+
+function resolveStoryObjectColorAnchors(story: StoryDocument): ObjectColorAnchor[] {
+  const sceneCards = story.book.memory.sceneCards.length
+    ? story.book.memory.sceneCards
+    : deriveTimelineBeats(story);
+  const anchorsByObject = new Map<
+    string,
+    {
+      objectLabel: string;
+      colors: Map<
+        string,
+        {
+          phrase: string;
+          sceneIds: string[];
+          protectedHit: boolean;
+        }
+      >;
+    }
+  >();
+
+  sceneCards.forEach(function (sceneCard) {
+    collectSceneCardTextEntriesWithHardness(sceneCard).forEach(function (entry) {
+      extractObjectColorAnchors([entry.value]).forEach(function (hit) {
+        const existing = anchorsByObject.get(hit.objectKey) ?? {
+          objectLabel: hit.objectLabel,
+          colors: new Map()
+        };
+        const colorBucket = existing.colors.get(hit.colorLabel) ?? {
+          phrase: hit.phrase,
+          sceneIds: [],
+          protectedHit: false
+        };
+
+        colorBucket.sceneIds = dedupeStrings(colorBucket.sceneIds.concat(sceneCard.sceneId));
+        colorBucket.protectedHit = colorBucket.protectedHit || entry.hard;
+        existing.colors.set(hit.colorLabel, colorBucket);
+        anchorsByObject.set(hit.objectKey, existing);
+      });
+    });
+  });
+
+  story.worldBible
+    .filter(function (entry) {
+      return entry.kind === "object";
+    })
+    .forEach(function (entry) {
+      extractObjectColorAnchors([`${entry.title} ${entry.summary}`]).forEach(function (hit) {
+        const sceneIds = sceneCards
+          .filter(function (sceneCard) {
+            return normalizedTextContainsTerm(
+              normalizeGuardText(collectSceneCardTextEntries(sceneCard).join(" ")),
+              hit.objectLabel
+            );
+          })
+          .map(function (sceneCard) {
+            return sceneCard.sceneId;
+          });
+        const existing = anchorsByObject.get(hit.objectKey) ?? {
+          objectLabel: hit.objectLabel,
+          colors: new Map()
+        };
+        const colorBucket = existing.colors.get(hit.colorLabel) ?? {
+          phrase: hit.phrase,
+          sceneIds: [],
+          protectedHit: false
+        };
+
+        colorBucket.sceneIds = dedupeStrings(colorBucket.sceneIds.concat(sceneIds));
+        colorBucket.protectedHit = true;
+        existing.colors.set(hit.colorLabel, colorBucket);
+        anchorsByObject.set(hit.objectKey, existing);
+      });
+    });
+
+  return Array.from(anchorsByObject.entries())
+    .map(function ([objectKey, entry]) {
+      if (entry.colors.size !== 1) {
+        return null;
+      }
+
+      const colorEntry = Array.from(entry.colors.entries())[0];
+
+      if (!colorEntry) {
+        return null;
+      }
+
+      const [colorLabel, colorBucket] = colorEntry;
+
+      if (colorBucket.sceneIds.length < 2 && !colorBucket.protectedHit) {
+        return null;
+      }
+
+      return {
+        objectLabel: entry.objectLabel,
+        objectKey,
+        colorLabel,
+        phrase: colorBucket.phrase,
+        sceneIds: colorBucket.sceneIds,
+        protectedHit: colorBucket.protectedHit
+      };
+    })
+    .filter(function (anchor): anchor is ObjectColorAnchor {
+      return Boolean(anchor);
+    });
+}
+
+function collectSceneCardTextEntries(sceneCard: TimelineBeat) {
+  return collectSceneCardTextEntriesWithHardness(sceneCard).map(function (entry) {
+    return entry.value;
+  });
+}
+
+function collectSceneCardTextEntriesWithHardness(sceneCard: TimelineBeat) {
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const entries: Array<{ value: string; hard: boolean }> = [
+    { value: sceneCard.sceneTitle, hard: false },
+    { value: sceneCard.summary, hard: false },
+    { value: sceneCard.excerpt, hard: false },
+    { value: sceneCard.chapterGoal, hard: false },
+    { value: directives.objective || "", hard: true },
+    { value: directives.opening || "", hard: true },
+    { value: directives.coreAction || "", hard: true },
+    { value: directives.dramaticBeat || "", hard: true },
+    { value: directives.ending || "", hard: true },
+    { value: directives.closingLine || "", hard: true }
+  ];
+
+  sceneCard.outline.forEach(function (line) {
+    entries.push({ value: line, hard: false });
+  });
+
+  directives.custom.forEach(function (entry) {
+    entries.push({
+      value: entry.value,
+      hard: HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizeDirectiveKey(entry.key))
+    });
+  });
+
+  return entries.filter(function (entry) {
+    return entry.value.trim().length > 0;
+  });
 }
 
 function resolveSceneCardDirectives(sceneCard: TimelineBeat) {
@@ -1965,7 +2293,268 @@ function detectContinuityRisks(packet: SceneContextPacket, draftText: string) {
     risks.push("Es gibt keinen klaren offenen Thread fuer die Szene; Konsequenzfluss pruefen.");
   }
 
-  return risks;
+  return dedupeStrings(risks.concat(auditSceneContinuityGuards(packet, draftText)));
+}
+
+export function auditSceneContinuityGuards(packet: SceneContextPacket, proseText: string): string[] {
+  const issues: string[] = [];
+  const normalizedProse = normalizeGuardText(proseText);
+
+  parseNameHardConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
+    findWrongSurnameMentions(proseText, constraint.firstName, constraint.fullName).forEach(function (wrongName) {
+      issues.push(
+        `Namensdrift: ${wrongName} muss ${constraint.fullName} bleiben.`
+      );
+    });
+  });
+
+  parseObjectColorHardConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
+    const proseAnchors = extractObjectColorAnchors([proseText]).filter(function (anchor) {
+      return anchor.objectKey === constraint.objectKey;
+    });
+    const wrongColor = proseAnchors.find(function (anchor) {
+      return anchor.colorLabel !== constraint.colorLabel;
+    });
+
+    if (wrongColor) {
+      issues.push(
+        `Farbdrift: ${constraint.objectLabel} ist ${constraint.colorLabel}, nicht ${wrongColor.colorLabel}.`
+      );
+      return;
+    }
+
+    if (!normalizedTextContainsTerm(normalizedProse, constraint.objectLabel)) {
+      issues.push(
+        `Objektdrift: ${constraint.objectLabel} fehlt, obwohl der Szenenanker es verlangt.`
+      );
+      return;
+    }
+
+    if (!proseAnchors.some(function (anchor) {
+      return anchor.colorLabel === constraint.colorLabel;
+    })) {
+      issues.push(
+        `Farbanker fehlt: ${constraint.objectLabel} muss lokal als ${constraint.colorLabel} gefuehrt werden.`
+      );
+    }
+  });
+
+  parseRequiredSceneAnchors(packet.dynamicContext.sceneHardConstraints).forEach(function (anchor) {
+    if (!requiredAnchorAppears(normalizedProse, anchor.value)) {
+      issues.push(`${anchor.label} nicht sichtbar: ${clampText(anchor.value, 90)}`);
+    }
+  });
+
+  return dedupeStrings(issues).slice(0, 8);
+}
+
+function parseNameHardConstraints(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Kanon-Name: (.+?) heisst vollstaendig (.+?)\./);
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        firstName: match[1],
+        fullName: match[2]
+      };
+    })
+    .filter(function (entry): entry is { firstName: string; fullName: string } {
+      return Boolean(entry);
+    });
+}
+
+function parseObjectColorHardConstraints(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Kanon-Objektanker: (.+?) bleibt ([^.]+)\./);
+
+      if (!match) {
+        return null;
+      }
+
+      const colorLabel = normalizeColorWord(match[2]);
+      const objectLabel = normalizeObjectLabel(match[1]);
+
+      if (!colorLabel || !objectLabel) {
+        return null;
+      }
+
+      return {
+        objectLabel,
+        objectKey: normalizeGuardToken(objectLabel),
+        colorLabel
+      };
+    })
+    .filter(function (entry): entry is { objectLabel: string; objectKey: string; colorLabel: string } {
+      return Boolean(entry);
+    });
+}
+
+function parseRequiredSceneAnchors(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^(Pflicht-(?:Beweisobjekt|Alltagswaffe|Ersetzungsmoment|Kindmoment|Objektanker)): (.+?)\./);
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        label: match[1],
+        value: match[2]
+      };
+    })
+    .filter(function (entry): entry is { label: string; value: string } {
+      return Boolean(entry);
+    });
+}
+
+function requiredAnchorAppears(normalizedProse: string, value: string) {
+  const terms = extractGuardTerms(value);
+
+  if (!terms.length) {
+    return true;
+  }
+
+  return terms.some(function (term) {
+    return normalizedTextContainsTerm(normalizedProse, term);
+  });
+}
+
+function findWrongSurnameMentions(proseText: string, firstName: string, fullName: string) {
+  const expectedFullName = normalizeGuardText(fullName);
+  const firstNamePattern = escapeRegExp(firstName);
+  const expectedTailWordCount = Math.max(1, fullName.trim().split(/\s+/).length - 1);
+  const tailPattern = Array.from({ length: expectedTailWordCount }, function () {
+    return "[A-ZÄÖÜ][\\p{L}ßäöüÄÖÜ-]+";
+  }).join("\\s+");
+  const pattern = new RegExp(
+    `\\b${firstNamePattern}\\s+(${tailPattern})`,
+    "gu"
+  );
+  const wrongNames: string[] = [];
+  let match: RegExpExecArray | null = pattern.exec(proseText);
+
+  while (match) {
+    const actualFullName = `${firstName} ${match[1]}`;
+
+    if (normalizeGuardText(actualFullName) !== expectedFullName) {
+      wrongNames.push(actualFullName);
+    }
+
+    match = pattern.exec(proseText);
+  }
+
+  return dedupeStrings(wrongNames);
+}
+
+function extractObjectColorAnchors(values: string[]) {
+  const pattern = new RegExp(`\\b(${COLOR_WORD_PATTERN})\\s+([\\p{L}][\\p{L}-]{2,})`, "giu");
+  const anchors: Array<{
+    objectLabel: string;
+    objectKey: string;
+    colorLabel: string;
+    phrase: string;
+  }> = [];
+
+  values.forEach(function (value) {
+    let match: RegExpExecArray | null = pattern.exec(value);
+
+    while (match) {
+      const colorLabel = normalizeColorWord(match[1]);
+      const objectLabel = normalizeObjectLabel(match[2]);
+      const objectKey = normalizeGuardToken(objectLabel);
+
+      if (
+        colorLabel &&
+        objectLabel &&
+        /^[A-ZÄÖÜ]/.test(objectLabel) &&
+        objectKey &&
+        !CONTINUITY_GUARD_STOPWORDS.has(objectKey)
+      ) {
+        anchors.push({
+          objectLabel,
+          objectKey,
+          colorLabel,
+          phrase: `${match[1]} ${match[2]}`
+        });
+      }
+
+      match = pattern.exec(value);
+    }
+  });
+
+  return anchors;
+}
+
+function normalizeDirectiveKey(value: string) {
+  return normalizeGuardText(value).replace(/\s+/g, "_");
+}
+
+function normalizeColorWord(value: string) {
+  const normalized = normalizeGuardToken(value);
+
+  if (normalized.startsWith("gelb")) return "gelb";
+  if (normalized.startsWith("rosa")) return "rosa";
+  if (normalized.startsWith("pink")) return "pink";
+  if (normalized.startsWith("lila")) return "lila";
+  if (normalized.startsWith("violett")) return "violett";
+  if (normalized.startsWith("rot")) return "rot";
+  if (normalized.startsWith("blau")) return "blau";
+  if (normalized.startsWith("gruen") || normalized.startsWith("grun")) return "gruen";
+  if (normalized.startsWith("schwarz")) return "schwarz";
+  if (normalized.startsWith("grau")) return "grau";
+  if (normalized.startsWith("braun")) return "braun";
+  if (normalized.startsWith("orange")) return "orange";
+
+  return null;
+}
+
+function normalizeObjectLabel(value: string) {
+  return value
+    .replace(/^[^A-Za-zÄÖÜäöüß]+|[^A-Za-zÄÖÜäöüß-]+$/g, "")
+    .trim();
+}
+
+function extractGuardTerms(value: string) {
+  return normalizeGuardText(value)
+    .split(/\s+/)
+    .map(function (term) {
+      return normalizeGuardToken(term);
+    })
+    .filter(function (term) {
+      return term.length >= 4 && !CONTINUITY_GUARD_STOPWORDS.has(term);
+    });
+}
+
+function normalizeGuardText(value: string) {
+  return normalizeText(value)
+    .replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeGuardToken(value: string) {
+  return normalizeGuardText(value).replace(/\s+/g, " ").trim();
+}
+
+function normalizedTextContainsTerm(normalizedText: string, rawTerm: string) {
+  const normalizedTerm = normalizeGuardToken(rawTerm);
+
+  if (!normalizedTerm) {
+    return false;
+  }
+
+  return new RegExp(`(^|\\s)${escapeRegExp(normalizedTerm)}(\\s|$)`).test(normalizedText);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function detectStyleDrift(packet: SceneContextPacket, draftText: string) {

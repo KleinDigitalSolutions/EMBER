@@ -75,6 +75,10 @@ type ParsedRegie = {
   scenes: ParsedScene[]
 }
 
+const SCENE_COLOR_WORD_PATTERN =
+  "gelb\\p{L}*|rosa|pink\\p{L}*|lila|violett\\p{L}*|rot\\p{L}*|blau\\p{L}*|gruen\\p{L}*|grun\\p{L}*|grün\\p{L}*|schwarz\\p{L}*|grau\\p{L}*|braun\\p{L}*|orange\\p{L}*"
+const SCENE_COLOR_OBJECT_STOPWORDS = new Set(["aber", "dass", "diese", "dieser", "eine", "einen", "nicht", "oder", "wenn", "wie"])
+
 async function main() {
   const options = parseArgs(process.argv.slice(2))
   const regiePath = path.resolve(process.cwd(), options.regiePath)
@@ -702,7 +706,7 @@ function parseRegie(
       )
     },
     writerConstitution: parseBulletLines(writerSection),
-    worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore),
+    worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore, scenes),
     canonFacts,
     characters,
     openThreads,
@@ -1050,7 +1054,8 @@ function parseWriterSummaries(section: string): ParsedWriterSummary[] {
 function buildWorldBibleEntries(
   worldBibleSection: string,
   characters: ParsedCharacter[],
-  thematicCore: string
+  thematicCore: string,
+  scenes: ParsedScene[]
 ): WorldBibleEntry[] {
   const entries: WorldBibleEntry[] = characters.map(function (character) {
     return {
@@ -1077,16 +1082,23 @@ function buildWorldBibleEntries(
     })
   }
 
-  const objectEntries: Array<{ title: string; summary: string }> = [
-    {
+  const objectEntries: Array<{ title: string; summary: string }> = []
+
+  if (worldBibleSection.includes("Prognosegutachten")) {
+    objectEntries.push({
       title: "Prognosegutachten",
       summary: "Externes forensisches Gutachten mit hohem Einfluss auf eine Lockerungsentscheidung und maximale Fallhoehe fuer Fehr."
-    },
-    {
+    })
+  }
+
+  if (worldBibleSection.includes("Unbegleitete Lockerung")) {
+    objectEntries.push({
       title: "Unbegleitete Lockerung",
       summary: "Konkrete Verfahrensfrage des Romans: nicht Freiheit, sondern die erste externe Lockerungsstufe mit maximaler institutioneller Sprengkraft."
-    }
-  ]
+    })
+  }
+
+  objectEntries.push(...buildSceneColorObjectEntries(scenes))
 
   const themeEntries: Array<{ title: string; summary: string }> = thematicCore
     ? [
@@ -1112,7 +1124,119 @@ function buildWorldBibleEntries(
       themeEntries.map(function (entry) {
         return { id: createUuid(), title: entry.title, kind: "theme" as const, summary: entry.summary }
       })
-    ))
+	    ))
+}
+
+function buildSceneColorObjectEntries(scenes: ParsedScene[]) {
+  const buckets = new Map<string, { title: string; color: string; object: string; sceneTitles: string[]; hardHits: number }>()
+
+  scenes.forEach(function (scene) {
+    collectSceneObjectAnchorSources(scene).forEach(function (source) {
+      extractColorObjectHits(source.value).forEach(function (hit) {
+        const key = `${hit.color}:${normalizeText(hit.object)}`
+        const bucket = buckets.get(key) ?? {
+          title: `${capitalizeFirst(hit.color)} ${hit.object}`,
+          color: hit.color,
+          object: hit.object,
+          sceneTitles: [],
+          hardHits: 0
+        }
+
+        bucket.sceneTitles = uniqueStrings(bucket.sceneTitles.concat(scene.sceneTitle))
+        bucket.hardHits += source.hard ? 1 : 0
+        buckets.set(key, bucket)
+      })
+    })
+  })
+
+  return Array.from(buckets.values())
+    .filter(function (bucket) {
+      return bucket.sceneTitles.length >= 2 || bucket.hardHits > 0
+    })
+    .map(function (bucket) {
+      return {
+        title: bucket.title,
+        summary: `${bucket.object} bleibt ${bucket.color}; harter Prop- und Farbanker aus den Scene Cards (${bucket.sceneTitles.slice(0, 4).join(", ")}).`
+      }
+    })
+}
+
+function collectSceneObjectAnchorSources(scene: ParsedScene) {
+  const sources: Array<{ value: string; hard: boolean }> = [
+    { value: scene.summary, hard: false },
+    { value: scene.excerpt, hard: false },
+    { value: scene.chapterGoal, hard: false },
+    { value: scene.directives.objective || "", hard: true },
+    { value: scene.directives.opening || "", hard: true },
+    { value: scene.directives.coreAction || "", hard: true },
+    { value: scene.directives.dramaticBeat || "", hard: true },
+    { value: scene.directives.ending || "", hard: true },
+    { value: scene.directives.closingLine || "", hard: true }
+  ]
+
+  scene.outline.forEach(function (line) {
+    sources.push({ value: line, hard: false })
+  })
+
+  scene.directives.custom.forEach(function (entry) {
+    sources.push({
+      value: entry.value,
+      hard: ["proof_object", "beweisobjekt", "alltagswaffe", "mila_kindmoment", "object_anchor", "prop_anchor"].includes(
+        normalizeKey(entry.key)
+      )
+    })
+  })
+
+  return sources.filter(function (source) {
+    return source.value.trim().length > 0
+  })
+}
+
+function extractColorObjectHits(value: string) {
+  const pattern = new RegExp(`\\b(${SCENE_COLOR_WORD_PATTERN})\\s+([\\p{L}][\\p{L}-]{2,})`, "giu")
+  const hits: Array<{ color: string; object: string }> = []
+  let match: RegExpExecArray | null = pattern.exec(value)
+
+  while (match) {
+    const color = normalizeSceneColor(match[1])
+    const object = match[2].replace(/^[^A-Za-zÄÖÜäöüß]+|[^A-Za-zÄÖÜäöüß-]+$/g, "").trim()
+
+    if (
+      color &&
+      object.length >= 4 &&
+      /^[A-ZÄÖÜ]/.test(object) &&
+      !SCENE_COLOR_OBJECT_STOPWORDS.has(normalizeText(object))
+    ) {
+      hits.push({ color, object })
+    }
+
+    match = pattern.exec(value)
+  }
+
+  return hits
+}
+
+function normalizeSceneColor(value: string) {
+  const normalized = normalizeText(value).replace(/ß/g, "ss")
+
+  if (normalized.startsWith("gelb")) return "gelb"
+  if (normalized.startsWith("rosa")) return "rosa"
+  if (normalized.startsWith("pink")) return "pink"
+  if (normalized.startsWith("lila")) return "lila"
+  if (normalized.startsWith("violett")) return "violett"
+  if (normalized.startsWith("rot")) return "rot"
+  if (normalized.startsWith("blau")) return "blau"
+  if (normalized.startsWith("gruen") || normalized.startsWith("grun")) return "gruen"
+  if (normalized.startsWith("schwarz")) return "schwarz"
+  if (normalized.startsWith("grau")) return "grau"
+  if (normalized.startsWith("braun")) return "braun"
+  if (normalized.startsWith("orange")) return "orange"
+
+  return ""
+}
+
+function capitalizeFirst(value: string) {
+  return value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : value
 }
 
 function buildOutlineLines(
