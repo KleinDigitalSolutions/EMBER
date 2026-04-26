@@ -80,7 +80,7 @@ Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroh
 | NORA CAPABILITY MAP | Plausibilitätsgrenzen für Noras Zugriff | Nein — menschlich |
 | NORA COST LEDGER | Nora-Erfolge mit Restfehlern und Payoffs pro Kapitel | Nein — Dramaturgie-Referenz |
 | OPEN THREADS | Dramaturgische Fragebögen mit Payoff-Acts | Nein — menschlich |
-| PROOF LADDER | Act-Struktur, Evidenz-Progression, interne Zeitachse | Nein — Dramaturgie-Referenz |
+| LOSS LADDER | Act-Struktur, Verlustprogression, Beweisfolgen, interne Zeitachse | Nein — Dramaturgie-Referenz |
 | ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — zentrale Produktions- und Laufzeitgrundlage |
 | WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Nein — Human-Writer-Starthilfe |
 | OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | Ja — operative Hilfe, aber kein Ersatz für gute Scene Cards |
@@ -134,7 +134,7 @@ Wenn ein neuer Chat ohne Kontext startet, muss der Agent rohe Gedanken und Notiz
 8. **OPEN THREADS** mit den zentralen dramaturgischen Fragebögen neu schreiben.
 9. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
 10. **Antagonisten-/Drucksystem ersetzen**: `NORA CAPABILITY MAP / COST LEDGER` durch eine äquivalente Map des neuen Drucksystems ersetzen.
-11. **PROOF LADDER** neu strukturieren: Was weiß wer in welchem Act, und welcher Beweis verändert Zugriff, Status oder Glaubwürdigkeit?
+11. **LOSS LADDER** neu strukturieren: Was verliert die Hauptfigur in welchem Act, und welcher Beweis verändert Zugriff, Status oder Glaubwürdigkeit?
 12. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` oder ein äquivalenter Materialanker.
 13. **Scene Contract pro Szene prüfen**: Jede Karte muss `openingPressure`, `proofObject`, `turn`, `finalImage` und `forbiddenExposition` ableitbar machen.
 14. **Wortbereiche setzen, nicht erzwingen**: `word_target_min`/`word_target_max` nur setzen, wenn die Szene bewusst kurz, normal, lang oder fusioniert sein soll.
@@ -149,10 +149,10 @@ Agents sollen beim Aufbau eines neuen Buchprojekts nicht einfach schöne Absätz
 |---|---|
 | "Eine Mutter wird ersetzt" | Prämisse, Reader Promise, zentrale Verlustlogik, Open Thread |
 | "Die Kita glaubt ihr nicht" | Institutioneller Druck, WORLD BIBLE, Scene Card `coreAction`, `proof_object` |
-| "Die andere Frau kennt zu viel" | Antagonisten-Capability, Cost Ledger, Proof Ladder |
+| "Die andere Frau kennt zu viel" | Antagonisten-Capability, Cost Ledger, Loss Ladder |
 | "Das Kind verhält sich komisch" | Kindmoment, Character State, Scene Contract `turn` |
 | "Es soll sich real anfühlen" | Alltagsrealismus-Anker, konkrete Objekte, verbotene Übertreibungen |
-| "Am Ende soll man alles rückwirkend verstehen" | Ending Promise, Proof Ladder, Payoff-Szenen, Canon Facts |
+| "Am Ende soll man alles rückwirkend verstehen" | Ending Promise, Loss Ladder, Payoff-Szenen, Canon Facts |
 
 Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen oder eine plausible Materialliste vorschlagen. Gute EMBER-Regie übersetzt abstrakte Emotion immer in Handlung, Objekt, Dokument, Ort, Zugriff oder soziale Konsequenz.
 
@@ -173,10 +173,10 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 
 | Feld | Inhalt |
 |---|---|
-| **Prämisse** | Eine getrennt lebende Mutter sieht in der Kita-App den Vermerk, sie habe ihre Tochter bereits gestern abgeholt. Die Videoaufnahme, eine Unterschrift und mehrere alltägliche Routinen sprechen gegen ihre Erinnerung. Je genauer sie prüft, desto klarer wird, dass niemand einfach ihr Kind entführen will, sondern ihre Zurechnungsfähigkeit, ihre Glaubwürdigkeit und am Ende ihre Rolle als Mutter ersetzt. |
-| **Reader Promise** | Ein psychologischer Thriller mit domestic-suspense-Zug: Kita, App, Ex-Partner, Nachbarschaft, Notfallkontakte und die banalen Wege eines Elternalltags werden zur Waffe. Der Leser soll sich permanent fragen, ob hier ein dokumentierter Identitätsangriff, eine sorgfältig gebaute Rufzerstörung oder eine persönliche Übernahme läuft. |
+| **Prämisse** | Eine getrennt lebende Mutter sieht in der Kita-App den Vermerk, sie habe ihre Tochter bereits gestern abgeholt. Video, Unterschrift und gelber Becher sprechen gegen ihre Erinnerung. Je genauer sie prüft, desto klarer wird, dass Nora keine spektakuläre Entführung plant, sondern eine zweite Version von Evas Alltag baut, die für Außenstehende stabiler wirkt als Evas echter Alltag. |
+| **Reader Promise** | Ein psychologischer Thriller mit domestic-suspense-Zug: Kita, App, Ex-Partner, Nachbarschaft, Notfallkontakte und die banalen Wege eines Elternalltags werden zur Waffe. Der Leser soll nicht primär Beweisobjekte sammeln, sondern spüren, was Eva als Nächstes verliert: Erinnerungssicherheit, Glaubwürdigkeit, direkten Zugriff, Alltagszeichen, institutionelle Kanäle und schließlich die Frage, wer Mila vertreten darf. |
 | **Ending Promise** | Kein Wahn-Twist, keine gespaltene Persönlichkeit, kein billiger Technikzauber. Die Wahrheit ist real, geplant und menschlich nah. Die Bedrohung kommt nicht von einem fremden Monster, sondern von einer Frau, die zu nah in den Alltag hineingelassen wurde und aus Fürsorge Besitz gemacht hat. |
-| **Thematischer Kern** | Elternschaft ist nicht nur Liebe, sondern auch Deutungshoheit. Wer einer Mutter ihre Erinnerung, ihre Zuverlässigkeit und ihre Alltagsbeweise nimmt, greift nicht ein Kind an, sondern die Person, die dieses Kind vor der Welt vertreten darf. |
+| **Thematischer Kern** | Elternschaft ist nicht nur Liebe, sondern auch Deutungshoheit. Wer einer Mutter ihre Erinnerung, ihre Zuverlässigkeit und ihre Alltagsbeweise nimmt, greift nicht ein Kind an, sondern die Person, die dieses Kind vor der Welt vertreten darf. Noras Angriff funktioniert, weil perfekte Organisation für Außenstehende leichter lesbar ist als echte, erschöpfte Bindung. |
 | **Arbeitstitel** | Die falsche Abholung |
 | **Genre** | Psychological Thriller / Domestic Suspense |
 | **Ziel-Wortanzahl** | 60.000-68.000 Wörter |
@@ -222,7 +222,7 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 - Kurze bis mittlere Kapitel: Normalbereich 1.000-1.500 Wörter, einzelne Schlüsselszenen bis etwa 1.700 Wörter; Kapitel 17, 23 und 27 dürfen als Fusionskapitel bei Bedarf 1.700-1.950 Wörter erreichen.
 - Jedes Kapitel endet mit einer konkreten offenen Konsequenz, nicht bloss mit Unruhe.
 - Im Mittelteil darf Evidenz nie Selbstzweck werden. Spätestens nach zwei Indizkapiteln muss ein Kapitel zeigen, was Eva konkret verliert, was Mila übernimmt oder wie Institutionen und Beziehungen sich neu gegen Eva ordnen.
-- Bedrohung entsteht aus normalen Dingen: App, Klingeln, Wechselkleidung, Trinkflasche, Vollmacht, Unterschrift, Nachricht, Stimme, Blick einer Erzieherin.
+- Bedrohung entsteht aus wenigen wiederkehrenden normalen Dingen: Kita-Abholung mit App, Video, Unterschrift und gelbem Becher; alte Nähe über Vollmacht, Schlüssel, Listen und Freigaben; doppelte Mutterroutine über Tasche, Jacke, Brotdose und Haargummi; institutioneller Zugriff über Kita, Praxis, App-Rücksetzung und Ausflug.
 - Exposition darf nur unter Druck vorkommen.
 - Dialoge müssen Vertrauen verschieben, Zweifel sähen oder Zugriff auf Mila verändern.
 - Jede Szene muss mindestens eines verändern: Beweislage, Glaubwürdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalität.
@@ -306,6 +306,7 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 - Nora hat Evas Routinen über Monate studiert und an entscheidenden Punkten mit legal wirkenden Hilfsrollen kombiniert.
 - Ihr Ziel ist nicht der einmalige Zugriff, sondern der schrittweise Beweis, dass Eva unzuverlässig, überfordert oder instabil wirkt.
 - Die "falsche Abholung" ist Auftakt und Testlauf eines größeren Ersetzungsmusters.
+- Der Roman fokussiert deshalb vier wiederkehrende Beweislinien statt immer neuer Einzelobjekte: falsche Kita-Abholung, alte Nähe, doppelte Mutterroutine und institutioneller Zugriff. Neue Details sind nur stark, wenn sie eine dieser Linien vertiefen und Eva real Zugriff, Vertrauen, Routine oder Status kosten.
 
 ### Eröffnungsmechanik für Kapitel 1
 - Eva sieht am späten Nachmittag in der Kita-App einen verspätet synchronisierten Abschlussvermerk vom Vortag: Mila sei um 15:42 Uhr von ihr abgeholt worden.
@@ -684,14 +685,14 @@ Nora wirkt nur dann stark, wenn ihr Zugriff realistisch bleibt. Diese Map begren
 | --- | --- | --- | --- | --- |
 | 1-2 | Falsche Abholung, Video, Unterschrift | Nora setzt früh die Lesart, dass dokumentierte Routine gegen Eva reicht | Das Material ist nur halb sauber; Gesicht und Stimme sind nicht voll eindeutig, die Unterschrift basiert auf älteren Gewohnheiten | Kapitel 25 und 37 verbinden alte Signatur, Zeitfenster und Verwaltungskette |
 | 4-5 | Alte Notfallliste und Vollmacht bleiben wirksam | Frühere Legitimität schützt Noras Nähe vor sofortigem Alarm | Dieselben alten Listen beweisen später, wie lang Restzugriffe offenstanden | Kapitel 19, 27 und 37 machen den Altzugriff institutionell lesbar |
+| 8 | Menschliche Ambivalenz | Noras frühere Wunde macht ihre Verlässlichkeit für andere nachvollziehbar | Der Leser darf Nora hier fast verstehen; sie wird nicht als Monster geschützt | Kapitel 32 und 35 zeigen, wie aus Verlässlichkeit moralischer Besitz wurde |
 | 9 | Wohnung- und Schlüsselzugriff | Nora konnte Dinge kopieren, legen und nachsortieren | Der Schlosswechsel kappt künftigen physischen Zugriff | Kapitel 27 zeigt, wie legitime Hilfe zum Einfallstor wurde |
 | 10 | Waldtag, Regenhose, Vorabwissen | Nora wirkt vorbereitet und mütterlich präsent, bevor Eva reagieren kann | Alter Helferchat und Planungsliste markieren eine konkrete Quelle | Kapitel 19 und 37 zeigen, dass Nora nur über zurückgelassene Systeme wusste |
-| 11 | Stimme und alte Sprachformeln | Nora kann Evas kurze Alltagsformulierungen sozial plausibel spiegeln | Die Formeln stammen aus sammelbaren Altaufnahmen | Kapitel 25 belegt, dass Nora archivierte Versionen von Eva nutzt |
+| 11 / 17 | Stimme, alte Aufnahmen und Familienalbum | Nora kann Evas kurze Alltagsformulierungen sozial plausibel spiegeln | Die Formeln stammen aus sammelbaren Altaufnahmen und alten Freigaben, nicht aus Technikmagie | Kapitel 25 belegt, dass Nora archivierte Versionen von Eva nutzt |
 | 16 | Simon als Filterkanal | Nora muss Eva nicht direkt verdrängen, solange Simon sie als ruhige Hilfe mitführt | Simon hört, liest und leitet mit; damit bleibt eine Zeugenlinie gegen Nora bestehen | Kapitel 26 und 33 kippen über genau diesen Kanal |
-| 13 | Dienstagstasche und imitierte Mutterroutine | Nora besetzt Milas Körpernähe und Evas Stil | Ein falsches Wort in der Notiz verrät die fremde Hand im Vertrauten | Kapitel 27 ordnet die Tasche als Teil der Hilfekette |
+| 13 / 23 | Tasche, Brotdose, Jacke und imitierte Mutterroutine | Nora besetzt Milas Körpernähe und Evas Stil | Kleine Routinefehler verraten die fremde Hand im Vertrauten | Kapitel 27 ordnet die doppelte Mutterroutine als Teil der Hilfekette; Kapitel 41 räumt sie materiell zurück |
 | 14 / 19 / 37 | Drucker-, Listen- und Formularspuren | Nora nutzt offene Verwaltungsreste statt offene Gewalt | Druckhistorie, Rückseitenblatt und Helfermappen machen ihren Zugriff später prüfbar | Kapitel 37 zieht daraus den harten aktuellen Gegenwartsbeweis |
 | 23 | Praxis und Kinderarzt | Nora wirkt in einem zweiten Vertrauensraum plausibler als Eva | Praxisnotiz und kleiner Etikettfehler bleiben administrativ rückverfolgbar | Kapitel 27 und 37 machen aus der Plausibilität eine Kette |
-| 23 | Zweite Jacke und doppelte Versorgung | Doppelte Fürsorge sieht nach Vernunft statt nach Besitz aus | Beschriftung, Größe und Routinefehler markieren die Dopplung als gebaut | Kapitel 41 zeigt die materielle Rückeroberung |
 | 26 | Falschinformationstest | Nora versucht, ihren Kanal über Simon weiter auszunutzen | Die direkte Reaktion auf isolierte Info macht aus Simons Vorsicht Mitwissen | Kapitel 33 baut darauf auf |
 | 17 | Familienalbum und digitaler Restzugriff | Nora besitzt alte Bilder, Notizen und Sprachreste ohne Hacking | Eva kappt geteilte Alben und schließt einen stillen Zugriff | Nora muss später stärker über Institutionen und Simon arbeiten |
 | 35 | Noras Wohnung und vorab ausgefüllte Ausflugserklärung | Nora zeigt ihre moralische und organisatorische Parallelordnung | Eva fotografiert statt eskaliert; das Blatt wird zum ruhigen Gegenbeweis | Kapitel 37 übersetzt den halbharten Fund in belastbares Material |
@@ -746,32 +747,43 @@ Nora wirkt nur dann stark, wenn ihr Zugriff realistisch bleibt. Diese Map begren
 
 ---
 
-## PROOF LADDER
+## LOSS LADDER
 
-Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart und Glaubwürdigkeit. Jede neue Stufe muss etwas Früheres umcodieren, nicht nur zusätzlich illustrieren.
+Diese Treppe ordnet nicht den Plot nach Beweisobjekten, sondern den fortschreitenden Verlust von Mutterautorität. Beweise bleiben wichtig, aber sie sind nur dann stark, wenn sie eine konkrete Folge erzeugen: Eva verliert Erinnerungssicherheit, Glaubwürdigkeit, direkten Zugriff, Alltagszeichen, institutionelle Kanäle oder Milas spontane Orientierung.
 
-### Act 1 - Irrtum wird zu Muster
+### Zentrale Beweislinien
+| Linie | Kernmaterial | Funktion |
+| --- | --- | --- |
+| Falsche Kita-Abholung | App-Eintrag, Videoausschnitt, Unterschrift, gelber Becher | Startet die dokumentierte zweite Eva und macht Erinnerung gegen Papier angreifbar. |
+| Alte Nähe | Notfallkontakt, Vollmacht, Schlüssel, Familienalbum, alte Chats | Erklärt Noras Zugriff ohne Allmacht und macht frühere Hilfe rückwirkend gefährlich. |
+| Doppelte Mutterroutine | Tasche, Jacke, Brotdose, Haargummi, Becher | Materialisiert, dass Nora nicht Mila stiehlt, sondern Mutterhandlungen ersetzt. |
+| Institutioneller Zugriff | Kita, Praxis, App-Rücksetzung, Ausflug, Druck-/Mailkette | Zeigt, wie korrekte Verfahren erst Eva schwächen und später Nora stoppen müssen. |
+
+### Act 1 - Eine zweite Eva taucht in der Dokumentation auf
 | Bereich | Vorgabe |
 | --- | --- |
-| Neue harte Fakten | App-Eintrag, Videoausschnitt, Unterschrift, alte Reserve-Liste, frühere Vollmacht |
-| Falsche Anfangslesart | technischer Fehler oder chaotische Kita-Kommunikation |
-| Neue Lesart nach Act 1 | Es gab einen realen alltagsnahen Zugriff, der Evas Spur benutzt hat |
+| Eva verliert | sichere Erinnerung, Fehlerlesart, erste Glaubwürdigkeit bei Petra und Simon |
+| Beweisfunktion | App, Video, Unterschrift, gelber Becher, alte Listen und Vollmacht genügen, um Evas Spur gegen sie zu wenden |
+| Falsche Anfangslesart | technischer Fehler, chaotische Kita-Kommunikation oder übergriffige, aber harmlose Hilfe |
+| Neue Lesart nach Act 1 | Es gibt einen realen alltagsnahen Zugriff, der eine zweite Version von Evas Mutterroutine erzeugt |
 | Wer glaubt was | Eva glaubt an gezielte Verschiebung; Petra an dokumentationspflichtige Unklarheit; Simon an gefährliche, aber noch erklärbare Schieflage |
-| Was unbewiesen bleiben muss | Dass Nora die Täterin ist und dass der Zugriff systematisch geplant ist |
+| Was unbewiesen bleiben muss | Dass Nora sicher die Täterin ist und dass der Zugriff systematisch geplant ist |
 
-### Act 2 - Zugriff wird zu Ersetzung
+### Act 2 - Die zweite Eva wird glaubwürdiger als die echte
 | Bereich | Vorgabe |
 | --- | --- |
-| Neue harte Fakten | doppelte Gegenstände, Sprachreste, alte Freigaben, falsche Alltagskenntnisse, Familienalbum/Fotofreigaben, Druckerspur, Zugriff auf Orga-Reste, entzogene oder umgeleitete Kontaktkanäle |
-| Falsche Zwischenlesart | Nora ist nur zu präsent oder zu hilfreich; Eva reagiert über |
-| Neue Lesart nach Act 2 | Jemand baut aus früherer Hilfe eine zweite, sozial glaubwürdige Version von Mutterschaft und erzielt damit schon reale Folgen für Zugriff, Routinen und Loyalität |
-| Wer glaubt was | Eva erkennt Muster; Simon spürt, dass seine Vorsicht Nora mitstützt; Petra bleibt formal vorsichtig, reagiert aber auf Struktur; Mila folgt Wiederholung statt Wahrheit |
+| Eva verliert | direkten Alltag mit Mila, Selbstverständlichkeit in Simons System, intime Routinezeichen, Deutungshoheit über Hilfe |
+| Beweisfunktion | Wenige wiederkehrende Motive zeigen Dopplung: Tasche/Jacke/Brotdose, alte Freigaben/Album, Simon-Kanal, Praxis- und Verwaltungsreste |
+| Falsche Zwischenlesart | Nora ist zu präsent, aber nützlich; Eva reagiert über; doppelte Versorgung ist vernünftig |
+| Neue Lesart nach Act 2 | Nora baut aus früherer Hilfe eine zweite, sozial glaubwürdige Version von Mutterschaft und erzielt reale Folgen für Zugriff, Routinen und Loyalität |
+| Wer glaubt was | Eva erkennt Muster; Simon hat kurze echte Glaubensmomente und rudert aus Schutz zurück; Petra bleibt formal vorsichtig; Mila folgt Wiederholung statt Wahrheit |
 | Was unbewiesen bleiben muss | Der institutionell belastbare Vollbeweis und das volle Motivmass |
 
-### Act 3 - Ersetzung wird nachweisbar
+### Act 3 - Eva beweist, wer Mila vertreten darf
 | Bereich | Vorgabe |
 | --- | --- |
-| Neue harte Fakten | kleine Unmöglichkeitsfenster, Signaturfehler, Kalenderabgleich, Wohnungsfund, Mail-/Druckkette, kohärente Beweiskette aus mehreren alltagsnahen Resten und aktuellen Verfahrensfolgen daraus |
+| Eva gewinnt zurück | Simons Mitdenken, Petras Verfahren, die Lesbarkeit ihrer Mutterrolle, Milas Orientierung im offiziellen Raum |
+| Beweisfunktion | Signaturfehler, Kalenderabgleich, Wohnungsfund, Vorabmail und Druckkette verdichten bestehende Linien, statt neue Gimmicks einzuführen |
 | Falsche Vor-Endlesart | Es reicht für Verdacht, aber nicht für Eingriff |
 | Neue Lesart nach Act 3 | Nora hat nicht punktuell geholfen, sondern systematisch Position, Glaubwürdigkeit und Mutterroutine besetzt; dieselben Institutionen, die Eva vorher ausdünnten, müssen ihre Lesart jetzt revidieren |
 | Wer glaubt was | Simon und Petra sehen das Muster jetzt mit; Institutionen reagieren auf Kette statt auf Einzelreiz; Eva gewinnt Autorität nicht privat, sondern sichtbar zurück |
@@ -783,15 +795,18 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 - Simon-, Petra- und Mila-Szenen sind keine Pausen vom Plot, sondern die Orte, an denen Beweise Konsequenzen bekommen.
 - Simon braucht in Act 2 mindestens einen kurzen Moment echten Glaubens, aus dem er aus Vorsicht wieder zurückrudert.
 - Mila muss in Act 2 mindestens zweimal als Kind im gegenwärtigen Vollzug sichtbar werden.
+- Nora darf in Act 1 nicht zu eindeutig als Täterin ausgestellt werden. Frühe Hinweise müssen als Hilfe, timingstarke Nähe oder plausible Grenzüberschreitung lesbar bleiben; härtere Unmöglichkeitsfenster gehören später.
 - Kapitel 35 darf nicht die erste Stelle sein, an der Noras Moral logisch lesbar wird. Spätestens in zwei früheren Szenen müssen bereits ihre Prioritäten sichtbar werden.
 
 ### Interne Zeitachse für Act 2
+- Kapitel 13: Dienstagstasche und imitierte Mutterroutine eröffnen Act 2 körpernah.
+- Kapitel 14-15: Chronologie und kalter Zugriffsverlust schließen Evas Reaktionsphase ab und schieben Mila praktisch zu Simon.
 - Kapitel 16: Montagmorgen, erste Woche bei Simon beginnt.
 - Kapitel 17: Montagabend bis Nacht, Beobachtung und digitaler Restzugriff.
 - Kapitel 18-19: Dienstag später Vormittag bis Mittag, Nora-Vergangenheit und administrativer Zugang.
-- Kapitel 20-21: Dienstagabend bis später Abend, erster kleiner Fehler plus institutionelle Sackgasse.
+- Kapitel 20-21: Dienstagabend bis später Abend, erster kleiner Fehler plus eine frühe institutionelle Grenze.
 - Kapitel 22: Mittwoch, Eva geht in die aktive Gegenstrategie.
-- Kapitel 23: Donnerstagmittag bis Abend, Kinderarzt und doppelte Versorgung.
+- Kapitel 23: Donnerstagmittag bis Abend, Kinderarzt und doppelte Versorgung als eine Verluststufe.
 - Kapitel 24-26: Freitag Nacht, Vormittag, Nachmittag. Schlaflosigkeit, Signatur, Falschinfo-Test.
 - Kapitel 27: Samstag Tag und Abend, Rueckwaertsarchiv und Midpoint-Erkenntnis.
 
@@ -806,14 +821,15 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 
 ### Produktionsbeschluss für die Straffung
 - Zielkorridor für das Debüt: 40 bis 42 Kapitel bei 60.000 bis 68.000 Wörtern.
-- Act 2 wird als 12-Kapitel-Block geschrieben.
+- Act 1 endet nach Kapitel 12. Die ersten zwölf Kapitel müssen den Hook, Petra/Simon/Nora, Altzugriffe und die erste Normalisierung Noras setzen, ohne den Roman in eine lange Beweisvitrine zu verwandeln.
+- Act 2 wird als 15-Kapitel-Block geschrieben, weil Kapitel 13 bis 15 nicht mehr Exposition sind, sondern bereits Verlustleiter: intime Routine, Gegenordnung, direkter Alltagsentzug.
 - Vorrang haben Fusionskapitel mit doppelter Funktion.
 - Jede Scene Card trägt eine Leserfrage und eine konkrete Folge. Wenn eines von beidem fehlt, ist die Szene noch nicht draftfähig.
 - Kapitel 17, 23 und 27 dürfen im Draft länger werden als der Durchschnitt, etwa 1.700 bis 1.950 Wörter. Diese Fusionskapitel dürfen nicht aus Kürzungsdisziplin gehetzt werden.
 
 ### Empfohlene Fusionsachsen für Act 2
 - `Kapitel 17 "Gespeicherter Alltag"` bündelt Hofbeobachtung, Etikettenreste und Familienalbum.
-- `Kapitel 23 "Doppelte Versorgung"` bündelt Praxis und zweite Jacke.
+- `Kapitel 23 "Doppelte Versorgung"` bündelt Praxis und doppelte Mutterroutine aus Jacke/Brotdose.
 - `Kapitel 27 "Nicht unzuverlässig, sondern ersetzt"` bündelt Chatarchiv und Midpoint-Erkenntnis.
 - Diese Fusionsachsen sind Produktionsvorgaben, keine blössen Optionen. Wenn später einzelne Kapitel getrennt bleiben, müssen sie nachweisbar unterschiedliche Funktionen behalten.
 
@@ -824,6 +840,7 @@ Diese Treppe ordnet nicht den Plot, sondern die Verschiebung von Beweis, Lesart 
 
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
+> Straffungsbeschluss: Act 1 endet nach Kapitel 12. Alles danach ist bereits Verlustleiter, nicht weitere Einrichtung.
 
 #### Kapitel 1: „Gestern"
 ```
@@ -911,14 +928,14 @@ Scene Card
   objective: Eva will Simon sichern, ohne kleiner zu wirken als die Lage.
   szenenantrieb: Eva will Simon als Verbündeten halten und riskiert, dass Nora durch weichere Hilfe sofort plausibler wirkt.
   scene_promise: Eva will Simon als Verbündeten halten, drängt auf Vertrauen und verliert Deutungshoheit, aber Nora besetzt den Raum schneller und weicher als sie.
-  wissensgrenze: Eva merkt, dass Nora zu schnell zu viel weiß, kann es aber noch nicht erklären.
-  information_gap: Woher hat Nora schon jetzt so präzises Wissen über Petras Wortlaut und den Ablauf?
+  wissensgrenze: Eva merkt, dass Nora im richtigen Moment zu verfügbar ist, kann aber noch nicht beweisen, dass darin Absicht liegt.
+  information_gap: Ist Nora nur gut vernetzt und aufmerksam, oder steht sie schon zu nah an Petras und Simons Informationsfluss?
   pressure_clock: Wenn Simon jetzt in Verfahren statt in Beziehung denkt, wird Nora zur plausibleren Entlastungsfigur.
   beziehungsdruck: Eva braucht Vertrauen; Simon will Mila schützen; Nora will als natürliche Entlastung im Raum stehen.
-  coreAction: Simon reagiert besorgt und verfahrensnah, Nora sofort warm und verfügbar.
+  coreAction: Simon reagiert besorgt und verfahrensnah, Nora sofort warm und verfügbar, ohne schon etwas eindeutig Unmögliches zu sagen.
   false_reading: Nora wirkt zunächst bloß aufmerksam und gut informiert, nicht gefährlich.
-  dramaticBeat: Nora sagt den Wortlaut von Petras Nachricht nach, obwohl Eva ihn ihr noch nicht genannt hat.
-  reversal: Aus warmer Hilfe wird ein erster nachprüfbarer Hinweis auf unzulässig frühes Wissen.
+  dramaticBeat: Nora bietet genau die Art Hilfe an, die Simon gerade entlastet, und wirkt dadurch nützlicher als Evas Wahrheit.
+  reversal: Aus warmer Hilfe wird eine soziale Alternative zu Eva, ohne dass Nora schon klar überführt wäre.
   konkrete_folge: Nora steht nicht mehr nur als Freundin im Raum, sondern als frühe Alternativstimme; Simon beginnt, die Lage in Verfahren statt in Beziehung zu denken.
   cost: Eva verliert emotionalen Vorsprung bei Simon.
   status_shift: Nora steigt von Helferin zur plausiblen Alternativstimme auf; Simon verschiebt sich Richtung Verfahrenslogik.
@@ -927,7 +944,7 @@ Scene Card
   new_question: Wie viele kleine Alltagsdinge laufen schon doppelt, ohne dass Eva sie bemerkt hat?
   bad_version_risk: Die Szene würde schwach, wenn Nora hier schon offen täterhaft klingt oder Simon zu früh eindeutig kippt.
   revision_focus: Nora weich, Simon verfahrensnah und den Haargummi als stillen Nachstoß statt als große Pointe setzen.
-  proof_object: Petras Wortlaut plus zweiter Haargummi
+  proof_object: Zweiter Haargummi und Noras zu passende Verfügbarkeit
   alltagswaffe: Sofortige Verfügbarkeit als Vertrauenssignal
   setup: CF004, CF005, CF006, OT002, OT003, OT005
 ```
@@ -939,28 +956,28 @@ Scene Card
   pov: EVA
   ort: Wohnung / Küchentisch / Innenhof
   uhrzeit: Abend
-  ziel: Den Verdacht vom Einzelereignis in ein belastbares Muster kippen.
+  ziel: Den Verdacht vom Einzelereignis in eine alte-Nähe-Linie kippen, ohne Nora schon eindeutig zu überführen.
   reader_pulse: Wie viel von Noras Nähe ist noch alte Hilfe und wie viel schon Zugriff?
   main_question: Wie viel von Noras Nähe ist noch alte Hilfe und wie viel schon Zugriff?
   objective: Eva will den Fehler in ihren Unterlagen finden.
-  szenenantrieb: Eva will einen administrativen Restfehler finden und riskiert, dass aus der Suche nach Entlastung ein erstes Muster gegen Nora wird.
-  scene_promise: Eva will einen Restfehler finden, prüft ihre Unterlagen und gewinnt ein erstes Muster, aber dieses Muster zieht Nora aus der Hilfe in den aktiven Zugriff.
+  szenenantrieb: Eva will einen administrativen Restfehler finden und riskiert, dass aus der Suche nach Entlastung die alte Hilfe plötzlich gegenwärtig wird.
+  scene_promise: Eva will einen Restfehler finden, prüft ihre Unterlagen und gewinnt eine alte-Nähe-Linie, aber diese Linie ist noch als Nachlässigkeit, Hilfe oder Zugriff lesbar.
   wissensgrenze: Eva weiß, dass Nora noch auf alten Listen auftaucht, ahnt aber noch nicht die Breite der Dopplung.
   information_gap: Wie viele alte Listen, Wege und Garderobendetails stehen Nora noch offen?
-  pressure_clock: Wenn Eva den Restzugriff nicht jetzt erkennt, verlagert sich der Angriff endgültig vom Einzelfall ins Zuhause.
+  pressure_clock: Wenn Eva den Restzugriff nicht jetzt ernst nimmt, bleibt die Grenze zwischen alter Hilfe und heutigem Zugriff zu weich.
   beziehungsdruck: Eva will Abstand; Nora drängt sich über praktische Hilfe weiter in Evas Nahraum.
   coreAction: Eva prüft App, Kalender, Ausdrucke und Notfallkontakte und entdeckt Nora auf einer alten Reserve-Liste.
   false_reading: Vielleicht ist Nora nur versehentlich nie sauber aus alten Abläufen entfernt worden.
-  dramaticBeat: Im Hof nennt Nora ein Detail aus Milas Garderobe, das sie offiziell nicht gesehen haben dürfte.
-  reversal: Aus möglicher Altlisten-Schlamperei wird ein aktiver, gegenwärtiger Nahraum-Zugriff.
-  konkrete_folge: Eva erkennt einen realen Restzugriff; ihr Zuhause wird zum zweiten Tatort neben der Kita.
+  dramaticBeat: Im Hof nennt Nora ein Garderobendetail so selbstverständlich, dass Eva nicht entscheiden kann, ob es aus alter Nähe, Beobachtung oder heutigem Zugriff stammt.
+  reversal: Aus möglicher Altlisten-Schlamperei wird die härtere Frage, ob frühere Hilfe überhaupt noch von Zugriff zu trennen ist.
+  konkrete_folge: Eva erkennt einen realen Restkanal; ihr Zuhause wird in die Unsicherheit der Kita hineingezogen, ohne dass Nora schon beweisbar überführt ist.
   cost: Eva verliert die Illusion, ihr Zuhause sei außerhalb des Problems.
-  status_shift: Nora gewinnt als unsichtbare Mitleserin und Mitordnerin Gewicht; Eva wird in ihrem eigenen Raum reaktiv.
+  status_shift: Nora gewinnt als mögliche Mitleserin und Mitordnerin Gewicht; Eva wird in ihrem eigenen Raum reaktiv.
   ending: An Evas Garderobenhaken hängt bereits Milas Ersatzjacke.
   ending_type: Object Intrusion
-  new_question: Wenn Nora schon im Zuhause mitliest, welche anderen Alltagswege hat Eva noch offen gelassen?
+  new_question: Wenn alte Hilfe heute wie Zugriff wirkt, welche Alltagswege hat Eva noch offen gelassen?
   bad_version_risk: Die Szene würde schwach, wenn sie nur Detektivfleiß zeigt und den Hofmoment oder die Jacke nicht als Gegenwartszugriff wirken lässt.
-  revision_focus: Aus Altlisten und Garderobendetail ein erstes Muster machen; keine Küchen-Detektivshow.
+  revision_focus: Aus Altlisten und Garderobendetail eine alte-Nähe-Linie machen; keine Küchen-Detektivshow und keine zu frühe Nora-Entlarvung.
   proof_object: Alte Reserve-Liste mit Notfallkontakt
   beweisobjekt: Alte Reserve-Liste mit Notfallkontakt
   false_friend_signal: Hilfe kommt ungefragt und wirkt trotzdem plausibel
@@ -1007,7 +1024,7 @@ Scene Card
 Scene Card
   id: SC_1_6
   pov: EVA
-  ort: Wohnung / Kinderarztpraxis / Supermarkt
+  ort: Wohnung / Telefon / Apotheke / Supermarkt
   uhrzeit: Mittag bis früher Abend
   ziel: Zeigen, dass der Eingriff nicht auf die Kita begrenzt ist.
   reader_pulse: Wie viele banale Spuren ergeben zusammen bereits einen zweiten Alltag?
@@ -1016,10 +1033,10 @@ Scene Card
   szenenantrieb: Eva will den Vorfall auf die Kita begrenzen und riskiert, dass stattdessen ein zweiter Tageslauf sichtbar wird.
   scene_promise: Eva will den Vorfall auf die Kita begrenzen, prüft andere Alltagsstellen und verliert den Trost des Einzelereignisses, aber der zweite Tageslauf greift bereits über mehrere Systeme.
   wissensgrenze: Eva erkennt eine Ausweitung, kennt aber noch nicht die Systematik.
-  information_gap: Über welche Kette wurden Arzt, Rezept und Supermarkt schon in Noras Zugriff gezogen?
+  information_gap: Über welche Kette wurde aus kleinen Alltagsstellen ein zweiter Tageslauf neben Evas eigenem?
   pressure_clock: Wenn Eva die Ausweitung nicht schnell begreift, wird aus dem Kita-Vorfall ein umfassendes Alltagssystem gegen sie.
   beziehungsdruck: Eva braucht von Simon gemeinsames Faktensammeln; Simon hilft, ohne sich schon auf ihre Deutung festzulegen.
-  coreAction: Ein Arzttermin ist verschoben, ein Rezept schon abgeholt, eine Kassiererin verwechselt Eva mit „gestern mit Mila“.
+  coreAction: Ein Praxisrückruf liegt auf einer falschen Nummer, ein Rezept scheint schon abgeholt, eine Kassiererin verwechselt Eva mit „gestern mit Mila“.
   false_reading: Vielleicht sind diese Spuren bloß verstreute Missverständnisse und keine zusammenhängende Struktur.
   dramaticBeat: Simon ruft selbst in der Praxis an und bestätigt wenigstens die Terminverschiebung.
   reversal: Aus losem Verdacht wird ein Fremdeingriff, den Simon erstmals selbst mitprüft.
@@ -1031,8 +1048,8 @@ Scene Card
   new_question: Wenn selbst überprüfbare Fremdspuren Simon nicht kippen lassen, was muss noch passieren, damit er Eva glaubt?
   bad_version_risk: Die Szene würde schwach, wenn sie nur weitere Merkwürdigkeiten sammelt, aber Simons überprüfenden Anruf und den Preis seiner Vorsicht nicht spürbar macht.
   revision_focus: Die Kumulierung klein halten, aber kausal; Horror über Verdichtung, nicht über Spektakel.
-  proof_object: Verschobener Arzttermin und abgeholtes Rezept
-  beweisobjekt: Verschobener Arzttermin und abgeholtes Rezept
+  proof_object: Falscher Praxisrückruf und Rezeptabholnotiz
+  beweisobjekt: Falscher Praxisrückruf und Rezeptabholnotiz
   ersetzungsmoment: Ein zweiter Tageslauf existiert neben Evas eigenem
   setup: CF005, CF006, OT001, OT003, OT004
 ```
@@ -1072,37 +1089,37 @@ Scene Card
   setup: CF004, CF005, CF008, OT003, OT004
 ```
 
-#### Kapitel 8: „Die Akte über Nora"
+#### Kapitel 8: „Die andere Seite"
 ```
 Scene Card
   id: SC_1_8
   pov: EVA
-  ort: Café / Handyrecherche / Polizeidienststelle
+  ort: Café / Handyrecherche / Anruf mit Beratungsumfeld
   uhrzeit: Abend
-  ziel: Nora als Gefahr konkret machen, ohne sie schon zu entzaubern.
-  reader_pulse: Was ist gefährlicher als offene Feindseligkeit? Eine Frau mit Aktenlogik.
-  main_question: Was ist gefährlicher als offene Feindseligkeit? Eine Frau mit Aktenlogik.
-  objective: Eva will eine harte Linie finden, die ihren Verdacht legitimiert.
-  szenenantrieb: Eva will aus Bauchgefühl eine belastbare Verdachtslinie machen und riskiert, dass gerade das lückenhafte Wissen Nora realistischer macht.
-  scene_promise: Eva will aus Bauchgefühl eine belastbare Verdachtslinie machen, sucht externe Bestätigung und gewinnt eine gefährlichere Lesart, aber gerade das bruchstückhafte Wissen macht Nora realistischer statt kleiner.
-  wissensgrenze: Eva ahnt Verwaltungslogik, aber weder Motiv noch vollen Plan.
-  information_gap: Welche frühere Erfahrung erklärt Noras Gegenwartslogik, ohne sie schon psychologisch fertig zu machen?
-  pressure_clock: Wenn Eva hier keine belastbare Lesart findet, bleibt Nora sozial nur die lästige Helferin.
-  beziehungsdruck: Eva braucht von außen einen Satz, der ihren Verdacht trägt; die Außenwelt gibt ihr nur Splitter.
-  coreAction: Eine frühere Bekannte aus dem Beratungsumfeld nennt keinen Fall, aber dieselbe Logik: Bei Nora wirkte immer alles sauberer als auf der anderen Seite.
-  false_reading: Nora könnte nur übergriffige Hilfsbereitschaft sein und nicht gezielte Gefahr.
-  dramaticBeat: Nicht ein offizielles Dokument, sondern die Wiederholung eines alten Urteils trifft Eva.
-  reversal: Eva sucht harte Aktenlinie und findet stattdessen eine gefährlichere soziale Logik.
-  konkrete_folge: Nora wird für Eva zur gezielten Gegnerin, nicht mehr zur bloß aufdringlichen Helferin; Evas Blick auf frühere Hilfe kippt.
-  cost: Eva verliert die bequeme Lesart einer bloß nervigen Freundin.
-  status_shift: In Evas Kopf steigt Nora zur strukturellen Gegnerin auf; Hilfe wird rückwärts verdächtig.
+  ziel: Nora als menschlich gefährliche Möglichkeit öffnen, ohne sie schon eindeutig zu markieren.
+  reader_pulse: Was, wenn Noras Hilfe nicht falsch wirkt, sondern gerade deshalb so gefährlich ist?
+  main_question: Was, wenn Noras Hilfe nicht falsch wirkt, sondern gerade deshalb so gefährlich ist?
+  objective: Eva will wissen, ob sie Nora unfair verdächtigt oder zu spät misstraut.
+  szenenantrieb: Eva sucht Entlastung und riskiert, dass Noras alte Verletzung die Gegenwart nicht entschuldigt, sondern plausibler macht.
+  scene_promise: Eva will Nora nicht vorschnell zur Täterin machen, hört nur Bruchstücke und gewinnt Ambivalenz, aber gerade diese Menschlichkeit macht Noras Nähe gefährlicher.
+  wissensgrenze: Eva darf Nora nicht psychologisch fertig erklären und bekommt keine bequeme Akte.
+  information_gap: Welche frühere Wunde macht Noras Verlässlichkeit verständlich, ohne ihre Gegenwartsnähe harmlos zu machen?
+  pressure_clock: Wenn Eva Nora zu früh als Monster liest, verliert sie die soziale Wahrheit: Nora wirkt für andere fast immer wie Hilfe.
+  beziehungsdruck: Eva braucht einen äußeren Blick, der weder Nora entschuldigt noch Eva bestätigt.
+  coreAction: Eine frühere Bekannte aus dem Beratungsumfeld sagt nur, Nora habe einmal alles verloren, obwohl sie nach außen stabiler wirkte als die andere Seite.
+  false_reading: Mehr Menschlichkeit könnte Nora entlasten und Evas Verdacht kleiner machen.
+  dramaticBeat: Nicht ein offizielles Dokument, sondern der Satz „sie wirkte immer so verlässlich“ trifft Eva wie ein Echo ihrer eigenen Lage.
+  reversal: Eva findet keine Täterakte, sondern eine menschliche Logik, die Hilfe und Besitz gefährlich nah zusammenbringt.
+  konkrete_folge: Nora bleibt für den Leser möglich unschuldig und zugleich gefährlicher; Evas Verdacht wird nicht bequemer, sondern moralisch schwieriger.
+  cost: Eva verliert die bequeme Lesart einer bloß nervigen Freundin, ohne schon Sicherheit über Schuld zu gewinnen.
+  status_shift: Nora wird ambivalenter: nicht Monster, sondern eine Frau, deren Verlässlichkeit sozial Macht erzeugt.
   ending: Zuhause steht Milas gespülte Brotdose auf Evas Ablage, obwohl Mila seit morgens bei Simon ist.
   ending_type: Object Intrusion
-  new_question: Wenn Nora sogar Abwesenheit nachbearbeitet, wie lange ordnet sie Evas Alltag schon rückwärts mit?
-  bad_version_risk: Die Szene würde schwach, wenn sie Nora mit einer bequemen Enthüllung erklärt statt ihre Logik nur schärfer und bedrohlicher zu machen.
-  revision_focus: Splitter statt Exposé; der Brotdosen-Schlag muss härter sitzen als jede Recherche-Info.
-  proof_object: Indirekter Hinweis auf früheren Sorgekonflikt
-  beweisobjekt: Indirekter Hinweis auf früheren Sorgekonflikt
+  new_question: Wenn sogar Noras Wunde plausibel klingt, wie erkennt Eva dann Zugriff, ohne nur Härte gegen Hilfe zu spielen?
+  bad_version_risk: Die Szene würde schwach, wenn sie Nora mit einer bequemen Enthüllung erklärt oder sie zu früh eindeutig verrät.
+  revision_focus: Splitter statt Exposé; die gespülte Brotdose muss härter sitzen als jede Recherche-Info und trotzdem noch als Hilfe misslesbar bleiben.
+  proof_object: Bruchstück über früheren Sorgekonflikt und gespülte Brotdose
+  beweisobjekt: Bruchstück über früheren Sorgekonflikt und gespülte Brotdose
   ersetzungsmoment: Nora verwertet Abwesenheit nach
   setup: CF007, OT002, OT004, OT005
 ```
@@ -1249,6 +1266,11 @@ Scene Card
   setup: CF004, CF005, CF008, OT003, OT004
 ```
 
+---
+
+### ACT 2 — „Die Probe"
+> Eröffnungs-Dokument: Simons brauchbarer Vorschlag, Nora als kontrollierte Reserve mitzudenken. Ab hier wird nicht weiter eingerichtet; ab hier verliert Eva Alltagszeichen, Zugriff und soziale Selbstverständlichkeit.
+
 #### Kapitel 13: „Dienstagstasche"
 ```
 Scene Card
@@ -1256,31 +1278,31 @@ Scene Card
   pov: EVA
   ort: Simon Wohnung / Kinderzimmer
   uhrzeit: Abend
-  ziel: Die imitierte Mutterroutine körperlich sichtbar machen.
+  ziel: Die doppelte Mutterroutine körperlich sichtbar machen.
   reader_pulse: Wie nah kann eine zweite Mutterhand kommen, ohne bemerkt zu werden?
   main_question: Wie nah kann eine zweite Mutterhand kommen, ohne bemerkt zu werden?
   objective: Eva will Milas Sachen für den nächsten Tag packen und Kontrolle zurückgewinnen.
   szenenantrieb: Eva will über Milas Tasche wieder echte Mutterkontrolle gewinnen und riskiert, dass selbst dieser intime Handgriff doppelt geführt wird.
-  scene_promise: Eva will über Milas Tasche Mutterkontrolle zurückholen, prüft Dinge und verliert Intimitätshoheit, aber gerade der kleinste Handgriff ist schon doppelt belegt.
+  scene_promise: Eva will über Milas Tasche Mutterkontrolle zurückholen, prüft Dinge und verliert Intimitätshoheit, aber Tasche, Brotdose und Kleidung beginnen als ein wiederkehrendes Ersatzmutter-Motiv zu arbeiten.
   wissensgrenze: Eva ahnt tiefen Zugriff in Milas Alltagsgegenstände, aber noch nicht dessen Dauer.
-  information_gap: Seit wann imitiert Nora nicht nur Abläufe, sondern Ton, Handschriftlogik und Taschendetails?
-  pressure_clock: Wenn selbst Milas Tasche nicht mehr eindeutig Evas Raum ist, rückt Ersetzung an Milas Körper.
+  information_gap: Seit wann imitiert Nora nicht nur Abläufe, sondern die kleinen Körper- und Versorgungshandgriffe einer Mutter?
+  pressure_clock: Wenn selbst Milas Tasche, Brotdose und Kleidung nicht mehr eindeutig Evas Raum sind, rückt Ersetzung an Milas Körper.
   beziehungsdruck: Eva braucht von Simon Alarm über das Falsche im Vertrauten; Simon liest lieber Kleinigkeiten.
-  coreAction: In Milas Tasche liegen Dinge, die Eva nicht eingepackt hat, aber exakt ihrem Stil ähneln.
+  coreAction: In Milas Tasche liegen Dinge, die Eva nicht eingepackt hat, aber exakt ihrem Stil ähneln: ein Zettel, eine Brotdosen-Reserve und ein Kleidungshinweis, der später zur zweiten Jacke führt.
   false_reading: Es könnte sich um eine gut gemeinte Reserve oder ein harmloses Versehen handeln.
   dramaticBeat: Der Zettel ist in Evas Handschriftlogik formuliert, benutzt aber ein Wort, das nur Nora sagt.
-  reversal: Aus vermeintlicher Kleinigkeitslogik wird ein präziser Imitationsbeweis im intimsten Alltagsraum.
-  konkrete_folge: Die Ersetzung rückt von Institutionen an Milas Körper; Eva hat erstmals einen imitierenden Alltagsbeweis in der Hand.
+  reversal: Aus vermeintlicher Kleinigkeitslogik wird das erste sichtbare Motiv einer doppelt geführten Mutterroutine.
+  konkrete_folge: Die Ersetzung rückt von Institutionen an Milas Körper; Eva hat erstmals ein wiederkehrendes Routine-Motiv in der Hand statt nur ein weiteres Objekt.
   cost: Eva verliert die Sicherheit, dass Mutterhandgriffe im Kindssystem noch eindeutig ihre sind.
   status_shift: Nora rückt von Helferin zur imitierenden Parallelmutter auf; Simon bleibt zu klein lesend.
   ending: Im Treppenhaus spürt Eva, dass Simon glaubt, sie mache aus Kleinigkeiten zu viel.
   ending_type: Social Reframe
   new_question: Wenn selbst intime Routinen schon doppelt geführt werden, wie lange ist Nora Milas Alltag bereits körperlich nah?
   bad_version_risk: Die Szene würde schwach, wenn sie Dinge fetischisiert statt die fast perfekte Imitation und Simons Verkleinerung zusammen arbeiten zu lassen.
-  revision_focus: Tasche, Zettel und Sprachverrutschung müssen den Schlag tragen; kein Symbol-Overkill.
-  proof_object: Notizzettel in falscher Handschriftlogik
-  beweisobjekt: Notizzettel in falscher Handschriftlogik
-  ersetzungsmoment: Die imitierte Mutterroutine taucht an Milas Körper auf
+  revision_focus: Tasche, Zettel, Brotdosen-Reserve und Kleidungshinweis als ein Motiv lesen; kein Symbol-Overkill und keine Objektauflistung.
+  proof_object: Tasche, Notizzettel und Brotdosen-Reserve
+  beweisobjekt: Tasche, Notizzettel und Brotdosen-Reserve
+  ersetzungsmoment: Die doppelte Mutterroutine taucht an Milas Körper auf
   setup: CF005, CF006, OT001, OT003, OT004
 ```
 
@@ -1326,7 +1348,7 @@ Scene Card
   pov: EVA
   ort: Kita / Wohnung / Simon Auto
   uhrzeit: Freitag
-  ziel: Act 1 mit einem plausiblen, kalten Kontrollverlust schließen.
+  ziel: Den ersten großen Verlustzug in Act 2 mit einem plausiblen, kalten Kontrollverlust schließen.
   reader_pulse: Wie weh tut Schutz, wenn er vernünftig klingt?
   main_question: Wie weh tut Schutz, wenn er vernünftig klingt?
   objective: Eva will Petra mit ihrer Chronologie erreichen, bevor Simon eine Übergangsregel erweitert.
@@ -1355,9 +1377,6 @@ Scene Card
 ```
 
 ---
-
-### ACT 2 — „Die Probe"
-> Eröffnungs-Dokument: SMS Simon an Eva: „Bis wir wissen, was hier läuft, brauche ich bei Mila eine klare Linie.“
 
 #### Kapitel 16: „Die Woche bei Simon"
 ```
@@ -1614,17 +1633,17 @@ Scene Card
   word_target_max: 1950
   ort: Kinderarztpraxis / Simon Flur / Milas Sachen
   uhrzeit: Donnerstagmittag bis Abend
-  ziel: Vertrauensraum und materielles Duplikat zu einem Statusverlust bündeln.
+  ziel: Vertrauensraum und doppelte Mutterroutine zu einem Statusverlust bündeln.
   reader_pulse: Wann wirkt doppelte Fürsorge glaubwürdiger als die echte Mutter?
   main_question: Wann wirkt doppelte Fürsorge glaubwürdiger als die echte Mutter?
   objective: Eva will begreifen, wie weit Nora institutionell und materiell schon als zweite Versorgung mitläuft.
   szenenantrieb: Eva sucht in Praxis und Dingen nach einer neutralen Grenze und riskiert, dass beide Räume Nora erst einmal plausibler machen.
-  scene_promise: Eva will sehen, wie weit Nora als zweite Versorgung schon mitläuft, prüft Praxis und Dinge und gewinnt ein Doppelversorgungs-Muster, aber genau dieses Muster macht Evas Status kleiner.
+  scene_promise: Eva will sehen, wie weit Nora als zweite Versorgung schon mitläuft, prüft Praxis und Dinge und erkennt das Motiv aus Tasche, Brotdose und Jacke wieder, aber genau dieses Doppelversorgungs-Muster macht Evas Status kleiner.
   wissensgrenze: Eva weiß, dass Nora in ihrem Namen handeln konnte, aber nicht, wie breit dieselbe Logik schon läuft.
   information_gap: Wie weit reicht Noras Ersatzsystem schon über Wohnung, Kita und Simon hinaus in neutrale Vertrauensräume?
   pressure_clock: Wenn doppelte Versorgung weiter als vernünftige Reserve gelesen wird, wird Eva Schritt für Schritt zur unpraktischeren Mutter.
   beziehungsdruck: Eva braucht Alarm über Material und Praxisnotiz; Simon liest beides zunächst als vernünftige Reserve.
-  coreAction: In der Praxis steht, dass Mila von einer „guten Bekannten der Mutter“ mit mündlicher Zustimmung vorgestellt wurde. Später hängt bei Simon eine fast identische zweite Regenjacke, die Nora für „alle Fälle“ mitgebracht hat.
+  coreAction: In der Praxis steht, dass Mila von einer „guten Bekannten der Mutter“ mit mündlicher Zustimmung vorgestellt wurde. Später hängt bei Simon eine fast identische zweite Regenjacke, die Nora für „alle Fälle“ mitgebracht hat, neben der schon vertrauten Brotdosen-Reserve aus Kapitel 13.
   false_reading: Praxisvermerk und zweite Jacke könnten nur fürsorgliche Entlastung in einer angespannten Lage sein.
   dramaticBeat: Mila greift automatisch zur falschen Jacke und sagt: „Die bleibt hier, sonst ist morgen falsch.“ Simon sieht den Riss kurz, hängt die Jacke dann aber doch wieder zurück, weil doppelte Versorgung in dieser Lage vernünftig klingt.
   reversal: Gerade die plausibelste Fürsorge macht Nora institutionell und materiell glaubwürdiger als Eva.
@@ -1636,10 +1655,10 @@ Scene Card
   ending_type: Proof Turn
   new_question: Wie viele Räume hat Nora bereits doppelt eingerichtet, bevor Eva überhaupt den ganzen Radius sieht?
   bad_version_risk: Die Szene würde schwach, wenn Praxis und Jacke bloß schockieren statt denselben Ersatzmechanismus materialisieren.
-  revision_focus: Vertrauensraum und materielles Duplikat als ein System lesen; Mila soll aus Gewohnheit handeln, nicht symbolisch kommentieren.
-  proof_object: Praxisnotiz plus zweite Jacke mit Etikett
+  revision_focus: Vertrauensraum und doppelte Mutterroutine als ein System lesen; Mila soll aus Gewohnheit handeln, nicht symbolisch kommentieren.
+  proof_object: Praxisnotiz plus Jacke/Brotdose-Routine
   endzustand_hook: Das Kapitel muss mit dem Gefühl enden, dass Nora inzwischen sogar Vertrauensräume und Dinge zugleich als Versorgungssystem besetzt.
-  beweisobjekt: Praxisnotiz plus zweite Jacke mit Etikett
+  beweisobjekt: Praxisnotiz plus Jacke/Brotdose-Routine
   nora_kosten: Der Praxisvermerk und der Etikettfehler schaffen später verwertbare Rückbeweise.
   setup: CF003, CF004, CF005, OT001, OT002, OT004, OT005
 ```
@@ -2143,31 +2162,31 @@ Scene Card
   pov: EVA
   ort: Kita / Ausflugssammelpunkt
   uhrzeit: 07:30 Uhr
-  ziel: Die Wahrheit unter Alltagsdruck sichtbar machen und Eva aktiv zurück in ihre Rolle führen.
-  reader_pulse: Wer darf in diesem Raum endlich wieder glaubwürdig Mutter sein?
-  main_question: Wer darf in diesem Raum endlich wieder glaubwürdig Mutter sein?
+  ziel: Die Frage zuspitzen, wer Mila offiziell und menschlich vertreten darf.
+  reader_pulse: Wer darf in diesem Raum Milas nächsten Tag organisieren?
+  main_question: Wer darf in diesem Raum Milas nächsten Tag organisieren?
   objective: Eva will verhindern, dass Nora die nächste offiziell wirkende Übergabe bekommt.
   szenenantrieb: Eva bringt Beweise und Verbündete zusammen und riskiert, dass Nora sich noch einmal über Ruhe und Alltagsskript herauswindet.
-  scene_promise: Eva will Nora die nächste offizielle Übergabe nehmen, bringt Beweise und Verbündete zusammen und gewinnt den Raum zurück, aber bis zum letzten Moment bleibt Nora über Ruhe und Alltagsskript gefährlich plausibel.
+  scene_promise: Eva will Nora die nächste offizielle Übergabe nehmen, bringt Beweise und Verbündete zusammen und gewinnt den Raum zurück, aber bis zum letzten Moment bleibt Nora über Jacke, Formular, Snack und ruhige Stimme gefährlich plausibel.
   wissensgrenze: Eva weiß genug für den Zugriff, nicht aber, wie Mila im Moment reagieren wird.
   information_gap: Reicht die Beweiskette unter Alltagsdruck wirklich, oder kippt der Raum wieder zugunsten der ruhigeren Frau?
   pressure_clock: Wenn Nora den Ausflugssammelpunkt noch einmal als Hilfe besetzt, wird aus Vorbereitung ein erneuter offizieller Zugriff.
   beziehungsdruck: Eva braucht von Petra Handeln und von Simon sichtbare Rückendeckung; Nora braucht nur einen letzten plausiblen Auftritt.
-  coreAction: Mit Fotos, Zeitstempeln, Listen und der Vorab-Erklärung zwingt Eva Petra, nicht mehr auf Eindruck, sondern auf Muster zu schauen.
+  coreAction: Nora erscheint nicht laut, sondern mit allem, was offiziell richtig aussieht: Jacke, Formular, Snack, Notfallnummer und ruhiger Stimme. Mit Fotos, Zeitstempeln, Listen und der Vorab-Erklärung zwingt Eva Petra, nicht mehr auf Eindruck, sondern auf Muster zu schauen.
   false_reading: Nora könnte trotz allem als hilfsbereite, zurecht betroffene Person dastehen und den Raum wieder sozial gewinnen.
   dramaticBeat: Petra spricht Nora vor den anderen Eltern nicht als Helferin, sondern als unberechtigte Beteiligte an.
   reversal: Nicht Nora bekommt den offiziellen Morgen, sondern Eva zieht die Mutterautorität im selben Raum zurück.
-  mila_kindmoment: Mila läuft nicht zu Nora, sondern bleibt zwischen Eva und Simon stehen und wartet, wer ihren Namen zuerst ruhig sagt.
+  mila_kindmoment: Mila läuft nicht zu Nora und nicht sofort zu Eva. Sie steht zwischen Eva und Simon und fragt klein: „Mama, wer holt mich denn nachher?“
   konkrete_folge: Nora verliert ihre soziale Plausibilität öffentlich; Eva gewinnt sichtbare Mutterautorität im selben Alltagsraum zurück, der sie vorher geschwächt hat.
   cost: Eva muss ihren Zugriff unter Blicken und vor Mila zurückholen, ohne Ausbruch und ohne falschen Ton.
   status_shift: Nora verliert die Bühne öffentlich; Eva und Simon stehen erstmals sichtbar auf derselben Seite.
-  ending: Mila bleibt zwischen Eva und Simon stehen, bis Eva ihren Namen ruhig sagt. Dann geht sie zu Eva.
+  ending: Eva beantwortet nicht Nora, sondern Milas Zukunftsfrage ruhig. Dann geht Mila zu ihr.
   ending_type: Child Echo
   new_question: Reicht dieser öffentliche Kipppunkt, damit die Wahrheit auch institutionell und sozial Bestand hat?
   bad_version_risk: Die Szene würde schwach, wenn sie in Geschrei oder Täterentlarvung kippt statt im Alltagssammelpunkt unter Blickdruck zu bleiben.
-  revision_focus: Petra, Blicke und Milas Warten tragen den Klimax; keine Nachrede nach dem stärksten Kindermoment.
-  proof_object: Vorab-Erklärung, Zeitstempel und Listen am Ausflugssammelpunkt
-  endzustand_hook: Der Klimax muss auf Alltagsdruck und Wahlspannung enden, nicht auf Geschrei; Mila entscheidet die Luft im Raum.
+  revision_focus: Petra, Blicke, Noras korrekt wirkende Ausstattung und Milas Zukunftsfrage tragen den Klimax; keine Nachrede nach dem stärksten Kindermoment.
+  proof_object: Vorab-Erklärung, Zeitstempel, Formular und Ausflugsjacke am Sammelpunkt
+  endzustand_hook: Der Klimax muss auf der Frage enden, wer Mila vertreten und ihren nächsten Tag organisieren darf, nicht auf Geschrei; Mila entscheidet die Luft im Raum.
   payoff: OT001, OT002, OT003, OT004
   setup: CF001, CF002, CF003, CF004, CF005, CF006, CF007
 ```
@@ -2332,11 +2351,11 @@ Der Horror liegt nicht im Video selbst, sondern darin, dass es für den Alltag r
 
 ### Kapitel 3 — „Bitte fahr nicht allein"
 **Writer Summary**
-Auf dem Parkplatz versucht Eva, Simon die Lage zu erklären, ohne sich selbst klein oder panisch zu machen. Simon reagiert beschützend, aber bereits verfahrensnah; Nora dagegen reagiert weich, schnell und sofort verfügbar. Diese Szene setzt die beiden zentralen Vertrauensachsen gegeneinander. Nora soll hier noch nicht als offen verdächtig wirken, aber sie weiss bereits zu viel. Die Szene endet mit einem kleinen falschen Alltagsdetail in Milas Fach, das den Verdacht vom Vorfall zum Muster verschiebt.
+Auf dem Parkplatz versucht Eva, Simon die Lage zu erklären, ohne sich selbst klein oder panisch zu machen. Simon reagiert beschützend, aber bereits verfahrensnah; Nora dagegen reagiert weich, schnell und sofort verfügbar. Diese Szene setzt die beiden zentralen Vertrauensachsen gegeneinander. Nora soll hier noch nicht als offen verdächtig wirken und nichts eindeutig Unmögliches wissen. Gefährlich ist, dass ihre Hilfe genau in Simons Bedürfnis nach Ordnung passt. Die Szene endet mit einem kleinen falschen Alltagsdetail in Milas Fach, das vom Vorfall in Richtung Dopplung verschiebt.
 
 ### Kapitel 4 — „Die Liste"
 **Writer Summary**
-Eva prüft zuhause App, Kalender, Ausdrucke und Notfallkontakte, um irgendwo einen klaren Fehler zu finden. Statt eines einzelnen Fehlers entdeckt sie, dass Nora auf einer alten Reserveliste noch als Kontakt auftaucht. Parallel dringt Nora über Hilfe in die Szene: Suppe, Verfügbarkeit, Nahversorgung. Dabei nennt sie ein Detail aus Milas Garderobe, das sie nicht wissen dürfte. Die Szene endet mit einem physischen Zeichen von Zutritt: Milas Ersatzjacke hängt bereits in Evas Flur.
+Eva prüft zuhause App, Kalender, Ausdrucke und Notfallkontakte, um irgendwo einen klaren Fehler zu finden. Statt eines einzelnen Fehlers entdeckt sie, dass Nora auf einer alten Reserveliste noch als Kontakt auftaucht. Parallel dringt Nora über Hilfe in die Szene: Suppe, Verfügbarkeit, Nahversorgung. Dabei nennt sie ein Garderobendetail so selbstverständlich, dass Eva nicht entscheiden kann, ob es aus alter Nähe, Beobachtung oder heutigem Zugriff stammt. Die Szene endet mit einem physischen Zeichen von Dopplung: Milas Ersatzjacke hängt bereits in Evas Flur.
 
 ### Kapitel 5 — „Schriftlich"
 **Writer Summary**
@@ -2347,15 +2366,15 @@ Die Szene soll nicht nach "Institution gegen Mutter" klingen. Sie soll zeigen, w
 
 ### Kapitel 6 — „Verlegt"
 **Writer Summary**
-Eva testet, ob der Eingriff nur die Kita betrifft oder schon tiefer in ihren Alltag reicht. Kinderarzttermin, Rezept und Supermarktbeobachtung zeigen, dass neben ihrem eigenen Tageslauf ein zweiter alltagsnaher Lauf existiert. Jedes Detail ist für sich klein, gemeinsam aber verstörend. Wichtig ist, dass Simon hier erstmals selbst einen Fakt prüft und in der Praxis anruft, bevor er wieder in Vorsicht ausweicht. Die Szene endet mit seiner Frage, ob Eva sicher sei, sich nicht zu täuschen.
+Eva testet, ob der Eingriff nur die Kita betrifft oder schon tiefer in ihren Alltag reicht. Ein falscher Praxisrückruf, eine Rezeptabholnotiz und eine Supermarktbeobachtung zeigen, dass neben ihrem eigenen Tageslauf ein zweiter alltagsnaher Lauf existiert. Jedes Detail ist für sich klein, gemeinsam aber verstörend. Wichtig ist, dass Simon hier erstmals selbst einen Fakt mitprüft, bevor er wieder in Vorsicht ausweicht. Die Szene endet mit seiner Frage, ob Eva sicher sei, sich nicht zu täuschen.
 
 ### Kapitel 7 — „Stabil"
 **Writer Summary**
 Eva sucht Simon persönlich auf und will ihn auf ihre Seite ziehen. Statt offen gegen sie zu stehen, argumentiert er aus Schutzlogik und denkt in Stabilität für Mila. Nora taucht zufällig, ruhig und sozial glaubwürdig auf dem Spielplatz auf; Mila begrüsst sie mit geübter Selbstverständlichkeit. Genau dadurch kippt die Gefahr vom abstrakten Verdacht in einen sozialen Realitätsverlust. Die Szene endet mit Simons Vorschlag, Mila vorerst selbst abzuholen.
 
-### Kapitel 8 — „Die Akte über Nora"
+### Kapitel 8 — „Die andere Seite"
 **Writer Summary**
-Eva sammelt erstmals Material über Nora, bekommt aber bewusst keine bequeme Akteneinsicht. Stattdessen erfährt sie nur indirekt von einem früheren Sorgekonflikt, in dem nicht Lautstärke, sondern administrative Glaubwürdigkeit entscheidend war. Genau dadurch wird klar, dass Nora Strukturen lesen und nutzen kann, ohne dass der Roman seinen Alltagsrealismus verliert. Zuhause wartet bereits das nächste kleine Zeichen nachträglicher Alltagsbesetzung: Milas Brotdose steht gespült in Evas Küche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzüberschreitung.
+Eva sucht Entlastung und will wissen, ob sie Nora unfair verdächtigt. Sie bekommt keine bequeme Akteneinsicht und keine eindeutige Täterspur, sondern nur einen menschlichen Splitter: Nora hat einmal alles verloren, obwohl sie nach außen stabiler wirkte als die andere Seite. Genau dadurch wird sie nicht kleiner, sondern gefährlicher ambivalent. Zuhause wartet ein kleines Zeichen nachträglicher Alltagsbesetzung: Milas Brotdose steht gespült in Evas Küche, obwohl Mila gar nicht bei ihr war. Ende auf dieser stillen Grenzüberschreitung, die noch als Hilfe misslesbar bleibt.
 
 ### Kapitel 9 — „Der Ersatzschlüssel"
 **Writer Summary**
@@ -2390,7 +2409,7 @@ Wichtig ist dabei: kein perfekt lesbarer Spiegelmoment, sondern ein halb abgesch
 
 ### Kapitel 15 — „Der falsche Nachmittag"
 **Writer Summary**
-Eva bringt ihre Chronologie zu Petra und hofft, dass endlich jemand die Linie erkennt. Petra nimmt sie ernster als bisher, kann vor dem Wochenende aber nichts formell hart genug ändern. Der eigentliche Schlag kommt von Simon. Wichtig ist: Er nimmt Mila Eva nicht wie ein Antagonist weg. Er weitet ein ohnehin geplantes Umgangswochenende oder eine temporäre Übergangsregel aus, weil ihm die Lage zu instabil erscheint. Genau deshalb tut es weh. Seine Entscheidung klingt vernünftig und kostet Eva trotzdem realen Zugriff auf die nächste Woche. Das Kapitel schließt Act 1 kalt und plausibel, nicht melodramatisch. Nora muss am Ende nicht punktgenau schon warten. Stärker ist, wenn sie erst sichtbar wird, als der Wagen fast schon aus dem Hof ist: nah genug für Stich, aber nicht magisch getaktet.
+Eva bringt ihre Chronologie zu Petra und hofft, dass endlich jemand die Linie erkennt. Petra nimmt sie ernster als bisher, kann vor dem Wochenende aber nichts formell hart genug ändern. Der eigentliche Schlag kommt von Simon. Wichtig ist: Er nimmt Mila Eva nicht wie ein Antagonist weg. Er weitet ein ohnehin geplantes Umgangswochenende oder eine temporäre Übergangsregel aus, weil ihm die Lage zu instabil erscheint. Genau deshalb tut es weh. Seine Entscheidung klingt vernünftig und kostet Eva trotzdem realen Zugriff auf die nächste Woche. Das Kapitel ist ein früher Act-2-Verlustschlag: kalt, plausibel, nicht melodramatisch. Nora muss am Ende nicht punktgenau schon warten. Stärker ist, wenn sie erst sichtbar wird, als der Wagen fast schon aus dem Hof ist: nah genug für Stich, aber nicht magisch getaktet.
 
 **Director Note**
 Nicht auf bösen Ex schreiben. Schutzlogik ist hier gefährlicher als offene Feindseligkeit.
@@ -2437,10 +2456,10 @@ Die Szene soll entschlossen wirken, nicht clever-cool. Eva baut keinen Agentenpl
 
 ### Kapitel 23 — „Doppelte Versorgung"
 **Writer Summary**
-Das Fusionskapitel verbindet Kinderarztpraxis und zweite Jacke zu einer einzigen Logik: Nora erscheint in Vertrauensraum und Gegenstand als vernünftige Reserve. In der Praxis wirkt eine ruhige, plausible Frau stärker als Evas Verdacht. Später hängt bei Simon eine zweite Regenjacke, die Milas Alltag scheinbar nur absichert. Genau darin liegt der Schrecken. Mila greift kindlich zur falschen Jacke oder benennt die Routine so, als sei Dopplung normal. Simon sieht den Riss kurz und erklärt ihn im nächsten Atemzug wieder als vernünftig. Wichtig ist die reale Folge: Evas Status sinkt sowohl im Praxisraum als auch im Simon-System. Der kleine Etikett- oder Datumsfehler bleibt als späterer Rückbeweis stehen.
+Das Fusionskapitel verbindet Kinderarztpraxis, zweite Jacke und Brotdosen-Reserve zu einer einzigen Logik: Nora erscheint in Vertrauensraum und Gegenstand als vernünftige Reserve. In der Praxis wirkt eine ruhige, plausible Frau stärker als Evas Verdacht. Später hängt bei Simon eine zweite Regenjacke neben den bereits doppelt geführten Versorgungssachen, als sichere sie Milas Alltag nur ab. Genau darin liegt der Schrecken. Mila greift kindlich zur falschen Jacke oder benennt die Routine so, als sei Dopplung normal. Simon sieht den Riss kurz und erklärt ihn im nächsten Atemzug wieder als vernünftig. Wichtig ist die reale Folge: Evas Status sinkt sowohl im Praxisraum als auch im Simon-System. Der kleine Etikett- oder Datumsfehler bleibt als späterer Rückbeweis stehen.
 
 **Director Note**
-Das Kapitel darf länger werden als der Durchschnitt. Praxis und Jacke müssen wie ein einziges Versorgungssystem gelesen werden.
+Das Kapitel darf länger werden als der Durchschnitt. Praxis, Jacke und Brotdosen-Reserve müssen wie ein einziges Versorgungssystem gelesen werden.
 
 ### Kapitel 24 — „Die Nacht vor Freitag"
 **Writer Summary**
@@ -2512,10 +2531,10 @@ Eva und Petra ziehen jetzt den harten aktuellen Beweis aus dem Vorabwissen um de
 
 ### Kapitel 38 — „Rückholung"
 **Writer Summary**
-Das ist der klimatische Zugriff des Romans, aber im Ton des Buches: kein lauter Showdown, sondern ein öffentlicher Alltagsraum, in dem plötzlich anders gelesen wird, was bisher plausibel war. Eva bringt Beweise, Simon Rückendeckung und Petra institutionelle Handlung zusammen. Nora bleibt ruhig, bis diese Ruhe erstmals nicht mehr als Verlässlichkeit funktioniert. Mila entscheidet die Szene nicht bewusst, sondern durch ihr Warten: Sie bleibt zwischen Eva und Simon stehen, bis Eva ihren Namen ruhig sagt. Erst dann geht sie zu ihr. Genau das ist das Ending dieses Kapitels. Die Szene endet auf zurückgewonnener, aber noch verletzlicher Ordnung.
+Das ist der klimatische Zugriff des Romans, aber im Ton des Buches: kein lauter Showdown, sondern ein öffentlicher Alltagsraum, in dem plötzlich anders gelesen wird, was bisher plausibel war. Nora kommt mit Jacke, Formular, Snack, Notfallnummer und ruhiger Stimme, also mit allem, was offiziell richtig aussieht. Eva bringt Beweise, Simon Rückendeckung und Petra institutionelle Handlung zusammen. Nora bleibt ruhig, bis diese Ruhe erstmals nicht mehr als Verlässlichkeit funktioniert. Mila entscheidet die Szene nicht bewusst, sondern durch eine kleine Zukunftsfrage: „Mama, wer holt mich denn nachher?“ Eva gewinnt nicht, weil sie lauter ist, sondern weil sie in diesem Raum wieder glaubwürdig für Milas nächsten Tag sprechen darf. Genau das ist das Ending dieses Kapitels. Die Szene endet auf zurückgewonnener, aber noch verletzlicher Ordnung.
 
 **Director Note**
-Nicht auf großes Geschrei schreiben. Dieselbe Alltagsbühne, die Eva vorher geschwächt hat, darf Nora jetzt nicht mehr schützen.
+Nicht auf großes Geschrei schreiben. Dieselbe Alltagsbühne, die Eva vorher geschwächt hat, darf Nora jetzt nicht mehr schützen. Der Klimax ist die Frage, wer Mila vertreten und ihren nächsten Tag organisieren darf.
 
 ### Kapitel 39 — „Aussage"
 **Writer Summary**
@@ -2590,10 +2609,10 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 `Petra darf nicht kalt oder böse wirken. Der Horror entsteht dadurch, dass sie vernünftig ist und das Material trotzdem gegen Eva arbeitet. Nicht auf Thriller-Hysterie spielen. Der soziale Beweis ist stärker als das Video selbst.`
 
 #### Kapitel 3 — „Bitte fahr nicht allein"
-`Nora darf hier noch nicht offen verdächtig wirken. Simon und Nora sind zwei Formen von Hilfe: Simon verfahrensnah, Nora warm und zu schnell im Raum. Der eigentliche Stich ist, dass Nora bereits zu viel weiss. Ende auf kleinem Alltagsdetail, nicht auf grosser Beschuldigung.`
+`Nora darf hier noch nicht offen verdächtig wirken. Simon und Nora sind zwei Formen von Hilfe: Simon verfahrensnah, Nora warm und zu schnell im Raum. Der eigentliche Stich ist, dass Noras Hilfe genau in Simons Ordnungslücke passt. Keine eindeutige Tätermarkierung. Ende auf kleinem Alltagsdetail, nicht auf grosser Beschuldigung.`
 
 #### Kapitel 4 — „Die Liste"
-`Kein Detektivfilm am Küchentisch. Eva sucht einen Fehler und findet stattdessen ein Muster aus Restzugriff und ungefragter Hilfe. Nora muss plausibel fürsorglich bleiben, nicht offen unheimlich werden. Der Schock liegt in der Selbstverständlichkeit des Zutritts.`
+`Kein Detektivfilm am Küchentisch. Eva sucht einen Fehler und findet stattdessen alte Nähe, die heute wie Zugriff wirkt. Nora muss plausibel fürsorglich bleiben, nicht offen unheimlich werden. Der Schock liegt in der Selbstverständlichkeit, mit der Hilfe und Zugriff nicht mehr sauber trennbar sind.`
 
 #### Kapitel 5 — „Schriftlich"
 `Die Szene soll nicht nach Institution gegen Mutter klingen. Zeige, wie formale Vorsicht eine ohnehin geschwächte Position weiter ausdünnt. Petra bleibt professionell, nicht feindselig.`
@@ -2604,8 +2623,8 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 #### Kapitel 7 — „Stabil"
 `Keine juristische Eskalationsszene daraus machen. Simon handelt aus Schutzlogik, nicht gegen Eva. Nora taucht sozial glaubwürdig auf und Mila begrüsst sie mit Wiederholungs-Selbstverständlichkeit, nicht mit Ersatzmutter-Pathos. Das Ende muss nach Stabilität aussehen und sich für Eva wie Entzug anfühlen.`
 
-#### Kapitel 8 — „Die Akte über Nora"
-`Kein Enthüllungskapitel mit bequemer Akte. Eva bekommt nur Bruchstücke, gerade genug, um Noras Gegenwartslogik zu schärfen. Polizei und Bekannte liefern keine Plotabkürzung, sondern nur Massstab für Beweisbarkeit. Die Brotdose am Ende ist stärker als jede Information davor.`
+#### Kapitel 8 — „Die andere Seite"
+`Kein Enthüllungskapitel mit bequemer Akte. Eva bekommt nur Bruchstücke, die Nora menschlicher und dadurch gefährlicher machen. Keine Polizeiabkürzung. Die Brotdose am Ende ist stärker als jede Information davor, weil sie noch als Hilfe misslesbar bleibt.`
 
 #### Kapitel 9 — „Der Ersatzschlüssel"
 `Die Szene ist kein Einbruchs-Thriller, sondern ein Nachweis früherer legitimer Nähe. Eva soll aktiv handeln und den Zylinder wechseln, aber die Massnahme darf nicht wie Sieg wirken. Der eigentliche Schrecken ist, dass Zutritt nur der Anfang war und die kopierten Routinen bleiben. Nora am Ende freundlich, nicht triumphierend.`
@@ -2650,7 +2669,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 `Die Szene soll entschlossen wirken, nicht clever-cool. Eva baut keinen Agentenplan, sondern eine plausible Selbstschutzstrategie aus Alltagsmitteln. Die Falschinformation muss simpel, glaubwürdig und prüfbar bleiben.`
 
 #### Kapitel 23 — „Doppelte Versorgung"
-`Fusionskapitel. Praxis und zweite Jacke gehören in dieselbe Logik: doppelte Versorgung wirkt vernünftig und kostet Eva real Status. Mila handelt kindlich, nicht symbolisch. Das Kapitel darf länger werden als der Durchschnitt.`
+`Fusionskapitel. Praxis, Jacke und Brotdosen-Reserve gehören in dieselbe Logik: doppelte Versorgung wirkt vernünftig und kostet Eva real Status. Mila handelt kindlich, nicht symbolisch. Das Kapitel darf länger werden als der Durchschnitt.`
 
 #### Kapitel 24 — „Die Nacht vor Freitag"
 `Kein Home-Invasion-Thriller. Die Nacht lebt von Schlafmangel, Vorbereitung und zu viel Synchronisation. Die Schlafhose ist intim genug; mehr braucht die Szene nicht. Eva soll nicht ausrasten, sondern wach bleiben.`
@@ -2695,7 +2714,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 `Der harte Beweis entsteht aus Kette, nicht aus Wunderfund. Druckjob, Entwurf, Raumzugang und Foto müssen zusammenklicken. Petra wird hier zur Verbündeten, bleibt aber im Ton professionell. Kein Gestandnisersatz.`
 
 #### Kapitel 38 — „Rückholung"
-`Nicht auf grosses Geschrei schreiben. Die Stärke der Szene liegt darin, dass derselbe öffentliche Raum, der Eva vorher geschwächt hat, jetzt Nora nicht mehr schützt. Mila muss nicht dramatisch Partei ergreifen.`
+`Nicht auf grosses Geschrei schreiben. Die Stärke der Szene liegt darin, dass derselbe öffentliche Raum, der Eva vorher geschwächt hat, jetzt Nora nicht mehr schützt. Nora kommt mit korrekt wirkenden Dingen. Mila muss nicht dramatisch Partei ergreifen; ihre kleine Frage, wer sie nachher holt, bündelt den ganzen Roman.`
 
 #### Kapitel 39 — „Aussage"
 `Nach dem Zugriff braucht das Buch Schwere, keinen Epilogbetrieb. Keine Triumphszene. Aussagen und Protokolle sollen zeigen, wie oft Ruhe mit Glaubwürdigkeit verwechselt wurde. Nora bleibt auch hier kontrolliert.`
