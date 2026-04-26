@@ -1318,18 +1318,13 @@ export function getDraftJobAcceptanceBlockers(story: StoryDocument, jobId: strin
     return ["Draft-Job wurde nicht gefunden."];
   }
 
-  const packet = buildSceneContextPacket(story, job.sceneId);
-  const deterministicRisks = packet ? auditSceneContinuityGuards(packet, job.rewriteText) : [];
-  const blockers = deterministicRisks.concat(
-    job.extractedState.continuityRisks.filter(function (risk) {
-      if (risk.startsWith("Extractor-Review:")) return false;
-      // Live deterministicRisks already re-runs these guard checks; skip stale stored copies
-      if (/^(Namensdrift|Farbdrift|Objektdrift|Farbanker fehlt|Pflicht-\S+ nicht sichtbar):/.test(risk)) return false;
-      return true;
-    })
-  );
+  if (!job.rewriteText.trim()) {
+    return ["Rewrite-Text ist leer."];
+  }
 
-  return dedupeStrings(blockers);
+  // Continuity- und Drift-Hinweise bleiben im Audit sichtbar, blockieren aber
+  // die Uebernahme nicht mehr, damit der Text anschliessend manuell editiert werden kann.
+  return [];
 }
 
 function getApprovedMemorySyncValues(
