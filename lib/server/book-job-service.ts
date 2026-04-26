@@ -1126,46 +1126,6 @@ function buildSystemPrompt(packet: SceneContextPacket) {
   return [buildCoreSystemPrompt(), buildStablePrefixPrompt(packet)].join("\n\n");
 }
 
-const STIL_SENTENCE_THRESHOLD = 0.35;
-const STIL_DIALOGUE_THRESHOLD = 0.15;
-
-function computeStyleMetrics(text: string): { avgSentenceLen: number; dialogueRatio: number } {
-  const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [];
-  const avgSentenceLen = sentences.length
-    ? sentences.reduce(function (sum, s) { return sum + s.trim().split(/\s+/).length; }, 0) / sentences.length
-    : 0;
-  const dialogueMatches = text.match(/„[^"]+"/g) ?? [];
-  const totalLines = text.split(/\n+/).filter(Boolean).length || 1;
-  return { avgSentenceLen, dialogueRatio: dialogueMatches.length / totalLines };
-}
-
-function computeStilAnkerDrift(newText: string, referenceTexts: string[]): string[] {
-  if (!referenceTexts.length) return [];
-  const newMetrics = computeStyleMetrics(newText);
-  const refMetrics = referenceTexts.map(computeStyleMetrics);
-  const avgRefSentLen =
-    refMetrics.reduce(function (s, m) { return s + m.avgSentenceLen; }, 0) / refMetrics.length;
-  const avgRefDialogue =
-    refMetrics.reduce(function (s, m) { return s + m.dialogueRatio; }, 0) / refMetrics.length;
-  const notes: string[] = [];
-
-  if (avgRefSentLen > 0 && Math.abs(newMetrics.avgSentenceLen - avgRefSentLen) > avgRefSentLen * STIL_SENTENCE_THRESHOLD) {
-    const dir = newMetrics.avgSentenceLen > avgRefSentLen ? "länger" : "kürzer";
-    notes.push(
-      `Stil-Anker: Satzkomplexität ${dir} als POV-Referenz (${newMetrics.avgSentenceLen.toFixed(1)} vs ${avgRefSentLen.toFixed(1)} W/Satz).`
-    );
-  }
-
-  if (Math.abs(newMetrics.dialogueRatio - avgRefDialogue) > STIL_DIALOGUE_THRESHOLD) {
-    const dir = newMetrics.dialogueRatio > avgRefDialogue ? "höher" : "niedriger";
-    notes.push(
-      `Stil-Anker: Dialoganteil ${dir} als POV-Referenz (${(newMetrics.dialogueRatio * 100).toFixed(0)}% vs ${(avgRefDialogue * 100).toFixed(0)}%).`
-    );
-  }
-
-  return notes;
-}
-
 function buildCoreSystemPrompt() {
   return [
     "You are the drafting engine for EMBER Book Studio.",
@@ -1361,31 +1321,27 @@ function buildQualityEvalPrompt(
 }
 
 function buildAnthropicScenePrompt(params: {
-  mode: "draft" | "rewrite" | "expand" | "compress";
+  mode: "draft" | "expand" | "compress";
   packet: SceneContextPacket;
   options: DraftGenerationOptions;
   beatPlan: BeatPlanPayload;
-  draftText?: string;
   rewriteText?: string;
 }) {
   const modeInstruction =
     params.mode === "draft"
       ? `Write the scene in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`
-      : params.mode === "rewrite"
-        ? `Rewrite the scene into a final pass in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words while preserving the raw texture of the draft.`
-        : params.mode === "expand"
-          ? `Expand the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by deepening at most two beats.`
-          : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
+      : params.mode === "expand"
+        ? `Expand the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by deepening at most two beats.`
+        : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
 
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
     `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
-    params.mode === "rewrite" ? "" : `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
+    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
       : "",
-    params.draftText ? `<draft_pass>${escapeXml(params.draftText)}</draft_pass>` : "",
     params.rewriteText ? `<current_rewrite>${escapeXml(params.rewriteText)}</current_rewrite>` : "",
     `<output_contract>${escapeXml(`${modeInstruction} Return prose only in German. No headings, no JSON, no commentary.`)}</output_contract>`
   ]
