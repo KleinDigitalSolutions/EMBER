@@ -1,0 +1,1 @@
+-- Provider expansion retired; kept as a no-op so applied migration history stays aligned.

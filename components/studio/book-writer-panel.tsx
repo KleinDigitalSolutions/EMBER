@@ -1157,8 +1157,6 @@ function getProviderTooltip(provider: BookJobProviderOption) {
       return "Nutzt OpenAI Modelle (z.B. GPT-5) für präzise und strukturierte Texte.";
     case "anthropic":
       return "Nutzt Anthropic Modelle (Claude) für besonders nuancierte und literarische Prosa.";
-    case "local":
-      return "Führt den Job lokal aus (nur für Tests oder bei fehlenden API-Keys).";
     default:
       return "";
   }

@@ -1,4 +1,4 @@
-export type BookJobProviderOption = "auto" | "openai" | "anthropic" | "local";
+export type BookJobProviderOption = "auto" | "openai" | "anthropic";
 export type BookJobModelKey = "openai" | "anthropic" | "anthropicContinuity";
 
 export type BookJobModelSelection = Record<BookJobModelKey, string>;
@@ -79,7 +79,6 @@ export function isBookJobProviderOption(value: string): value is BookJobProvider
   return (
     value === "auto" ||
     value === "openai" ||
-    value === "anthropic" ||
-    value === "local"
+    value === "anthropic"
   );
 }
