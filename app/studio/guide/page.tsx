@@ -263,10 +263,46 @@ word_target_max: 1950</div>
       </section>
 
       <section>
-        <h2>3. Charakter-Gedächtnis & Ledger</h2>
+        <h2>3. Das Weltgedächtnis: Der Codex</h2>
         <p>
-          Die KI muss wissen, was eine Figur antreibt (Wunde) und wie sie spricht (Speech Pattern). 
-          Das <strong>Character State Ledger</strong> liefert diese Daten konsistent an jedes Kapitel.
+          Der <strong>Codex</strong> (auch WorldBible genannt) ist das dauerhafte Wissensarchiv deines Projekts. 
+          Hier werden alle Informationen gespeichert, die über das gesamte Buch hinweg wahr bleiben müssen.
+        </p>
+
+        <div className="grid">
+          <div className="grid-item">
+            <span className="label">Was gehört in den Codex?</span>
+            <ul style={{ fontSize: '0.85rem' }}>
+              <li><strong>Charaktere:</strong> Wer sind sie? Wie sehen sie aus? Was treibt sie an?</li>
+              <li><strong>Locations:</strong> Wo spielt die Handlung? (z.B. Kita Sonnengarten).</li>
+              <li><strong>Objekte:</strong> Wichtige Items (z.B. Evas analoges Notizbuch).</li>
+              <li><strong>Themen:</strong> Zentrale Motive und Konzepte der Welt.</li>
+            </ul>
+          </div>
+          <div className="grid-item">
+            <span className="label">Pipeline-Integration</span>
+            <p style={{ fontSize: '0.85rem' }}>
+              Die Pipeline wählt automatisch die relevantesten Codex-Einträge für jede Szene aus. 
+              Diese Informationen landen im <strong>Kanon-Ledger</strong> und dienen als 
+              unverrückbare Wahrheit für den Schreibprozess.
+            </p>
+          </div>
+        </div>
+
+        <div className="card">
+          <h3>Wo füge ich Codex-Einträge hinzu?</h3>
+          <p style={{ fontSize: '0.9rem' }}>
+            Klicke im Studio in der linken Seitenleiste auf das <strong>Buch-Icon (Codex)</strong>. 
+            Dort kannst du neue Einträge erstellen, nach Kategorien filtern und Beschreibungen editieren.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. Dynamische Entwicklung: Character Ledger</h2>
+        <p>
+          Während der Codex statische Informationen liefert, hält das <strong>Character Ledger</strong> fest, 
+          wie sich Figuren über die Zeit verändern.
         </p>
 
         <div className="card">
@@ -283,7 +319,7 @@ word_target_max: 1950</div>
       </section>
 
       <section>
-        <h2>4. Continuity Guardrails</h2>
+        <h2>5. Continuity Guardrails</h2>
         <p>
           Dieses Modul läuft nach jedem Draft-Lauf und prüft auf Fehler, die ein menschlicher 
           Lektor sofort sehen würde.
@@ -318,7 +354,7 @@ word_target_max: 1950</div>
       </section>
 
       <section>
-        <h2>5. Der Strategische Assistent (Chat)</h2>
+        <h2>6. Der Strategische Assistent (Chat)</h2>
         <p>
           Der EMBER Assistant ist kein gewöhnlicher Chatbot. Er ist ein integrierter Story-Stratege, 
           der den gesamten Kontext deines Projekts kennt.
