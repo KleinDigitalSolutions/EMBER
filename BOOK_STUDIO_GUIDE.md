@@ -214,18 +214,16 @@ Hier steuerst du den Draft-Job.
 
 #### Provider
 
-Verfügbar sind:
+Verfügbar sind in der aktuellen UI:
 
 - `Auto`
 - `OpenAI`
 - `Anthropic`
-- `Gemini`
 
 Praxis:
 
 - `OpenAI` eignet sich gut für präzise, saubere Struktur.
 - `Anthropic` eignet sich gut für nuancierte, atmosphärische Prosa.
-- `Gemini` eignet sich gut für schnelle Läufe und breite Kontexte.
 - `Auto` nimmt den besten verfügbaren Pfad auf Basis der Umgebung.
 
 Für den ersten echten Testlauf ist besser:
@@ -504,7 +502,7 @@ Wenn du deinen ersten echten Run machen willst, nimm diesen Minimalpfad:
 1. `npm run dev`
 2. `/studio` öffnen
 3. eine Szene mit klarer Summary wählen
-4. Provider bewusst auf `OpenAI`, `Anthropic` oder `Gemini` setzen
+4. Provider bewusst auf `OpenAI` oder `Anthropic` setzen
 5. Wortziel auf `1200–1600`
 6. eine kurze operative Director Note schreiben
 7. Job starten

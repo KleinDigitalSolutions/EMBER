@@ -142,13 +142,14 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
 ## KI-Strategie
 ### Modellpolitik
 Wir fahren den produktiven Pfad nur noch ueber Premium-Modelle.
-- OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
-- Anthropic: Claude Opus 4.7 ist im Code der aktuelle starke Book-Default fuer Prosa. Structured Nebenjobs werden davon getrennt: Continuity und seit `2026-04-21` auch State-Extract laufen auf `claude-haiku-4-5-20251001`, weil dort Schema-Treue wichtiger ist als stilistische Stärke. Deployment-spezifische Wechsel bleiben weiterhin über Env oder UI-Override möglich `aktualisiert 2026-04-21`
-- Anthropic-Livepfad fuer Book-Jobs ist seit `2026-04-20` gehaertet: dynamisches Output-Budget, robuster JSON-Parse statt blindem Auto-Parse, Retry mit hoeherem Tokenbudget, kompakteres Prompting fuer Metadaten und ein gezielter Repair-Pass fuer Qualitaetsabweichungen. Dadurch bleibt der Pfad in echten `/api/book-jobs`-Läufen deutlich stabiler remote statt auf `local_fallback` zu kippen.
+- OpenAI: Responses API als Primärpfad; `gpt-5.4-pro` als aktueller Default für starke Generierungsjobs `erledigt 2026-04-18`
+- Anthropic: `claude-opus-4-7` ist der aktuelle Default fuer Prosa und die strukturierten Nebenstufen im Anthropic-Pfad. Separate Modell-Overrides bleiben pro Job moeglich, aber der Runtime-Pfad splittet nicht mehr auf einen dritten Provider auf.
+- Die Book-Runtime ist bewusst auf OpenAI oder Anthropic begrenzt. Wenn ein Key fehlt oder ein Remote-Call scheitert, faellt der Lauf kontrolliert auf `local_fallback` zurueck. Dieser Modus ist ein Sicherheitsnetz und kein Modellurteil.
+- Der Anthropic-Livepfad fuer Book-Jobs ist seit `2026-04-20` gehaertet: dynamisches Output-Budget, robuster JSON-Parse statt blindem Auto-Parse, Retry mit hoeherem Tokenbudget, kompakteres Prompting fuer Metadaten und ein gezielter Repair-Pass fuer Qualitaetsabweichungen. Dadurch bleibt der Pfad in echten `/api/book-jobs`-Läufen deutlich stabiler remote statt auf `local_fallback` zu kippen.
 
 Optional später:
-- kleinere GPT- oder Claude-Klassen nur für Extraktion, Audits und Hintergrundjobs
-- feinere Routing-Regeln fuer Premium-vs.-Kostenpfad je nach Jobtyp
+- feinere Routing-Regeln zwischen Draft-, Continuity- und Cost-Pfad innerhalb von OpenAI und Anthropic
+- strengere Guardrails fuer die Auswahl von Modell-Overrides pro Job
 
 ### Betriebsprinzip
 - Der Chat ist nie die Quelle der Wahrheit.
@@ -372,8 +373,8 @@ Quick Tunnels sind laut Cloudflare nicht für Produktion gedacht. Für echte ext
 - Patch-System `erledigt 2026-04-18` als lokales regelbasiertes Patch-Lab
 - Continuity Checks `erledigt 2026-04-18` als lokaler Continuity-Report im Review-Panel
 - Submission Reviewer `erledigt 2026-04-18` als lokales Reviewer-Memo im Review-Panel
-- **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`OpenAI` / `Anthropic` / `Gemini` / `Local Fallback`) im Writer-Panel integriert.
-- **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → outline → draft → extract → continuity → rewrite`.
+- **Model Selector UI:** `erledigt 2026-04-19`. Toggle-Interface zur Provider-Wahl pro Job (`Auto` / `OpenAI` / `Anthropic`) im Writer-Panel integriert; `local_fallback` bleibt nur die Runtime-Sicherung bei fehlenden Keys oder Remote-Fehlern.
+- **Stage Split UI:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel zeigen die Pipeline jetzt getrennt als `context → beat_plan → draft → rewrite → length_control → extract → continuity → quality_eval`.
 - **Assistant Workspace:** `erledigt 2026-04-19`. Thread-basierter Story-Chat mit serverseitiger Route, Provider-/Modellwahl, Scope (`Projekt` / `Act` / `Kapitel` / `Szene`) und strukturierten Outputs fuer Antwort oder Regie-Dokument.
 - **Studio Brainstormer:** RAG-basierter Ausbau des Assistant Workspace mit tieferer Codex-/Historien-Einbindung. `geplant`
 - **Style Presets:** Szenen-spezifische Stilregeln (z.B. "Action-Pacing"). `geplant`
@@ -436,9 +437,9 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 
 ### Phase 3: Draft Engine `erledigt 2026-04-18`
 - Szenenweises Drafting `erledigt`
-- getrennte Jobs bzw. Stufen fuer Context, Outline, Draft, Extract, Continuity und Rewrite `erledigt` im Datenmodell, Persistenzlayer und UI-Flow
+- getrennte Jobs bzw. Stufen fuer Context, Beat Plan, Draft, Rewrite, Length Control, Extract, Continuity und Quality Eval `erledigt` im Datenmodell, Persistenzlayer und UI-Flow
 - strukturierte Rueckgaben statt Freitext-Only `erledigt`
-- Modellrouting fuer starkes Hauptmodell plus guenstigere Nebenjobs `erledigt` als initialer Provider-Flow; aktuell OpenAI, Anthropic und Gemini plus lokaler Fallback
+- Modellrouting fuer starkes Hauptmodell plus sauberen Remote-Fallback `erledigt` als initialer Provider-Flow; aktuell OpenAI und Anthropic plus lokaler Fallback
 - stabile Prompt-Module plus kleiner dynamischer Szene-Pack `erledigt`; Anthropic nutzt fuer den stabilen Prefix Prompt Caching
 - Anthropic-Book-Pfad gegen JSON-Abbrueche und Formatdrift gehaertet: dynamisches Tokenbudget, Retry, JSON-Extraktion, defensive Array-Normalisierung und Repair-Pass `erledigt 2026-04-20`
 
@@ -451,7 +452,7 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-18`
 - **Foundation:** `erledigt`. Book-Blueprint in Schema integriert. Plan-Modus unterstützt Master Brief & Market Brief.
 - **Memory Backbone:** `erledigt`. Canon Ledger, Character Ledger und Open Threads werden persistent in Supabase verwaltet.
-- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-4o`) und Anthropic als konfigurierbarem Premium-Pfad; die konkreten Provider-Modelle bleiben ueber Env und spaeter auch per UI-Override austauschbar. Context-Packs werden server-seitig generiert.
+- **Draft Engine:** `erledigt`. `BookJobProvider` startet mit OpenAI (`gpt-5.4-pro`) und Anthropic (`claude-opus-4-7`) als konfigurierbarem Premium-Pfad; die konkreten Provider-Modelle bleiben ueber Env und spaeter auch per UI-Override austauschbar. Context-Packs werden server-seitig generiert.
 - **Persistence:** `erledigt`. Volle Persistenz des Story-Graphen und Book-Gedächtnisses in Supabase implementiert.
 
 ## Status Report `2026-04-19`
@@ -465,20 +466,20 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Assistant Schema:** `erledigt 2026-04-19`. `StoryDocument` traegt jetzt Assistant-Praeferenzen, Threads, Nachrichten und Artefakte inklusive Normalisierung fuer Legacy-Daten.
 - **Schema & Persistence:** `erledigt`. `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
 - **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
-- **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; ein separater Continuity-Audit kann auf einem leichteren Anthropic-Modell statt auf dem Haupt-Draft-Modell laufen.
-- **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind Claude/GPT-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
+- **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; Draft, Rewrite, Extract, Continuity und Quality-Eval laufen im selben Providerpfad und koennen ueber separate Draft- und Continuity-Model-Overrides gesteuert werden.
+- **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind OpenAI- und Anthropic-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
 - **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
 
 ## Status Report `2026-04-20`
 - **Anthropic Book Hardening:** `erledigt 2026-04-20`. Der serverseitige Anthropic-Pfad in `BookJobService` arbeitet nicht mehr mit einem starren kleinen Tokenlimit und blindem Auto-Parse, sondern mit dynamischem Output-Budget, robuster JSON-Extraktion, Retry bei unvollstaendigem Output und einem gezielten Repair-Pass fuer Qualitaetsverletzungen.
 - **Remote Stability:** `erledigt 2026-04-20`. Echte End-to-End-Läufe ueber `/api/book-jobs` mit `claude-opus-4-7` bleiben nun im Modus `remote`, statt systematisch auf `local_fallback` zu kippen. Der Pfad ist damit fuer den alltäglichen Einsatz deutlich belastbarer.
-- **Anthropic Extract Split:** `aktualisiert 2026-04-21`. Der State-Extract im Anthropic-Pfad wurde bewusst von Opus auf `claude-haiku-4-5-20251001` verschoben. Grund: Opus ist stark fuer Prosa, aber zu kreativ fuer harte Structured-Extraktion; Haiku ist hier das passendere Tool. Parallel dazu wurde das Extract-Schema verkleinert, der Prompt haerter begrenzt und der alte Repair-Schritt durch eine frische Neugenerierung mit kleinerem Contract ersetzt.
-- **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `claude-opus-4-7` fuer den Hauptdraft und `claude-haiku-4-5-20251001` fuer Continuity. Deployment-spezifische Env-Werte koennen davon weiterhin abweichen.
+- **Structured Stage Split:** `aktualisiert 2026-04-21`. Der Book-Job ist in `context`, `beat_plan`, `draft`, `rewrite`, `length_control`, `extract`, `continuity` und `quality_eval` gegliedert. Die strukturierten Stufen laufen nicht mehr als separater Billig-Provider-Pfad, sondern im selben Provider-/Model-Setup wie der Job selbst.
+- **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `gpt-5.4-pro` fuer OpenAI und `claude-opus-4-7` fuer Anthropic, jeweils mit per-Job-Override und Env-Override als hoeheren Ebenen.
 - **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
 - **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde eine fehlerhafte Kurzfassung durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
-- **Offene Grenze:** `aktualisiert 2026-04-21`. Der Anthropic-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Zusaetzlich bleibt Gemini aktuell durch Verfuegbarkeitsschwankungen (`503 / high demand`) als Vergleichspfad eingeschraenkt. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
+- **Offene Grenze:** `aktualisiert 2026-04-26`. Der Book-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
 
 ### Nächste technische Prioritäten
 1. **Rewrite-Length Control:** Zweiten gezielten Expand-/Repair-Pass einführen, damit `rewriteText` hohe Zielbereiche wie `1350-1650` zuverlässiger erreicht, ohne die Prosa zu verwässern.
@@ -490,10 +491,10 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Architekturentscheidung aus verifizierter Recherche `Stand 2026-04-18`
 - OpenAI empfiehlt fuer neue Workflows die Responses API statt Chat Completions.
 - Responses liefert Stateful Context, Structured Outputs, bessere Cache-Nutzung und passt damit sauber zu einem serverseitigen Schreibsystem.
-- OpenAI-gpt-5.4 ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; gpt-5.4-mini bleibt Kandidat fuer Extractor- und Audit-Paesse.
-- Anthropic dokumentiert Claude Opus 4 als staerkstes Modell und Claude Sonnet 4 als effizientere High-Performance-Option; im EMBER-Book-Track ist Opus 4.7 inzwischen der robuste Premium-Pfad fuer wichtige Szenen, waehrend Haiku den Continuity-Audit tragen kann.
-- Gemini 3.1 Pro ist als schnellerer und guenstigerer Provider fuer Drafting-/Testpfade angebunden; die Architektur traegt damit bewusst mehr als einen Premium-Pfad.
-- Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt; dieser Split ist fuer Anthropic jetzt konkret umgesetzt.
+- OpenAI-gpt-5.4-pro ist laut aktueller Doku der sinnvolle Default fuer hochwertige Generierungsjobs; gpt-5.4-mini bleibt nur ein moeglicher Override fuer sparsamere Szenarien.
+- Anthropic dokumentiert Claude Opus 4.7 als starke Premium-Option; im EMBER-Book-Track ist Opus 4.7 aktuell der robuste Default fuer wichtige Szenen und fuer die strukturierten Nebenstufen.
+- Es gibt keinen dritten Runtime-Provider mehr fuer den Book-Pfad. OpenAI und Anthropic sind die produktiven Wege, `local_fallback` ist nur das Sicherheitsnetz.
+- Prompt Caching ist fuer beide Anbieter relevant, aber nur dann stark, wenn der stabile Prefix identisch bleibt und der variable Kontext klein bleibt.
 - Langer Kontext ist kein Selbstzweck. Die Architektur muss Relevanz filtern, statt das ganze Buch in jeden Prompt zu kippen.
 
 ## Zielbild für die Book Engine
@@ -527,6 +528,8 @@ Der Buch-Track wird als mehrstufiges Schreibsystem gebaut, nicht als endlose Ses
   - Open Threads
 - Wenn eine Figur ueber eine Wunde motiviert ist, muss diese explizit und strukturiert im Character State stehen; sonst wird sie im Prompt zu weich.
 - Wenn eine Szene einen speziellen Trigger oder Manipulationsmoment hat, muss er als eigenes Scene-Card-Feld vorliegen, nicht nur implizit in Summary oder Freitext.
+- Der Parser liest pro Scene Card heute nur die harten Direktiven `pov`, `location`/`ort`, `timeAnchor`/`uhrzeit`, `objective`/`ziel`, `opening`/`einstieg`, `coreAction`/`kern_aktion`, `dramaticBeat`/`beat`, `ending`/`ende` und `closingLine`/`letzter_satz` direkt. Harte Custom-Keys sind `proof_object`/`beweisobjekt`, `alltagswaffe`, `ersetzungsmoment`, `kindmoment`/`mila_kindmoment`, `object_anchor`/`prop_anchor`, plus die narrativen Zusatzfelder `setup`, `subtext` und `buch2_hinweis`.
+- `reversal`, `reader_pulse`, `main_question`, `scene_promise` und aehnliche Felder sind weiterhin wertvoll als Regie- und Lesefuehrung, aber sie sind keine direkten Parser-Hard-Fields.
 - Nach jedem Regie-Sync ist ein Ruecklese-Check Pflicht:
   - `book_projects.master_brief` muss vollstaendig sein, nicht nur Stichwoerter
   - `book_writer_rules` muss die komplette Regelbasis tragen

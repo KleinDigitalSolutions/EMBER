@@ -184,223 +184,199 @@ export default function StudioGuidePage() {
       `}</style>
 
       <header>
-        <span className="kicker">Deep Dive | Blueprint v2</span>
-        <h1>Die perfekte Regie</h1>
+        <span className="kicker">Deep Dive | Book Track</span>
+        <h1>So arbeitet der Book-Bereich</h1>
         <p className="intro">
-          EMBER schreibt nicht „einfach so“. Die Qualität des Drafts hängt direkt von der 
-          Konfiguration in deiner Regie-Datei ab. Hier lernst du, wie du die Pipeline steuerst.
+          Der Book-Track ist kein normaler Texteditor. Du schärfst erst den Blueprint, dann
+          die Scene Cards, und erst danach startest du einen Draft-Job. So bleibt die
+          Pipeline für neue Nutzer nachvollziehbar.
         </p>
       </header>
 
       <section>
-        <h2>1. Das Strategische Fundament</h2>
-        <p>
-          Bevor eine einzige Zeile Prosa entsteht, muss die KI den „Sound“ und die Grenzen 
-          des Projekts verstehen. Dies geschieht in der <strong>Writer Constitution</strong>.
-        </p>
-        
+        <h2>1. Womit du anfängst</h2>
         <div className="grid">
           <div className="grid-item rule-pos">
-            <span className="label">Positiv-Regeln (Stilanker)</span>
-            <p style={{ fontSize: '0.85rem' }}>
-              Definiere, wie EMBER schreiben soll. Vermeide Adjektive, nutze Beobachtungen.
+            <span className="label">Blueprint</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Master Brief, Market Brief und Writer Constitution geben Richtung, Ton und
+              Grenzen vor. Wenn das weich ist, wird der Draft weich.
             </p>
-            <div className="example-block">
-"Nahe dritte Person auf Eva. 
-Sätze werden unter Druck nicht poetischer, 
-sondern genauer und kürzer."</div>
           </div>
-          <div className="grid-item rule-neg">
-            <span className="label">Negativ-Regeln (Verbote)</span>
-            <p style={{ fontSize: '0.85rem' }}>
-              Harte Grenzen verhindern KI-Drift (z.B. „Kitsch“, „Erklärungsmonologe“).
+          <div className="grid-item rule-pos">
+            <span className="label">Scene Cards</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Szene für Szene legst du harte Regie fest. Die Scene Card ist die operative
+              Einheit, nicht der Fliesstext.
             </p>
-            <div className="example-block">
-"Kein Täter-POV. 
-Keine inkompetente Kita als billiger Plotmotor.
-Kein Wahn- oder Psychose-Twist."</div>
+          </div>
+          <div className="grid-item rule-pos">
+            <span className="label">Joblauf</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Draft, Rewrite, Length Control, Extract, Continuity und Quality Eval laufen
+              nacheinander. Danach entscheidest du über Accept und Save.
+            </p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>2. Das operative Gehirn: Scene Cards</h2>
-        <p>
-          Scene Cards sind die wichtigste Sektion. Sie wandeln deine Dramaturgie in 
-          maschinelle Anweisungen für die Pipeline um.
-        </p>
-
-        <h3>Der Proof-Object-Guard</h3>
-        <p>
-          Das Feld <span className="code">proof_object</span> ist ein Sicherheitsmechanismus. 
-          Der Draft wird vom System <strong>abgelehnt</strong>, wenn dieser Begriff nicht 
-          im Text auftaucht.
-        </p>
-
-        <div className="highlight-box">
-          <span className="label">Beispiel aus „Die falsche Abholung“ (Szene 1.2)</span>
-          <div className="example-block">
-Scene Card
-  id: SC_1_2
-  proof_object: Videoausschnitt, Unterschrift und gelber Becher
-  coreAction: Petra zeigt ihr Videoausschnitt, Unterschrift und den gelben Becher...
-  reversal: Gerade die alltagsnahe Unschärfe macht den Vorgang sozial glaubwürdig.</div>
-          <p style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
-            <strong>Warum das wichtig ist:</strong> Ohne den „gelben Becher“ als materiellen Anker 
-            könnte die KI eine generische Büro-Szene schreiben. Der Guard zwingt sie zur 
-            Konkretheit.
-          </p>
-        </div>
-
-        <h3>Wortziele für Fusionskapitel</h3>
-        <p>
-          EMBER hat Standard-Ziele (1200–1600 Wörter). Für komplexe Wendepunkte kannst du diese 
-          in der Scene Card überschreiben:
-        </p>
-        <div className="example-block">
-word_target_min: 1700
-word_target_max: 1950</div>
-      </section>
-
-      <section>
-        <h2>3. Das Weltgedächtnis: Der Codex</h2>
-        <p>
-          Der <strong>Codex</strong> (auch WorldBible genannt) ist das dauerhafte Wissensarchiv deines Projekts. 
-          Hier werden alle Informationen gespeichert, die über das gesamte Buch hinweg wahr bleiben müssen.
-        </p>
-
+        <h2>2. Was im Blueprint sitzen muss</h2>
         <div className="grid">
           <div className="grid-item">
-            <span className="label">Was gehört in den Codex?</span>
-            <ul style={{ fontSize: '0.85rem' }}>
-              <li><strong>Charaktere:</strong> Wer sind sie? Wie sehen sie aus? Was treibt sie an?</li>
-              <li><strong>Locations:</strong> Wo spielt die Handlung? (z.B. Kita Sonnengarten).</li>
-              <li><strong>Objekte:</strong> Wichtige Items (z.B. Evas analoges Notizbuch).</li>
-              <li><strong>Themen:</strong> Zentrale Motive und Konzepte der Welt.</li>
-            </ul>
+            <span className="label">Master Brief</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Premise, Reader Promise, Ending Promise und thematischer Kern. Das ist die
+              Klammer der Story.
+            </p>
           </div>
           <div className="grid-item">
-            <span className="label">Pipeline-Integration</span>
-            <p style={{ fontSize: '0.85rem' }}>
-              Die Pipeline wählt automatisch die relevantesten Codex-Einträge für jede Szene aus. 
-              Diese Informationen landen im <strong>Kanon-Ledger</strong> und dienen als 
-              unverrückbare Wahrheit für den Schreibprozess.
+            <span className="label">Market Brief</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Hook, Category Lane und Verpackungslogik. Das hilft bei Positionierung und
+              Lesbarkeit.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Writer Constitution</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Kurze, prüfbare Regeln. Keine weichen Ansagen wie „schöner schreiben“, sondern
+              konkrete Schreibvorgaben.
             </p>
           </div>
         </div>
-
-        <div className="card">
-          <h3>Wo füge ich Codex-Einträge hinzu?</h3>
-          <p style={{ fontSize: '0.9rem' }}>
-            Klicke im Studio in der linken Seitenleiste auf das <strong>Buch-Icon (Codex)</strong>. 
-            Dort kannst du neue Einträge erstellen, nach Kategorien filtern und Beschreibungen editieren.
+        <div className="highlight-box">
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Für neue Nutzer reicht am Anfang oft schon diese Reihenfolge: erst Story-Kern,
+            dann Marktspur, dann klare Schreibregeln.
           </p>
         </div>
       </section>
 
       <section>
-        <h2>4. Dynamische Entwicklung: Character Ledger</h2>
+        <h2>3. Was eine Scene Card wirklich steuert</h2>
         <p>
-          Während der Codex statische Informationen liefert, hält das <strong>Character Ledger</strong> fest, 
-          wie sich Figuren über die Zeit verändern.
-        </p>
-
-        <div className="card">
-          <span className="label">Beispiel: Eva Berger (Wunde)</span>
-          <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
-            „Simon warf ihr Unzuverlässigkeit vor. Eva verteidigt sich über Kontrolle. 
-            Wenn sie angezweifelt wird, wird sie schneller und härter.“
-          </p>
-          <p style={{ fontSize: '0.85rem' }}>
-            <strong>Pipeline-Effekt:</strong> Wenn Eva in Szene 1.1 den App-Eintrag sieht, 
-            schreibt die KI sie nicht „traurig“, sondern „kontrolliert-nervös“.
-          </p>
-        </div>
-      </section>
-
-      <section>
-        <h2>5. Continuity Guardrails</h2>
-        <p>
-          Dieses Modul läuft nach jedem Draft-Lauf und prüft auf Fehler, die ein menschlicher 
-          Lektor sofort sehen würde.
+          Scene Cards werden als fenced Code Blocks gelesen. Direkt wirksam sind nur die
+          Felder, die der Parser kennt.
         </p>
 
         <table>
           <thead>
             <tr>
-              <th>Typ</th>
-              <th>Prüfung durch die Pipeline</th>
-              <th>Beispiel-Schutz</th>
+              <th>Feld</th>
+              <th>Wirkung</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Namensdrift</strong></td>
-              <td>Wurde eine Figur plötzlich umbenannt?</td>
-              <td>„Eva Berger“ vs. „Frau Müller“</td>
+              <td><span className="code">pov</span></td>
+              <td>Harte Perspektive der Szene.</td>
             </tr>
             <tr>
-              <td><strong>Farbdrift</strong></td>
-              <td>Behalten Ankerobjekte ihre Farbe?</td>
-              <td>„gelber Becher“ vs. „blauer Becher“</td>
+              <td><span className="code">location</span> / <span className="code">ort</span>, <span className="code">timeAnchor</span> / <span className="code">uhrzeit</span></td>
+              <td>Ort und Zeitanker für den Job-Kontext.</td>
             </tr>
             <tr>
-              <td><strong>Rollen-Lock</strong></td>
-              <td>Wird die Funktion der Figur beibehalten?</td>
-              <td>„Sonnengarten“ muss eine Kita bleiben.</td>
+              <td><span className="code">objective</span> / <span className="code">ziel</span>, <span className="code">opening</span> / <span className="code">einstieg</span>, <span className="code">coreAction</span> / <span className="code">kern_aktion</span>, <span className="code">dramaticBeat</span> / <span className="code">beat</span>, <span className="code">ending</span> / <span className="code">ende</span></td>
+              <td>Die eigentliche Szenensteuerung für Prompt und Verlauf.</td>
+            </tr>
+            <tr>
+              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span>, <span className="code">object_anchor</span> / <span className="code">prop_anchor</span>, <span className="code">closingLine</span> / <span className="code">letzter_satz</span></td>
+              <td>Harte Custom-Constraints, die im Draft sichtbar bleiben müssen.</td>
+            </tr>
+            <tr>
+              <td><span className="code">reversal</span> und ähnliche Regiehinweise</td>
+              <td>Hilfreich für Dramaturgie, aber nicht der harte Parser-Kern.</td>
             </tr>
           </tbody>
         </table>
+
+        <div className="highlight-box">
+          <span className="label">Beispiel</span>
+          <div className="example-block">
+Scene Card
+  id: SC_1_2
+  pov: EVA
+  objective: Eva will den App-Eintrag korrigieren.
+  coreAction: Eva fährt direkt zur Kita und prüft den Vorgang.
+  proof_object: Videoausschnitt, Unterschrift und gelber Becher
+  dramaticBeat: Aus dem vermuteten App-Fehler wird ein real protokollierter Abholvorgang.</div>
+        </div>
       </section>
 
       <section>
-        <h2>6. Der Strategische Assistent (Chat)</h2>
+        <h2>4. Wie ein Job läuft</h2>
+        <div className="grid">
+          <div className="grid-item">
+            <span className="label">Ablauf</span>
+            <ol style={{ fontSize: "0.9rem", paddingLeft: "1.2rem" }}>
+              <li>Context</li>
+              <li>Beat Plan</li>
+              <li>Draft</li>
+              <li>Rewrite</li>
+              <li>Length Control</li>
+              <li>Extract</li>
+              <li>Continuity</li>
+              <li>Quality Eval</li>
+            </ol>
+          </div>
+          <div className="grid-item">
+            <span className="label">Provider</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              In der UI wählst du nur <strong>Auto</strong>, <strong>OpenAI</strong> oder
+              <strong> Anthropic</strong>. Wenn ein Key fehlt, läuft der Job im
+              <span className="code">local_fallback</span> weiter.
+            </p>
+          </div>
+        </div>
+        <div className="highlight-box">
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            <strong>remote</strong> bedeutet: echter Modelllauf. <strong>local_fallback</strong>
+            bedeutet: Sicherheitsnetz, nicht Qualitätsurteil.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5. Generate, Accept, Save</h2>
         <p>
-          Der EMBER Assistant ist kein gewöhnlicher Chatbot. Er ist ein integrierter Story-Stratege, 
-          der den gesamten Kontext deines Projekts kennt.
+          Erst wird generiert, dann geprüft, dann übernommen. Nur so landet der Text sauber
+          in Szene und Datenbank.
         </p>
 
         <div className="grid">
           <div className="grid-item">
-            <span className="label">Context Scopes</span>
-            <p style={{ fontSize: '0.85rem' }}>
-              Du entscheidest, wie viel der Assistent „weiß“. Wähle zwischen 
-              <strong> Projekt</strong>, <strong>Act</strong>, <strong>Kapitel</strong> oder 
-              einer spezifischen <strong>Szene</strong>. 
-            </p>
-            <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: 'var(--text-faint)' }}>
-              Im Scope „Szene“ sieht er alle relevanten Charakter-Stände und offenen Threads.
+            <span className="label">1. Generate</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Startet den Job und legt Draft, Rewrite und Notes an.
             </p>
           </div>
           <div className="grid-item">
-            <span className="label">Output Modi</span>
-            <p style={{ fontSize: '0.85rem' }}>
-              <strong>Antwort (Chat):</strong> Schnelles Brainstorming und Analyse.<br />
-              <strong>Regie (Dokument):</strong> Erzeugt einen formalen Regiebrief als persistentes Dokument (Artifact).
+            <span className="label">2. Accept</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Schreibt den Rewrite in die Szene, wenn keine Acceptance-Blocker mehr da sind.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">3. Save</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Erst danach ist der Stand in Supabase stabil und nicht nur ein lokaler Draft.
             </p>
           </div>
         </div>
+      </section>
 
+      <section>
+        <h2>6. Erster Lauf für neue Nutzer</h2>
         <div className="highlight-box">
-          <h3 style={{ marginTop: 0 }}>Was ein Regiebrief (Artifact) leistet</h3>
-          <p style={{ fontSize: '0.9rem' }}>
-            Wenn du den Modus auf „Regie“ stellst, analysiert der Assistent den **Pipeline-Fit** 
-            deiner Idee. Er erzeugt Dokumente mit:
-          </p>
-          <ul style={{ fontSize: '0.85rem' }}>
-            <li><strong>Strukturabgleich:</strong> Passt die Szene zum Master Brief?</li>
-            <li><strong>Stable Prefix:</strong> Zusammenfassung der unumstößlichen Buchwahrheiten.</li>
-            <li><strong>Nächste Schritte:</strong> Konkrete Aufgaben für die Writer-UI.</li>
-          </ul>
-        </div>
-
-        <div className="error-box" style={{ background: 'rgba(224, 159, 102, 0.05)', borderLeftColor: 'var(--accent)' }}>
-          <h4 style={{ color: 'var(--accent)' }}>Pro-Tipp: Die X-Ray Regel</h4>
-          <p style={{ fontSize: '0.85rem' }}>
-            Nutze vor jeder Revision ein Kapitel-X-Ray: 
-            <strong> „Eva will X, tut Y, verliert oder gewinnt Z.“</strong> 
-            Wenn ein Kapitel keine klare Veränderung (Z) hat, streiche oder fusioniere es.
-          </p>
+          <ol style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.95rem" }}>
+            <li>`npm run dev` starten.</li>
+            <li>`/studio` öffnen und eine Szene mit klarer Summary wählen.</li>
+            <li>Provider auf `OpenAI` oder `Anthropic` setzen.</li>
+            <li>Wortziel auf einen normalen Bereich setzen, nicht zu hoch.</li>
+            <li>Eine kurze operative Director Note schreiben.</li>
+            <li>Job starten, Ergebnis lesen, dann Accept und Save prüfen.</li>
+          </ol>
         </div>
       </section>
 

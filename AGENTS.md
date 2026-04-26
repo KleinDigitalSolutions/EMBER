@@ -24,3 +24,12 @@ Recent commits use short, lowercase summaries like `store front`. Keep commit me
 
 ## Configuration & Content Notes
 The legacy reader stores progress in browser localStorage under `ember-progress-v1`. If you change scene IDs, ending IDs, or asset names inside `public/legacy/`, update all references together to avoid broken progress restores or missing media. Keep runtime assets under `public/legacy/` instead of duplicating them in the repository root.
+
+For the Book pipeline, keep the docs aligned with the current runtime instead of older provider experiments:
+
+- Remote Book jobs are routed only through `OpenAI` or `Anthropic`.
+- `local_fallback` is an expected safety path, not a signal that the model is bad.
+- The UI currently exposes `Auto`, `OpenAI`, and `Anthropic`; there is no Gemini runtime path in the Book writer.
+- Scene Cards are parsed from fenced code blocks. The direct hard fields are `pov`, `location` / `ort`, `timeAnchor` / `uhrzeit`, `objective` / `ziel`, `opening`, `coreAction` / `kern_aktion`, `dramaticBeat` / `beat`, `ending` / `ende`, and `closingLine` / `letzter_satz`.
+- Hard custom keys include `proof_object` / `beweisobjekt`, `alltagswaffe`, `ersetzungsmoment`, `kindmoment` / `mila_kindmoment`, `object_anchor`, and `prop_anchor`.
+- Keep `book_writer_rules`, `book_scene_cards`, `book_context_packs`, `master_brief_runtime`, and `writer_rules_runtime` in sync when you touch the book bootstrap or sync flow.
