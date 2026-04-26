@@ -991,65 +991,65 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-3",
     kicker: "Buchprobe · Szene 3",
-    title: "Der Verdacht",
+    title: "Bitte fahr nicht allein",
     summary:
-      "Nach einem Telefonat mit Simon und einer irritierenden Begegnung mit Nora macht Eva zu Hause eine Entdeckung in Milas Rucksack, die den Fall in ein völlig neues Licht rückt.",
+      "Auf dem Parkplatz vor der Kita reagieren Simon und Nora auf dieselbe Lage mit zwei gegensätzlichen Formen von Hilfe. Zuhause wartet mit einem zweiten Haargummi bereits der erste kleine Beweis, dass Noras Nähe nicht nur tröstet, sondern mitläuft.",
     paragraphs: sceneThreeParagraphs
   },
   {
     id: "scene-4",
     kicker: "Buchprobe · Szene 4",
-    title: "Die Listen",
+    title: "Die Liste",
     summary:
-      "Eva vergleicht Kalender, App und alte Papierformulare. Ein Fund im Kita-Ordner und eine nächtliche Begegnung im Hof verstärken das Gefühl, dass jemand ihre Identität bis in die kleinsten Details kennt.",
+      "Eva sucht in Kalendern, App und alten Papierwegen nach einem banalen Restfehler. Statt Entlastung findet sie ein Muster, das Nora aus alten Listen und gegenwärtigen Garderobendetails direkt in den Nahraum zieht.",
     paragraphs: sceneFourParagraphs
   },
   {
     id: "scene-5",
     kicker: "Buchprobe · Szene 5",
-    title: "Das Codewort",
+    title: "Schriftlich",
     summary:
-      "Eva legt in der Kita neue Sicherheitsregeln und ein geheimes Codewort fest. Doch beim Blick in die alten Unterlagen zögert sie, Nora offiziell zu streichen – und macht kurz darauf eine Beobachtung auf der Straße.",
+      "Im Büro von Petra soll Schrift erstmals Schutz geben. Doch die alte Vollmacht zeigt, wie lange Nora formal mitlief, und Eva streicht sie noch nicht aus dem System, weil ein zu früher Schnitt mehr verdecken als klären würde.",
     paragraphs: sceneFiveParagraphs
   },
   {
     id: "scene-6",
     kicker: "Buchprobe · Szene 6",
-    title: "Zwei Wahrheiten",
+    title: "Verlegt",
     summary:
-      "Ein Anruf in der Praxis und eine Begegnung an der Supermarktkasse bestätigen Evas schlimmsten Verdacht: Jemand führt ihr Leben, während sie selbst an einem anderen Ort ist – und Simon beginnt, an ihrer Wahrnehmung zu zweifeln.",
+      "Praxis, Rezept und Supermarktkasse erzählen plötzlich denselben falschen Tag. Simon prüft zum ersten Mal selbst mit, bleibt aber vorsichtig genug, um Evas Lage noch nicht für Wahrheit, sondern nur für Unruhe zu halten.",
     paragraphs: sceneSixParagraphs
   },
   {
     id: "scene-7",
     kicker: "Buchprobe · Szene 7",
-    title: "Eine Woche",
+    title: "Stabil",
     summary:
-      "Eva konfrontiert Simon mit ihren Belegen. Unten im Hof wird sichtbar, wie selbstverständlich Nora längst in Milas Alltag steht und wie schnell Simon die Kontrolle über jede weitere Abholung an sich zieht.",
+      "Simon will Mila schützen und übersetzt Angst in Ordnung. Auf dem Spielplatz wird sichtbar, wie vernünftig diese Schutzlogik klingt und wie leicht sie Nora dabei schon als selbstverständliche Konstante mitträgt.",
     paragraphs: sceneSevenParagraphs
   },
   {
     id: "scene-8",
     kicker: "Buchprobe · Szene 8",
-    title: "Papier",
+    title: "Die Akte über Nora",
     summary:
-      "Ein Gespräch und ein Gang zur Dienststelle verschieben Evas Verdacht in eine neue Richtung: Nicht nur das Kind, auch die Dokumentation selbst kann zur Waffe werden. Zuhause wartet bereits der nächste Beweis.",
+      "Ein Gespräch im Café und ein nüchterner Gang zur Dienststelle schärfen Noras Muster, ohne es schon zu beweisen. Zuhause liegt der nächste Gegenwartsrest bereit und macht aus Verdacht wieder Material.",
     paragraphs: sceneEightParagraphs
   },
   {
     id: "scene-9",
     kicker: "Buchprobe · Szene 9",
-    title: "Ersatz",
+    title: "Der Ersatzschlüssel",
     summary:
-      "Eva prüft Schlüssel, Kopien und Kellerbeutel und stößt auf Spuren, die sich nicht mehr als Zufall lesen lassen. Als Nora nachts im Treppenhaus auftaucht, kippt der Verdacht endgültig in konkrete Bedrohung.",
+      "Eva folgt dem alten Ersatzschlüssel bis in den Keller und stößt auf eine still manipulierte Rückgabe. Der neue Zylinder schützt die Tür, aber nicht die Erkenntnis, wie lange Nora bereits jede kleine Gewohnheit im Haus kannte.",
     paragraphs: sceneNineParagraphs
   },
   {
     id: "scene-10",
     kicker: "Buchprobe · Szene 10",
-    title: "Waldtag",
+    title: "Elternabend",
     summary:
-      "Beim Elternabend erfährt Eva, dass Nora Informationen über Mila besitzt, bevor die Eltern sie offiziell bekommen. Vor der Wohnungstür liegt kurz darauf bereits der nächste Beweis.",
+      "Im Elternabend kippt ein harmloser Orga-Punkt in einen stillen Dominanzzug: Nora weiß vom Waldtag, bevor Eva reagieren kann. Vor der Wohnungstür liegt kurz darauf bereits die passende Regenhose.",
     paragraphs: sceneTenParagraphs
   },
   {
