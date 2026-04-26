@@ -101,7 +101,6 @@ type DraftGenerationOptions = {
   targetSceneWordsMin: number;
   targetSceneWordsMax: number;
   directorNote: string;
-  stilreferenz?: string;
 };
 
 type StageCallMetrics = {
@@ -132,9 +131,7 @@ type ScenePipelineAdapter = {
   modelName: string;
   continuityModelName: string | null;
   extractModelName: string | null;
-  generateBeatPlan: () => Promise<StructuredStageResult<BeatPlanPayload>>;
   writeDraft: (beatPlan: BeatPlanPayload) => Promise<TextStageResult>;
-  rewriteScene: (beatPlan: BeatPlanPayload, draftText: string) => Promise<TextStageResult>;
   expandScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
   compressScene: (beatPlan: BeatPlanPayload, rewriteText: string) => Promise<TextStageResult>;
   extractSceneState: (
@@ -202,9 +199,6 @@ export async function generateBookDraftJob(params: {
   const targetSceneWordsMin = normalizedTargets.targetSceneWordsMin;
   const targetSceneWordsMax = normalizedTargets.targetSceneWordsMax;
   const directorNote = params.directorNote?.trim() || "";
-  const stilreferenz = params.story
-    ? buildStilankerReferenz(params.story, packet)
-    : undefined;
 
   if (provider === "local") {
     return createLocalExecution(
@@ -231,8 +225,7 @@ export async function generateBookDraftJob(params: {
       modelOverrides: params.modelOverrides,
       targetSceneWordsMin,
       targetSceneWordsMax,
-      directorNote,
-      stilreferenz
+      directorNote
     };
 
     const result =
@@ -303,16 +296,6 @@ async function generateWithOpenAI(
     modelName,
     continuityModelName: modelName,
     extractModelName: modelName,
-    generateBeatPlan: function () {
-      return requestOpenAIStructured({
-        client,
-        modelName,
-        schema: beatPlanSchema,
-        schemaName: "ember_book_beat_plan",
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildBeatPlanPrompt(packet, options)
-      });
-    },
     writeDraft: function (beatPlan) {
       return requestOpenAIText({
         client,
@@ -320,15 +303,6 @@ async function generateWithOpenAI(
         systemPrompt: buildSystemPrompt(packet),
         userPrompt: buildDraftProsePrompt(packet, options, beatPlan),
         maxOutputTokens: resolveOpenAIProseMaxTokens(resolveDraftWordTargets(options).max)
-      });
-    },
-    rewriteScene: function (beatPlan, draftText) {
-      return requestOpenAIText({
-        client,
-        modelName,
-        systemPrompt: buildSystemPrompt(packet),
-        userPrompt: buildRewriteProsePrompt(packet, options, beatPlan, draftText),
-        maxOutputTokens: resolveOpenAIProseMaxTokens(options.targetSceneWordsMax)
       });
     },
     expandScene: function (beatPlan, rewriteText) {
@@ -414,23 +388,12 @@ async function generateWithAnthropic(
     modelName,
     continuityModelName,
     extractModelName: continuityModelName,
-    generateBeatPlan: function () {
-      return requestAnthropicStructured({
-        client,
-        stageName: "beat_plan",
-        modelName: continuityModelName,
-        maxTokens: STRUCTURED_STAGE_MAX_TOKENS,
-        schema: beatPlanSchema,
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildBeatPlanPrompt(packet, options)
-      });
-    },
     writeDraft: function (beatPlan) {
       return requestAnthropicText({
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(resolveDraftWordTargets(options).max),
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
         userPrompt: buildAnthropicScenePrompt({
           mode: "draft",
           packet,
@@ -439,27 +402,12 @@ async function generateWithAnthropic(
         })
       });
     },
-    rewriteScene: function (beatPlan, draftText) {
-      return requestAnthropicText({
-        client,
-        modelName,
-        maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
-        userPrompt: buildAnthropicScenePrompt({
-          mode: "rewrite",
-          packet,
-          options,
-          beatPlan,
-          draftText
-        })
-      });
-    },
     expandScene: function (beatPlan, rewriteText) {
       return requestAnthropicText({
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
         userPrompt: buildAnthropicScenePrompt({
           mode: "expand",
           packet,
@@ -474,7 +422,7 @@ async function generateWithAnthropic(
         client,
         modelName,
         maxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax),
-        systemBlocks: buildAnthropicSystemPromptBlocks(packet),
+        systemBlocks: buildAnthropicProseSystemPromptBlocks(packet),
         userPrompt: buildAnthropicScenePrompt({
           mode: "compress",
           packet,
@@ -542,37 +490,8 @@ async function runScenePipeline(
     modelName: adapter.modelName,
     updatedAt: new Date().toISOString(),
     attemptCount: 0,
-    notes: ["Beat-Plan wurde noch nicht erzeugt."]
+    notes: ["Beat-Plan deaktiviert. Fallback aus Scene Card verwendet."]
   });
-
-  try {
-    const beatPlanResult = await adapter.generateBeatPlan();
-    beatPlan = sanitizeBeatPlan(packet, options, beatPlanResult.payload);
-    outlineNotes = buildOutlineFromBeatPlan(beatPlan);
-    beatPlanStage = createStageRun({
-      provider: adapter.provider,
-      modelName: beatPlanResult.metrics.modelName,
-      updatedAt: new Date().toISOString(),
-      attemptCount: beatPlanResult.metrics.attemptCount,
-      repairCount: beatPlanResult.metrics.repairCount,
-      durationMs: beatPlanResult.metrics.durationMs,
-      inputTokens: beatPlanResult.metrics.inputTokens,
-      outputTokens: beatPlanResult.metrics.outputTokens,
-      stopReason: beatPlanResult.metrics.stopReason,
-      notes: outlineNotes
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "unknown error";
-    const fallbackNote = `Beat-Plan fehlgeschlagen; fallback aus Scene Card verwendet. ${message}`;
-    warnings.push(fallbackNote);
-    beatPlanStage = createStageRun({
-      status: "failed",
-      provider: adapter.provider,
-      modelName: adapter.modelName,
-      updatedAt: new Date().toISOString(),
-      notes: [fallbackNote].concat(outlineNotes.slice(0, 3))
-    });
-  }
 
   const draftResult = await adapter.writeDraft(beatPlan);
   const draftText = sanitizeSceneText(draftResult.text);
@@ -580,14 +499,7 @@ async function runScenePipeline(
   if (!draftText) {
     throw new Error("Draft stage returned no prose.");
   }
-
-  const rewriteResult = await adapter.rewriteScene(beatPlan, draftText);
-  const rewrittenText = sanitizeSceneText(rewriteResult.text);
-
-  if (!rewrittenText) {
-    throw new Error("Rewrite stage returned no prose.");
-  }
-
+  const rewrittenText = draftText;
   const lengthControl = await maybeRunLengthControl(packet, options, adapter, beatPlan, rewrittenText);
 
   if (lengthControl.warning) {
@@ -729,19 +641,6 @@ async function runScenePipeline(
     warnings.push(`Continuity-Guard: ${guardContinuityRisks.join(" | ")}`);
   }
 
-  if (options.stilreferenz) {
-    const referenceTexts = options.stilreferenz.split("\n---\n").filter(Boolean);
-    const driftNotes = computeStilAnkerDrift(lengthControl.text, referenceTexts);
-
-    if (driftNotes.length) {
-      extractedState = mergeContinuityAudit(extractedState, {
-        continuityRisks: [],
-        styleDriftNotes: driftNotes
-      });
-      warnings.push(`Stil-Anker: ${driftNotes.join(" | ")}`);
-    }
-  }
-
   let qualityEval = createFallbackQualityEval(options, countWords(lengthControl.text));
   let qualityStage = createStageRun({
     status: "skipped",
@@ -825,19 +724,15 @@ async function runScenePipeline(
         notes: [`Erster Prosa-Pass mit ${countWords(draftText)} Wörtern erstellt.`]
       }),
       rewrite: createStageRun({
+        status: "skipped",
         provider: adapter.provider,
-        modelName: rewriteResult.metrics.modelName,
+        modelName: adapter.modelName,
         updatedAt: new Date().toISOString(),
-        attemptCount: rewriteResult.metrics.attemptCount,
-        repairCount: rewriteResult.metrics.repairCount,
-        durationMs: rewriteResult.metrics.durationMs,
-        inputTokens: rewriteResult.metrics.inputTokens,
-        outputTokens: rewriteResult.metrics.outputTokens,
-        stopReason: rewriteResult.metrics.stopReason,
+        attemptCount: 0,
         targetWordsMin: options.targetSceneWordsMin,
         targetWordsMax: options.targetSceneWordsMax,
         actualWords: countWords(rewrittenText),
-        notes: [`Rewrite-Pass mit ${countWords(rewrittenText)} Wörtern erzeugt.`]
+        notes: [`Rewrite-Pass deaktiviert. Draft direkt mit ${countWords(rewrittenText)} Wörtern übernommen.`]
       }),
       length_control: lengthControl.stage,
       extract: extractStage,
@@ -1315,30 +1210,17 @@ function computeStilAnkerDrift(newText: string, referenceTexts: string[]): strin
 function buildCoreSystemPrompt() {
   return [
     "You are the drafting engine for EMBER Book Studio.",
-    "STYLE CHAMELEON MODE: Analyze the input and autonomously select the most appropriate German author style to maximize impact:",
-    "- Fitzek/Strobel: For psychological oppression, high pacing, and staccato-like sentence structures.",
-    "- Elsberg/Schätzing: For technical precision, research depth, and analytical, cinematic coolness.",
-    "- Zeh/Menasse: For societal friction, intellectual subtext, and sharp, precise observation of contemporary life.",
-    "- Stern/Lind: For atmospheric density, historical accuracy, or deep emotional rooting.",
-    "At the beginning of your response, briefly state the chosen style in a single line (e.g., 'Style: Fitzek Mode').",
-    "CORE CONSTRAINTS (Technical Foundation):",
     "Write all output in German. Use Präteritum throughout. Never switch tense within a scene.",
-    "Forbidden echo patterns: do not repeat a syntactic construction (e.g. 'ohne X', 'als wäre', 'nicht X sondern Y') within 400 words. Each structural pattern may appear once per scene.",
-    "The final sentence of a scene must be concrete and external: an object, a gesture, an action, a sensory detail. Never end on interpretation, realization, or a sentence that names what the scene has shown.",
     "Honor canon, continuity, and scene-level causality.",
-    "Scene-specific hard constraints outrank style rules, examples, and generic thriller habits.",
+    "Scene-specific hard constraints outrank generic style habits.",
     "Hard anchors for names, colors, places, times, props, proof objects, and child routines are literal constraints, not inspiration.",
-    "Never reuse literal timestamps, locations, headers, or props from examples unless they appear in the current scene constraints.",
-    "Favor commercial readability, tension, subtext, concrete observation, and clean scene movement.",
     "If context is insufficient, flag risk explicitly instead of inventing hidden facts.",
-    "Show, don't explain. If an image, gesture, or action already carries meaning, no explanatory sentence follows.",
-    "Forbidden patterns: 'Sie merkte, dass', 'Sie spürte, wie', 'Das war es, was', 'nicht X, sondern Y' as explanation. End the sentence where the action ends.",
+    "Favor scene truth, subtext, momentum, concrete observation, and readable prose over explanation-heavy interpretation.",
+    "Show, do not over-explain. If an image, gesture, or action already carries meaning, do not add a second sentence that explains it.",
     "POV discipline: Stay within the perceptual boundary of the POV character. No knowledge, emotion, or observation the character cannot access. Third-person limited; no omniscient intrusions.",
-    "Inner reflection must never run longer than the action that triggered it. One sentence maximum unless the scene beat is explicitly introspective.",
-    "Never resolve a scene. End on pressure, an open question, or a shift in power — not on comfort or summary.",
-    "Do not repeat information the reader already has. No recap gestures, no confirmatory inner monologue, no re-describing props already established.",
-    "Check physical blocking continuity: track each named character's physical state (standing, sitting, position in room) across the scene. Flag any character who stands or exits without having been seated, or sits without having stood.",
-    "Dialogue: Characters do not answer the question asked. Sentences break off. Subtext carries the exchange. No stacked attribution after the reply."
+    "Keep inner reflection shorter than the action that triggers it unless the scene is explicitly introspective.",
+    "Do not recap the scene to the reader. Let pressure, objects, and interaction carry the movement.",
+    "The prose should feel immediate and necessary, not over-designed."
   ].join("\n");
 }
 
@@ -1370,6 +1252,20 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
     {
       type: "text" as const,
       text: buildAnthropicDynamicContextPrompt(packet),
+      cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    }
+  ];
+}
+
+function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket) {
+  return [
+    {
+      type: "text" as const,
+      text: buildCoreSystemPrompt()
+    },
+    {
+      type: "text" as const,
+      text: buildStablePrefixPrompt(packet),
       cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
     }
   ];
@@ -1418,9 +1314,8 @@ function buildDraftProsePrompt(
     "Return prose only. No JSON, no headings, no bullet points, no commentary.",
     `Draft target range: ${draftTargets.min}-${draftTargets.max} words.`,
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
-    "Hit every beat, but keep some sentences raw enough that a later rewrite can sharpen them.",
-    buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    "Write the scene directly from the material at hand. Keep some sentences raw enough that the prose stays alive.",
+    buildProseSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
 }
@@ -1435,13 +1330,9 @@ function buildRewriteProsePrompt(
     "Rewrite the scene into the final prose pass.",
     "Return prose only. No JSON, no commentary.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Tighten rhythm, sharpen observation, improve dialogue subtext, and end on a stronger hook.",
-    "Preserve canon and beat order. Expand pressure, not fluff.",
-    options.stilreferenz
-      ? `Stilreferenz (letzte akzeptierte Szenen, gleiches POV – Ton und Rhythmus beibehalten):\n${options.stilreferenz}`
-      : null,
-    buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    "Tighten rhythm, sharpen observation, and preserve the living texture of the draft.",
+    "Preserve canon and the scene movement. Remove explanation before you remove friction.",
+    buildProseSceneContextPrompt(packet),
     `Current draft: ${draftText}`
   ].filter(Boolean).join("\n");
 }
@@ -1452,18 +1343,12 @@ function buildExpandPrompt(
   beatPlan: BeatPlanPayload,
   rewriteText: string
 ) {
-  const beatsToExpand = beatPlan.beats.slice(-2).map(function (beat) {
-    return `${beat.label}: ${beat.purpose}`;
-  });
-
   return [
     "Expand the scene while preserving continuity and voice.",
     "Return prose only.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
-    "Only deepen up to two named beats. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
-    `Preferred expansion beats: ${beatsToExpand.join(" | ") || "last two beats"}`,
-    buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    "Deepen the existing scene movement. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
+    buildProseSceneContextPrompt(packet),
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -1479,8 +1364,7 @@ function buildCompressPrompt(
     "Return prose only.",
     `Target rewrite range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
-    buildSceneContextPrompt(packet),
-    `Beat plan: ${formatBeatPlanForPrompt(beatPlan)}`,
+    buildProseSceneContextPrompt(packet),
     `Current rewrite: ${rewriteText}`
   ].join("\n");
 }
@@ -1565,12 +1449,11 @@ function buildAnthropicScenePrompt(params: {
   draftText?: string;
   rewriteText?: string;
 }) {
-  const sceneContext = buildSceneContextXml(params.packet);
   const modeInstruction =
     params.mode === "draft"
       ? `Write a first-pass scene in ${resolveDraftWordTargets(params.options).min}-${resolveDraftWordTargets(params.options).max} words.`
       : params.mode === "rewrite"
-        ? `Rewrite the scene into a polished final pass in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`
+        ? `Rewrite the scene into a final pass in ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words while preserving the raw texture of the draft.`
         : params.mode === "expand"
           ? `Expand the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by deepening at most two beats.`
           : `Compress the scene into ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words by cutting exposition and repetition.`;
@@ -1578,12 +1461,8 @@ function buildAnthropicScenePrompt(params: {
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
-    `<scene_context>${sceneContext}</scene_context>`,
-    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
-    params.options.stilreferenz
-      ? `<stilreferenz>${escapeXml(params.options.stilreferenz)}</stilreferenz>`
-      : "",
-    `<beat_plan>${escapeXml(formatBeatPlanForPrompt(params.beatPlan))}</beat_plan>`,
+    `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
+    params.mode === "rewrite" ? "" : `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
       : "",
@@ -1629,6 +1508,47 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
       })
       .join(" || ") || "none"}`
   ].join("\n");
+}
+
+function buildProseSceneContextPrompt(packet: SceneContextPacket) {
+  const proseConstraints = filterProseHardConstraints(packet.dynamicContext.sceneHardConstraints);
+
+  return [
+    `Act: ${packet.dynamicContext.actTitle}`,
+    `Chapter: ${packet.dynamicContext.chapterTitle}`,
+    `Scene: ${packet.dynamicContext.sceneTitle}`,
+    `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
+    `Scene summary: ${packet.dynamicContext.sceneSummary}`,
+    `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
+    `Relevant codex: ${packet.dynamicContext.relevantCodex
+      .map(function (entry) {
+        return `${entry.title}: ${entry.summary}`;
+      })
+      .join(" || ") || "none"}`,
+    `Relevant character states: ${packet.dynamicContext.relevantCharacterStates
+      .map(function (entry) {
+        return formatCharacterStatePrompt(entry);
+      })
+      .join(" || ") || "none"}`,
+    `Active threads: ${packet.dynamicContext.activeThreads
+      .map(function (thread) {
+        return `${thread.label}: ${thread.detail}`;
+      })
+      .join(" || ") || "none"}`
+  ].join("\n");
+}
+
+function filterProseHardConstraints(constraints: string[]) {
+  return constraints.filter(function (constraint) {
+    return !(
+      constraint.startsWith("Pflicht-Einstieg:") ||
+      constraint.startsWith("Pflicht-Kernaktion:") ||
+      constraint.startsWith("Pflicht-Beat:") ||
+      constraint.startsWith("Pflicht-Ende:") ||
+      constraint.startsWith("Pflicht-Schlusssatz oder Schlussbild:") ||
+      constraint.startsWith("Szenenziel:")
+    );
+  });
 }
 
 function buildSceneContextXml(packet: SceneContextPacket) {

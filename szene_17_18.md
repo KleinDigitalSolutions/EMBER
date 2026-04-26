@@ -76,7 +76,7 @@ Hinter dem Tresen tippte eine Frau in ein Telefon, ohne aufzusehen. Eva hatte ih
 
 Eva legte die Hände auf die Knie und zwang sie, dort zu bleiben. Sie war nicht hier als Mutter. Sie war hier als jemand, der einen Namen mitbrachte. Nora Seidel. Der Name lag in ihrem Mund wie etwas, das sie nicht ausspucken konnte.
 
-Neben ihr saß eine Frau mit Kinderwagen, in dem ein Säugling schlief, und blätterte in einer alten Zeitschrift, ohne bei einer Seite zu bleiben. Auf dem niedrigen Tisch lag ein Stapel Flyer, oben einer mit dem Titel *Wenn Sorge zu Kontrolle wird*. Eva sah weg. Sie hatte das Gefühl, dass jeder Aushang in diesem Vorraum heute persönlich an sie adressiert war.
+Neben ihr saß eine Frau mit Kinderwagen, in dem ein Säugling schlief, und blätterte in einer alten Zeitschrift, ohne bei einer Seite zu bleiben. Auf dem niedrigen Tisch lag ein Stapel Flyer, oben einer mit dem Titel *Wenn Sorge zu Kontrolle wird*. Eva sah weg. Mediation, Trennung, Notruf. Mit jedem Blinzeln wirkten die Worte auf der Pinnwand größer.
 
 Eine Tür öffnete sich am Ende des Flurs. Die Frau, die heraustrat, war Anfang fünfzig, kurze graue Haare, eine Bluse, die einmal teuer gewesen war. Sie nickte der Empfangsfrau zu und blieb dann vor Eva stehen, ohne sich zu setzen.
 
@@ -108,7 +108,7 @@ Eva zog Luft ein, an einer Stelle in der Brust blieb sie hängen.
 
 „Das ist keine Krankheit, das verschwindet in keinem Bericht.“ Hennig sprach jetzt langsamer. „Es liest sich wie Fürsorge. Es liest sich wie Verlässlichkeit. Das Problem zeigt sich erst, wenn jemand versucht, die Person aus seinem Leben herauszunehmen. Dann fehlen plötzlich die Gegenstände. Die eigene Routine fällt auseinander, weil die Person sie längst trägt.“
 
-Eva dachte an die Trinkflasche, die letzte Woche nicht in der Spülmaschine gestanden hatte, sondern in der Küchenzeile von Simon, beschriftet mit einem Stift, den Eva nie besessen hatte. Sie dachte an die zweite Wechselhose im Kita-Fach, die nicht von ihr gekauft worden war, und an die Erzieherin, die freundlich gesagt hatte, *die hat Frau Seidel mitgebracht, weil Sie ja gerade so viel zu organisieren haben*.
+Eva dachte an die Trinkflasche, die letzte Woche nicht in der Spülmaschine gestanden hatte, sondern in der Küchenzeile von Simon, beschriftet mit einem Stift, den Eva nie besessen hatte. Vor ihr lag auch wieder die zweite Wechselhose im Kita-Fach, die nicht von ihr gekauft worden war, und die Erzieherin, die freundlich gesagt hatte, *die hat Frau Seidel mitgebracht, weil Sie ja gerade so viel zu organisieren haben*.
 
 „Und im Konflikt?“ Evas Stimme klang ihr selbst zu trocken. „Wenn so jemand vor Gericht geht?“
 
