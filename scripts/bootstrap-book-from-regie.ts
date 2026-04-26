@@ -4,9 +4,11 @@ import { createUuid } from "../lib/id"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
+  createEmptyBookLockedFacts,
   createEmptyBookSceneCardDirectives,
   type BookCharacterState,
   type BookContextPack,
+  type BookLockedFacts,
   type BookOpenThread,
   type BookSceneCard,
   type StoryAct,
@@ -68,6 +70,8 @@ type ParsedRegie = {
   masterBrief: StoryDocument["book"]["masterBrief"]
   marketBrief: StoryDocument["book"]["marketBrief"]
   writerConstitution: string[]
+  continuityGuardrails: string[]
+  lockedFacts: BookLockedFacts
   worldBibleEntries: WorldBibleEntry[]
   canonFacts: ParsedCanonFact[]
   characters: ParsedCharacter[]
@@ -83,13 +87,21 @@ async function main() {
   const options = parseArgs(process.argv.slice(2))
   const regiePath = path.resolve(process.cwd(), options.regiePath)
   const markdown = await readFile(regiePath, "utf8")
-  const parsed = parseRegie(markdown, options.titleOverride, options.authorOverride)
+  const parsed = applyLockedFactOverrides(
+    parseRegie(markdown, options.titleOverride, options.authorOverride),
+    {
+      incidentDate: options.lockedIncidentDate,
+      evaAlibiWindow: options.lockedAlibiWindow
+    }
+  )
 
   if (options.dryRun) {
     console.log(
       JSON.stringify(
         {
+          mode: options.patchRuntimeOnly ? "patch-runtime-only" : "bootstrap-full",
           regiePath,
+          storyId: options.storyId,
           title: parsed.title,
           authorName: parsed.authorName,
           acts: Array.from(new Set(parsed.scenes.map(function (scene) {
@@ -99,12 +111,24 @@ async function main() {
           canonFacts: parsed.canonFacts.length,
           characters: parsed.characters.length,
           openThreads: parsed.openThreads.length,
-          worldBibleEntries: parsed.worldBibleEntries.length
+          worldBibleEntries: parsed.worldBibleEntries.length,
+          lockedFacts: parsed.lockedFacts,
+          continuityGuardrails: parsed.continuityGuardrails.length
         },
         null,
         2
       )
     )
+    return
+  }
+
+  if (options.patchRuntimeOnly) {
+    if (!options.storyId) {
+      throw new Error("--patch-runtime-only braucht --story-id <STORY_ID>.")
+    }
+
+    const summary = await patchExistingStoryRuntimeOnly(options.storyId, parsed)
+    console.log(JSON.stringify(summary, null, 2))
     return
   }
 
@@ -142,6 +166,53 @@ async function main() {
       2
     )
   )
+}
+
+async function patchExistingStoryRuntimeOnly(storyId: string, parsed: ParsedRegie) {
+  const story = await loadStudioStory(storyId)
+
+  if (story.id !== storyId) {
+    throw new Error(`Story ${storyId} wurde nicht gefunden.`)
+  }
+
+  const runtimeContext = {
+    lockedFacts: parsed.lockedFacts,
+    continuityGuardrails: parsed.continuityGuardrails
+  }
+
+  const bookProjectUpdate = await supabaseAdmin
+    .from("book_projects")
+    .update({
+      master_brief_runtime: runtimeContext,
+      writer_rules_runtime: runtimeContext,
+      threat_model: {
+        lockedFacts: parsed.lockedFacts
+      }
+    })
+    .eq("story_id", storyId)
+
+  if (bookProjectUpdate.error) {
+    throw new Error(`book_projects update: ${bookProjectUpdate.error.message}`)
+  }
+
+  const contextPackUpdate = await supabaseAdmin
+    .from("book_context_packs")
+    .update({
+      runtime_context: runtimeContext
+    })
+    .eq("story_id", storyId)
+
+  if (contextPackUpdate.error) {
+    throw new Error(`book_context_packs update: ${contextPackUpdate.error.message}`)
+  }
+
+  return {
+    mode: "patch-runtime-only",
+    storyId,
+    title: story.title,
+    lockedFacts: parsed.lockedFacts,
+    continuityGuardrailsUpdated: parsed.continuityGuardrails.length
+  }
 }
 
 function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): StoryDocument {
@@ -388,7 +459,11 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
         .slice(0, 4)
         .map(function (thread) {
           return thread.id
-        }))
+        })),
+      runtimeContext: {
+        lockedFacts: parsed.lockedFacts,
+        continuityGuardrails: parsed.continuityGuardrails
+      }
     }
   })
 
@@ -399,6 +474,17 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
     masterBrief: parsed.masterBrief,
     marketBrief: parsed.marketBrief,
     writerConstitution: parsed.writerConstitution,
+    masterBriefRuntime: {
+      lockedFacts: parsed.lockedFacts,
+      continuityGuardrails: parsed.continuityGuardrails
+    },
+    writerRulesRuntime: {
+      lockedFacts: parsed.lockedFacts,
+      continuityGuardrails: parsed.continuityGuardrails
+    },
+    threatModel: {
+      lockedFacts: parsed.lockedFacts
+    },
     memory: {
       lastSyncedAt: now,
       canonLedger,
@@ -406,6 +492,8 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       openThreads,
       sceneCards,
       contextPacks,
+      lockedFacts: parsed.lockedFacts,
+      continuityGuardrails: parsed.continuityGuardrails,
       continuityNotes: [],
       humanEditExamples: []
     },
@@ -580,7 +668,8 @@ async function overwriteBookMemory(story: StoryDocument) {
         stable_prefix_signature: pack.stablePrefixSignature,
         previous_scene_ids: pack.previousSceneIds,
         next_scene_id: pack.nextSceneId,
-        prepared_at: pack.preparedAt
+        prepared_at: pack.preparedAt,
+        runtime_context: pack.runtimeContext
       }
     }),
     "id"
@@ -628,7 +717,10 @@ async function overwriteBookMemory(story: StoryDocument) {
   const bookProjectUpdate = await supabaseAdmin
     .from("book_projects")
     .update({
-      memory_last_synced_at: story.book.memory.lastSyncedAt
+      memory_last_synced_at: story.book.memory.lastSyncedAt,
+      master_brief_runtime: story.book.masterBriefRuntime,
+      writer_rules_runtime: story.book.writerRulesRuntime,
+      threat_model: story.book.threatModel
     })
     .eq("story_id", story.id)
 
@@ -650,6 +742,7 @@ function parseRegie(
   const marketBriefRows = parseMarkdownTable(marketBriefSection)
   const writerSection = getTopLevelSection(productionMarkdown, "WRITER CONSTITUTION")
   const worldBibleSection = getTopLevelSection(productionMarkdown, "WORLD BIBLE")
+  const continuityGuardrailsSection = getOptionalTopLevelSection(productionMarkdown, "CONTINUITY GUARDRAILS (Arbeitsstand Entwurf)")
   const writerSummariesSection =
     getOptionalTopLevelSection(productionMarkdown, "WRITER-SUMMARIES — KAPITEL 1 BIS 42") ||
     getOptionalTopLevelSection(productionMarkdown, "WRITER-SUMMARIES — KAPITEL 1 BIS 12")
@@ -675,12 +768,20 @@ function parseRegie(
   })
   const writerSummaries = parseWriterSummaries(writerSummariesSection)
   const scenes = parseScenes(productionMarkdown, writerSummaries)
+  const continuityGuardrails = parseBulletLines(continuityGuardrailsSection)
   const defaultBook = createDefaultBookBlueprint(titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt")
   const title = titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt"
   const genre = masterBriefRows["Genre"] || ""
   const targetLengthWords = parseTargetWordCount(masterBriefRows["Ziel-Wortanzahl"]) || defaultBook.targetLengthWords
   const premise = getFirstTableValue(masterBriefRows, ["Prämisse", "Praemisse"])
   const thematicCore = getFirstTableValue(masterBriefRows, ["Thematischer Kern"])
+  const lockedFacts = deriveLockedFacts({
+    continuityGuardrailsSection,
+    continuityGuardrails,
+    canonFacts,
+    characters,
+    scenes
+  })
 
   return {
     title,
@@ -706,6 +807,8 @@ function parseRegie(
       )
     },
     writerConstitution: parseBulletLines(writerSection),
+    continuityGuardrails,
+    lockedFacts,
     worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore, scenes),
     canonFacts,
     characters,
@@ -1103,7 +1206,7 @@ function buildWorldBibleEntries(
   const themeEntries: Array<{ title: string; summary: string }> = thematicCore
     ? [
         {
-          title: "Objektivitaet und Schuld",
+          title: "Thematischer Kern",
           summary: clampText(thematicCore, 260)
         }
       ]
@@ -1266,6 +1369,85 @@ function buildOutlineLines(
         return `${entry.key}: ${entry.value}`
       })
   )
+}
+
+function deriveLockedFacts(params: {
+  continuityGuardrailsSection: string
+  continuityGuardrails: string[]
+  canonFacts: ParsedCanonFact[]
+  characters: ParsedCharacter[]
+  scenes: ParsedScene[]
+}): BookLockedFacts {
+  const fallback = createEmptyBookLockedFacts()
+  const section = params.continuityGuardrailsSection
+  const firstScene = params.scenes[0]
+  const opening = firstScene?.directives.opening || ""
+  const firstSceneText = [opening, firstScene?.directives.coreAction || "", firstScene?.summary || ""].join(" ")
+  const protagonist = params.characters.find(function (character) {
+    return /mutter/i.test(character.role) || normalizeText(character.name) === "eva berger"
+  })?.name || null
+  const child = params.characters.find(function (character) {
+    return /kind/i.test(character.role) || normalizeText(character.name) === "mila berger"
+  })?.name || null
+  const antagonist = params.characters.find(function (character) {
+    return /vertraute/i.test(character.role) || normalizeText(character.name) === "nora seidel"
+  })?.name || null
+  const coparent = params.characters.find(function (character) {
+    return /vater/i.test(character.role) || normalizeText(character.name) === "simon berger"
+  })?.name || null
+  const institutionName =
+    matchSingle(section, /`([^`]+)` bleibt die Kita/) ||
+    matchSingle(params.canonFacts.map(function (fact) {
+      return fact.fact
+    }).join("\n"), /Kita ([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    null
+  const incidentTime =
+    matchSingle(section, /Abholzeitpunkt ist (\d{1,2}:\d{2}) Uhr/) ||
+    matchSingle(firstSceneText, /(\d{1,2}:\d{2}) Uhr/) ||
+    null
+  const notificationTime =
+    matchSingle(section, /Heute um (\d{1,2}:\d{2}) Uhr sieht sie den verspäteten App-Eintrag/) ||
+    firstScene?.directives.timeAnchor?.match(/(\d{1,2}:\d{2})/)?.[1] ||
+    null
+  const firstOfficeTime =
+    matchSingle(section, /sitzt um (\d{1,2}:\d{2}) Uhr im Leitungsbüro/) ||
+    matchSingle(params.scenes[1]?.directives.timeAnchor || "", /(\d{1,2}:\d{2})/) ||
+    null
+  const evaAlibiLocation =
+    matchSingle(section, /nachweisbar in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    matchSingle(firstSceneText, /Kundentermin in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    null
+
+  return {
+    ...fallback,
+    protagonistName: protagonist,
+    childName: child,
+    antagonistName: antagonist,
+    coparentName: coparent,
+    institutionName,
+    incidentTime,
+    notificationTime,
+    firstOfficeTime,
+    evaAlibiLocation,
+    documentedPickupPerson: protagonist
+  }
+}
+
+function applyLockedFactOverrides(
+  parsed: ParsedRegie,
+  overrides: {
+    incidentDate: string | null
+    evaAlibiWindow: string | null
+  }
+) {
+  return {
+    ...parsed,
+    lockedFacts: {
+      ...parsed.lockedFacts,
+      incidentDate: overrides.incidentDate || parsed.lockedFacts.incidentDate,
+      evaAlibiWindow: overrides.evaAlibiWindow || parsed.lockedFacts.evaAlibiWindow
+    }
+  }
 }
 
 function pickRelevantCharacterStateIds(
@@ -1645,6 +1827,10 @@ function parseArgs(args: string[]) {
     regiePath: "Regie-Der-Analytiker-wird-zum-Spiegel.md",
     titleOverride: null as string | null,
     authorOverride: null as string | null,
+    storyId: null as string | null,
+    lockedIncidentDate: null as string | null,
+    lockedAlibiWindow: null as string | null,
+    patchRuntimeOnly: false,
     dryRun: false
   }
 
@@ -1666,6 +1852,29 @@ function parseArgs(args: string[]) {
     if (arg === "--author" && args[index + 1]) {
       options.authorOverride = args[index + 1]
       index += 1
+      continue
+    }
+
+    if (arg === "--story-id" && args[index + 1]) {
+      options.storyId = args[index + 1]
+      index += 1
+      continue
+    }
+
+    if (arg === "--locked-incident-date" && args[index + 1]) {
+      options.lockedIncidentDate = args[index + 1]
+      index += 1
+      continue
+    }
+
+    if (arg === "--locked-alibi-window" && args[index + 1]) {
+      options.lockedAlibiWindow = args[index + 1]
+      index += 1
+      continue
+    }
+
+    if (arg === "--patch-runtime-only") {
+      options.patchRuntimeOnly = true
       continue
     }
 

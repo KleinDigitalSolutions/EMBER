@@ -36,8 +36,10 @@ import {
   createDefaultBookBlueprint,
   findSceneContext,
   isBranchingStory,
+  normalizeBookLockedFacts,
   normalizeBookDraftTargets,
   normalizeBookRuleList,
+  normalizeBookRuntimeContext,
   updateSceneInStory,
   type StoryAct,
   type StoryChapter,
@@ -2941,6 +2943,11 @@ function normalizeBookBlueprint(
       candidate.writerConstitution,
       fallback.writerConstitution
     ),
+    masterBriefRuntime: normalizeBookRuntimeContext(candidate.masterBriefRuntime),
+    writerRulesRuntime: normalizeBookRuntimeContext(candidate.writerRulesRuntime),
+    threatModel: {
+      lockedFacts: normalizeBookLockedFacts(candidate.threatModel?.lockedFacts)
+    },
     memory: normalizeBookMemoryBackbone(candidate.memory, fallback.memory),
     draftEngine: {
       mode: "local",
@@ -3163,6 +3170,14 @@ function normalizeBookMemoryBackbone(
       : fallback.sceneCards,
     contextPacks:
       Array.isArray(candidate.contextPacks) ? candidate.contextPacks : fallback.contextPacks,
+    lockedFacts: normalizeBookLockedFacts(candidate.lockedFacts),
+    continuityGuardrails:
+      Array.isArray(candidate.continuityGuardrails) &&
+      candidate.continuityGuardrails.every(function (entry) {
+        return typeof entry === "string";
+      })
+        ? candidate.continuityGuardrails
+        : fallback.continuityGuardrails,
     continuityNotes:
       Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes,
     humanEditExamples:

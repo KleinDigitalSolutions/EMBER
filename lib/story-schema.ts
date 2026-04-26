@@ -200,6 +200,11 @@ export type BookBlueprint = {
     publishingGuardrails: string[];
   };
   writerConstitution: string[];
+  masterBriefRuntime: BookRuntimeContext;
+  writerRulesRuntime: BookRuntimeContext;
+  threatModel: {
+    lockedFacts: BookLockedFacts;
+  };
   memory: BookMemoryBackbone;
   draftEngine: BookDraftEngine;
   amazonOps: AmazonOps;
@@ -279,8 +284,30 @@ export type BookMemoryBackbone = {
   openThreads: BookOpenThread[];
   sceneCards: BookSceneCard[];
   contextPacks: BookContextPack[];
+  lockedFacts: BookLockedFacts;
+  continuityGuardrails: string[];
   continuityNotes: string[];
   humanEditExamples: BookHumanEditExample[];
+};
+
+export type BookLockedFacts = {
+  protagonistName: string | null;
+  childName: string | null;
+  antagonistName: string | null;
+  coparentName: string | null;
+  institutionName: string | null;
+  incidentDate: string | null;
+  incidentTime: string | null;
+  notificationTime: string | null;
+  firstOfficeTime: string | null;
+  evaAlibiLocation: string | null;
+  evaAlibiWindow: string | null;
+  documentedPickupPerson: string | null;
+};
+
+export type BookRuntimeContext = {
+  lockedFacts: BookLockedFacts;
+  continuityGuardrails: string[];
 };
 
 export type BookCanonFact = {
@@ -369,6 +396,7 @@ export type BookContextPack = {
   relevantCanonEntryIds: string[];
   relevantCharacterStateIds: string[];
   activeThreadIds: string[];
+  runtimeContext: BookRuntimeContext;
 };
 
 export type DraftExtractionState = {
@@ -615,8 +643,76 @@ export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
     openThreads: [],
     sceneCards: [],
     contextPacks: [],
+    lockedFacts: createEmptyBookLockedFacts(),
+    continuityGuardrails: [],
     continuityNotes: [],
     humanEditExamples: []
+  };
+}
+
+export function createEmptyBookLockedFacts(): BookLockedFacts {
+  return {
+    protagonistName: null,
+    childName: null,
+    antagonistName: null,
+    coparentName: null,
+    institutionName: null,
+    incidentDate: null,
+    incidentTime: null,
+    notificationTime: null,
+    firstOfficeTime: null,
+    evaAlibiLocation: null,
+    evaAlibiWindow: null,
+    documentedPickupPerson: null
+  };
+}
+
+export function normalizeBookLockedFacts(value: unknown): BookLockedFacts {
+  const fallback = createEmptyBookLockedFacts();
+  const record = value && typeof value === "object" ? (value as Partial<BookLockedFacts>) : null;
+
+  return {
+    protagonistName: typeof record?.protagonistName === "string" ? record.protagonistName.trim() || null : fallback.protagonistName,
+    childName: typeof record?.childName === "string" ? record.childName.trim() || null : fallback.childName,
+    antagonistName: typeof record?.antagonistName === "string" ? record.antagonistName.trim() || null : fallback.antagonistName,
+    coparentName: typeof record?.coparentName === "string" ? record.coparentName.trim() || null : fallback.coparentName,
+    institutionName: typeof record?.institutionName === "string" ? record.institutionName.trim() || null : fallback.institutionName,
+    incidentDate: typeof record?.incidentDate === "string" ? record.incidentDate.trim() || null : fallback.incidentDate,
+    incidentTime: typeof record?.incidentTime === "string" ? record.incidentTime.trim() || null : fallback.incidentTime,
+    notificationTime: typeof record?.notificationTime === "string" ? record.notificationTime.trim() || null : fallback.notificationTime,
+    firstOfficeTime: typeof record?.firstOfficeTime === "string" ? record.firstOfficeTime.trim() || null : fallback.firstOfficeTime,
+    evaAlibiLocation: typeof record?.evaAlibiLocation === "string" ? record.evaAlibiLocation.trim() || null : fallback.evaAlibiLocation,
+    evaAlibiWindow: typeof record?.evaAlibiWindow === "string" ? record.evaAlibiWindow.trim() || null : fallback.evaAlibiWindow,
+    documentedPickupPerson:
+      typeof record?.documentedPickupPerson === "string"
+        ? record.documentedPickupPerson.trim() || null
+        : fallback.documentedPickupPerson
+  };
+}
+
+export function createEmptyBookRuntimeContext(): BookRuntimeContext {
+  return {
+    lockedFacts: createEmptyBookLockedFacts(),
+    continuityGuardrails: []
+  };
+}
+
+export function normalizeBookRuntimeContext(value: unknown): BookRuntimeContext {
+  const fallback = createEmptyBookRuntimeContext();
+  const record = value && typeof value === "object" ? (value as Partial<BookRuntimeContext>) : null;
+
+  return {
+    lockedFacts: normalizeBookLockedFacts(record?.lockedFacts),
+    continuityGuardrails: Array.isArray(record?.continuityGuardrails)
+      ? record.continuityGuardrails
+          .filter(function (entry): entry is string {
+            return typeof entry === "string";
+          })
+          .map(function (entry) {
+            return entry.trim();
+          })
+          .filter(Boolean)
+      : fallback.continuityGuardrails
   };
 }
 
@@ -700,6 +796,11 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       publishingGuardrails: DEFAULT_BOOK_PUBLISHING_GUARDRAILS.slice()
     },
     writerConstitution: DEFAULT_BOOK_WRITER_CONSTITUTION.slice(),
+    masterBriefRuntime: createEmptyBookRuntimeContext(),
+    writerRulesRuntime: createEmptyBookRuntimeContext(),
+    threatModel: {
+      lockedFacts: createEmptyBookLockedFacts()
+    },
     memory: createDefaultBookMemoryBackbone(),
     draftEngine: {
       mode: "local",

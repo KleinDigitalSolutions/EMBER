@@ -1251,8 +1251,10 @@ function buildStablePrefixPrompt(packet: SceneContextPacket) {
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
     `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
     `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
+    formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
     formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
     formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
+    formatPromptList("Continuity guardrails", packet.stablePrefix.continuityGuardrails),
     formatPromptList("Publishing guardrails", packet.stablePrefix.publishingGuardrails)
   ].join("\n");
 }
@@ -1475,6 +1477,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
+    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
@@ -1508,6 +1511,7 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     `Scene: ${packet.dynamicContext.sceneTitle}`,
     buildSceneContractPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
+    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
@@ -1623,6 +1627,8 @@ function buildSceneContextXml(packet: SceneContextPacket) {
 
 function buildContinuityContext(packet: SceneContextPacket) {
   return [
+    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" | ") || "none"}`,
+    `Continuity guardrails: ${packet.stablePrefix.continuityGuardrails.join(" | ") || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
         return `${entry.title}: ${entry.summary}`;
@@ -1654,6 +1660,16 @@ function formatPromptList(label: string, items: string[]) {
   }
 
   return `${label}: ${compactItems.join(" | ")}`;
+}
+
+function formatLockedFacts(lockedFacts: SceneContextPacket["stablePrefix"]["lockedFacts"]) {
+  return Object.entries(lockedFacts)
+    .filter(function ([, value]) {
+      return typeof value === "string" && value.trim().length > 0;
+    })
+    .map(function ([key, value]) {
+      return `${key}=${value}`;
+    });
 }
 
 function sanitizeBeatPlan(

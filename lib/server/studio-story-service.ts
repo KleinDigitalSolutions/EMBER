@@ -3,6 +3,8 @@ import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
+  normalizeBookLockedFacts,
+  normalizeBookRuntimeContext,
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
   normalizeAssistantWorkspace,
@@ -336,6 +338,11 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
             }),
             fallbackBook.writerConstitution
           ),
+        masterBriefRuntime: normalizeBookRuntimeContext(bookProject.master_brief_runtime),
+        writerRulesRuntime: normalizeBookRuntimeContext(bookProject.writer_rules_runtime),
+        threatModel: {
+          lockedFacts: normalizeBookLockedFacts(toRecord(bookProject.threat_model).lockedFacts)
+        },
         memory: {
           lastSyncedAt: memoryLastSyncedAt,
           canonLedger: canonFacts.map(function (row) {
@@ -436,9 +443,14 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
                 .map(function (linkRow) {
                   return threadMap.get(linkRow.thread_id as string)?.id as string
                 })
-                .filter(Boolean)
+                .filter(Boolean),
+              runtimeContext: normalizeBookRuntimeContext(row.runtime_context)
             }
           }),
+          lockedFacts: normalizeBookLockedFacts(toRecord(bookProject.master_brief_runtime).lockedFacts),
+          continuityGuardrails: normalizeStringArray(
+            toRecord(bookProject.writer_rules_runtime).continuityGuardrails
+          ),
           continuityNotes: [],
           humanEditExamples: (humanEditExamplesResult.data ?? []).map(mapHumanEditExampleRow)
         },
@@ -657,7 +669,10 @@ async function saveStudioStoryInternal(
       target_format: nextStory.book.targetFormat || "novel",
       target_length_words: nextStory.book.targetLengthWords || 70000,
       master_brief: nextStory.book.masterBrief,
+      master_brief_runtime: nextStory.book.masterBriefRuntime,
       market_brief: nextStory.book.marketBrief,
+      writer_rules_runtime: nextStory.book.writerRulesRuntime,
+      threat_model: nextStory.book.threatModel,
       amazon_ops: nextStory.book.amazonOps,
       memory_last_synced_at: nextStory.book.memory.lastSyncedAt
     })
@@ -922,7 +937,8 @@ async function saveStudioStoryInternal(
         stable_prefix_signature: pack.stablePrefixSignature,
         previous_scene_ids: pack.previousSceneIds,
         next_scene_id: pack.nextSceneId,
-        prepared_at: pack.preparedAt
+        prepared_at: pack.preparedAt,
+        runtime_context: pack.runtimeContext
       }
     })
 

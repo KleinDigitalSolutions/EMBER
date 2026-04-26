@@ -101,6 +101,8 @@ export type SceneContextPacket = {
     marketHook: string;
     publishingGuardrails: string[];
     writerConstitution: string[];
+    lockedFacts: StoryDocument["book"]["memory"]["lockedFacts"];
+    continuityGuardrails: string[];
   };
   dynamicContext: {
     actTitle: string;
@@ -299,15 +301,17 @@ export function buildSceneContextPacket(
   return {
     sceneId,
     stablePrefix: {
-      premise: story.book.masterBrief.premise,
-      readerPromise: story.book.masterBrief.readerPromise,
-      endingPromise: story.book.masterBrief.endingPromise,
-      thematicCore: story.book.masterBrief.thematicCore,
-      storyArchitecture: story.book.masterBrief.storyArchitecture,
-      categoryLane: story.book.marketBrief.categoryLane,
-      marketHook: story.book.marketBrief.hook,
-      publishingGuardrails: story.book.marketBrief.publishingGuardrails,
-      writerConstitution: story.book.writerConstitution
+      premise: syncedStory.book.masterBrief.premise,
+      readerPromise: syncedStory.book.masterBrief.readerPromise,
+      endingPromise: syncedStory.book.masterBrief.endingPromise,
+      thematicCore: syncedStory.book.masterBrief.thematicCore,
+      storyArchitecture: syncedStory.book.masterBrief.storyArchitecture,
+      categoryLane: syncedStory.book.marketBrief.categoryLane,
+      marketHook: syncedStory.book.marketBrief.hook,
+      publishingGuardrails: syncedStory.book.marketBrief.publishingGuardrails,
+      writerConstitution: syncedStory.book.writerConstitution,
+      lockedFacts: syncedStory.book.memory.lockedFacts,
+      continuityGuardrails: syncedStory.book.memory.continuityGuardrails
     },
     dynamicContext: {
       actTitle: sceneContext.act.title,
@@ -623,6 +627,14 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
     openThreads,
     sceneCards,
     contextPacks,
+    lockedFacts:
+      Object.values(story.book.memory.lockedFacts).some(Boolean)
+        ? story.book.memory.lockedFacts
+        : story.book.masterBriefRuntime.lockedFacts,
+    continuityGuardrails:
+      story.book.memory.continuityGuardrails.length > 0
+        ? story.book.memory.continuityGuardrails
+        : story.book.writerRulesRuntime.continuityGuardrails,
     continuityNotes,
     humanEditExamples: story.book.memory.humanEditExamples
   };
@@ -1061,7 +1073,11 @@ function deriveContextPacks(
       relevantCharacterStateIds: relevantCharacterStates.map(function (entry) {
         return entry.id;
       }),
-      activeThreadIds
+      activeThreadIds,
+      runtimeContext: {
+        lockedFacts: story.book.memory.lockedFacts,
+        continuityGuardrails: story.book.memory.continuityGuardrails
+      }
     };
   });
 }
@@ -1323,9 +1339,13 @@ export function getDraftJobAcceptanceBlockers(story: StoryDocument, jobId: strin
     return ["Rewrite-Text ist leer."];
   }
 
-  // Continuity- und Drift-Hinweise bleiben im Audit sichtbar, blockieren aber
-  // die Uebernahme nicht mehr, damit der Text anschliessend manuell editiert werden kann.
-  return [];
+  const packet = buildSceneContextPacket(story, job.sceneId);
+
+  if (!packet) {
+    return ["Scene context konnte fuer den Draft-Job nicht aufgebaut werden."];
+  }
+
+  return auditSceneContinuityGuards(packet, job.rewriteText);
 }
 
 function getApprovedMemorySyncValues(
@@ -1962,6 +1982,10 @@ function buildSceneHardConstraints(story: StoryDocument, sceneCard: TimelineBeat
     hardConstraints.push(constraint);
   });
 
+  buildLockedFactHardConstraints(story, sceneCard).forEach(function (constraint) {
+    hardConstraints.push(constraint);
+  });
+
   if (directives.objective) {
     hardConstraints.push(`Szenenziel: ${directives.objective}. Die Szene darf nicht in einen anderen Zweck abdriften.`)
   }
@@ -2071,6 +2095,106 @@ function buildSceneObjectColorHardConstraints(story: StoryDocument, sceneCard: T
     .map(function (anchor) {
       return `Kanon-Objektanker: ${anchor.objectLabel} bleibt ${anchor.colorLabel}. Keine andere Farbe oder Ersatz-Requisite verwenden.`;
     });
+}
+
+function buildLockedFactHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
+  const lockedFacts = story.book.memory.lockedFacts;
+  const sceneText = normalizeGuardText(collectSceneCardTextEntries(sceneCard).join(" "));
+  const constraints: string[] = [];
+
+  if (
+    lockedFacts.institutionName &&
+    (normalizedTextContainsTerm(sceneText, lockedFacts.institutionName) || normalizedTextContainsTerm(sceneText, "kita"))
+  ) {
+    constraints.push(
+      `Locked Fact - Kita: ${lockedFacts.institutionName}. Wenn die Einrichtung namentlich auftaucht, muss sie so heissen.`
+    );
+  }
+
+  if (
+    lockedFacts.incidentDate &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.incidentDate) ||
+      normalizedTextContainsTerm(sceneText, "datum") ||
+      normalizedTextContainsTerm(sceneText, "vortag") ||
+      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
+      normalizedTextContainsTerm(sceneText, "abschlussvermerk")
+    )
+  ) {
+    constraints.push(`Locked Fact - Vorfallsdatum: ${lockedFacts.incidentDate}.`);
+  }
+
+  if (
+    lockedFacts.incidentTime &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.incidentTime) ||
+      normalizedTextContainsTerm(sceneText, "abhol") ||
+      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
+      normalizedTextContainsTerm(sceneText, "abschlussvermerk")
+    )
+  ) {
+    constraints.push(`Locked Fact - Dokumentierte Abholzeit: ${lockedFacts.incidentTime} Uhr.`);
+  }
+
+  if (
+    lockedFacts.notificationTime &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.notificationTime) ||
+      normalizedTextContainsTerm(sceneText, "app") ||
+      normalizedTextContainsTerm(sceneText, "benachrichtigung")
+    )
+  ) {
+    constraints.push(`Locked Fact - App-Benachrichtigung: ${lockedFacts.notificationTime} Uhr.`);
+  }
+
+  if (
+    lockedFacts.firstOfficeTime &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.firstOfficeTime) ||
+      normalizedTextContainsTerm(sceneText, "leitungsbuero") ||
+      normalizedTextContainsTerm(sceneText, "petra")
+    )
+  ) {
+    constraints.push(`Locked Fact - Leitungsbuero-Zeit: ${lockedFacts.firstOfficeTime} Uhr.`);
+  }
+
+  if (
+    lockedFacts.evaAlibiLocation &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.evaAlibiLocation) ||
+      normalizedTextContainsTerm(sceneText, "nachweisbar") ||
+      normalizedTextContainsTerm(sceneText, "kundentermin") ||
+      normalizedTextContainsTerm(sceneText, "alibi")
+    )
+  ) {
+    constraints.push(`Locked Fact - Eva-Alibi-Ort: ${lockedFacts.evaAlibiLocation}.`);
+  }
+
+  if (
+    lockedFacts.evaAlibiWindow &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.evaAlibiWindow) ||
+      normalizedTextContainsTerm(sceneText, "kundentermin") ||
+      normalizedTextContainsTerm(sceneText, "alibi") ||
+      normalizedTextContainsTerm(sceneText, "frankfurt") ||
+      normalizedTextContainsTerm(sceneText, "maintower") ||
+      normalizedTextContainsTerm(sceneText, "termin")
+    )
+  ) {
+    constraints.push(`Locked Fact - Eva-Alibi-Fenster: ${lockedFacts.evaAlibiWindow}.`);
+  }
+
+  if (
+    lockedFacts.documentedPickupPerson &&
+    (
+      normalizedTextContainsTerm(sceneText, lockedFacts.documentedPickupPerson) ||
+      normalizedTextContainsTerm(sceneText, "abholung")
+    )
+  ) {
+    constraints.push(`Locked Fact - Dokumentierte Abholperson: ${lockedFacts.documentedPickupPerson}.`);
+  }
+
+  return constraints;
 }
 
 function resolveStoryObjectColorAnchors(story: StoryDocument): ObjectColorAnchor[] {
@@ -2457,6 +2581,37 @@ export function auditSceneContinuityGuards(packet: SceneContextPacket, proseText
     }
   });
 
+  parseLockedFactConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
+    if (constraint.kind === "institution") {
+      if (!requiredAnchorAppears(normalizedProse, constraint.value)) {
+        issues.push(`${constraint.label} driftet oder fehlt: ${clampText(constraint.value, 90)}`);
+      }
+
+      findWrongInstitutionMentions(proseText, constraint.value).forEach(function (wrongName) {
+        issues.push(`Institutionsdrift: ${wrongName} muss ${constraint.value} bleiben.`);
+      });
+      return;
+    }
+
+    if (constraint.kind === "incident_date") {
+      if (!containsIncidentDate(proseText, constraint.value)) {
+        issues.push(`${constraint.label} driftet oder fehlt: ${clampText(constraint.value, 90)}`);
+      }
+      return;
+    }
+
+    if (constraint.kind === "time_window") {
+      if (!containsLockedTimeWindow(proseText, constraint.value)) {
+        issues.push(`${constraint.label} driftet oder fehlt: ${clampText(constraint.value, 90)}`);
+      }
+      return;
+    }
+
+    if (!requiredAnchorAppears(normalizedProse, constraint.value)) {
+      issues.push(`${constraint.label} driftet oder fehlt: ${clampText(constraint.value, 90)}`);
+    }
+  });
+
   return dedupeStrings(issues).slice(0, 8);
 }
 
@@ -2558,6 +2713,98 @@ function parseRequiredSceneAnchors(values: string[]) {
     .filter(function (entry): entry is { label: string; value: string } {
       return Boolean(entry);
     });
+}
+
+function parseLockedFactConstraints(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Locked Fact - ([^:]+): (.+?)\.(?:\s|$)/);
+
+      if (!match) {
+        return null;
+      }
+
+      const label = match[1];
+      const factValue = match[2];
+      let kind: "generic" | "institution" | "incident_date" | "time_window" = "generic";
+
+      if (/kita/i.test(label)) {
+        kind = "institution";
+      } else if (/vorfallsdatum/i.test(label)) {
+        kind = "incident_date";
+      } else if (/alibi-fenster/i.test(label)) {
+        kind = "time_window";
+      }
+
+      return {
+        label: `Locked Fact - ${label}`,
+        value: factValue,
+        kind
+      };
+    })
+    .filter(function (
+      entry
+    ): entry is {
+      label: string;
+      value: string;
+      kind: "generic" | "institution" | "incident_date" | "time_window";
+    } {
+      return Boolean(entry);
+    });
+}
+
+function containsIncidentDate(proseText: string, incidentDate: string) {
+  const normalizedDate = incidentDate.trim();
+
+  if (!normalizedDate) {
+    return true;
+  }
+
+  const proseMatches = proseText.match(/\b\d{1,2}\.\d{1,2}\.?\b/g) ?? [];
+  const normalizedExpected = normalizedDate.replace(/\.$/, "");
+
+  return proseMatches.some(function (match) {
+    return match.replace(/\.$/, "") === normalizedExpected;
+  });
+}
+
+function containsLockedTimeWindow(proseText: string, timeWindow: string) {
+  const expectedTimes = Array.from(timeWindow.matchAll(/\b\d{1,2}:\d{2}\b/g)).map(function (match) {
+    return match[0];
+  });
+
+  if (expectedTimes.length < 2) {
+    return requiredAnchorAppears(normalizeGuardText(proseText), timeWindow);
+  }
+
+  const proseTimes = new Set(
+    Array.from(proseText.matchAll(/\b\d{1,2}:\d{2}\b/g)).map(function (match) {
+      return match[0];
+    })
+  );
+
+  return expectedTimes.every(function (time) {
+    return proseTimes.has(time);
+  });
+}
+
+function findWrongInstitutionMentions(proseText: string, expectedName: string) {
+  const wrongNames: string[] = [];
+  const pattern = /\bKita\s+([A-ZÄÖÜ][\p{L}ßäöüÄÖÜ-]+)/gu;
+  const expected = normalizeGuardText(expectedName);
+  let match: RegExpExecArray | null = pattern.exec(proseText);
+
+  while (match) {
+    const actualName = match[1];
+
+    if (normalizeGuardText(actualName) !== expected) {
+      wrongNames.push(`Kita ${actualName}`);
+    }
+
+    match = pattern.exec(proseText);
+  }
+
+  return dedupeStrings(wrongNames);
 }
 
 function requiredAnchorAppears(normalizedProse: string, value: string) {
