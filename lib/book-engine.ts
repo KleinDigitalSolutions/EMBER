@@ -103,6 +103,7 @@ export type SceneContextPacket = {
     writerConstitution: string[];
     lockedFacts: StoryDocument["book"]["memory"]["lockedFacts"];
     continuityGuardrails: string[];
+    proseTechniqueProfile: StoryDocument["book"]["memory"]["proseTechniqueProfile"];
   };
   dynamicContext: {
     actTitle: string;
@@ -311,7 +312,8 @@ export function buildSceneContextPacket(
       publishingGuardrails: syncedStory.book.marketBrief.publishingGuardrails,
       writerConstitution: syncedStory.book.writerConstitution,
       lockedFacts: syncedStory.book.memory.lockedFacts,
-      continuityGuardrails: syncedStory.book.memory.continuityGuardrails
+      continuityGuardrails: syncedStory.book.memory.continuityGuardrails,
+      proseTechniqueProfile: syncedStory.book.memory.proseTechniqueProfile
     },
     dynamicContext: {
       actTitle: sceneContext.act.title,
@@ -635,6 +637,10 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
       story.book.memory.continuityGuardrails.length > 0
         ? story.book.memory.continuityGuardrails
         : story.book.writerRulesRuntime.continuityGuardrails,
+    proseTechniqueProfile:
+      story.book.memory.proseTechniqueProfile?.techniqueRules?.length > 0
+        ? story.book.memory.proseTechniqueProfile
+        : story.book.writerRulesRuntime.proseTechniqueProfile,
     continuityNotes,
     humanEditExamples: story.book.memory.humanEditExamples
   };
@@ -1076,7 +1082,8 @@ function deriveContextPacks(
       activeThreadIds,
       runtimeContext: {
         lockedFacts: story.book.memory.lockedFacts,
-        continuityGuardrails: story.book.memory.continuityGuardrails
+        continuityGuardrails: story.book.memory.continuityGuardrails,
+        proseTechniqueProfile: story.book.memory.proseTechniqueProfile
       }
     };
   });
@@ -2976,6 +2983,10 @@ function escapeRegExp(value: string) {
 
 function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
   const notes: string[] = [];
+  const profile = packet.stablePrefix.proseTechniqueProfile;
+  const paragraphs = splitIntoParagraphs(draftText);
+  const firstParagraph = paragraphs[0] ?? "";
+  const lastParagraph = paragraphs[paragraphs.length - 1] ?? "";
 
   if (draftText.includes("Die Figuren reagieren konkret, nicht essayistisch.")) {
     notes.push("Der lokale Draft enthaelt noch Metasprache und braucht spaetere Modell-Politur.");
@@ -2985,7 +2996,67 @@ function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
     notes.push("Reader Promise ist leer; Stilsteuerung bleibt dadurch allgemein.");
   }
 
-  return notes;
+  if (
+    profile.sceneHooks.opening === "disturbance_first" &&
+    firstParagraph &&
+    countApproxWords(firstParagraph) > 110
+  ) {
+    notes.push("Der Einstieg wirkt zu lang fuer ein disturbance-first Technikprofil.");
+  }
+
+  if (
+    (profile.sceneHooks.ending === "image_or_threat" ||
+      profile.sceneHooks.ending === "proof_image_or_status_threat") &&
+    lastParagraph &&
+    countApproxWords(lastParagraph) > 110
+  ) {
+    notes.push("Das Szenenende wirkt zu ausfuehrlich fuer ein Hook- oder Stoerbild-Ende.");
+  }
+
+  if (
+    (profile.sensoryWeight === "high" || profile.sensoryWeight === "medium_high") &&
+    !hasEarlySensoryAnchor(draftText)
+  ) {
+    notes.push("Im Einstieg fehlt eine klare sinnliche Verankerung fuer das Technikprofil.");
+  }
+
+  if (
+    profile.expositionMode === "embedded_only" &&
+    countAbstractExpositionPhrases(draftText) >= 6
+  ) {
+    notes.push("Der Text erklaert zu viel direkt, statt Druck ueber Handlung und Wahrnehmung zu tragen.");
+  }
+
+  return dedupeStrings(notes).slice(0, 4);
+}
+
+function hasEarlySensoryAnchor(value: string) {
+  const openingWindow = value
+    .trim()
+    .split(/\s+/)
+    .slice(0, 90)
+    .join(" ");
+
+  return /(sah|sieht|blickte|blick|hoerte|horte|klang|roch|roch es|spuerte|spurte|fuehlte|fuhlte|kalt|warm|licht|geraeusch|geruch)/i.test(
+    openingWindow
+  );
+}
+
+function countAbstractExpositionPhrases(value: string) {
+  const patterns = [
+    /\bwusste,\s+dass\b/gi,
+    /\bdachte,\s+dass\b/gi,
+    /\bfuehlte,\s+dass\b/gi,
+    /\berkannte,\s+dass\b/gi,
+    /\bes war, als\b/gi,
+    /\bdas bedeutete\b/gi,
+    /\bim grunde\b/gi,
+    /\beigentlich\b/gi
+  ];
+
+  return patterns.reduce(function (sum, pattern) {
+    return sum + ((value.match(pattern) ?? []).length);
+  }, 0);
 }
 
 function padDraftToTarget(value: string, targetWords: number) {

@@ -1239,7 +1239,9 @@ function buildCoreSystemPrompt() {
     "POV discipline: Stay within the perceptual boundary of the POV character. No knowledge, emotion, or observation the character cannot access. Third-person limited; no omniscient intrusions.",
     "Keep inner reflection shorter than the action that triggers it unless the scene is explicitly introspective.",
     "Do not recap the scene to the reader. Let pressure, objects, and interaction carry the movement.",
-    "The prose should feel immediate and necessary, not over-designed."
+    "The prose should feel immediate and necessary, not over-designed.",
+    "Use only abstract technique guidance from EMBER. Never imitate, paraphrase, or echo recognizable phrasing from a specific author, comp title, or reference excerpt.",
+    "If the technique profile asks for more pressure, achieve it through original scene construction, not through borrowed stylistic signatures."
   ].join("\n");
 }
 
@@ -1252,6 +1254,14 @@ function buildStablePrefixPrompt(packet: SceneContextPacket) {
     `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
     `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
     formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
+    formatPromptList(
+      "Prose technique profile",
+      formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile)
+    ),
+    formatPromptList(
+      "Anti-imitation rules",
+      packet.stablePrefix.proseTechniqueProfile.antiImitationRules
+    ),
     formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
     formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
     formatPromptList("Continuity guardrails", packet.stablePrefix.continuityGuardrails),
@@ -1324,6 +1334,7 @@ function buildDraftProsePrompt(
     "Do not pad the scene to satisfy length. Do not compress away necessary pressure.",
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Write the scene directly from the material at hand. Keep some sentences raw enough that the prose stays alive.",
+    "Follow the prose technique profile as an abstract craft brief, not as author imitation.",
     buildProseSceneContextPrompt(packet),
     options.directorNote ? `Director note: ${options.directorNote}` : "Director note: none"
   ].join("\n");
@@ -1341,6 +1352,7 @@ function buildExpandPrompt(
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "This is an emergency length repair. Add only necessary scene substance, not padding.",
     "Deepen the existing scene movement. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
+    "Preserve the technique profile. Do not drift into explanatory filler or recognizable borrowed voice.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
   ].join("\n");
@@ -1358,6 +1370,7 @@ function buildCompressPrompt(
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "This is an emergency length repair. Cut only material that weakens scene pressure.",
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
+    "Preserve the technique profile. Remove explanation before you remove pressure-bearing objects, reversals, or hook images.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
   ].join("\n");
@@ -1381,6 +1394,7 @@ function buildStateExtractionPrompt(
     "- extractedState must stay conservative: explicit facts only.",
     "- Extracted facts are review candidates, not canon; do not promote guesses or renamed entities.",
     "- Any mismatch against hard names, colors, proof objects, places, or times belongs in continuityRisks.",
+    "- Any drift away from the prose technique profile belongs in styleDriftNotes.",
     "- Prefer empty arrays over speculative entries.",
     "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
@@ -1402,6 +1416,7 @@ function buildContinuityAuditPrompt(
     "Return only structured output matching the requested schema.",
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
+    "Check style against the prose technique profile and anti-imitation rules, not against named authors.",
     "Keep every listed issue compact.",
     buildSceneContextPrompt(packet),
     buildSceneContractPrompt(packet),
@@ -1429,6 +1444,7 @@ function buildQualityEvalPrompt(
     "Do not penalize organic scene length inside normal bounds. Flag only if the scene feels underdeveloped or bloated.",
     "Issues should be short, concrete, and user-facing.",
     "Keep every issue compact.",
+    "Reward original prose that follows the technique profile without sounding derivative or overdesigned.",
     buildSceneContextPrompt(packet),
     buildSceneContractPrompt(packet),
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
@@ -1453,6 +1469,12 @@ function buildAnthropicScenePrompt(params: {
   return [
     `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
     `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
+    `<prose_technique_profile>${escapeXml(
+      formatTechniqueProfile(params.packet.stablePrefix.proseTechniqueProfile).join(" | ")
+    )}</prose_technique_profile>`,
+    `<anti_imitation_rules>${escapeXml(
+      params.packet.stablePrefix.proseTechniqueProfile.antiImitationRules.join(" | ")
+    )}</anti_imitation_rules>`,
     `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
     `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
     params.options.directorNote
@@ -1478,6 +1500,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
     `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
+    `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" || ") || "none"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
@@ -1512,6 +1535,7 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     buildSceneContractPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
     `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
+    `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
@@ -1628,6 +1652,8 @@ function buildSceneContextXml(packet: SceneContextPacket) {
 function buildContinuityContext(packet: SceneContextPacket) {
   return [
     `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" | ") || "none"}`,
+    `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" | ") || "none"}`,
+    `Anti-imitation rules: ${packet.stablePrefix.proseTechniqueProfile.antiImitationRules.join(" | ") || "none"}`,
     `Continuity guardrails: ${packet.stablePrefix.continuityGuardrails.join(" | ") || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
@@ -1670,6 +1696,31 @@ function formatLockedFacts(lockedFacts: SceneContextPacket["stablePrefix"]["lock
     .map(function ([key, value]) {
       return `${key}=${value}`;
     });
+}
+
+function formatTechniqueProfile(
+  profile: SceneContextPacket["stablePrefix"]["proseTechniqueProfile"]
+) {
+  return [
+    `narrativeIntent=${profile.narrativeIntent}`,
+    `povDistance=${profile.povDistance}`,
+    `tensionMode=${profile.tensionMode}`,
+    `expositionMode=${profile.expositionMode}`,
+    `sensoryWeight=${profile.sensoryWeight}`,
+    `interiorityMode=${profile.interiorityMode}`,
+    `sentenceBaseline=${profile.sentenceDynamics.baseline}`,
+    `sentenceUnderStress=${profile.sentenceDynamics.underStress}`,
+    `fragmentation=${profile.sentenceDynamics.fragmentation}`,
+    `openingHook=${profile.sceneHooks.opening}`,
+    `endingHook=${profile.sceneHooks.ending}`,
+    `dialogueMode=${profile.dialogueMode}`,
+    `revealPattern=${profile.revealPattern}`,
+    `anchorPolicy=${profile.anchorPolicy}`
+  ]
+    .concat(profile.techniqueRules.map(function (rule) {
+      return `techniqueRule=${rule}`;
+    }))
+    .filter(Boolean);
 }
 
 function sanitizeBeatPlan(

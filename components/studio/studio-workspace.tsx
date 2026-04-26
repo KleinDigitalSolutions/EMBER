@@ -37,6 +37,7 @@ import {
   findSceneContext,
   isBranchingStory,
   normalizeBookLockedFacts,
+  normalizeBookProseTechniqueProfile,
   normalizeBookDraftTargets,
   normalizeBookRuleList,
   normalizeBookRuntimeContext,
@@ -3178,6 +3179,7 @@ function normalizeBookMemoryBackbone(
       })
         ? candidate.continuityGuardrails
         : fallback.continuityGuardrails,
+    proseTechniqueProfile: normalizeBookProseTechniqueProfile(candidate.proseTechniqueProfile),
     continuityNotes:
       Array.isArray(candidate.continuityNotes) ? candidate.continuityNotes : fallback.continuityNotes,
     humanEditExamples:

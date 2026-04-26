@@ -12,7 +12,7 @@ const scenes: SampleReaderScene[] = [
       "Sie tippte darauf, weil das Hirn schneller war als die Bedeutung. Die App öffnete den Eintrag in ganzer Länge. Datum gestern. Uhrzeit 15:42. Abholberechtigte Person: sie selbst. Daneben das kleine graue Häkchen für *bestätigt*.",
       "Eva schob den Stuhl zurück. In ihrem Outlook lag der gestrige Termin noch offen: 14:30–17:30, Frankfurt, MainTower. Empfangscode, Parkhaus, Kerstins Nummer im Anrufverlauf. Um 15:42 Uhr hatte sie in einem Stuhl mit dunkelblauem Bezug gesessen, Block auf den Knien, hundert Kilometer entfernt.",
       "Sie öffnete die Telefon-App.",
-      "Beim ersten Versuch wählte sie sich verschrieben. Beim zweiten landete sie in der Warteschleife der Kita, einer Klaviermelodie, die sie sonst kaum bemerkte und jetzt jeden Takt mitzählte. Sie sah, dass ihre Hand zitterte, und legte sie auf den Tisch, flach, als ließe sich das so abstellen.",
+      "Beim ersten Versuch verwählte sie sich. Beim zweiten landete sie in der Warteschleife der Kita, einer Klaviermelodie, die sie sonst kaum bemerkte und jetzt jeden Takt mitzählte. Sie sah, dass ihre Hand zitterte, und legte sie auf den Tisch, flach, als ließe sich das so abstellen.",
       "„Kita Sonnenhof, Löwen.“",
       "„Petra, hier ist Eva Berger. Mila Bergers Mutter.“",
       "„Ja, Frau Berger.“ Petras Stimme, ruhig wie immer, leicht nasal vom Wetter. „Was kann ich für Sie tun?“",

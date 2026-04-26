@@ -286,6 +286,7 @@ export type BookMemoryBackbone = {
   contextPacks: BookContextPack[];
   lockedFacts: BookLockedFacts;
   continuityGuardrails: string[];
+  proseTechniqueProfile: BookProseTechniqueProfile;
   continuityNotes: string[];
   humanEditExamples: BookHumanEditExample[];
 };
@@ -305,9 +306,33 @@ export type BookLockedFacts = {
   documentedPickupPerson: string | null;
 };
 
+export type BookProseTechniqueProfile = {
+  narrativeIntent: string;
+  povDistance: string;
+  tensionMode: string;
+  expositionMode: string;
+  sensoryWeight: string;
+  interiorityMode: string;
+  sentenceDynamics: {
+    baseline: string;
+    underStress: string;
+    fragmentation: string;
+  };
+  sceneHooks: {
+    opening: string;
+    ending: string;
+  };
+  dialogueMode: string;
+  revealPattern: string;
+  anchorPolicy: string;
+  techniqueRules: string[];
+  antiImitationRules: string[];
+};
+
 export type BookRuntimeContext = {
   lockedFacts: BookLockedFacts;
   continuityGuardrails: string[];
+  proseTechniqueProfile: BookProseTechniqueProfile;
 };
 
 export type BookCanonFact = {
@@ -645,6 +670,7 @@ export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
     contextPacks: [],
     lockedFacts: createEmptyBookLockedFacts(),
     continuityGuardrails: [],
+    proseTechniqueProfile: createDefaultBookProseTechniqueProfile(),
     continuityNotes: [],
     humanEditExamples: []
   };
@@ -690,10 +716,126 @@ export function normalizeBookLockedFacts(value: unknown): BookLockedFacts {
   };
 }
 
+export function createDefaultBookProseTechniqueProfile(): BookProseTechniqueProfile {
+  return {
+    narrativeIntent:
+      "Schreibe als zugkraeftige, lesbare Spannungsprosa: konkret, nah, druckvoll und ohne Autorenmasken.",
+    povDistance: "close",
+    tensionMode: "progressive_escalation",
+    expositionMode: "embedded_only",
+    sensoryWeight: "medium",
+    interiorityMode: "micro_reactions",
+    sentenceDynamics: {
+      baseline: "controlled_medium",
+      underStress: "tighten_and_shorten",
+      fragmentation: "occasional_only"
+    },
+    sceneHooks: {
+      opening: "disturbance_first",
+      ending: "image_or_reversal"
+    },
+    dialogueMode: "subtext_and_pressure",
+    revealPattern: "withhold_then_clarify",
+    anchorPolicy: "each_scene_needs_a_concrete_anchor",
+    techniqueRules: [
+      "Beginne mit Stoerung, Druck oder veraenderter Lage statt mit Vorerklaerung.",
+      "Fuehre Wahrnehmung, Handlung und Mikroreaktion enger als abstrakte Reflexion.",
+      "Exposition nur unter Bewegung, Konflikt oder Gegenstandsdruck einlassen.",
+      "Nach sichtbarem Machtwechsel, Evidenzturn oder Stoerbild zuegig beenden."
+    ],
+    antiImitationRules: [
+      "Keine erkennbaren Anleihen bei einzelnen Autorinnen, Autoren oder Comp Titles.",
+      "Keine markanten Phrasen, Satzmuster oder Signaturbilder aus Referenztexten uebernehmen.",
+      "Technik nur auf hoher Abstraktion verwenden: Spannung bauen, nicht Stimmen kopieren."
+    ]
+  };
+}
+
+export function normalizeBookProseTechniqueProfile(value: unknown): BookProseTechniqueProfile {
+  const fallback = createDefaultBookProseTechniqueProfile();
+  const record =
+    value && typeof value === "object" ? (value as Partial<BookProseTechniqueProfile>) : null;
+  const sentenceDynamics =
+    record?.sentenceDynamics && typeof record.sentenceDynamics === "object"
+      ? record.sentenceDynamics
+      : null;
+  const sceneHooks =
+    record?.sceneHooks && typeof record.sceneHooks === "object" ? record.sceneHooks : null;
+
+  return {
+    narrativeIntent:
+      typeof record?.narrativeIntent === "string" && record.narrativeIntent.trim()
+        ? record.narrativeIntent.trim()
+        : fallback.narrativeIntent,
+    povDistance:
+      typeof record?.povDistance === "string" && record.povDistance.trim()
+        ? record.povDistance.trim()
+        : fallback.povDistance,
+    tensionMode:
+      typeof record?.tensionMode === "string" && record.tensionMode.trim()
+        ? record.tensionMode.trim()
+        : fallback.tensionMode,
+    expositionMode:
+      typeof record?.expositionMode === "string" && record.expositionMode.trim()
+        ? record.expositionMode.trim()
+        : fallback.expositionMode,
+    sensoryWeight:
+      typeof record?.sensoryWeight === "string" && record.sensoryWeight.trim()
+        ? record.sensoryWeight.trim()
+        : fallback.sensoryWeight,
+    interiorityMode:
+      typeof record?.interiorityMode === "string" && record.interiorityMode.trim()
+        ? record.interiorityMode.trim()
+        : fallback.interiorityMode,
+    sentenceDynamics: {
+      baseline:
+        typeof sentenceDynamics?.baseline === "string" && sentenceDynamics.baseline.trim()
+          ? sentenceDynamics.baseline.trim()
+          : fallback.sentenceDynamics.baseline,
+      underStress:
+        typeof sentenceDynamics?.underStress === "string" && sentenceDynamics.underStress.trim()
+          ? sentenceDynamics.underStress.trim()
+          : fallback.sentenceDynamics.underStress,
+      fragmentation:
+        typeof sentenceDynamics?.fragmentation === "string" && sentenceDynamics.fragmentation.trim()
+          ? sentenceDynamics.fragmentation.trim()
+          : fallback.sentenceDynamics.fragmentation
+    },
+    sceneHooks: {
+      opening:
+        typeof sceneHooks?.opening === "string" && sceneHooks.opening.trim()
+          ? sceneHooks.opening.trim()
+          : fallback.sceneHooks.opening,
+      ending:
+        typeof sceneHooks?.ending === "string" && sceneHooks.ending.trim()
+          ? sceneHooks.ending.trim()
+          : fallback.sceneHooks.ending
+    },
+    dialogueMode:
+      typeof record?.dialogueMode === "string" && record.dialogueMode.trim()
+        ? record.dialogueMode.trim()
+        : fallback.dialogueMode,
+    revealPattern:
+      typeof record?.revealPattern === "string" && record.revealPattern.trim()
+        ? record.revealPattern.trim()
+        : fallback.revealPattern,
+    anchorPolicy:
+      typeof record?.anchorPolicy === "string" && record.anchorPolicy.trim()
+        ? record.anchorPolicy.trim()
+        : fallback.anchorPolicy,
+    techniqueRules: normalizeBookRuleList(record?.techniqueRules, fallback.techniqueRules),
+    antiImitationRules: normalizeBookRuleList(
+      record?.antiImitationRules,
+      fallback.antiImitationRules
+    )
+  };
+}
+
 export function createEmptyBookRuntimeContext(): BookRuntimeContext {
   return {
     lockedFacts: createEmptyBookLockedFacts(),
-    continuityGuardrails: []
+    continuityGuardrails: [],
+    proseTechniqueProfile: createDefaultBookProseTechniqueProfile()
   };
 }
 
@@ -712,7 +854,8 @@ export function normalizeBookRuntimeContext(value: unknown): BookRuntimeContext 
             return entry.trim();
           })
           .filter(Boolean)
-      : fallback.continuityGuardrails
+      : fallback.continuityGuardrails,
+    proseTechniqueProfile: normalizeBookProseTechniqueProfile(record?.proseTechniqueProfile)
   };
 }
 

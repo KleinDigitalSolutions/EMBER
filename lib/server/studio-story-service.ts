@@ -4,6 +4,7 @@ import {
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
   normalizeBookLockedFacts,
+  normalizeBookProseTechniqueProfile,
   normalizeBookRuntimeContext,
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
@@ -450,6 +451,9 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
           lockedFacts: normalizeBookLockedFacts(toRecord(bookProject.master_brief_runtime).lockedFacts),
           continuityGuardrails: normalizeStringArray(
             toRecord(bookProject.writer_rules_runtime).continuityGuardrails
+          ),
+          proseTechniqueProfile: normalizeBookProseTechniqueProfile(
+            toRecord(bookProject.writer_rules_runtime).proseTechniqueProfile
           ),
           continuityNotes: [],
           humanEditExamples: (humanEditExamplesResult.data ?? []).map(mapHumanEditExampleRow)

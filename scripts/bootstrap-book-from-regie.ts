@@ -5,11 +5,13 @@ import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
   createEmptyBookLockedFacts,
+  createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
   type BookCharacterState,
   type BookContextPack,
   type BookLockedFacts,
   type BookOpenThread,
+  type BookProseTechniqueProfile,
   type BookSceneCard,
   type StoryAct,
   type StoryDocument,
@@ -72,6 +74,7 @@ type ParsedRegie = {
   writerConstitution: string[]
   continuityGuardrails: string[]
   lockedFacts: BookLockedFacts
+  proseTechniqueProfile: BookProseTechniqueProfile
   worldBibleEntries: WorldBibleEntry[]
   canonFacts: ParsedCanonFact[]
   characters: ParsedCharacter[]
@@ -113,7 +116,8 @@ async function main() {
           openThreads: parsed.openThreads.length,
           worldBibleEntries: parsed.worldBibleEntries.length,
           lockedFacts: parsed.lockedFacts,
-          continuityGuardrails: parsed.continuityGuardrails.length
+          continuityGuardrails: parsed.continuityGuardrails.length,
+          proseTechniqueProfile: parsed.proseTechniqueProfile
         },
         null,
         2
@@ -177,7 +181,8 @@ async function patchExistingStoryRuntimeOnly(storyId: string, parsed: ParsedRegi
 
   const runtimeContext = {
     lockedFacts: parsed.lockedFacts,
-    continuityGuardrails: parsed.continuityGuardrails
+    continuityGuardrails: parsed.continuityGuardrails,
+    proseTechniqueProfile: parsed.proseTechniqueProfile
   }
 
   const bookProjectUpdate = await supabaseAdmin
@@ -211,7 +216,8 @@ async function patchExistingStoryRuntimeOnly(storyId: string, parsed: ParsedRegi
     storyId,
     title: story.title,
     lockedFacts: parsed.lockedFacts,
-    continuityGuardrailsUpdated: parsed.continuityGuardrails.length
+    continuityGuardrailsUpdated: parsed.continuityGuardrails.length,
+    proseTechniqueProfile: parsed.proseTechniqueProfile
   }
 }
 
@@ -462,7 +468,8 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
         })),
       runtimeContext: {
         lockedFacts: parsed.lockedFacts,
-        continuityGuardrails: parsed.continuityGuardrails
+        continuityGuardrails: parsed.continuityGuardrails,
+        proseTechniqueProfile: parsed.proseTechniqueProfile
       }
     }
   })
@@ -476,11 +483,13 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
     writerConstitution: parsed.writerConstitution,
     masterBriefRuntime: {
       lockedFacts: parsed.lockedFacts,
-      continuityGuardrails: parsed.continuityGuardrails
+      continuityGuardrails: parsed.continuityGuardrails,
+      proseTechniqueProfile: parsed.proseTechniqueProfile
     },
     writerRulesRuntime: {
       lockedFacts: parsed.lockedFacts,
-      continuityGuardrails: parsed.continuityGuardrails
+      continuityGuardrails: parsed.continuityGuardrails,
+      proseTechniqueProfile: parsed.proseTechniqueProfile
     },
     threatModel: {
       lockedFacts: parsed.lockedFacts
@@ -494,6 +503,7 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       contextPacks,
       lockedFacts: parsed.lockedFacts,
       continuityGuardrails: parsed.continuityGuardrails,
+      proseTechniqueProfile: parsed.proseTechniqueProfile,
       continuityNotes: [],
       humanEditExamples: []
     },
@@ -782,6 +792,24 @@ function parseRegie(
     characters,
     scenes
   })
+  const writerConstitution = parseBulletLines(writerSection)
+  const marketBrief = {
+    ...defaultBook.marketBrief,
+    amazonGoal: marketBriefRows["Amazon Goal"] || "",
+    categoryLane: marketBriefRows["Category Lane"] || "",
+    hook: marketBriefRows["Commercial Hook"] || "",
+    seriesPotential: marketBriefRows["Serienpotenzial"] || "",
+    coverDirection: marketBriefRows["Cover-Richtung"] || "",
+    publishingGuardrails: uniqueStrings(
+      defaultBook.marketBrief.publishingGuardrails.concat(parseBulletLines(marketBriefSection))
+    )
+  }
+  const proseTechniqueProfile = deriveProseTechniqueProfile({
+    genre,
+    marketBrief,
+    writerConstitution,
+    continuityGuardrails
+  })
 
   return {
     title,
@@ -795,20 +823,11 @@ function parseRegie(
       endingPromise: masterBriefRows["Ending Promise"] || "",
       thematicCore
     },
-    marketBrief: {
-      ...defaultBook.marketBrief,
-      amazonGoal: marketBriefRows["Amazon Goal"] || "",
-      categoryLane: marketBriefRows["Category Lane"] || "",
-      hook: marketBriefRows["Commercial Hook"] || "",
-      seriesPotential: marketBriefRows["Serienpotenzial"] || "",
-      coverDirection: marketBriefRows["Cover-Richtung"] || "",
-      publishingGuardrails: uniqueStrings(
-        defaultBook.marketBrief.publishingGuardrails.concat(parseBulletLines(marketBriefSection))
-      )
-    },
-    writerConstitution: parseBulletLines(writerSection),
+    marketBrief,
+    writerConstitution,
     continuityGuardrails,
     lockedFacts,
+    proseTechniqueProfile,
     worldBibleEntries: buildWorldBibleEntries(worldBibleSection, characters, thematicCore, scenes),
     canonFacts,
     characters,
@@ -1430,6 +1449,96 @@ function deriveLockedFacts(params: {
     firstOfficeTime,
     evaAlibiLocation,
     documentedPickupPerson: protagonist
+  }
+}
+
+function deriveProseTechniqueProfile(params: {
+  genre: string
+  marketBrief: StoryDocument["book"]["marketBrief"]
+  writerConstitution: string[]
+  continuityGuardrails: string[]
+}): BookProseTechniqueProfile {
+  const fallback = createDefaultBookProseTechniqueProfile()
+  const signalText = [
+    params.genre,
+    params.marketBrief.categoryLane,
+    params.marketBrief.hook,
+    params.marketBrief.seriesPotential,
+    params.marketBrief.coverDirection
+  ]
+    .concat(params.writerConstitution)
+    .concat(params.continuityGuardrails)
+    .join(" ")
+  const normalizedSignals = normalizeText(signalText)
+  const isDomesticSuspense =
+    normalizedSignals.includes("domestic suspense") ||
+    normalizedSignals.includes("psychological thriller")
+  const alltagsnah =
+    normalizedSignals.includes("alltags") ||
+    normalizedSignals.includes("routine") ||
+    normalizedSignals.includes("institution") ||
+    normalizedSignals.includes("verwaltungs")
+  const noThrillerLoudness =
+    normalizedSignals.includes("ohne thrillerlarm") ||
+    normalizedSignals.includes("keine thrillershow") ||
+    normalizedSignals.includes("nicht wie tech-thriller") ||
+    normalizedSignals.includes("nicht wie ein thrillerbeweis")
+
+  if (!isDomesticSuspense && !alltagsnah) {
+    return fallback
+  }
+
+  return {
+    narrativeIntent:
+      "Alltagsnahe psychologische Suspense: dokumentierte Stoerung, sozialer Druck und ruhiger Verlust von Zugriff statt lauter Schauwerte.",
+    povDistance: "tight_close",
+    tensionMode: "progressive_escalation",
+    expositionMode: "embedded_only",
+    sensoryWeight: "medium_high",
+    interiorityMode: "micro_reactions",
+    sentenceDynamics: {
+      baseline: "controlled_medium",
+      underStress: "shorter_and_tighter",
+      fragmentation: "occasional_under_peak_stress"
+    },
+    sceneHooks: {
+      opening: "disturbance_first",
+      ending: "proof_image_or_status_threat"
+    },
+    dialogueMode: "subtext_and_procedural_friction",
+    revealPattern: "withhold_then_validate",
+    anchorPolicy: "every_scene_needs_a_concrete_object_or_document_anchor",
+    techniqueRules: uniqueStrings(
+      [
+        "Beginne so nah wie moeglich am ersten realen Angriff oder Stoermoment.",
+        "Fuehre Spannung ueber Dokumente, Objekte, Routinen und soziale Reaktionen statt ueber Showeffekte.",
+        "Backstory nur unter Bewegung; Vergangenheit kommt in kleinen spaeten Einsprengseln, nie als Bremsblock.",
+        "Innenleben ueber Koerper, Wahrnehmung, Mikroentscheidung und kurzen Deutungsdruck tragen.",
+        "Satzlaenge unter Druck sichtbar verdichten, ohne in abgehackte Dauerstakkati zu kippen.",
+        "Nach Proof-Image, Evidenzturn oder klarem Machtwechsel sofort oder sehr frueh aus der Szene gehen.",
+        "Dialog muss Vertrauen, Verfahren, Zugriff oder Machtbalance verschieben."
+      ].concat(
+        noThrillerLoudness
+          ? [
+              "Keine Thriller-Hysterie: Druck bleibt ruhig, plausibel und institutionell lesbar.",
+              "Nicht ueberbauen. Wenn ein Gegenstand oder Satz den Horror traegt, nicht nochmal aufdrehen."
+            ]
+          : []
+      )
+    ),
+    antiImitationRules: uniqueStrings(
+      [
+        "Keine Stilkopie einzelner Autorinnen, Autoren oder Comp Titles.",
+        "Keine markanten Phrasen, Setzungen oder Signaturbilder aus Referenztexten uebernehmen.",
+        "Tempo und Hooks ueber eigene Satzentscheidungen und Szenenlogik herstellen, nicht ueber erkennbare Fremdstimme."
+      ].concat(
+        alltagsnah
+          ? [
+              "Bedrohung ueber Alltagsbeweise, Verfahren und soziale Reibung tragen, nicht ueber grelle Thrillerornamente."
+            ]
+          : []
+      )
+    )
   }
 }
 
