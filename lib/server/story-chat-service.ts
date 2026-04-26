@@ -6,7 +6,11 @@ import { GoogleGenAI } from "@google/genai";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { buildSceneContextPacket } from "@/lib/book-engine";
+import {
+  analyzeBookDraftReadiness,
+  buildSceneContextPacket,
+  getDraftJobsForScene
+} from "@/lib/book-engine";
 import {
   DEFAULT_BOOK_JOB_MODELS,
   resolveBookJobModelValue,
@@ -20,7 +24,11 @@ import type {
   AssistantProvider,
   StoryDocument
 } from "@/lib/story-schema";
-import { createDefaultAssistantContextSelection } from "@/lib/story-schema";
+import {
+  countWords,
+  createDefaultAssistantContextSelection,
+  getAllScenes
+} from "@/lib/story-schema";
 
 const storyChatSchema = z.object({
   reply: z.string().min(40),
@@ -37,6 +45,18 @@ const storyChatSchema = z.object({
 
 type StoryChatPayload = z.infer<typeof storyChatSchema>;
 type RemoteStoryChatProvider = Exclude<AssistantProvider, "auto" | "local">;
+type StoryChatDraftJob = StoryDocument["book"]["draftEngine"]["jobs"][number];
+
+const STORY_CHAT_STAGE_ORDER = [
+  "context",
+  "beat_plan",
+  "draft",
+  "rewrite",
+  "length_control",
+  "extract",
+  "continuity",
+  "quality_eval"
+] as const;
 
 export type StoryChatExecution = {
   provider: Exclude<AssistantProvider, "auto">;
@@ -346,48 +366,309 @@ function buildUserPrompt(
     return candidate.id === threadId;
   });
   const recentMessages = (thread?.messages ?? []).slice(-8).map(function (message) {
-    return `${message.role === "assistant" ? "ASSISTANT" : "USER"}: ${message.content}`;
+    return `${message.role === "assistant" ? "ASSISTANT" : "USER"}: ${trimPromptText(message.content, 1400)}`;
   });
-  const codexSnapshot = story.worldBible.slice(0, 8).map(function (entry) {
-    return `- ${entry.title} (${entry.kind}): ${entry.summary}`;
-  });
-  const writerRules = buildWriterConstitutionPrompt(story.book.writerConstitution);
-  const scopedContext = buildScopedContextPrompt(story, contextSelection);
-  const memorySnapshot = buildMemorySnapshotPrompt(story, contextSelection);
+  const projectContext = buildAssistantProjectContextPrompt(story, contextSelection);
 
   return [
     `OUTPUT_MODE: ${outputMode}`,
     `CONTEXT_SCOPE: ${contextSelection.scope}`,
-    `PROJEKT: ${story.title}`,
-    `GENRE: ${story.meta.genre || "nicht gesetzt"}`,
-    `SPRACHE: ${story.meta.language || "de"}`,
-    `PREMISE: ${story.book.masterBrief.premise || "nicht gesetzt"}`,
-    `READER_PROMISE: ${story.book.masterBrief.readerPromise || "nicht gesetzt"}`,
-    `ENDING_PROMISE: ${story.book.masterBrief.endingPromise || "nicht gesetzt"}`,
-    `THEMATIC_CORE: ${story.book.masterBrief.thematicCore || "nicht gesetzt"}`,
-    `MARKET_HOOK: ${story.book.marketBrief.hook || "nicht gesetzt"}`,
+    `AKTIVER_KONTEXT: ${buildContextLabel(story, contextSelection)}`,
     "",
-    "WRITER_CONSTITUTION:",
-    writerRules,
-    "",
-    "CODEX:",
-    codexSnapshot.length ? codexSnapshot.join("\n") : "- Keine Codex-Einträge",
-    "",
-    "MEMORY_BACKBONE:",
-    memorySnapshot,
-    "",
-    "KONTEXT:",
-    scopedContext,
+    "PROJECT_CONTEXT:",
+    projectContext,
     "",
     "LETZTE NACHRICHTEN:",
-    recentMessages.join("\n"),
+    recentMessages.length ? recentMessages.join("\n") : "- Keine bisherigen Nachrichten.",
     "",
     "LIEFERE JSON im vereinbarten Schema.",
+    "Nutze PROJECT_CONTEXT als Quelle der Wahrheit: Blueprint, Memory, Pipeline und aktiver Scope sind wichtiger als allgemeine Schreibratschläge.",
+    "Wenn die Nutzerfrage unklar ist, antworte trotzdem hilfreich aus dem aktiven Scope und markiere die wichtigste fehlende Entscheidung.",
     "Wenn OUTPUT_MODE chat ist, soll artifact null sein.",
     "Wenn OUTPUT_MODE regie ist, erzeuge ein kompaktes, hochwertiges Markdown-Dokument als artifact.",
     "Wenn OUTPUT_MODE regie ist, muss artifact.content diese Abschnitte enthalten: ## Strukturabgleich, ## Stable Prefix, ## Writer Constitution, ## Dynamic Context, ## Pipeline-Fit, ## Nächste Schritte.",
     "Wenn du eine Lücke benennst, sage explizit, ob sie heute ein echter Datenmodell- oder Persistenzmangel ist oder nur ein geplanter Ausbau laut Struktur.",
     "Der reply-Text bleibt knapp und sagt, was du entschieden oder erzeugt hast."
+  ].join("\n");
+}
+
+function buildAssistantProjectContextPrompt(
+  story: StoryDocument,
+  contextSelection: AssistantContextSelection
+) {
+  const scopedScenes = getScopedSceneContexts(story, contextSelection);
+  const scopedSceneIds = new Set(
+    scopedScenes.map(function (sceneContext) {
+      return sceneContext.sceneId;
+    })
+  );
+  const sections: Array<string | null> = [
+    buildProjectIdentityPrompt(story, scopedScenes.length),
+    buildStableBriefPrompt(story),
+    buildPipelineContextPrompt(story, scopedSceneIds),
+    buildMemoryContextPrompt(story, scopedSceneIds),
+    buildActiveScopeContextPrompt(story, contextSelection, scopedScenes),
+    buildActiveScenePacketPrompt(story, contextSelection),
+    buildAssistantWorkspaceMemoryPrompt(story)
+  ];
+
+  return sections.filter(Boolean).join("\n\n");
+}
+
+function buildProjectIdentityPrompt(story: StoryDocument, scopedSceneCount: number) {
+  const allScenes = getAllScenes(story);
+  const totalWords = allScenes.reduce(function (sum, scene) {
+    return sum + getSceneTextWordCount(scene);
+  }, 0);
+
+  return [
+    "## Project Identity",
+    `Title: ${formatPromptValue(story.title)}`,
+    `Author: ${formatPromptValue(story.authorName)}`,
+    `Status: ${story.status}`,
+    `Mode: ${story.mode}`,
+    `Language: ${formatPromptValue(story.meta.language || "de")}`,
+    `Genre: ${formatPromptValue(story.meta.genre)}`,
+    `Audience: ${formatPromptValue(story.meta.audience)}`,
+    `Target: ${story.book.targetFormat}, ${story.book.targetLengthWords} words`,
+    `Current structure: ${story.acts.length} act(s), ${allScenes.length} scene(s), approx. ${totalWords} words in scene text`,
+    `Active scope scene count: ${scopedSceneCount}`
+  ].join("\n");
+}
+
+function buildStableBriefPrompt(story: StoryDocument) {
+  return [
+    "## Stable Brief",
+    `Premise: ${formatPromptValue(story.book.masterBrief.premise)}`,
+    `Reader Promise: ${formatPromptValue(story.book.masterBrief.readerPromise)}`,
+    `Ending Promise: ${formatPromptValue(story.book.masterBrief.endingPromise)}`,
+    `Thematic Core: ${formatPromptValue(story.book.masterBrief.thematicCore)}`,
+    `Amazon Goal: ${formatPromptValue(story.book.marketBrief.amazonGoal)}`,
+    `Category Lane: ${formatPromptValue(story.book.marketBrief.categoryLane)}`,
+    `Commercial Hook: ${formatPromptValue(story.book.marketBrief.hook)}`,
+    `Series Potential: ${formatPromptValue(story.book.marketBrief.seriesPotential)}`,
+    `Cover Direction: ${formatPromptValue(story.book.marketBrief.coverDirection)}`,
+    "Story Architecture:",
+    formatPromptList(story.book.masterBrief.storyArchitecture, "Keine Story-Architecture hinterlegt.", 8),
+    "Publishing Guardrails:",
+    formatPromptList(story.book.marketBrief.publishingGuardrails, "Keine Publishing-Guardrails hinterlegt.", 8),
+    "Writer Constitution:",
+    buildWriterConstitutionPrompt(story.book.writerConstitution)
+  ].join("\n");
+}
+
+function buildPipelineContextPrompt(story: StoryDocument, scopedSceneIds: Set<string>) {
+  const audit = analyzeBookDraftReadiness(story);
+  const allSceneCount = getAllScenes(story).length;
+  const sortedJobs = story.book.draftEngine.jobs
+    .slice()
+    .sort(function (left, right) {
+      return right.updatedAt.localeCompare(left.updatedAt);
+    });
+  const scopedJobs = sortedJobs.filter(function (job) {
+    return scopedSceneIds.has(job.sceneId);
+  });
+  const scopedJobLines = scopedJobs.slice(0, 5).map(formatDraftJobLine);
+  const latestJobLines = sortedJobs.slice(0, 5).map(formatDraftJobLine);
+  const readinessWarnings = audit.continuityBlockers
+    .concat(audit.qualityWarnings)
+    .concat(audit.marketWarnings)
+    .slice(0, 8);
+
+  return [
+    "## Pipeline State",
+    `Active Phase: ${story.book.activePhase}`,
+    `Draft Target: ${story.book.draftEngine.targetSceneWordsMin}-${story.book.draftEngine.targetSceneWordsMax} words per scene`,
+    `Style Profile: ${story.book.draftEngine.styleProfileVersion}`,
+    `Market Profile: ${story.book.draftEngine.marketProfileVersion}`,
+    `Stage Order: ${STORY_CHAT_STAGE_ORDER.join(" -> ")}`,
+    `Draft Jobs: ${sortedJobs.length} total, ${audit.acceptedJobs} accepted, ${audit.pendingJobs} ready/pending, ${audit.uncoveredSceneCount}/${allSceneCount} scene(s) uncovered`,
+    `Current Scope Jobs: ${scopedJobs.length}`,
+    "Readiness / Risks:",
+    formatPromptList(readinessWarnings, "Keine harten Readiness-Warnungen im aktuellen Snapshot.", 8),
+    "Latest Draft Jobs:",
+    formatPromptList(latestJobLines, "Noch keine Draft-Jobs vorhanden.", 5),
+    scopedSceneIds.size && scopedSceneIds.size !== allSceneCount
+      ? ["Draft Jobs in Active Scope:", formatPromptList(scopedJobLines, "Noch kein Draft-Job im aktiven Scope.", 5)].join("\n")
+      : ""
+  ].filter(Boolean).join("\n");
+}
+
+function buildMemoryContextPrompt(story: StoryDocument, scopedSceneIds: Set<string>) {
+  const memory = story.book.memory;
+  const canonEntries = selectRelevantCanonEntries(story, scopedSceneIds);
+  const characterStates = selectRelevantCharacterStates(story, scopedSceneIds);
+  const openThreads = selectRelevantOpenThreads(story, scopedSceneIds);
+
+  return [
+    "## Memory Backbone",
+    `Last Synced: ${memory.lastSyncedAt || "noch nie"}`,
+    `Canon Ledger: ${memory.canonLedger.length} fact(s)`,
+    `Character Ledger: ${memory.characterLedger.length} state(s)`,
+    `Open Threads: ${memory.openThreads.length} thread(s)`,
+    `Scene Cards: ${memory.sceneCards.length}`,
+    `Context Packs: ${memory.contextPacks.length}`,
+    "Relevant Canon:",
+    formatPromptList(
+      canonEntries.map(function (entry) {
+        return `${entry.title} [${entry.kind}, ${entry.importance}, ${entry.status}]: ${trimPromptText(entry.summary, 220)}`;
+      }),
+      "Keine relevanten Kanon-Einträge im aktiven Scope.",
+      6
+    ),
+    "Relevant Character States:",
+    formatPromptList(
+      characterStates.map(function (entry) {
+        const latestSnapshot = entry.snapshots[entry.snapshots.length - 1] ?? null;
+        return `${entry.characterName}: ${trimPromptText(entry.currentState, 180)} | Agenda: ${trimPromptText(entry.agenda, 140)} | Latest: ${latestSnapshot?.sourceLabel || "Baseline"}`;
+      }),
+      "Keine relevanten Figurenstände im aktiven Scope.",
+      6
+    ),
+    "Relevant Open Threads:",
+    formatPromptList(
+      openThreads.map(function (thread) {
+        return `${thread.label} [${thread.status}/${thread.priority}] from ${thread.sourceSceneTitle}: ${trimPromptText(thread.detail, 220)}`;
+      }),
+      "Keine relevanten offenen Fäden im aktiven Scope.",
+      6
+    ),
+    "Continuity Notes:",
+    formatPromptList(memory.continuityNotes, "Keine Continuity-Notizen hinterlegt.", 5)
+  ].join("\n");
+}
+
+function buildActiveScopeContextPrompt(
+  story: StoryDocument,
+  contextSelection: AssistantContextSelection,
+  scopedScenes: ReturnType<typeof getScopedSceneContexts>
+) {
+  const structureLines = story.acts.map(function (act) {
+    const sceneCount = act.chapters.reduce(function (sum, chapter) {
+      return sum + chapter.scenes.length;
+    }, 0);
+
+    return `${act.title}: ${act.chapters.length} chapter(s), ${sceneCount} scene(s)`;
+  });
+  const weakSceneLines = scopedScenes
+    .filter(function (sceneContext) {
+      return sceneContext.summary.length < 30;
+    })
+    .slice(0, 5)
+    .map(function (sceneContext) {
+      return `${sceneContext.sceneTitle} (${sceneContext.chapterTitle}) hat eine sehr kurze oder fehlende Summary.`;
+    });
+
+  return [
+    "## Active Scope",
+    `Resolved Label: ${buildContextLabel(story, contextSelection)}`,
+    buildScopedContextPrompt(story, contextSelection),
+    "Structure Overview:",
+    formatPromptList(structureLines, "Keine Struktur angelegt.", 8),
+    "Scenes in Active Scope:",
+    formatPromptList(
+      scopedScenes.slice(0, 10).map(function (sceneContext) {
+        return formatScopedSceneLine(story, sceneContext);
+      }),
+      "Keine Szene im aktiven Scope auflösbar.",
+      10
+    ),
+    "Scope Gaps:",
+    formatPromptList(weakSceneLines, "Keine offensichtlichen Scope-Lücken in den ersten Szenen.", 5)
+  ].join("\n");
+}
+
+function buildActiveScenePacketPrompt(story: StoryDocument, contextSelection: AssistantContextSelection) {
+  if (!contextSelection.sceneId) {
+    return null;
+  }
+
+  const packet = buildSceneContextPacket(story, contextSelection.sceneId);
+
+  if (!packet) {
+    return "## Active Scene Packet\n- Scene Context Packet konnte nicht geladen werden.";
+  }
+
+  const sceneCard = story.book.memory.sceneCards.find(function (card) {
+    return card.sceneId === contextSelection.sceneId;
+  }) ?? null;
+  const jobs = getDraftJobsForScene(story, contextSelection.sceneId);
+  const latestJob = jobs[0] ?? null;
+
+  return [
+    "## Active Scene Packet",
+    `Act / Chapter: ${packet.dynamicContext.actTitle} / ${packet.dynamicContext.chapterTitle}`,
+    `Scene: ${packet.dynamicContext.sceneTitle}`,
+    `Scene Label: ${packet.dynamicContext.sceneCardLabel || "nicht gesetzt"}`,
+    `Summary: ${formatPromptValue(packet.dynamicContext.sceneSummary)}`,
+    `Excerpt: ${formatPromptValue(packet.dynamicContext.sceneExcerpt, 600)}`,
+    `Context Pack: ${packet.dynamicContext.contextPackId || "nicht persistiert"}`,
+    `Memory Synced: ${packet.dynamicContext.memorySyncedAt || "noch nie"}`,
+    `Word Target: ${packet.dynamicContext.wordTargetMin ?? story.book.draftEngine.targetSceneWordsMin}-${packet.dynamicContext.wordTargetMax ?? story.book.draftEngine.targetSceneWordsMax}`,
+    "Scene Card Outline:",
+    formatPromptList(packet.dynamicContext.sceneCardOutline, "Keine Outline in der Scene Card.", 8),
+    "Scene Directives:",
+    formatPromptList(formatSceneDirectives(sceneCard?.directives ?? null), "Keine konkreten Scene-Directives hinterlegt.", 12),
+    "Hard Constraints:",
+    formatPromptList(packet.dynamicContext.sceneHardConstraints, "Keine harten Szenen-Constraints erkannt.", 8),
+    "Previous Beats:",
+    formatPromptList(
+      packet.dynamicContext.previousBeats.map(function (beat) {
+        return `${beat.orderLabel} ${beat.sceneTitle}: ${trimPromptText(beat.summary, 180)}`;
+      }),
+      "Keine vorherigen Beats im Packet.",
+      4
+    ),
+    "Next Beat:",
+    packet.dynamicContext.nextBeat
+      ? `- ${packet.dynamicContext.nextBeat.orderLabel} ${packet.dynamicContext.nextBeat.sceneTitle}: ${trimPromptText(packet.dynamicContext.nextBeat.summary, 220)}`
+      : "- Kein nächster Beat im Packet.",
+    "Packet Canon:",
+    formatPromptList(
+      packet.dynamicContext.relevantCodex.map(function (entry) {
+        return `${entry.title}: ${trimPromptText(entry.summary, 220)}`;
+      }),
+      "Kein relevanter Kanon im Packet.",
+      5
+    ),
+    "Packet Character States:",
+    formatPromptList(
+      packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+        return `${entry.characterName}: ${trimPromptText(entry.currentState, 180)} | ${trimPromptText(entry.innerShift, 160)}`;
+      }),
+      "Keine relevanten Figurenstände im Packet.",
+      5
+    ),
+    "Packet Open Threads:",
+    formatPromptList(
+      packet.dynamicContext.activeThreads.map(function (thread) {
+        return `${thread.label} [${thread.status}/${thread.priority}]: ${trimPromptText(thread.detail, 220)}`;
+      }),
+      "Keine aktiven Fäden im Packet.",
+      5
+    ),
+    "Latest Scene Draft Job:",
+    latestJob ? formatFocusedJobBlock(latestJob) : "- Noch kein Draft-Job für diese Szene."
+  ].join("\n");
+}
+
+function buildAssistantWorkspaceMemoryPrompt(story: StoryDocument) {
+  const artifacts = story.assistant.artifacts
+    .slice()
+    .sort(function (left, right) {
+      return right.updatedAt.localeCompare(left.updatedAt);
+    })
+    .slice(0, 4)
+    .map(function (artifact) {
+      return `${artifact.kind}: ${artifact.title} (${buildContextLabel(story, artifact.context)}) - ${trimPromptText(artifact.summary, 180)}`;
+    });
+
+  return [
+    "## Assistant Workspace Memory",
+    `Threads: ${story.assistant.threads.length}`,
+    `Artifacts: ${story.assistant.artifacts.length}`,
+    "Recent Artifacts:",
+    formatPromptList(artifacts, "Noch keine Assistant-Dokumente gespeichert.", 4)
   ].join("\n");
 }
 
@@ -815,4 +1096,245 @@ function buildRegieNextSteps(
   }
 
   return nextSteps;
+}
+
+function getScopedSceneContexts(story: StoryDocument, contextSelection: AssistantContextSelection) {
+  const contexts = story.acts.flatMap(function (act) {
+    return act.chapters.flatMap(function (chapter) {
+      return chapter.scenes.map(function (scene) {
+        return {
+          actId: act.id,
+          actTitle: act.title,
+          chapterId: chapter.id,
+          chapterTitle: chapter.title,
+          sceneId: scene.id,
+          sceneTitle: scene.title,
+          summary: scene.summary,
+          wordCount: getSceneTextWordCount(scene)
+        };
+      });
+    });
+  });
+
+  if (contextSelection.scope === "project") {
+    return contexts;
+  }
+
+  if (contextSelection.scope === "act") {
+    return contexts.filter(function (sceneContext) {
+      return sceneContext.actId === contextSelection.actId;
+    });
+  }
+
+  if (contextSelection.scope === "chapter") {
+    return contexts.filter(function (sceneContext) {
+      return (
+        sceneContext.actId === contextSelection.actId &&
+        sceneContext.chapterId === contextSelection.chapterId
+      );
+    });
+  }
+
+  return contexts.filter(function (sceneContext) {
+    return sceneContext.sceneId === contextSelection.sceneId;
+  });
+}
+
+function getSceneTextWordCount(
+  scene: StoryDocument["acts"][number]["chapters"][number]["scenes"][number]
+) {
+  if (scene.wordCount > 0) {
+    return scene.wordCount;
+  }
+
+  return countWords(
+    [scene.summary]
+      .concat(
+        scene.blocks.map(function (block) {
+          return block.text;
+        })
+      )
+      .join(" ")
+  );
+}
+
+function formatScopedSceneLine(
+  story: StoryDocument,
+  sceneContext: ReturnType<typeof getScopedSceneContexts>[number]
+) {
+  const latestJob = getLatestJobForScene(story, sceneContext.sceneId);
+  const jobStatus = latestJob
+    ? `${latestJob.status}, ${countWords(latestJob.rewriteText)} rewrite words`
+    : "no draft job";
+
+  return `${sceneContext.actTitle} / ${sceneContext.chapterTitle} / ${sceneContext.sceneTitle} (${sceneContext.wordCount} words; ${jobStatus}): ${formatPromptValue(sceneContext.summary, 220)}`;
+}
+
+function getLatestJobForScene(story: StoryDocument, sceneId: string) {
+  return getDraftJobsForScene(story, sceneId)[0] ?? null;
+}
+
+function selectRelevantCanonEntries(story: StoryDocument, scopedSceneIds: Set<string>) {
+  const allSceneCount = getAllScenes(story).length;
+
+  if (!scopedSceneIds.size || scopedSceneIds.size === allSceneCount) {
+    return story.book.memory.canonLedger.slice(0, 6);
+  }
+
+  const scoped = story.book.memory.canonLedger.filter(function (entry) {
+    return entry.sceneIds.some(function (sceneId) {
+      return scopedSceneIds.has(sceneId);
+    });
+  });
+
+  return (scoped.length ? scoped : story.book.memory.canonLedger).slice(0, 6);
+}
+
+function selectRelevantCharacterStates(story: StoryDocument, scopedSceneIds: Set<string>) {
+  const allSceneCount = getAllScenes(story).length;
+
+  if (!scopedSceneIds.size || scopedSceneIds.size === allSceneCount) {
+    return story.book.memory.characterLedger.slice(0, 6);
+  }
+
+  const scoped = story.book.memory.characterLedger.filter(function (entry) {
+    if (scopedSceneIds.has(entry.updatedFromSceneId)) {
+      return true;
+    }
+
+    return entry.snapshots.some(function (snapshot) {
+      return Boolean(snapshot.sourceSceneId && scopedSceneIds.has(snapshot.sourceSceneId));
+    });
+  });
+
+  return (scoped.length ? scoped : story.book.memory.characterLedger).slice(0, 6);
+}
+
+function selectRelevantOpenThreads(story: StoryDocument, scopedSceneIds: Set<string>) {
+  const allSceneCount = getAllScenes(story).length;
+  const threads = story.book.memory.openThreads
+    .slice()
+    .sort(function (left, right) {
+      const leftScore = scoreOpenThread(left.status, left.priority);
+      const rightScore = scoreOpenThread(right.status, right.priority);
+
+      return rightScore - leftScore || left.label.localeCompare(right.label);
+    });
+
+  if (!scopedSceneIds.size || scopedSceneIds.size === allSceneCount) {
+    return threads.slice(0, 6);
+  }
+
+  const scoped = threads.filter(function (thread) {
+    return (
+      scopedSceneIds.has(thread.sourceSceneId) ||
+      Boolean(thread.payoffSceneId && scopedSceneIds.has(thread.payoffSceneId))
+    );
+  });
+
+  return (scoped.length ? scoped : threads).slice(0, 6);
+}
+
+function scoreOpenThread(status: StoryDocument["book"]["memory"]["openThreads"][number]["status"], priority: StoryDocument["book"]["memory"]["openThreads"][number]["priority"]) {
+  const statusScore = status === "active" ? 20 : status === "watch" ? 10 : 0;
+  const priorityScore = priority === "high" ? 3 : priority === "medium" ? 2 : 1;
+
+  return statusScore + priorityScore;
+}
+
+function formatSceneDirectives(
+  directives: StoryDocument["book"]["memory"]["sceneCards"][number]["directives"] | null
+) {
+  if (!directives) {
+    return [];
+  }
+
+  const fixedEntries: Array<[string, string | null]> = [
+    ["POV", directives.pov],
+    ["Location", directives.location],
+    ["Time", directives.timeAnchor],
+    ["Objective", directives.objective],
+    ["Opening", directives.opening],
+    ["Core Action", directives.coreAction],
+    ["Dramatic Beat", directives.dramaticBeat],
+    ["Ending", directives.ending],
+    ["Closing Line", directives.closingLine]
+  ];
+  const customEntries = directives.custom.map(function (entry) {
+    return [entry.key, entry.value] as [string, string | null];
+  });
+
+  return fixedEntries
+    .concat(customEntries)
+    .filter(function (entry) {
+      return Boolean(entry[1]?.trim());
+    })
+    .map(function ([key, value]) {
+      return `${key}: ${trimPromptText(value ?? "", 240)}`;
+    });
+}
+
+function formatDraftJobLine(job: StoryChatDraftJob) {
+  const pendingSyncItems = job.extractedState.memorySync.items.filter(function (item) {
+    return item.status === "pending";
+  }).length;
+  const qualityScore = job.stages.quality_eval.qualityScore;
+  const qualitySuffix = typeof qualityScore === "number" ? `, quality ${qualityScore}` : "";
+
+  return `${job.sceneTitle} [${job.status}, ${job.provider}${job.modelName ? `/${job.modelName}` : ""}, ${countWords(job.rewriteText)} rewrite words${qualitySuffix}, pending sync ${pendingSyncItems}] stages: ${formatStageStatusSummary(job)}`;
+}
+
+function formatFocusedJobBlock(job: StoryChatDraftJob) {
+  return [
+    `- Status: ${job.status}; provider: ${job.provider}${job.modelName ? `/${job.modelName}` : ""}; updated: ${job.updatedAt}`,
+    `- Context Snapshot: chapter ${job.contextSnapshot.chapterTitle}; pack ${job.contextSnapshot.contextPackId || "lokal"}; memory ${job.contextSnapshot.memorySyncedAt || "unsynced"}`,
+    `- Outline: ${job.outline.length ? job.outline.slice(0, 6).join(" | ") : "keine Outline"}`,
+    `- Rewrite Notes: ${job.rewriteNotes.length ? job.rewriteNotes.slice(0, 5).join(" | ") : "keine Rewrite Notes"}`,
+    `- Extracted Canon: ${job.extractedState.newCanonFacts.slice(0, 4).join(" | ") || "keine"}`,
+    `- Character Updates: ${job.extractedState.characterStateUpdates.slice(0, 4).join(" | ") || "keine"}`,
+    `- Open Threads Created: ${job.extractedState.openThreadsCreated.slice(0, 4).join(" | ") || "keine"}`,
+    `- Continuity Risks: ${job.extractedState.continuityRisks.concat(job.extractedState.styleDriftNotes).slice(0, 5).join(" | ") || "keine"}`,
+    `- Stage Status: ${formatStageStatusSummary(job)}`
+  ].join("\n");
+}
+
+function formatStageStatusSummary(job: StoryChatDraftJob) {
+  return STORY_CHAT_STAGE_ORDER.map(function (stage) {
+    const run = job.stages[stage];
+
+    return `${stage}:${run.status}${run.repairCount ? `/repairs-${run.repairCount}` : ""}`;
+  }).join(", ");
+}
+
+function formatPromptList(items: string[], emptyLabel: string, maxItems = 6) {
+  const lines = items
+    .map(function (item) {
+      return trimPromptText(item, 520);
+    })
+    .filter(Boolean)
+    .slice(0, maxItems);
+
+  if (!lines.length) {
+    return `- ${emptyLabel}`;
+  }
+
+  return lines.map(function (line) {
+    return `- ${line}`;
+  }).join("\n");
+}
+
+function formatPromptValue(value: string | null | undefined, maxLength = 360) {
+  const trimmed = trimPromptText(value ?? "", maxLength);
+
+  return trimmed || "nicht gesetzt";
+}
+
+function trimPromptText(value: string, maxLength: number) {
+  const cleaned = value.replace(/\s+/g, " ").trim();
+
+  if (cleaned.length <= maxLength) {
+    return cleaned;
+  }
+
+  return `${cleaned.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
 }
