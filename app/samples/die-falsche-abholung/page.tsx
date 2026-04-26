@@ -3,8 +3,9 @@ import { SampleReader, type SampleReaderScene } from "@/components/sample-reader
 const scenes: SampleReaderScene[] = [
   {
     id: "scene-1",
-    kicker: "Die Benachrichtigung",
+    kicker: "Buchprobe · Szene 1",
     title: "Gestern",
+    summary: "Eine verspätete Meldung in der Kita-App kippt Evas Alltag aus der Bahn: Laut System hat sie ihre Tochter Mila gestern selbst abgeholt – zu einer Zeit, als sie nachweislich hundert Kilometer entfernt in einem Meeting saß.",
     paragraphs: [
       "Die Benachrichtigung kam um 16:18 Uhr, während in der Kalkulation noch nichts stand. Oben rechts schob sich das Symbol der Kita-App ins Bild, dieses runde, grüne Logo mit der stilisierten Sonne, das sie sonst nur morgens und nachmittags wahrnahm. 16:18 Uhr. Sie las die Vorschau und las sie noch einmal.",
       "*Abschlussvermerk synchronisiert. 04.11., 15:42 Uhr. Mila Berger wurde abgeholt durch: Eva Berger.*",
