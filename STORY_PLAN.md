@@ -141,14 +141,13 @@ Die KI arbeitet nie direkt auf dem finalen Story-Text. `erledigt 2026-04-18` (Bo
 
 ## KI-Strategie
 ### Modellpolitik
-Wir fahren initial einen Hybrid-Ansatz aus Premium-Modellen und einem guenstigen Test-/Fallback-Pfad.
+Wir fahren den produktiven Pfad nur noch ueber Premium-Modelle.
 - OpenAI: Responses API als Primärpfad; `gpt-5.4` als Default für starke Generierungsjobs `erledigt 2026-04-18`
 - Anthropic: Claude Opus 4.7 ist im Code der aktuelle starke Book-Default fuer Prosa. Structured Nebenjobs werden davon getrennt: Continuity und seit `2026-04-21` auch State-Extract laufen auf `claude-haiku-4-5-20251001`, weil dort Schema-Treue wichtiger ist als stilistische Stärke. Deployment-spezifische Wechsel bleiben weiterhin über Env oder UI-Override möglich `aktualisiert 2026-04-21`
-- Gemini: `gemini-2.5-flash` als dritter Provider fuer schnelle und guenstigere Draft-/Testlaeufe via Google AI Studio / Gemini API `erledigt 2026-04-19`
 - Anthropic-Livepfad fuer Book-Jobs ist seit `2026-04-20` gehaertet: dynamisches Output-Budget, robuster JSON-Parse statt blindem Auto-Parse, Retry mit hoeherem Tokenbudget, kompakteres Prompting fuer Metadaten und ein gezielter Repair-Pass fuer Qualitaetsabweichungen. Dadurch bleibt der Pfad in echten `/api/book-jobs`-Läufen deutlich stabiler remote statt auf `local_fallback` zu kippen.
 
 Optional später:
-- kleinere GPT-5-Varianten oder Sonnet/Haiku-Klassen nur für Extraktion, Audits und Hintergrundjobs
+- kleinere GPT- oder Claude-Klassen nur für Extraktion, Audits und Hintergrundjobs
 - feinere Routing-Regeln fuer Premium-vs.-Kostenpfad je nach Jobtyp
 
 ### Betriebsprinzip
@@ -458,16 +457,16 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 ## Status Report `2026-04-19`
 - **Book Writer Panel:** `erledigt`. Dediziertes Schreib-Interface für fokussiertes Authoring von Buch-Projekten implementiert.
 - **Workspace Overhaul:** `erledigt`. Umfassender Refactor des `studio-workspace.tsx` zur Unterstützung dynamischer Panel-Transitions (Blueprint, Writer, Review, Assistant).
-- **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic` / `Gemini`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
+- **Draft Job UI & Model Selector:** `erledigt`. UI zur Visualisierung der AI-Jobs und Provider-Wahl (`OpenAI` / `Anthropic`) in das Writer-Panel integriert; Auswahl bleibt lokal erhalten.
 - **Per-Job Model Switcher:** `erledigt 2026-04-19`. Writer- und Blueprint-Panel koennen jetzt pro Job konkrete Modell-IDs je Provider ueberschreiben; die Auswahl wird lokal gespeichert und als Request-Override an den Server gereicht.
-- **Gemini Schnittstelle:** `erledigt`. `BookJobService` unterstützt jetzt `gemini-2.5-flash` über das offizielle Google GenAI SDK mit strukturierten JSON-Outputs.
+- **Provider-Bereinigung:** `erledigt 2026-04-26`. Chat und Book-Job-Service routen remote nur noch ueber OpenAI oder Anthropic; schnelle Testprovider wurden aus Runtime, UI und Env entfernt.
 - **Assistant Workspace:** `erledigt 2026-04-19`. Neues Chat-Panel mit Thread-Liste, Quick Prompts, Kontext-Scope und Regie-Modus fuer speicherbare Markdown-Dokumente.
-- **Story Chat Service:** `erledigt 2026-04-19`. Neue serverseitige `/api/story-chat`-Route plus Provider-Routing fuer OpenAI, Anthropic, Gemini und lokalen Fallback bei fehlenden Keys oder Remote-Fehlern.
+- **Story Chat Service:** `erledigt 2026-04-19`. Neue serverseitige `/api/story-chat`-Route plus Provider-Routing fuer OpenAI, Anthropic und lokalen Fallback bei fehlenden Keys oder Remote-Fehlern.
 - **Assistant Schema:** `erledigt 2026-04-19`. `StoryDocument` traegt jetzt Assistant-Praeferenzen, Threads, Nachrichten und Artefakte inklusive Normalisierung fuer Legacy-Daten.
-- **Schema & Persistence:** `erledigt`. Supabase-Enum `ai_provider` um `gemini` erweitert; `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
+- **Schema & Persistence:** `erledigt`. `book_draft_jobs.stage_runs` persistiert jetzt den mehrstufigen Pipeline-Status und wurde round-trip verifiziert.
 - **Service Layer:** `BookJobService` und `StudioStoryService` für robustere serverseitige Orchestrierung, Provider-Normalisierung, Stage-Metadaten und AI-Integration aktualisiert.
 - **Anthropic Routing:** `erledigt`. Stabiler Prefix wird gecacht; ein separater Continuity-Audit kann auf einem leichteren Anthropic-Modell statt auf dem Haupt-Draft-Modell laufen.
-- **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind Sonnet/Opus/GPT/Gemini-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
+- **Model Overrides:** `erledigt`. Server priorisiert jetzt pro Job explizite Modell-Overrides aus der UI vor Env-Defaults; dadurch sind Claude/GPT-Wechsel ohne Redeploy oder Env-Edit im laufenden Studio moeglich.
 - **Writer Constitution:** `erledigt`. Default-Regelbasis um negative Stilregeln und klarere Hook-/Ende-Regeln für Szenen und Kapitel geschärft.
 - **Studio UI/UX:** Signifikante Styling-Updates in `globals.css` zur Unterstützung des neuen Authoring-Workflows.
 
@@ -476,9 +475,8 @@ Der angehaengte Buch-Plan wird als eigener, priorisierter Track in EMBER gefuehr
 - **Remote Stability:** `erledigt 2026-04-20`. Echte End-to-End-Läufe ueber `/api/book-jobs` mit `claude-opus-4-7` bleiben nun im Modus `remote`, statt systematisch auf `local_fallback` zu kippen. Der Pfad ist damit fuer den alltäglichen Einsatz deutlich belastbarer.
 - **Anthropic Extract Split:** `aktualisiert 2026-04-21`. Der State-Extract im Anthropic-Pfad wurde bewusst von Opus auf `claude-haiku-4-5-20251001` verschoben. Grund: Opus ist stark fuer Prosa, aber zu kreativ fuer harte Structured-Extraktion; Haiku ist hier das passendere Tool. Parallel dazu wurde das Extract-Schema verkleinert, der Prompt haerter begrenzt und der alte Repair-Schritt durch eine frische Neugenerierung mit kleinerem Contract ersetzt.
 - **Model Defaults im Code:** `aktualisiert 2026-04-21`. Die aktuellen Code-Fallbacks fuer Book-Jobs liegen in `lib/book-job-models.ts` bei `claude-opus-4-7` fuer den Hauptdraft und `claude-haiku-4-5-20251001` fuer Continuity. Deployment-spezifische Env-Werte koennen davon weiterhin abweichen.
-- **Gemini Probe-Lage:** `aktualisiert 2026-04-21`. Drei echte End-to-End-Probes gegen `gemini-2.5-flash` zeigen ein gemischtes Bild: ein Lauf blieb remote, zwei fielen wegen `503 / high demand` komplett auf `local_fallback`. In dem einen Remote-Lauf scheiterte zudem die Extract-Stage ebenfalls an `503`. Fazit: Gemini funktioniert prinzipiell, ist in der aktuellen Lastlage aber kein stabiler Referenzpfad fuer belastbare JSON- oder Qualitaetsvergleiche.
 - **Regie-zu-Blueprint Sync:** `erledigt 2026-04-21`. Eine lokale Regie kann jetzt als neues oder bestehendes Book schema-konform in Supabase synchronisiert werden, statt als loser Markdown-Blob zu enden. Entscheidend ist der Ruecklese-Check: `master_brief`, `book_writer_rules`, `book_character_states`, `book_scene_cards` und `book_context_packs` muessen nach dem Sync wieder aus der DB lesbar und fuer den Generator nutzbar sein.
-- **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde die fehlerhafte Kurzfassung aus Gemini (`premise: DNA-Falle`, `readerPromise: OSINT Tech Fokus`) durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
+- **Echo-Effekt Guardrail:** `erledigt 2026-04-21`. Fuer `Der Echo-Effekt` wurde eine fehlerhafte Kurzfassung durch den vollen lokalen Blueprint ersetzt. Verifiziert fuer `SC_1_1`: voller Master Brief, komplette Writer Constitution, alle drei Character States mit Wunden-Block und Scene Card inklusive `viktor_moment`.
 - **User Guide Book:** `erledigt 2026-04-20`. `BOOK_STUDIO_GUIDE.md` wurde von einer groben Betriebsanleitung zu einer nutzungsnahen Arbeitsanleitung umgebaut: Feld fuer Feld, Bereich fuer Bereich, inklusive Remote-vs.-Fallback-Erklaerung und konkreter Empfehlungen fuer bessere Outputs.
 - **Offene Grenze:** `aktualisiert 2026-04-21`. Der Anthropic-Pfad ist stabiler und die Structured-Architektur klarer getrennt, trifft aber hohe Zielbereiche fuer `rewriteText` noch nicht in jedem Lauf. Zusaetzlich bleibt Gemini aktuell durch Verfuegbarkeitsschwankungen (`503 / high demand`) als Vergleichspfad eingeschraenkt. Die naechste qualitative Stufe bleibt deshalb: Rewrite-Length-Control und sauberer Remote-Benchmark ueber mehrere stabile Läufe.
 

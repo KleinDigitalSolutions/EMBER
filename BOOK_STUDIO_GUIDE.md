@@ -249,7 +249,6 @@ Voraussetzung für echte Remote-Läufe:
 
 - `OPENAI_API_KEY` für OpenAI
 - `ANTHROPIC_API_KEY` für Anthropic
-- `GEMINI_API_KEY` oder `GOOGLE_API_KEY` oder `GOOGLE_GEMINI_API_KEY` für Gemini
 
 Fehlt der Key für den gewählten Provider, fällt EMBER auf `local_fallback` zurück oder nutzt den Provider gar nicht.
 
