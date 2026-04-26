@@ -1,171 +1,535 @@
+import { SampleReader, type SampleReaderScene } from "@/components/sample-reader";
+
+const scenes: SampleReaderScene[] = [
+  {
+    id: "scene-1",
+    kicker: "Die Benachrichtigung",
+    title: "Gestern",
+    paragraphs: [
+      "Die Benachrichtigung kam um 16:18 Uhr, während in der Kalkulation noch nichts stand. Oben rechts schob sich das Symbol der Kita-App ins Bild, dieses runde, grüne Logo mit der stilisierten Sonne, das sie sonst nur morgens und nachmittags wahrnahm. 16:18 Uhr. Sie las die Vorschau und las sie noch einmal.",
+      "*Abschlussvermerk synchronisiert. 04.11., 15:42 Uhr. Mila Berger wurde abgeholt durch: Eva Berger.*",
+      "Sie tippte darauf, weil das Hirn schneller war als die Bedeutung. Die App öffnete den Eintrag in ganzer Länge. Datum gestern. Uhrzeit 15:42. Abholberechtigte Person: sie selbst. Daneben das kleine graue Häkchen für *bestätigt*.",
+      "Eva schob den Stuhl zurück. In ihrem Outlook lag der gestrige Termin noch offen: 14:30–16:00, Frankfurt, MainTower. Empfangscode, Parkhaus, Kerstins Nummer im Anrufverlauf. Um 15:42 Uhr hatte sie in einem Stuhl mit dunkelblauem Bezug gesessen, Block auf den Knien, hundert Kilometer entfernt.",
+      "Sie öffnete die Telefon-App.",
+      "Beim ersten Versuch wählte sie sich verschrieben. Beim zweiten landete sie in der Warteschleife der Kita, einer Klaviermelodie, die sie sonst kaum bemerkte und jetzt jeden Takt mitzählte. Sie sah, dass ihre Hand zitterte, und legte sie auf den Tisch, flach, als ließe sich das so abstellen.",
+      "„Kita Sonnenhof, Löwen.“",
+      "„Petra, hier ist Eva Berger. Mila Bergers Mutter.“",
+      "„Ja, Frau Berger.“ Petras Stimme, ruhig wie immer, leicht nasal vom Wetter. „Was kann ich für Sie tun?“",
+      "„Ich habe gerade einen Eintrag in der App. Von gestern. Da steht, ich hätte Mila um 15:42 Uhr abgeholt.“",
+      "Eine kleine Pause. Tastenklicken. „Moment, ich schaue.“",
+      "„Das ist falsch“, sagte Eva. „Ich war gestern in Frankfurt. Beim Kundentermin. Mila hat Nora geholt, das war so abgesprochen.“",
+      "„Ja, ich sehe es hier“, sagte Petra. Und dann, nicht entschuldigend, nicht zweifelnd, sondern in dem ruhigen Verwaltungston, den sie sonst für Geburtstagslisten benutzte: „Der Vorgang ist regulär bei uns drin. 15:42 Uhr, Abholung durch Sie. Frau Krüger hat es eingetragen.“",
+      "„Frau Krüger“, wiederholte Eva.",
+      "„Sie hatte gestern den Spätdienst.“",
+      "„Petra, ich war nicht da.“",
+      "Ich höre Sie\", sagte Petra. Und nach einer Sekunde: „Der Vorgang wurde real protokolliert. Unterschrift im Abholbuch, App-Eintrag. Das System hat heute Mittag synchronisiert.",
+      "Eva spürte, wie sich etwas in ihrer Brust zusammenzog und gleichzeitig seltsam scharf wurde. Sie kannte diese Stimme. Diese Stimme war dieselbe, mit der Petra Eltern sagte, dass das Kind doch bitte den eigenen Becher mitbringen solle. Ein Ton, der keinen Spielraum für *vielleicht* hatte.",
+      "„Können Sie mir das Bild rausziehen?“, fragte Eva. „Sie haben doch die Kamera am Eingang.“",
+      "„Ja, die haben wir.“",
+      "„Dann zeigen Sie mir das. Ich komme jetzt.“",
+      "„Frau Berger…“",
+      "„Ich komme jetzt“, sagte sie noch einmal, schon im Aufstehen, und legte auf, bevor Petra antworten konnte.",
+      "Sie nahm den Mantel vom Haken, den dunkelgrünen mit dem Knopf, der seit zwei Wochen lose hing, weil sie ihn immer abends festnähen wollte und es immer abends vergaß. Sie nahm Tasche, Schlüssel, Telefon. Den Laptop ließ sie offen liegen. Im Vorbeigehen sagte sie zu Kerstin etwas, sie wusste später nicht mehr, was. *Mila* vermutlich. *Kita*. Worte, die niemand hinterfragte.",
+      "Im Treppenhaus rechnete sie. Zwölf Minuten zur Kita, wenn die Ampel an der Roonstraße mitspielte. Es war 16:24 Uhr, als sie ins Auto stieg. Sie ließ das Telefon auf dem Beifahrersitz liegen, Display nach oben, weil der Eintrag nicht verschwinden durfte. Er verschwand nicht. Er stand da, hellgrau hinterlegt, mit diesem freundlichen Häkchen.",
+      "An der ersten roten Ampel zog sie den Frankfurt-Termin in Outlook noch einmal auf, mobil, kleines Display. Der Empfangscode stand drin. Sie suchte in den gesendeten Nachrichten, fand die Mail an Nora von vorgestern Abend, *kannst du Mila morgen um drei holen, ich schaff es nicht zurück*, fand Noras Antwort, *klar, mach ich gern, lass dir Zeit*. Ein Smiley. Das ganz normale Smiley einer Frau, die ihr in den letzten Monaten dreimal die Woche das Leben leichter gemacht hatte.",
+      "Sie wählte Noras Nummer, während sie anfuhr. Mailbox. Sie sprach nicht drauf.",
+      "Vor der Kita parkte sie krumm. Es war 16:36 Uhr. Der Hof war leer, nur ein vergessener Roller lag auf der Seite. Drinnen roch es nach Apfeltee und feuchten Jacken. Petra stand schon im Büro, die Tür offen, der Bildschirm gedreht.",
+      "„Frau Berger.“",
+      "„Zeigen Sie es mir.“",
+      "Petra setzte sich nicht. Sie deutete nur. Auf dem Monitor lief eine Schwarz-Weiß-Aufnahme, Zeitstempel unten links, *04.11. – 15:41:58*. Eva sah den Eingangsbereich von oben, schräg, der bekannte Garderobenwinkel mit den Haken in Fischform. Eine Frau kam ins Bild. Sie führte Mila an der Hand. Mila trug die rote Mütze.",
+      "Eva trat näher.",
+      "Die Frau im Bild bückte sich, half Mila in die Jacke, sagte etwas, das die Kamera nicht hörte, richtete sich wieder auf. Die Statur. Die Haltung beim Bücken, das leicht nach links gekippte Knie. Ein dunkelgrüner Mantel. Der Knopf am unteren Saum hing lose.",
+      "„Halten Sie an“, sagte Eva.",
+      "Petra legte den Finger auf die Maus. Das Bild fror.",
+      "Die Frau stand halb zur Kamera gewandt, das Gesicht im Profil, das Haar in Evas Schnitt, der Mantel offen, der lose Knopf am unteren Rand der Aufnahme genau dort, wo er bei Eva immer hing. Mila hielt ihre Hand und sah nicht erstaunt aus.",
+      "Eva hörte die eigene Stimme erst, als sie schon im Raum war.",
+      "„Das bin nicht ich.“",
+      "Petra antwortete nicht.",
+      "Auf dem Bildschirm stand die Frau weiter im Profil, im selben Mantel, mit Milas Hand in ihrer."
+    ]
+  },
+  {
+    id: "scene-2",
+    kicker: "Das Video",
+    title: "Das Bild",
+    paragraphs: [
+      "Der Monitor stand schräg auf Petra Löwens Schreibtisch, so, dass beide hineinsehen konnten, ohne dass eine von ihnen aufstehen musste. Petra hatte den Stuhl nicht verschoben, als Eva sich gesetzt hatte. Sie hatte nur die Tür geschlossen, das Fenster der Software geöffnet, die Datei gesucht, die Datei gefunden, und die Maus über die Zeitleiste gezogen.",
+      "\"Ich zeige es Ihnen einmal komplett\", sagte Petra. \"Dann noch einmal langsam.\"",
+      "Eva nickte. Sie nickte zu früh. Sie merkte es daran, dass Petra einen halben Atemzug wartete, bevor sie auf Play drückte.",
+      "Auf dem Bildschirm: der Flur vor dem gelben Gruppenraum, von oben links gefilmt, dieser leicht verzerrte Weitwinkel, der Erwachsene immer ein bisschen kleiner machte, als sie waren. Eine Frau kam von rechts ins Bild. Dunkler Mantel. Schal hochgeschoben. Tasche über der linken Schulter, nicht über der rechten. Sie ging zur Garderobe, beugte sich, holte etwas heraus, richtete sich wieder auf. Mila kam aus dem Gruppenraum gelaufen, Arme oben, der gelbe Becher in der rechten Hand, halb voll, der Deckel verrutscht. Die Frau bückte sich, fing sie ab, schraubte den Deckel fest, ohne hinzusehen, und steckte den Becher seitlich in die Tasche, mit dem Henkel nach außen.",
+      "Eva hörte sich einatmen.",
+      "Mila gab der Frau die Hand. Nicht widerwillig. Nicht freudig. Routiniert, so, wie sie es Eva gab, wenn sie müde war. Die beiden gingen zur Tür. Im letzten Bild, bevor die Kamera den Winkel verlor, drehte die Frau den Kopf halb nach links und sagte etwas zu Mila. Ihr Profil flackerte, weil sie sich gleichzeitig den Schal vom Kinn zog.",
+      "\"Dauert vier Sekunden\", sagte Petra. \"Dieser Moment, wo man ihr Gesicht sehen könnte. Aber nur teilweise.\"",
+      "Sie spulte zurück. Sie spulte langsamer.",
+      "Eva sah hin. Sie sah es genau an. Das Profil war körnig, halb verdeckt, eine Andeutung von Wange, ein Stück Kieferlinie. Es konnte sie sein. Es konnte auch nicht sie sein. Es war kein Gesicht, das man vor Gericht bringen konnte.",
+      "\"Das bin ich nicht\", sagte Eva.",
+      "Petra nickte langsam. Nicht zustimmend. Bestätigend, dass sie den Satz gehört hatte.",
+      "\"Sehen Sie den Mantel?\", fragte Eva. \"Der Schnitt geht bis übers Knie. Meiner geht bis zur Wade. Sehen Sie hier, wo sie sich bückt –\"",
+      "\"Frau Berger.\" Petra hob nicht die Hand. Sie hob nur den Ton, ein Halbgrad. \"Ich sehe den Mantel. Es ist nicht der Mantel, den ich sonst an Ihnen sehe. Es ist auch nicht weit davon weg.\"",
+      "Eva schluckte. Petra spulte zurück zur Garderobe.",
+      "\"Was ich Ihnen zeigen muss\", sagte Petra, \"ist nicht das Gesicht. Mit dem Gesicht hätten wir ein Problem, das wäre einfach. Sie könnten sagen, das bin ich nicht, und ich würde es einsehen müssen.\" Sie hielt das Bild an, in dem die Frau den Becher festschraubte. \"Schauen Sie, wie sie das macht.\"",
+      "Eva schaute.",
+      "Die Frau auf dem Bild hatte den Becher genommen, ohne hinzusehen. Sie hatte den Deckel mit dem Daumen ausgerichtet, eine Vierteldrehung, dann fest. Sie hatte ihn seitlich verstaut, Henkel nach außen, weil Mila sonst beim Laufen daran zog.",
+      "Es war Evas Bewegung. Eva tat das jeden Nachmittag. Sie hatte es nie jemandem gezeigt. Es war nicht etwas, das man jemandem zeigte. Es war etwas, das man tat, weil ein Becher seit zwei Jahren denselben Deckel hatte und man wusste, wie weit man ihn drehen musste, damit er hielt und Mila ihn trotzdem aufbekam.",
+      "\"Und hier\", sagte Petra und schob den Schieber drei Sekunden weiter. \"Wie sie nach dem Kind greift. Linke Hand zuerst.\"",
+      "Eva starrte auf den Bildschirm. Sie griff mit der linken zuerst. Immer. Weil sie mit der rechten Schreiben, Schlüssel halten, Tasche öffnen brauchte.",
+      "\"Das ist nicht eindeutig\", sagte sie. Ihre Stimme klang schmaler. \"Das macht jeder Linkshänder so.\"",
+      "\"Sie sind keine Linkshänderin.\"",
+      "\"Ich – nein.\"",
+      "Petra klickte das Video weg und schob ein Blatt herüber. Die Übergabeliste, gestern, 16:14 Uhr. Die Unterschrift war kein Rätsel und kein Treffer. Sie war der Typ Unterschrift, den Eva schnell hinkritzelte, wenn sie schon halb zur Tür sah. Das E am Anfang stimmte in der Höhe. Der Bogen am Ende war kürzer als ihrer. Das R hatte den falschen Schlenker.",
+      "\"Das R\", sagte Eva, und legte den Finger darauf. \"Das mache ich anders.\"",
+      "\"Ja\", sagte Petra. \"Das R ist anders.\"",
+      "Sie sagte es so, dass es nicht reichte.",
+      "Eva sah Petra an. Petra sah nicht weg. Petra sah sie an mit dem Blick einer Frau, die seit zwölf Jahren eine Kita leitete und die wusste, wann eine Mutter unter Druck Worte fand und wann sie keine fand.",
+      "\"Frau Berger\", sagte Petra, \"ich verstehe, was Sie sagen. Das Gesicht ist unscharf. Das R ist anders. Der Mantel ist nicht ganz Ihrer.\" Sie legte die Hand flach neben das Blatt, nicht darauf. \"Aber Frau Holzer hat das Kind übergeben. Frau Holzer kennt Sie seit anderthalb Jahren. Sie hat die Person nicht gestoppt. Sie hat sie als Sie gelesen. Und als ich sie heute Mittag gefragt habe, ob etwas ungewöhnlich war, hat sie überlegt und gesagt: nein. Mila ist mitgegangen. Ohne Frage.\"",
+      "Eva öffnete den Mund. Schloss ihn.",
+      "\"Das ist nicht nichts\", sagte Petra.",
+      "In Evas Tasche, neben ihrem Knie, summte das Telefon. Zweimal kurz. Sie sah nicht hin. Sie wusste, dass sie nicht hinsehen sollte. Sie sah trotzdem hin, weil es ihr gerade leichter fiel als auf den Bildschirm.",
+      "Nora Seidel. *Hey du, hab grad gesehen, du bist noch in der Kita? Falls du Mila heut früher abholen willst, ich kann sie um halb sechs nehmen, hab eh nichts vor. Sag Bescheid.* Ein Smiley. Ein zweiter Smiley, kleiner.",
+      "Eva drehte das Display nach unten auf den Oberschenkel. Sie spürte, dass Petra es gesehen hatte. Petra sagte nichts dazu.",
+      "\"Ich war gestern um diese Zeit im Büro\", sagte Eva. Sie hörte sich selbst dabei zu, wie sie es sagte, und sie hörte, dass es nicht half. \"Ich kann Ihnen die Logs zeigen. Ich war im Termin bis 17:30 Uhr. Mein Kollege –\"",
+      "\"Frau Berger.\" Petra hob nicht die Stimme. \"Niemand sagt, dass Sie das waren. Ich auch nicht. Ich sage, dass die Frau auf diesem Material vier Dinge tut, die Sie tun. Mit einem Becher, den Mila gestern hatte. Und dass das Kind ohne Widerstand mitgegangen ist.\" Sie zog das Blatt zurück, nicht weg, nur zu sich. \"Das müssen wir besprechen. Nicht, weil ich Ihnen nicht glaube. Sondern weil ich, wenn jemand außer mir das hier sieht, eine Erklärung dafür haben muss, warum ich nichts unternommen habe.\"",
+      "Es war 16:42 Uhr. Eva sah es auf dem unteren Rand des Monitors, weil sie irgendwohin sehen musste.",
+      "\"Was heißt unternommen\", sagte sie leise.",
+      "Petra atmete einmal, ruhig.",
+      "\"Ich werde das Material sichern. Ich werde mit Frau Holzer ein zweites Mal sprechen, schriftlich. Ich werde den Vorgang im Team intern dokumentieren.\" Sie hielt einen Moment inne. \"Und ich werde Sie bitten, mit Ihrem Mann zu sprechen, bevor ich es tue.\"",
+      "\"Mit Simon.\"",
+      "\"Ja.\"",
+      "\"Sie werden Simon anrufen?\"",
+      "\"Ich muss Herrn Berger informieren, ja. Er ist auf der Sorgerechtsmitteilung gleichberechtigt. Wenn das hier in irgendeiner Form Konsequenzen entwickelt – und es muss nicht, Frau Berger, es muss wirklich nicht –, dann darf er es nicht von mir zuerst hören. Das wäre für niemanden gut. Für Sie nicht. Für Mila nicht.\"",
+      "Sie legte die Hände aufeinander.",
+      "\"Rufen Sie ihn heute Abend an. Vor neun. Sagen Sie ihm, was Sie gesehen haben. Sagen Sie ihm, was Sie davon halten. Ich rufe ihn morgen früh an, um halb neun.\"",
+      "Eva nickte. Sie nickte richtig dieses Mal, weil etwas anderes nicht funktionierte.",
+      "Petra schob das Blatt in eine Mappe. Die Mappe trug Milas Namen, vorne, in dem schmalen Fenster.",
+      "\"Frau Berger.\" Petra stand nicht auf. Sie sagte es im Sitzen, und gerade deshalb hörte Eva es. \"Bitte rufen Sie ihn vor mir an.\""
+    ]
+  },
+  {
+    id: "scene-3",
+    kicker: "Auf dem Parkplatz",
+    title: "Bitte fahr nicht allein",
+    paragraphs: [
+      "Um 17:05 Uhr stand sein Wagen schon auf dem Parkplatz, schräg eingeparkt, als hätte er die letzten Meter nicht mehr ausgerichtet. Eva sah Simon Berger an der Fahrertür lehnen, das Telefon am Ohr, den Blick auf den Eingang der Kita gerichtet, als könnte das Gebäude jeden Moment etwas hergeben.",
+      "Sie ging über den Asphalt, langsamer, als sie wollte. Sich nicht zu beeilen war eine Entscheidung. Wer rannte, sah aus wie jemand, der etwas verloren hatte.",
+      "„Ich bin hier\", sagte sie.",
+      "Simon steckte das Telefon weg. Er sah sie an, kurz und prüfend, so wie er es im letzten halben Jahr gelernt hatte.",
+      "„Was genau steht in der App?\"",
+      "„Ein Eintrag von gestern. Sechzehn Uhr zweiundzwanzig. Abholung durch mich.\"",
+      "„Und?\"",
+      "„Ich war nicht hier.\"",
+      "Er nickte nicht. Er schloss kurz die Augen, dann öffnete er sie wieder. „Eva. Setz dich einen Moment.\"",
+      "„Ich muss nicht sitzen.\"",
+      "„Du sollst dich setzen.\"",
+      "Sie lehnte sich gegen die Beifahrertür seines Wagens. Das war der Kompromiss. Der Lack war warm. Sie spürte es durch die Bluse und merkte erst dadurch, dass sie zitterte.",
+      "„Hast du es Petra gezeigt?\", fragte er.",
+      "„Ja.\"",
+      "„Und?\"",
+      "„Sie hat das Video aufgerufen. Es zeigt jemanden, der wie ich aussieht. Jacke, Statur, Haltung. Petra sagt, der Eintrag ist mit meiner Unterschrift quittiert.\"",
+      "Simon atmete einmal durch die Nase. Es war derselbe Atemzug wie damals, nach dem Anruf wegen Mila Bergers Fieber, als er eine Stunde später in der Küche stand und Listen anlegte für eine Krankheit, die schon vorbei war.",
+      "„Okay\", sagte er. „Wir machen das so. Ich rufe heute Abend bei der Leitung an. Ich will den Vorfall schriftlich. Datiert, mit Uhrzeit, mit Name der Erzieherin, die das Video gesichtet hat.\"",
+      "„Petra hat das schon notiert.\"",
+      "„Ich will es trotzdem von der Leitung.\"",
+      "„Simon, ich –\"",
+      "„Eva. Bitte.\" Er hob die Hand. Nicht abwehrend. Eher wie jemand, der ein Glas auf einer Kante balanciert. „Wenn das stimmt, was du sagst, dann hat hier jemand Mila abgeholt, der nicht abholberechtigt war. Das ist kein Missverständnis, das ist eine Anzeige.\"",
+      "„Ich weiß.\"",
+      "„Ich will nur, dass das sauber liegt. Falls wir später –\" Er brach ab.",
+      "Sie wusste, was später hieß. Später hieß, wenn jemand fragt, wer hier zuverlässig ist.",
+      "„Ich fahre jetzt mit Mila nach Hause\", sagte sie.",
+      "„Ich komme mit.\"",
+      "„Du musst nicht.\"",
+      "„Ich komme mit bis zur Tür. Dann fahre ich weiter.\"",
+      "Sie sah ihn an und nickte, weil das die Variante war, die ihn am wenigsten kostete. Und sie. Er hatte schon das Telefon wieder in der Hand. Sie sah, wie er die App öffnete, die Notiz suchte, ein Foto vom Bildschirm machte. Er sicherte gerade, ohne sie zu fragen.",
+      "In dem Moment kam Nora Seidel über den Parkplatz.",
+      "Sie kam nicht in Eile. Sie kam in dem Tempo, in dem man eine Freundin abholt, von der man weiß, dass sie einen schweren Nachmittag hatte. Eine Tasche über der Schulter, eine zweite, kleinere, in der Hand. Die Jacke offen. Ein Lächeln, das eher entschuldigend war als fröhlich.",
+      "„Ich war auf dem Weg zum Markt\", sagte Nora, als sie heran war. „Petra hat eben angerufen. Ich dachte, ich schaue, ob ihr was braucht.\"",
+      "Eva merkte, wie Simon sich ein halbes Stück aufrichtete. Nicht abweisend. Nur in eine andere Haltung, eine, in der eine angebotene Hand etwas wert war.",
+      "„Petra ruft dich an?\", fragte er. Es klang nicht misstrauisch. Es klang interessiert.",
+      "„Ich stehe als Notfallkontakt.\" Nora sah Eva an, kurz, weich. „Sie hat nichts erzählt. Sie hat nur gesagt, dass es ein bisschen Unruhe gab und dass ich vielleicht in der Nähe bleiben soll. Ich war eh hier oben.\"",
+      "Eva öffnete den Mund, um zu sagen, dass es keine Unruhe war, sondern ein Eintrag, der nicht stimmte, aber sie schluckte es weg. Vor Simon jetzt das Wort *falsch* in den Mund zu nehmen, würde es kleiner machen, nicht größer.",
+      "„Es ist okay\", sagte sie. „Ich fahre Mila heim.\"",
+      "„Klar.\" Nora nickte sofort. „Wenn du willst, mache ich nachher Abendessen mit. Ich habe sowieso für mich gekocht, da ist Platz für zwei. Oder ich hole nur Brot. Du sagst.\"",
+      "„Du musst nicht –\"",
+      "„Ich weiß.\"",
+      "Simon sah Nora an, und Eva sah, wie er etwas registrierte, das er bei ihr selbst seit Monaten nicht mehr fand: eine Frau, die eine Tasche in der Hand hatte, in der schon das Brot drin war.",
+      "„Das wäre gut\", sagte er. Zu Nora, nicht zu Eva. „Wenn du heute Abend kurz oben bist. Nur falls.\"",
+      "„Mache ich.\"",
+      "„Ich rufe morgen früh die Leitung an\", sagte er, jetzt zu Eva gewandt, „und ich melde mich danach bei dir. Wenn etwas ist heute Nacht, ruf an. Egal wann.\"",
+      "„Ja.\"",
+      "„Egal wann, Eva.\"",
+      "„Ja.\"",
+      "Er legte die Hand kurz auf ihren Oberarm. Es war keine Geste, mit der man eine Ehefrau berührte. Es war eine, mit der man jemanden stabilisierte, dem man gerade etwas glaubte und etwas nicht.",
+      "Dann ging er Richtung Eingang, um Mila mitzuholen, weil das offenbar auch zur Variante gehörte, in der er sich ruhiger fühlte.",
+      "Nora blieb stehen. Sie sah Eva an, ohne sie zu drängen.",
+      "„Du musst nichts erzählen.\"",
+      "„Es ist nur ein Eintrag.\"",
+      "„Okay.\"",
+      "„Ein falscher Eintrag.\"",
+      "Nora nickte langsam. „Petra hat das schriftlich?\"",
+      "„Sie macht es.\"",
+      "„Gut.\" Eine Pause. „Soll ich heute Nacht bei euch bleiben? Auf dem Sofa. Du musst nicht reden. Ich bin einfach da.\"",
+      "Sie spürte gleichzeitig, wie es sie kleiner machte, dass sie es spürte.",
+      "„Nein\", sagte sie. „Danke. Es geht.\"",
+      "„Okay.\" Nora hob die kleinere Tasche. „Brot ist drin. Ich stelle es dir vor die Tür. Du musst nicht aufmachen.\"",
+      "„Nora.\"",
+      "„Hm?\"",
+      "„Hat Petra dir gesagt, was im Eintrag steht?\"",
+      "Nora sah sie an. Ehrlich, ohne Rückzug. „Sie hat gesagt, es geht um gestern. Mehr nicht. Sie wollte nur, dass jemand erreichbar ist.\"",
+      "„Okay.\"",
+      "Simon kam zurück, Mila an der Hand. Mila trug die rote Jacke, die Eva ihr gestern Morgen angezogen hatte, und den Rucksack mit dem Bär. Sie sah müde aus, aber nicht verstört. Sie sah aus wie ein Kind nach einem normalen Kita-Tag.",
+      "„Mama.\"",
+      "„Hallo, Spatz.\"",
+      "„Papa hat gesagt, du fährst.\"",
+      "„Ich fahre.\"",
+      "„Nora auch?\"",
+      "„Nora kommt später vielleicht kurz vorbei.\"",
+      "Mila nickte, als wäre das eine bekannte Reihenfolge.",
+      "Eva schnallte sie an. Sie tat es langsam, weil ihre Finger sonst zu schnell gewesen wären. Im Rückspiegel sah sie, wie Simon und Nora auf dem Parkplatz noch einen Satz tauschten. Sie konnte ihn nicht hören. Sie sah nur, dass er nickte.",
+      "Sie fuhr.",
+      "Auf der Brücke fragte Mila, ob es Nudeln gäbe. Eva sagte ja. Sie sagte es zu schnell.",
+      "In der Wohnung zog sie Mila die Jacke aus, hängte den Rucksack an den Haken im Flur, und während Mila schon ins Wohnzimmer lief, öffnete Eva die Lade des kleinen Schranks, in dem Milas Sachen lagen, und zog das Fach mit den Haargummis auf, weil das Zopfband vom Morgen lose im Rucksack gewesen war und sie es zurücklegen wollte.",
+      "Im Fach lag ein zweiter Haargummi.",
+      "Hellblau, mit dem kleinen weißen Stern, von dem es nur zwei Stück gegeben hatte. Den anderen hatte sie heute Morgen Mila ins Haar gemacht. Diesen hier hatte sie vor drei Tagen verloren geglaubt.",
+      "Sie stand am Schrank, die Lade halb offen, das Brot von Nora noch nicht vor der Tür.",
+      "Im Wohnzimmer rief Mila nach ihr."
+    ]
+  },
+  {
+    id: "scene-4",
+    kicker: "Zwei Wahrheiten",
+    title: "Die Liste",
+    paragraphs: [
+      "Auf dem Küchentisch lagen die Stapel in der Ordnung, in der Eva sie immer ablegte: links die Ausdrucke aus der Kita-App der letzten zwei Wochen, in der Mitte der Familienkalender, rechts der Ordner mit den Originalunterlagen aus der Anmeldung vor zwei Jahren. Mila schlief seit halb acht. Im Flur tickte die Heizung. Eva hatte sich Tee gemacht und nicht getrunken.",
+      "Sie ging die App-Einträge zuerst durch, weil sie wusste, was dort stand, und es trotzdem noch einmal sehen musste. Abholung gestern, 15:42 Uhr. Unterschrift. Häkchen. Sie scrollte weiter, vor und zurück, suchte einen verschobenen Tag, eine doppelt eingetragene Woche, irgendetwas, das sich als Systemfehler lesen ließ. Die Einträge davor stimmten mit ihren Notizen überein. Montag 16:10, Dienstag 16:05, Mittwoch frei. Donnerstag, der Eintrag, den sie suchte, sass dort wie die anderen, nur nicht von ihr.",
+      "Sie öffnete den Familienkalender. Donnerstag, 14 bis 17 Uhr, Projektcall mit Hamburg, blau markiert. Das Häkchen daneben, das sie nach beendeten Calls setzte, war gesetzt. Sie öffnete den Mailordner, suchte das Protokoll. 14:03 Beitritt, 16:51 Verlassen. Homeoffice, Kopfhörer, niemand sonst im Raum.",
+      "Eva legte den Kalender zur Seite und zog den Ordner zu sich. Anmeldeformular. Sorgerechtsstatus. Ärztliche Einverständnisse. Hinten, hinter den Trennblättern aus dem ersten Kita-Jahr, lag eine Klarsichthülle, die sie seit Monaten nicht mehr aufgemacht hatte. Notfallkontakte, Stand vor zwei Jahren. Sie zog das Blatt heraus.",
+      "Drei Namen. Simon, mit der alten Festnetznummer aus der gemeinsamen Wohnung. Ihre Mutter. Und darunter, in ihrer eigenen Handschrift, sauber mit Kugelschreiber, Nora Seidel, Hofnachbarin, mit Mobilnummer und einem kleinen Häkchen am Rand, das bedeutete, dass die Kita die Person bei der Anmeldung als bevollmächtigt registriert hatte.",
+      "Sie hatte die Liste damals abgegeben. Sie hatte die Liste auch aktualisiert, als Simon ausgezogen war. Sie war sicher, dass sie die Liste aktualisiert hatte. Nur lag jetzt die alte vor ihr, und sie wusste nicht, ob die Kita jemals die neue bekommen hatte oder ob die neue nur in ihrem Ordner steckte, weil sie das Telefonat geführt, aber das Formular nicht abgegeben hatte.",
+      "Sie ging in Gedanken durch, wann sie zuletzt mit dem Büro gesprochen hatte. Im März. Vielleicht April. Sie hatte gesagt, sie wolle die Notfallkontakte anpassen. Sie hatte nicht gesagt, sie habe sie angepasst.",
+      "Eva legte das Blatt zurück, dann doch nicht, sondern flach neben den Kalender. Sie sah die Handschrift an, ihre eigene, das Häkchen am Rand, das nicht von ihr kam, sondern von der Erzieherin, die das Formular damals entgegengenommen hatte.",
+      "Es klopfte.",
+      "Nicht an der Wohnungstür. An der Glastür zum Innenhof, unten, der Weg, den nur die Nachbarn benutzten. Eva stand auf, ging in den Flur, sah durch das Seitenfenster nach unten. Nora stand im Hof, eine flache Auflaufform vor der Brust, in eine Geschirrtuch gewickelt. Sie hob den Kopf, als hätte sie gewusst, dass Eva schaute, und hob die Form leicht an.",
+      "Eva drückte den Türöffner und ging die Treppe hinunter, weil es ihr falsch schien, Nora hochzubitten in eine Wohnung, in der die Notfallliste auf dem Tisch lag.",
+      "Im Hof war es kühl. Die Hofbeleuchtung lag flach über den Pflastersteinen. Nora trug die Strickjacke, die sie immer trug, wenn sie schnell rüberkam, ohne sich umzuziehen.",
+      "„Ich hab zu viel gemacht\", sagte Nora. „Linseneintopf. Der wird über Nacht nicht besser.\" Sie reichte Eva die Form. Sie war noch warm.",
+      "„Das musst du nicht.\"",
+      "„Ich weiß. Aber du hattest heute den Tag.\" Nora sagte es nicht mitleidig. Sie sagte es, wie man feststellt, dass es regnet.",
+      "Eva nahm die Form. Sie hätte etwas sagen können über die Kita, über den Eintrag, über die Liste. Sie sagte nichts. Nora schaute kurz an ihr vorbei, nach oben, zu Evas Küchenfenster, in dem Licht brannte.",
+      "„Hat Mila die rote Jacke mit?\", fragte Nora. „Morgen soll es nass werden.\"",
+      "„Sie hat die blaue an gehabt.\"",
+      "„Die blaue ist die mit dem losen Knopf am rechten Ärmel, oder? Du wolltest den letzte Woche annähen.\"",
+      "Eva spürte, wie ihre Hand fester um die Auflaufform schloss. Den losen Knopf hatte sie vergangenen Mittwoch beim Anziehen bemerkt. Sie hatte es Nora nicht erzählt. Sie war sich ziemlich sicher, dass sie es Nora nicht erzählt hatte. Sie konnte es Nora erzählt haben, an dem Abend, an dem Nora Mila zum Spielplatz gebracht hatte, weil Eva einen Anruf führen musste. Oder sie hatte es nicht erzählt, und Nora hatte den Knopf einfach gesehen, in der Garderobe der Kita, an der Reihe der Haken, an der jeder vorbeiging, der ein Kind dort abholte oder brachte.",
+      "Oder heute.",
+      "„Ich bring den morgen früh dran\", sagte Nora. „Ich hab das passende Garn. Ich klingel um acht, dann ist es weg, bevor sie merkt, dass es weg war.\"",
+      "„Das musst du nicht.\"",
+      "„Ich weiß.\" Nora lächelte kurz. „Ich mach das trotzdem.\"",
+      "Eva nickte, weil sie nicht wusste, wie man eine ungefragt angebotene Hilfe ablehnt, ohne zu erklären, warum. Sie hatte keine Erklärung.",
+      "„Danke für die Suppe\", sagte sie.",
+      "„Iss was.\" Nora trat einen Schritt zurück. „Du hast heute nichts gegessen.\"",
+      "Es war nicht als Frage gemeint. Eva wusste nicht, woher Nora das hatte. Vielleicht sah man es. Vielleicht hatte Nora vom Hof aus gesehen, dass das Küchenlicht angegangen war, ohne dass jemand sich an den Tisch gesetzt hatte. Vielleicht.",
+      "Nora ging über das Pflaster zurück zu ihrer Tür, ohne sich umzudrehen. Eva blieb noch einen Moment stehen, die Form vor der Brust, dann ging sie hinein.",
+      "Im Treppenhaus roch es nach dem Eintopf durch das Geschirrtuch. Sie nahm zwei Stufen auf einmal, weil sie wieder am Küchentisch sein wollte, bei der Liste, bei den Stapeln, bei der Ordnung, die sie selbst angelegt hatte. Sie schloss die Wohnungstür hinter sich und drehte sich zur Garderobe, um die Auflaufform abzustellen, weil ihre Hand zitterte und sie sie ausziehen wollte, die Jacke, das Tagsein.",
+      "An Milas Haken, dem niedrigen, dem zweiten von links, hing eine kleine gelbe Regenjacke, die Eva am Morgen nicht angezogen hatte, weil sie im Wäschekorb gelegen hatte, die ganze letzte Woche."
+    ]
+  },
+  {
+    id: "scene-5",
+    kicker: "Schriftlich",
+    title: "Schriftlich",
+    paragraphs: [
+      "Petra Löwen schloss die Tür hinter Eva, nicht hörbar, aber so, dass das Geräusch im Raum blieb. Der Schreibtisch war frei geräumt bis auf einen Schnellhefter, ein Formular und einen Kugelschreiber, der schon aufgeschraubt dalag.",
+      "\"Setzen Sie sich.\"",
+      "Eva legte ihren Ordner neben den Schnellhefter, gleiche Höhe, gleicher Winkel. Sie hatte die Chronologie ausgedruckt, doppelseitig, mit Zeitstempeln. Sie hatte sich vorgenommen, ruhig zu sprechen.",
+      "\"Ich wollte schriftlich festhalten —\"",
+      "\"Wir auch.\" Petra schob ihr das Formular zu. \"Bitte lesen Sie das in Ruhe. Es ist eine aktualisierte Abholberechtigung. Stand heute, sieben Uhr.\"",
+      "Das Blatt war frisch gedruckt, der Toner roch noch warm. Oben das Logo der Kita, darunter Milas Name, ihr Geburtsdatum, die Gruppe. Drei freie Felder für Berechtigte. Eva las einmal von oben nach unten, dann noch einmal.",
+      "\"Das hier ist leer.\"",
+      "\"Genau. Wir tragen ab heute nur noch ein, was Sie heute eintragen. Schriftlich, mit Datum, mit Unterschrift. Bei Änderungen kommt jede Person einmal persönlich vorbei und legt einen Ausweis vor.\"",
+      "\"Auch Simon Berger?\"",
+      "\"Auch der Vater. Auch Sie, wenn Sie jemand Neues hinzufügen wollen.\"",
+      "Eva nickte. Sie hatte mit etwas Ähnlichem gerechnet. Es war, was sie sich seit gestern Abend gewünscht hatte. Ein Filter, ein Verfahren, eine Wand. Nur dass die Wand jetzt auch zwischen ihr und allem stand, was vorher selbstverständlich gewesen war.",
+      "\"Das ist gut\", sagte sie. \"Das ist —\"",
+      "\"Es ist Standard nach einem solchen Vorgang.\" Petra zog den Schnellhefter zu sich, klappte ihn auf und drehte ihn um, damit Eva mitlesen konnte. \"Bevor Sie unterschreiben, möchte ich Ihnen kurz zeigen, was bei uns hinterlegt ist.\"",
+      "In der Klarsichthülle lag ein älteres Formular. Vergilbt am Rand, eine Heftklammer, die Rost angesetzt hatte. Oben das Datum, vor zweieinhalb Jahren. Eva erkannte das Blatt, bevor sie es las. Sie erkannte ihre eigene Schrift.",
+      "Drei Namen. Sie selbst. Simon. Und in der dritten Zeile, in derselben blauen Tinte, in derselben Handschrift: Nora Seidel, Notfallkontakt und Abholberechtigte, Telefonnummer, Adresse Hof gegenüber.",
+      "Ihre Unterschrift unten. Ihre Unterschrift von damals, runder, leichter, mit dem kleinen Schwung, den sie sich später abgewöhnt hatte.",
+      "\"Frau Berger.\" Petra wartete, bis Eva den Blick hob. \"Können Sie mir sagen, warum Frau Seidel in diesen älteren Unterlagen noch immer als Berechtigte geführt wird?\"",
+      "Die Frage war nicht spitz. Sie war ruhig, fast freundlich, und genau das machte sie schwer.",
+      "\"Weil ich sie eingetragen habe\", sagte Eva. \"Damals. Als Mila in die Krippe gewechselt ist. Wir hatten gerade — Simon Berger war oft auf Montage, und Nora wohnt direkt gegenüber, sie hatte einen Schlüssel, sie hat —\"",
+      "\"Das verstehe ich.\" Petra zog ein zweites Blatt hervor. \"Hier ist das Aktualisierungsformular von vor acht Monaten. Sie haben damals den Familienstand geändert und die Kontaktdaten von Herrn Berger angepasst.\"",
+      "Eva sah das Formular. Acht Monate, das passte. Es war kurz nach dem Auszug gewesen. Sie hatte zwischen zwei Terminen in der Kita gestanden, mit halb aufgegessenem Apfel in der Tasche, und so schnell ausgefüllt, wie Petra hingehalten hatte.",
+      "\"Frau Seidel ist auf diesem Formular nicht aufgeführt\", sagte Petra. \"Sie ist aber auch nicht gestrichen worden. Im System läuft nur die jüngste Variante. Im Ordner liegt die ältere weiter.\"",
+      "\"Und welche zählt?\"",
+      "\"Im System nur die aktuelle. Im Streitfall —\" Petra ließ den Satz einen Moment stehen. \"Im Streitfall werden beide gesehen.\"",
+      "Eva sah auf die Klarsichthülle. Das alte Formular lag da wie ein Möbelstück, das sie selbst hereingetragen hatte und vergessen.",
+      "\"Ich möchte sie streichen lassen.\"",
+      "\"Das können wir machen.\" Petra zog ein drittes Blatt hervor, ein Streichungsformular. \"Heute, jetzt. Sie unterschreiben, ich datiere gegen, wir legen es zur Akte. Frau Seidel wird darüber nicht automatisch informiert.\"",
+      "\"Nicht automatisch.\"",
+      "\"Wenn sie das nächste Mal hier vorbeikommt und nach Mila fragt, wird ihr gesagt, dass sie nicht abholberechtigt ist. Das ist die Information, die sie dann bekommt. Mehr nicht.\"",
+      "Eva sah auf das leere Feld für ihre Unterschrift. Sie hatte den Kugelschreiber schon in der Hand, ohne ihn aufgenommen zu haben.",
+      "Sie dachte an gestern. An den gelben Becher in der Garderobe, der nicht ihrer war und doch ihrer sein sollte. An die Videoaufnahme, in der jemand mit ihrem Gang aus dem Bild ging. An die Jacke an Noras Garderobenhaken, die sie nicht zurückgebracht hatte, weil sie sie nie geholt hatte.",
+      "Wenn sie jetzt unterschrieb, würde Nora es spätestens morgen wissen. Und dann würde Nora wissen, dass Eva wusste.",
+      "Sie legte den Kugelschreiber wieder hin.",
+      "\"Können wir die aktuelle Liste so lassen, wie sie heute ist?\", sagte sie. \"Im System. Nur Simon und ich. Und das Streichungsformular für die alte Akte —\" sie suchte das Wort, \"— machen wir es nächste Woche?\"",
+      "Petra sah sie an. Es war kein langer Blick, aber er war länger als nötig.",
+      "\"Sie wollen die alte Eintragung erst einmal stehen lassen.\"",
+      "\"Ich will sie nicht warnen.\" Eva hörte sich selbst und korrigierte. \"Ich will nicht, dass sie merkt, dass etwas läuft. Bevor ich nicht weiß, was läuft.\"",
+      "\"Frau Berger.\" Petra schloss den Schnellhefter, legte die Hand darauf. \"Ich kann Ihnen das nicht raten. Ich kann Ihnen sagen, was wir dokumentieren. Solange in unseren Unterlagen Frau Seidels Name in irgendeiner Form steht, ist meine Position schwächer, falls noch einmal etwas passiert. Das gilt nicht für heute. Das gilt für morgen, übermorgen, in vier Wochen.\"",
+      "\"Verstehe.\"",
+      "\"Dann unterschreiben Sie wenigstens die neue Liste. Damit das System ab heute eindeutig ist.\"",
+      "Eva nahm den Kugelschreiber wieder auf. Sie trug die Namen ein. Eva Berger. Simon Berger. Sie hielt kurz an, bevor sie unterschrieb, weil ihre Hand das alte Schwung-E machen wollte, das sie auf dem alten Formular gesehen hatte. Sie zwang sich zur jüngeren Variante. Gerader Strich, kleiner Bogen, fertig.",
+      "Petra datierte gegen, kopierte die Liste in den Schnellhefter, das Original in eine zweite Hülle.",
+      "\"Das Streichungsformular hebe ich Ihnen auf.\" Sie legte das unausgefüllte Blatt zur Seite, nicht in die Akte. \"Wenn Sie morgen kommen und sagen, jetzt, machen wir es in zwei Minuten.\"",
+      "\"Danke.\"",
+      "\"Eines noch.\" Petra wartete, bis Eva sie ansah. \"Wenn Frau Seidel zwischen heute und Ihrem nächsten Besuch hier auftaucht und nach Mila fragt — auch nur informell, im Vorbeigehen — werde ich Sie sofort anrufen. Habe ich Ihre Erlaubnis dazu?\"",
+      "\"Ja.\"",
+      "\"Schriftlich, bitte.\"",
+      "Petra schob ihr ein viertes Blatt zu. Eva las den Satz, der dort stand, and unterschrieb. Vier Unterschriften an einem Morgen, dachte sie, und keine davon machte sie sicherer.",
+      "Sie stand auf. Petra gab ihr nicht die Hand, aber sie nickte, in der Art, wie man jemandem zunickt, der gerade etwas sehr Vernünftiges getan hatte und sehr müde aussah.",
+      "Im Flur war es still. Die Gruppentür stand einen Spalt offen. Eva ging nicht hinein. Sie hatte sich vorgenommen, Mila erst nachmittags zu sehen, weil sie sonst nicht weggekommen wäre.",
+      "Sie ging durch das Foyer, an der Garderobe vorbei, die ordentlich war wie jede Garderobe einer guten Kita. Die Tür glitt automatisch auf. Draußen war ein heller, kühler Morgen, und der Vorplatz mit den Kastanien lag voller schräger Schatten.",
+      "Auf der anderen Straßenseite, am Zaun zum Parkplatz, stand Nora. Sie trug die graue Strickjacke, die sie immer trug, und sie hatte etwas in der Hand, das sie gegen das Licht hielt, prüfend, wie man ein Foto prüft.",
+      "Eva blieb am oberen Ende der Treppe stehen.",
+      "Es war ein Fensterbild aus Transparentpapier, hinter Pappe geklebt. Ein gelber Fisch, ein blauer Fisch, dazwischen Wellen aus Silberfolie. In der unteren Ecke der wackelige Schriftzug, den Eva von zwei Dutzend Zeichnungen am Kühlschrank kannte.",
+      "Nora drehte das Bild leicht, damit die Sonne durch das Transparentpapier fiel, und lächelte."
+    ]
+  },
+  {
+    id: "scene-6",
+    kicker: "Die Spur",
+    title: "Verlegt",
+    paragraphs: [
+      "Eva legte das Telefon flach auf die Arbeitsplatte, neben den Notizblock, auf dem schon zwei Spalten standen: links, was sie wusste, rechts, was sie überprüfen musste. Die Kita war abgehakt, mit einem Fragezeichen, das größer war als die Spalte selbst. Sie wollte sehen, ob es dabei blieb.",
+      "Sie wählte die Praxisnummer, die sie seit Milas zweitem Lebensjahr im Kopf hatte. Es klingelte zweimal, dann meldete sich die Stimme, die immer am Empfang saß, freundlich, etwas zu schnell.",
+      "„Praxis Dr. Henning, guten Tag.\"",
+      "„Berger, Eva. Ich wollte fragen, ob für Mila etwas offen ist. Ein Rückruf, ein Termin.\"",
+      "Tastatur. Pause.",
+      "„Ja, Frau Berger, wir hatten Sie gestern erreicht. Ihr Mann hat zurückgerufen, der Termin ist auf nächsten Mittwoch verschoben.\"",
+      "Eva schob den Notizblock weg, weil ihr Stift zu nah am Rand lag.",
+      "„Welche Nummer haben Sie versucht?\"",
+      "Die Stimme las eine Nummer vor. Es war nicht Evas Nummer. Es war eine Mobilnummer, die mit denselben drei Ziffern begann wie Evas, aber in der Mitte abwich. Eva ließ sich die Ziffern noch einmal durchgeben, langsam, und schrieb sie in die rechte Spalte.",
+      "„Diese Nummer ist nicht meine.\"",
+      "„Sie steht aber bei uns als Erstkontakt. Soll ich das ändern?\"",
+      "„Bitte ändern Sie nichts, bis ich vorbeikomme. Und der Termin?\"",
+      "„Mittwoch, zehn Uhr fünfzehn. Wurde gestern auf Wunsch verschoben.\"",
+      "„Auf wessen Wunsch?\"",
+      "„Auf Ihren.\"",
+      "Eva hörte das Wort und hörte gleichzeitig, dass die Frau am anderen Ende keinen Zweifel hineinlegte, weil sie keinen hatte. Sie bedankte sich und legte auf.",
+      "Auf dem Notizblock stand jetzt eine Telefonnummer, die niemandem gehörte, den Eva kannte. Sie unterstrich sie zweimal und merkte, dass sie zu fest aufdrückte.",
+      "Die Apotheke lag drei Straßen weiter, im selben Block mit der Supermarkt. Eva nahm die Tasche, vergaß den Schlüssel, ging zurück, nahm den Schlüssel. Auf der Treppe spürte sie den Impuls, Simon anzurufen, und unterdrückte ihn, weil sie wusste, was er gleich beim ersten Punkt sagen würde.",
+      "In der Apotheke wartete sie hinter einer älteren Frau, die ihre Karte nicht fand. Eva sah den Bildschirm hinter dem Tresen blinken, sah die Auszeichnungen für Hustensaft, sah eine Mitarbeiterin lächeln, die sie kannte. Als sie an der Reihe war, schob sie ihre Karte über den Tresen.",
+      "„Berger, Mila. Ist da etwas zur Abholung?\"",
+      "„Moment.\" Die Mitarbeiterin tippte. „Das Antibiotikum haben Sie schon gestern Nachmittag mitgenommen, Frau Berger.\"",
+      "„Welches Antibiotikum?\"",
+      "Die Frau drehte den Bildschirm leicht, aber nicht weit genug, dass Eva mitlesen konnte. „Das, was Dr. Henning verordnet hat. Steht hier mit Ihrer Unterschrift.\"",
+      "„Darf ich die Unterschrift sehen?\"",
+      "Ein kurzer Blick, dann eine Bewegung der Schultern, die alles und nichts bedeutete. Die Frau drehte einen ausgedruckten Beleg hervor und legte einen auf den Tresen. Es war Evas Schrift. Nicht perfekt, nicht falsch. Das E zu groß, das g leicht nach unten gezogen, so wie sie es schrieb, wenn sie es eilig hatte. Daneben das Datum von gestern, die Uhrzeit kurz nach sechszehn Uhr, der Name des Präparats, das Eva nicht in Auftrag gegeben hatte.",
+      "„Kann ich eine Kopie davon haben?\"",
+      "„Natürlich.\"",
+      "Während die Mitarbeiterin kopierte, sah Eva auf die Reihe der Schubladen hinter dem Tresen und versuchte, sich an den Nachmittag von gestern zu erinnern, Stunde für Stunde. Sie war im Büro gewesen. Telefonkonferenz, sechszehn Uhr, gezogen. Halb sechs, Mila. Vorgestern. Gestern.",
+      "Den kopierten Beleg faltete sie nicht. Sie schob ihn flach in den hinteren Teil der Tasche, wo nichts knickte.",
+      "Im Supermarkt nahm sie nur das, was sie auf der Liste hatte. Milch, Brot, Joghurt, die Bananen für Milas Frühstücksbox. An der Kasse stand die Kassiererin mit dem rotblonden Pferdeschwanz, die immer Mila ein Bonbon zuschob, wenn Eva nicht hinsah. Sie zog die Bananen über den Scanner und lächelte.",
+      "„Heute allein? Gestern war die Kleine doch so aufgedreht.\"",
+      "Eva blieb stehen. Hinter ihr klimperte ein Wagen.",
+      "„Gestern war ich nicht hier.\"",
+      "„Doch, doch.\" Die Frau lachte freundlich. „Mit der dunklen Jacke. Mila wollte unbedingt den Joghurt mit den Erdbeeren, Sie haben dann den anderen genommen.\"",
+      "„Welche Zeit?\"",
+      "Die Kassiererin überlegte. „Nachmittag. So gegen halb fünf.\"",
+      "„Sind Sie sicher, dass das ich war?\"",
+      "Ein Blick, der zwischen Höflichkeit und Irritation hängenblieb. „Ich glaube schon. Sie sind doch immer mit der Kleinen hier.\"",
+      "Eva bezahlte, packte ein, verließ den Markt langsamer, als sie gekommen war. Sie blieb auf dem Parkplatz vor dem Eingang stehen und schaute zurück durch die Glasfront, als ließe sich von außen sehen, wer dort gestern eingekauft hatte.",
+      "Sie rief Simon vom Auto aus an.",
+      "„Ich brauche dich kurz\", sagte sie, und hörte, wie er den Atem anhielt, weil sie diesen Satz seit der Trennung praktisch nie gesagt hatte. „Ruf bitte bei Dr. Henning an. Frag, ob Milas Termin verschoben wurde, und ob du es warst, der das gestern bestätigt hat.\"",
+      "„Eva, was ist los?\"",
+      "„Ruf an. Bitte. Dann reden wir.\"",
+      "Er schwieg einen Moment, der lang genug war, dass sie ihn falsch deuten konnte.",
+      "„Ich rufe zurück.\"",
+      "Sie wartete im Auto, das Telefon im Schoß, die Tasche mit dem kopierten Beleg neben sich. Sie zwang sich, nicht den Notizblock vom Küchentisch herbeizurufen, indem sie an ihn dachte. Es nutzte nichts. Sie sah ihn vor sich, die richtige Spalte, die jetzt drei Einträge hatte: fremde Nummer, abgeholtes Rezept, gestern halb fünf.",
+      "Er rief nach sieben Minuten an. Sie wusste es, weil sie auf die Uhr gesehen hatte, als sie aufgelegt hatten.",
+      "„Der Termin ist auf Mittwoch, zehn Uhr fünfzehn\", sagte er. „Das stimmt. Aber ich habe gestern nicht in der Praxis angerufen. Ich war auf der Baustelle, das Telefon lag im Wagen.\"",
+      "„Welche Nummer haben sie dir genannt?\"",
+      "Er las eine Nummer vor. Es war dieselbe Mobilnummer, die Eva auf den Block geschrieben hatte. Sie sagte nichts dazu.",
+      "„Eva.\"",
+      "„Ja.\"",
+      "„Die Frau am Empfang hat gesagt, sie hat mit dir gesprochen. Sie ist sich sicher.\"",
+      "„Mit mir.\"",
+      "„Ja.\"",
+      "Eva hörte, wie er Luft holte, und sie wusste, was er gleich sagen würde, weil sie ihn lange genug kannte.",
+      "„Sie sagt, deine Stimme. Sie hat die Verschiebung mit dir abgesprochen. Du hast nach Alternativen gefragt, du hast Mittwoch genommen.\"",
+      "„Simon.\"",
+      "„Ich frage nur, weil sie es klar gesagt hat.\"",
+      "„Ich war im Büro.\"",
+      "„Ich weiß.\" Er sagte es zu schnell, zu vorsichtig. Die alte Vorsicht, die er seit dem Nachmittag mit dem Fieber hatte, der Nachmittag, von dem sie beide nicht mehr sprachen. „Ich weiß, du warst im Büro. Ich glaube dir. Ich frage trotzdem.\"",
+      "„Was fragst du?\"",
+      "Er schwieg. Sie hörte ein Auto auf seiner Seite, eine Tür, die zuschlug, Stimmen, die nicht zu ihnen gehörten. Dann seine Stimme, leiser.",
+      "„Bist du ganz sicher, dass du dich nicht täuschst?\""
+    ]
+  },
+  {
+    id: "scene-7",
+    kicker: "Klare Linie",
+    title: "Der Spielplatz",
+    paragraphs: [
+      "Simon öffnete die Tür mit einem Geschirrtuch über der Schulter, und Eva sah sofort, dass sie zu früh dran war. In der Küche lief das Radio leise, und auf der Arbeitsplatte lag ein Brett mit halbierten Gurken, daneben eine Scheibe Brot, von der jemand mit dem Messer einen Halbkreis abgeschnitten hatte. Mila kniete am Wohnzimmertisch über einem Ausmalbild und hob den Kopf nur kurz.",
+      "„Mama.“",
+      "„Hi, Spatz.“",
+      "Simon trat zur Seite, ließ sie herein, ohne etwas zu sagen, und ging zurück in die Küche. Eva folgte ihm, blieb am Türrahmen stehen. Auf dem Stuhl lagen zwei zusammengerollte Socken, hellblau mit weißen Punkten, ordentlich nebeneinander.",
+      "„Für morgen“, sagte Simon, ohne sich umzudenken. Er strich Frischkäse auf das Brot. „Sie wollte unbedingt die mit den Punkten.“",
+      "„Simon.“",
+      "„Setz dich.“",
+      "Sie setzte sich nicht. Sie blieb im Türrahmen, weil das Sitzen ein Vertrauensvorschuss gewesen wäre, den sie nicht verteilen wollte, bevor er ihr zugehört hatte.",
+      "„Ich brauche dich kurz.“",
+      "Er legte das Messer ab, drehte sich um, lehnte sich gegen die Spüle. Das Geschirrtuch hing immer noch über seiner Schulter.",
+      "„Ich höre.“",
+      "„Petra hat den Eintrag jetzt schriftlich gegengezeichnet. Es steht so in der Akte, dass ich Mila gestern abgeholt habe. Mit Video. Mit Unterschrift.“ Sie hörte, wie ihre Stimme schneller wurde, und zog sie zurück. „Ich war nicht dort, Simon. Ich war im Büro, ich kann dir das Log zeigen, ich kann dir den Kalender –“",
+      "„Ich weiß.“",
+      "„Was weißt du?“",
+      "„Dass du das glaubst.“ Er sagte es ohne Schärfe. „Und ich weiß auch, dass die Kita das anders dokumentiert hat. Beides ist wahr für dich gerade. Ich verstehe das.“",
+      "„Das ist kein Glauben, Simon. Das ist –“",
+      "„Eva.“ Er hob die Hand, nicht abwehrend, sondern wie jemand, der die Lautstärke eines Radios runterdreht. „Ich bin nicht dein Gegner.“",
+      "Sie atmete einmal durch die Nase, sah zu Mila hinüber, die mit der orangefarbenen Stiftspitze einen Drachenflügel ausfüllte und nichts mitbekam. Oder so tat.",
+      "„Dann hilf mir“, sagte Eva leiser. „Sag der Kita, dass du mir glaubst. Schreib eine Mail an Petra. Eine Zeile reicht.“",
+      "Simon sah eine Sekunde zu lang auf das Brot.",
+      "„Das mache ich nicht.“",
+      "„Warum nicht.“",
+      "„Weil ich nicht weiß, was passiert ist.“ Er nahm das Brett und legte das Brot in zwei Hälften zurecht, die Gurkenscheiben überlappend, wie Mila es mochte. „Wenn ich Petra schreibe, ich glaube dir, und morgen taucht noch irgendetwas auf, das ich nicht erklären kann, dann habe ich mich für eine Seite ausgesprochen, bevor ich es musste. Das hilft niemandem. Vor allem nicht ihr.“",
+      "Er nickte mit dem Kopf in Milas Richtung, ohne hinzusehen.",
+      "„Du redest, als wäre das ein Verfahren.“",
+      "„Es wird gerade eines.“",
+      "Sie spürte, wie sich etwas in ihrem Brustkorb zusammenzog, ein kleiner, kalter Knoten knapp unterhalb des Schlüsselbeins. Sie hatte den Satz erwartet, und trotzdem traf er anders, wenn er aus seinem Mund kam, in dieser Küche, neben den hellblauen Socken.",
+      "„Ich bin ihre Mutter.“",
+      "„Das bestreitet niemand.“",
+      "„Doch. Petra bestreitet, dass ich gestern nicht da war. Das ist dasselbe.“",
+      "Simon legte das Messer hin. Er sah sie zum ersten Mal länger an, und sie sah, dass er nicht ausgeschlafen war. Unter den Augen lag dieser graue Schatten, den er bekam, wenn er nachts aufstand und am Küchenfenster stand.",
+      "„Eva. Du wirkst erschöpft.“",
+      "„Ich bin erschöpft. Wer wäre das nicht.“",
+      "„Genau das meine ich.“",
+      "Sie wollte etwas sagen, schluckte es runter, weil es zu laut geworden wäre, und Mila hatte feine Antennen.",
+      "„Lass uns kurz rausgehen“, sagte Simon. „Sie soll noch eine halbe Stunde Spielplatz, sonst schläft sie nicht.“",
+      "Es war keine Frage. Er nahm das Geschirrtuch von der Schulter, legte es zusammen, zweimal, und legte es auf die Arbeitsplatte. Mila stand auf, als hätte sie gewartet, und zog sich die Schuhe an, ohne dass jemand sie aufgefordert hätte.",
+      "Der Spielplatz lag zwei Minuten von Simons Haustür entfernt, ein schmales Rechteck zwischen zwei Mietshäusern, mit einem Klettergerüst, einer Schaukel und einer Bank, deren Lehne schief stand. Der späte Nachmittag legte das Licht flach über den Sandkasten. Mila lief vor, ohne sich umzudrehen.",
+      "Simon und Eva blieben an der Bank stehen, setzten sich nicht.",
+      "„Ich schlage dir was vor“, sagte er.",
+      "„Bitte nicht.“",
+      "„Hör erst zu.“",
+      "Sie sah Mila zu, wie sie auf das Klettergerüst stieg, zwei Sprossen, drei, mit der Hand nach der nächsten griff, ohne nachzudenken.",
+      "„Eine Woche“, sagte Simon. „Eine Woche bringe und hole ich sie. Nur ich. Du siehst sie hier, am Wochenende, auf dem Spielplatz, im Café, was du willst. Aber die Kita-Strecke macht eine Person. Ich. Damit nichts mehr durcheinanderläuft. Damit Petra einen einzigen Ansprechpartner hat. Damit Mila weiß, wer sie abholt.“",
+      "Eva sah ihn an.",
+      "„Du nimmst mir die Abholung weg.“",
+      "„Ich nehme dir nichts weg. Ich nehme die Verwirrung raus.“",
+      "„Indem du mich rausnimmst.“",
+      "„Indem ich für eine Woche der Eine bin, der reingeht. Danach reden wir wieder.“",
+      "Sie hörte den Satz und hörte gleichzeitig, wie er klang, wenn man ihn weitergab. *Simon kümmert sich gerade allein um die Kita, Eva ist im Moment etwas* — sie hörte das Wort nicht zu Ende, weil sie es nicht zu Ende denken wollte.",
+      "„Das geht in die Akte“, sagte sie. „Eine Woche, in der nur du sie holst, geht in die Akte.“",
+      "„Es steht eh schon was in der Akte.“",
+      "Da war es. Ruhig, ohne Triumph, einfach als Feststellung.",
+      "Mila hatte oben am Klettergerüst angehalten und winkte. Simon hob die Hand. Eva hob die Hand eine Sekunde später.",
+      "Hinter ihnen, am Eingang zum Spielplatz, knirschte Kies.",
+      "„Oh.“",
+      "Eva drehte sich um, weil sie die Stimme erkannte, bevor sie das Gesicht sah.",
+      "Nora stand am Tor, eine Stofftasche in der Armbeuge, aus der ein Bund Frühlingszwiebeln und ein Karton Eier ragten. Sie hatte die Haare hochgesteckt, eine helle Strickjacke offen, und sie blieb an der Schwelle stehen, als würde sie überlegen, ob sie weitergehen oder umdrehen sollte.",
+      "„Entschuldigt.“ Nora hob kurz die Tasche, eine kleine, fast verlegene Geste. „Ich bin gerade unpraktisch im Weg, oder? Ich nehme die Abkürzung sonst nicht, aber der Aldi hatte –“ Sie brach ab, lächelte, kam zwei Schritte näher, blieb dann stehen.",
+      "„Schon gut“, sagte Simon.",
+      "Mila war schon vom Klettergerüst herunter. Sie kam quer über den Sand, mit dieser kleinen, geraden Schrittfolge, die sie hatte, wenn sie auf jemanden zulief, ohne darüber nachzudenken.",
+      "„Nora.“",
+      "Nicht *Hallo Nora*, nicht *guck mal wer da ist*. Einfach *Nora*, in der Tonlage, mit der sie *Papa* sagte, wenn er aus der Küche kam.",
+      "„Hey, du.“ Nora ging in die Knie, nicht umarmend, nur auf Augenhöhe. „Habt ihr Drachen gemalt?“",
+      "„Woher weißt du das.“",
+      "„Geraten.“",
+      "Mila lachte einmal kurz, eine Silbe, und Nora streckte den Daumen aus, tippte ihr leicht auf den Handrücken, eine Geste, die Eva nicht kannte, eine kleine Wiederholung, die wie eine Quittung aussah. Mila tippte zurück.",
+      "Eva hörte, wie Simon neben ihr einatmete.",
+      "Nora stand wieder auf, blieb genau dort stehen, wo sie war. Sie machte keinen Schritt auf die Bank zu. Sie machte auch keinen Schritt zurück.",
+      "„Ich wollte wirklich nicht stören.“ Sie sah Eva an, freundlich, mit dem Ausdruck einer Frau, die gerade eine Familie nicht zerbricht. „Ich gehe gleich weiter.“",
+      "„Schon okay“, sagte Simon.",
+      "Sie blieb stehen.",
+      "Mila war zurück am Klettergerüst, sah aber zwischendurch herüber, kurz, wie auf eine Steckdose, von der sie wusste, dass sie da war.",
+      "„Ich ruf dich morgen an“, sagte Nora zu Eva. Es war kein Vorschlag, es war eine Information, leicht gesagt, und Eva nickte, weil etwas anderes komisch ausgesehen hätte.",
+      "Nora hob die Tasche, ging an der Bank vorbei, in dem leicht entschuldigenden Gang, mit dem Leute durch Wartezimmer gehen, und verschwand am anderen Ende des Spielplatzes hinter der Hecke.",
+      "Simon sagte eine Weile nichts.",
+      "Dann: „Sie kennt sich gut mit ihr.“",
+      "„Sie war oft da.“",
+      "„Ja.“",
+      "Eva sah Mila an, oben am Gerüst, wie sie sich wieder mit dem Drachenflügel beschäftigte, in der Luft, mit dem ausgestreckten Arm, als hätte es Nora nicht gegeben.",
+      "„Eine Woche“, sagte Simon leise. „Nur eine Woche klare Linie. Das kriegt sie runter.“"
+    ]
+  },
+  {
+    id: "scene-8",
+    kicker: "Die andere Seite",
+    title: "Verlässlich",
+    paragraphs: [
+      "Das Café an der Ecke zur Reichenberger hatte um diese Zeit nur noch zwei Tische besetzt, einer davon ihrer. Eva hatte den Platz hinten an der Wand gewählt, weil die Wand half, wenn man telefonieren musste, ohne dass die eigene Stimme im Raum stand. Vor ihr ein Glas Wasser, daneben das Handy mit dem Display nach oben, daneben der Notizblock, auf dem bisher nichts stand außer einem Datum und dem Wort *Nora*, zweimal unterstrichen, einmal wieder durchgestrichen.",
+      "Sie hatte sich vorgenommen, in dieser Reihenfolge zu fragen: zuerst, ob sie überreagierte. Dann, ob jemand sie kannte. Dann erst, ob etwas dran war.",
+      "Die ersten beiden Anrufe brachten nichts. Eine Erzieherin aus Milas erster Krippe, die freundlich blieb, sich aber nicht erinnern konnte, einen Namen Nora Seidel jemals auf einer Liste gehabt zu haben. Eine alte Kollegin aus der Familienberatung, in der Eva vor drei Jahren ein Praktikum gemacht hatte, sagte, sie dürfe über Klienten nichts sagen, was Eva sowieso nicht gefragt hatte. Sie hängte höflich auf.",
+      "Beim dritten Anruf hob Kerstin ab.",
+      "Kerstin hatte in derselben Beratungsstelle gearbeitet, war inzwischen in einem anderen Träger, näher am Sorgerecht, näher an dem, was in solchen Akten landete. Eva hatte sie zweimal im Jahr auf Geburtstagen gesehen, nicht öfter. Sie nannte ihren Namen, sagte, dass sie privat anrufe, und hörte das kurze Schweigen, das entstand, wenn jemand abwog, ob das Gespräch in eine Form passte, in der man bleiben konnte.",
+      "»Ich frage dich nichts Dienstliches«, sagte Eva. »Ich brauche nur eine Einschätzung. Wenn du nicht kannst, leg auf.«",
+      "»Sag den Namen.«",
+      "»Nora Seidel.«",
+      "Eine Pause, in der jemand auf der anderen Seite einen Stuhl rückte und eine Tür schloss. Dann: »Wo hast du die kennengelernt?«",
+      "»Hofnachbarin. Sie hat ein paarmal bei Mila eingesprungen. Sie war auf der Notfallliste. Ich habe sie da runtergenommen.«",
+      "»Gut.«",
+      "Das Wort kam zu schnell, um nichts zu bedeuten. Eva drehte den Kugelschreiber zwischen den Fingern, ohne zu schreiben.",
+      "»Ich darf dir nichts erzählen, Eva. Ich kann dir nur sagen, dass der Name mir was sagt. Lange her. Anderer Träger, andere Stadt. Ich hab nur am Rand mitbekommen, was lief.«",
+      "»Was lief?«",
+      "»Sorgerecht. Sie hat verloren.«",
+      "Eva schrieb das Wort *verloren*. Daneben, kleiner, ein Fragezeichen.",
+      "»Und?«",
+      "»Und nichts. Ich kann nicht ins Detail.«",
+      "»Kerstin. Ich frage nicht nach Akten. Ich frage, ob ich mich zu Recht unwohl fühle.«",
+      "Wieder die Pause. Diesmal länger. Eva hörte am anderen Ende einen Wasserkocher, das leise Klicken, mit dem so ein Gerät sich abschaltete. Häuslich. Abend bei Kerstin. Tee.",
+      "»Was ich dir sagen kann«, sagte Kerstin schließlich, »ist eine Sache, die mir damals hängengeblieben ist. Nicht aus der Akte. Aus dem Pausenraum. Du weißt, wie das ist.«",
+      "»Ja.«",
+      "»Die Kollegin, die den Fall hatte, hat irgendwann gesagt: Das Schwierige sei, dass die andere Seite immer die wirre wirke. Die Mutter, gegen die es ging. Und Frau Seidel sei die, bei der man am Ende des Termins denke, gut, dass es wenigstens eine vernünftige Ansprechpartnerin gibt.«",
+      "Eva legte den Stift hin.",
+      "»Sie wirkte immer so verlässlich«, sagte Kerstin. »Das war der Satz. Wortwörtlich. Und am Ende stand trotzdem ein Beschluss, in dem das Kind nicht zu ihr durfte. Frag mich nicht warum. Ich weiß es nicht.«",
+      "Sie wirkte immer so verlässlich.",
+      "Eva hörte den Satz noch, als Kerstin schon weiterredete, irgendetwas darüber, dass das auch nichts heißen müsse, dass Menschen sich änderten, dass ein verlorenes Sorgerecht keine Aussage über heute sei. Worte, die Kerstin vermutlich beruflich oft sagte und die jetzt wie eine Hülle um den eigentlichen Satz lagen.",
+      "»Danke«, sagte Eva. »Das reicht.«",
+      "»Eva. Tu nichts Dummes mit dem, was ich dir gerade gesagt habe.«",
+      "»Nein.«",
+      "»Kein Brief. Keine Konfrontation. Nichts schriftlich. Wenn du das Gefühl hast, es geht um dein Kind, dann nicht über mich. Über die richtigen Stellen.«",
+      "»Ja.«",
+      "Sie legte auf. Die Wand hinter ihr war kalt, das Wasserglas vor ihr leer, ohne dass sie sich erinnern konnte, getrunken zu haben. Sie schrieb auf den Block: *früherer Sorgekonflikt. Verloren. Wirkte verlässlicher als die andere Seite.* Sie schrieb es zweimal. Die Feder grub sich tief in den Block, bis die Hand fest wurde.",
+      "Die andere Seite. Eva las das Wort und hielt kurz an. Sie war jetzt jemandes andere Seite.",
+      "Sie zahlte am Tresen, ließ den Block nicht in der Tasche verschwinden, hielt ihn in der Hand, als wäre er ein zweites Telefon. Draußen war es kühler geworden, die Straße roch nach nassem Asphalt, obwohl es nicht geregnet hatte. Sie ging zu Fuß, weil der Weg nicht lang war und sie nicht wollte, dass die Bewegung aufhörte, bevor sie zuhause war.",
+      "Im Treppenhaus hörte sie aus der Wohnung gegenüber Fernsehen. Aus Noras Wohnung, eine Etage tiefer, hörte sie nichts. Das war nicht ungewöhnlich, Nora war eine leise Nachbarin, das war einer der Gründe gewesen, warum man sie gemocht hatte. Eva schloss auf, zog die Schuhe nicht aus, nicht sofort, ging zwei Schritte in den Flur und blieb stehen.",
+      "Sie konnte die Küche von hier aus sehen. Sie hatte das Licht morgens nicht ausgemacht, oder doch, sie wusste es nicht mehr genau, das war so eine Sache, die sie früher gewusst hätte. Auf der Arbeitsplatte links vom Wasserhahn, da, wo bei ihr nichts stand außer dem Streifen Küchenpapier, der dort immer lag, stand etwas.",
+      "Sie ging hin.",
+      "Milas Brotdose. Die hellgrüne mit dem abgestoßenen Eck oben rechts, der Verschluss an der richtigen Seite, der Deckel sauber drauf. Sie war gespült. Innen trocken. Außen trocken. Daneben, ordentlich darauf abgelegt, der kleine blaue Gummiring, den Mila immer aus dem Deckel nahm, weil er sie störte, und den Eva sonst suchte.",
+      "Mila war seit halb acht morgens bei Simon Berger. Mila hatte ihre Brotdose mit zu Simon genommen, oder Simon hatte sie ihr gemacht, oder irgendwer hatte sie ihr gemacht, jedenfalls hatte diese Brotdose den tag nicht in dieser Wohnung verbracht.",
+      "Eva fasste sie nicht an.",
+      "Sie stand vor der Ablage und sah die Brotdose an, und der Satz aus dem Café lag jetzt neben ihr auf der Arbeitsplatte, so deutlich, als hätte ihn jemand mit ausgepackt.",
+      "Sie wirkte immer so verlässlich.",
+      "Eva drehte den Schlüssel zweimal um, ging zur Wohnungstür zurück, prüfte sie. Abgeschlossen, zweimal, wie immer. Der Schlüssel innen steckte nicht, weil sie ihn nie innen stecken ließ. Sie ging in den Flur, zur Garderobe, zog die Schublade auf, in der der Ersatzschlüssel lag, den Nora vor Monaten zurückgegeben hatte, an einem Abend mit Wein, mit dem Satz, sie wolle das sauber haben, jetzt, wo Eva und Simon das anders regelten. Der Schlüssel lag da. Genau da, wo er liegen sollte.",
+      "Eva schloss die Schublade.",
+      "Sie ging zurück in die Küche, blieb wieder vor der Ablage stehen, und es gab jetzt zwei Möglichkeiten, in die das nächste Stück Abend zerfiel. Entweder Simon hatte die Dose vorbeigebracht, weil er etwas vergessen hatte, weil Mila etwas vergessen hatte, weil irgendetwas Banales passiert war, und gleich klingelte das Telefon und er sagte es. Oder Nora hatte einen Weg, der nicht über den zurückgegebenen Schlüssel lief.",
+      "Sie nahm das Handy. Sie schrieb Simon nicht. Sie wollte den Satz erst sehen, bevor sie ihn abrief, sie wollte nicht, dass er aus seiner Logik kam, sie wollte ihn aus dem leeren Bildschirm holen.",
+      "Das Handy blieb leer.",
+      "Sie legte es weg. Sie sah die Brotdose an, den blauen Ring daneben, das saubere Ablagepapier darunter, das ohne Wasserrand war, obwohl etwas Frischgespültes darauf stand. Jemand hatte die Dose abgetrocknet, bevor er sie dort abstellte.",
+      "Eva zog den Stuhl unter dem Küchentisch hervor und setzte sich nicht."
+    ]
+  }
+];
+
 export default function DieFalscheAbholungSamplePage() {
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "clamp(24px, 5vw, 64px) 20px",
-        background:
-          "radial-gradient(circle at top, rgba(85, 80, 67, 0.18), transparent 28%), radial-gradient(circle at 20% 30%, rgba(91, 102, 123, 0.13), transparent 30%), linear-gradient(180deg, #090a0d 0%, #060608 48%, #020203 100%)",
-        color: "#f2efe8",
-        fontFamily:
-          '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif'
+    <SampleReader
+      sampleId="die-falsche-abholung"
+      title="Die falsche Abholung"
+      description="Ein Psychothriller über Kontrolle, Identität und die Zerbrechlichkeit des Alltags."
+      heroKicker="Buchprobe · Szenen 1–8"
+      heroTitle="Gestern"
+      heroSummary="Eine verspätete Meldung in der Kita-App kippt Evas Alltag aus der Bahn: Laut System hat sie ihre Tochter Mila gestern selbst abgeholt – zu einer Zeit, als sie nachweislich hundert Kilometer entfernt in einem Meeting saß."
+      scenes={scenes}
+      continuationTitle="Wie geht es weiter?"
+      continuationCopy="Erfahre in den kommenden Kapiteln, wie Eva versucht, die Kontrolle über ihr Leben zurückzugewinnen, während die Grenzen zwischen Realität und Manipulation immer weiter verschwimmen."
+      theme={{
+        accent: "#7c958e",
+        accentSoft: "rgba(124, 149, 142, 0.18)",
+        accentGlow: "rgba(124, 149, 142, 0.28)",
+        surface: "rgba(235, 245, 243, 0.028)",
+        railSurface: "rgba(18, 24, 24, 0.84)"
       }}
-    >
-      <section
-        style={{
-          width: "min(100%, 920px)",
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 0.72fr) minmax(0, 1fr)",
-          overflow: "hidden",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          background:
-            "linear-gradient(180deg, rgba(18, 18, 23, 0.94), rgba(8, 8, 11, 0.98))",
-          boxShadow: "0 24px 90px rgba(0, 0, 0, 0.5)"
-        }}
-      >
-        <div
-          style={{
-            position: "relative",
-            minHeight: "420px",
-            background:
-              "linear-gradient(180deg, rgba(26, 26, 31, 0.9), rgba(12, 12, 15, 0.98))"
-          }}
-        >
-          <img
-            src="/images/die_falsche_abholung.png"
-            alt=""
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center top",
-              filter: "saturate(0.88) contrast(1.05) brightness(0.72)"
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(180deg, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.16) 46%, rgba(0, 0, 0, 0.78) 100%)"
-            }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              left: "20px",
-              top: "20px",
-              padding: "8px 11px",
-              border: "1px solid rgba(255, 255, 255, 0.14)",
-              background: "rgba(10, 10, 14, 0.74)",
-              color: "#fff6ed",
-              fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-              fontSize: "11px",
-              fontWeight: 700,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase"
-            }}
-          >
-            Leseprobe
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            alignContent: "center",
-            padding: "clamp(32px, 5vw, 58px)",
-            textAlign: "left"
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              color: "rgba(242, 239, 232, 0.48)",
-              fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase"
-            }}
-          >
-            EMBER Buchprobe
-          </p>
-          <h1
-            style={{
-              margin: "18px 0 0",
-              color: "#f2efe8",
-              fontFamily: '"Didot", "Bodoni 72", "Iowan Old Style", "Times New Roman", serif',
-              fontSize: "clamp(42px, 7vw, 76px)",
-              fontWeight: 400,
-              lineHeight: 0.94,
-              letterSpacing: "0.04em"
-            }}
-          >
-            Die falsche Abholung
-          </h1>
-          <div
-            style={{
-              marginTop: "30px",
-              padding: "22px 0",
-              borderTop: "1px solid rgba(255, 255, 255, 0.12)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.12)"
-            }}
-          >
-            <p
-              style={{
-                margin: 0,
-                color: "#c7b18b",
-                fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-                fontSize: "clamp(18px, 3vw, 28px)",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                lineHeight: 1.25,
-                textTransform: "uppercase"
-              }}
-            >
-              REGIE WIRD BEARBEITET
-            </p>
-          </div>
-          <p
-            style={{
-              maxWidth: "34rem",
-              margin: "24px 0 0",
-              color: "rgba(242, 239, 232, 0.76)",
-              fontSize: "18px",
-              lineHeight: 1.55
-            }}
-          >
-            Die Leseprobe wird gerade neu ausgerichtet und ist vorübergehend
-            nicht verfügbar.
-          </p>
-          <a
-            href="/"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "fit-content",
-              marginTop: "34px",
-              minHeight: "48px",
-              padding: "0 22px",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              background: "linear-gradient(180deg, #f1e6d5, #d7bb95)",
-              color: "#17120e",
-              fontFamily: '"Avenir Next", "Segoe UI", sans-serif',
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.02em",
-              textDecoration: "none"
-            }}
-          >
-            Zur Storefront
-          </a>
-        </div>
-      </section>
-    </main>
-  )
+    />
+  );
 }

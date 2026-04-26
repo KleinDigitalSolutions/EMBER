@@ -4079,10 +4079,7 @@ textarea {
   --sample-accent-glow: rgba(142, 125, 104, 0.3);
   --sample-surface: rgba(255, 255, 255, 0.03);
   --sample-rail-surface: rgba(13, 14, 18, 0.82);
-  background:
-    radial-gradient(circle at top left, var(--sample-accent-soft), transparent 28%),
-    radial-gradient(circle at top right, var(--sample-accent-glow), transparent 20%),
-    linear-gradient(180deg, #111216 0%, #090a0d 100%);
+  background: #0f1014;
 }
 
 .sample-reader__topbar {
@@ -4117,18 +4114,14 @@ textarea {
   gap: 0.65rem;
   padding: 1.25rem;
   border: 1px solid color-mix(in srgb, var(--sample-accent) 28%, var(--line));
-  background:
-    linear-gradient(180deg, var(--sample-surface), rgba(255, 255, 255, 0.02)),
-    radial-gradient(circle at top left, var(--sample-accent-soft), transparent 48%);
+  background: var(--sample-surface);
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
 }
 
 .sample-reader__hero--lead {
   gap: 0.8rem;
   padding: 1.4rem;
-  background:
-    radial-gradient(circle at top left, var(--sample-accent-glow), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: rgba(255, 255, 255, 0.012);
 }
 
 .sample-reader__hero h2,

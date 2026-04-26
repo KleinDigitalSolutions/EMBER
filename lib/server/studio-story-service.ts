@@ -1617,22 +1617,35 @@ function mergeHumanEditExamples(
   capturedExamples: BookHumanEditExample[]
 ) {
   const byId = new Map<string, BookHumanEditExample>()
+  const byBusinessKey = new Map<string, BookHumanEditExample>()
 
-  existingExamples.forEach(function (example) {
-    byId.set(example.id, example)
-  })
-  clientExamples.forEach(function (example) {
-    byId.set(example.id, {
-      ...(byId.get(example.id) ?? example),
-      learningStatus: normalizeHumanEditLearningStatus(example.learningStatus),
-      excludedReason: example.excludedReason,
-      learningWeight: typeof example.learningWeight === "number" ? example.learningWeight : 1,
+  function track(example: BookHumanEditExample) {
+    const key = `${example.draftJobId}:${example.acceptedAt || ""}`
+    const existingById = byId.get(example.id)
+    const existingByBusinessKey = byBusinessKey.get(key)
+
+    const merged = {
+      ...(existingById || existingByBusinessKey || example),
+      ...example,
+      // Ensure we don't downgrade learning status if it was already modified
+      learningStatus: normalizeHumanEditLearningStatus(
+        example.learningStatus !== "included" 
+          ? example.learningStatus 
+          : (existingById || existingByBusinessKey)?.learningStatus ?? "included"
+      ),
       updatedAt: new Date().toISOString()
-    })
-  })
-  capturedExamples.forEach(function (example) {
-    byId.set(example.id, example)
-  })
+    }
+
+    // Keep the most stable ID (existing one if available)
+    merged.id = existingById?.id || existingByBusinessKey?.id || example.id
+
+    byId.set(merged.id, merged)
+    byBusinessKey.set(key, merged)
+  }
+
+  existingExamples.forEach(track)
+  clientExamples.forEach(track)
+  capturedExamples.forEach(track)
 
   return Array.from(byId.values()).sort(function (a, b) {
     return b.capturedAt.localeCompare(a.capturedAt)

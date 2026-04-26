@@ -1203,9 +1203,16 @@ function buildHumanEditProfilePrompt(
 
 function dedupeHumanEditExamples(examples: BookHumanEditExample[]) {
   const byId = new Map<string, BookHumanEditExample>();
+  const byBusinessKey = new Map<string, BookHumanEditExample>();
 
   examples.forEach(function (example) {
-    byId.set(example.id, example);
+    const key = `${example.draftJobId}:${example.acceptedAt || ""}`;
+    const existing = byId.get(example.id) || byBusinessKey.get(key);
+    
+    const effective = existing ? { ...existing, ...example } : example;
+
+    byId.set(effective.id, effective);
+    byBusinessKey.set(key, effective);
   });
 
   return Array.from(byId.values());

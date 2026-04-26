@@ -217,53 +217,25 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 
 ## WRITER CONSTITUTION
 
-### Stilregeln (Positiv)
 - Nahe dritte Person auf Eva. Keine allwissende Erklärstimme.
-- Kurze bis mittlere Kapitel: Normalbereich 1.000-1.500 Wörter, einzelne Schlüsselszenen bis etwa 1.700 Wörter; Kapitel 17, 23 und 27 dürfen als Fusionskapitel bei Bedarf 1.700-1.950 Wörter erreichen.
-- Jedes Kapitel endet mit einer konkreten offenen Konsequenz, nicht bloss mit Unruhe.
-- Im Mittelteil darf Evidenz nie Selbstzweck werden. Spätestens nach zwei Indizkapiteln muss ein Kapitel zeigen, was Eva konkret verliert, was Mila übernimmt oder wie Institutionen und Beziehungen sich neu gegen Eva ordnen.
-- Bedrohung entsteht aus wenigen wiederkehrenden normalen Dingen: Kita-Abholung mit App, Video, Unterschrift und gelbem Becher; alte Nähe über Vollmacht, Schlüssel, Listen und Freigaben; doppelte Mutterroutine über Tasche, Jacke, Brotdose und Haargummi; institutioneller Zugriff über Kita, Praxis, App-Rücksetzung und Ausflug.
-- Exposition darf nur unter Druck vorkommen.
-- Dialoge müssen Vertrauen verschieben, Zweifel sähen oder Zugriff auf Mila verändern.
+- Szenen steigen spät ein und gehen früh raus.
+- Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
+- Im Mittelteil nie länger als zwei reine Indizszenen hintereinander. Danach braucht es eine reale Folge für Zugriff, Loyalität, Institution oder Kinderroutine.
+- Die Übergänge zwischen Szenen müssen kausal lesbar sein. Beim Durchsehen muss zwischen zwei Kapiteln eher `deshalb` oder `aber` passen als `und dann`.
+- Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits trägt, folgt kein erklärender Satz.
+- Keine drei Atmosphärenbeobachtungen vor dem eigentlichen Schlag. Binnenprosa nur unter Zug.
+- Raum, Körper und Stimmung nur dann ausführen, wenn sie Beweislage, Glaubwürdigkeit, Zugriff oder Routine verändern.
+- Nora bleibt früh sozial plausibel, hilfreich lesbar und nie zu perfekt kuratiert bedrohlich.
+- Nora darf nie wie eine folgenlose Alltags-Supertäterin wirken. Jeder grössere Zug hinterlässt Restfehler, Gegendruck oder engeren Spielraum.
+- Eva unter Druck präzise, aber leicht überladen. Ihre Wahrnehmung darf kurz stolpern, ohne hysterisch zu werden.
+- Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen. Wenn sie falsch reagieren, muss das Eva konkret etwas kosten.
+- Simon braucht vor seinem späten Kippmoment mindestens eine frühere aktive Fehlentscheidung, die aus Schutzlogik plausibel ist und Eva real Zugriff nimmt.
+- Objektspannung vor Reflexion. Dinge müssen zuerst handeln, bevor Gedanken sie ausdeuten.
 - Jede Szene muss mindestens eines verändern: Beweislage, Glaubwürdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalität.
-- Hinweise werden klein, materiell und rückprüfbar gesetzt.
-- Die Prosa bleibt klar, lesbar, zugespitzt, nicht literarisch versunken.
-- Emotion wird über Handlung, Körper, Sprache und Fehlentscheidungen sichtbar, nicht erklärt.
-- Der Leser soll jede Szene unmittelbar auf Mila, Eva oder Zugriffslinien beziehen können.
-- Aussenfiguren bleiben glaubhaft. Niemand ist nur Plotmaschine.
-- Simon darf nicht nur skeptisch spiegeln. Seine Schutzentscheidungen müssen Eva real etwas kosten.
-- Nora gewinnt über Plausibilität, Restzugriff und Geduld, nicht über Omnipotenz. Jeder grössere Erfolg hinterlässt kleinen Verschleiss, Restfehler oder einen enger werdenden Handlungskorridor.
-
-### Stilregeln (Negativ — verboten)
-- Kein Täter-POV.
-- Kein Wahn- oder Psychose-Twist.
-- Keine plötzliche Hightech-Verschwörung, die den Alltagsstoff entwertet.
-- Keine inkompetente Kita als billiger Plotmotor.
-- Kein Ex-Mann als Standardböswicht, wenn die Regie etwas Komplexeres will.
-- Keine Erklärungsmonologe über Trauma statt Handlung.
-- Keine Rückblenden, die nur Informationen nachreichen, die man spannender in der Gegenwart zeigen kann.
-- Keine sentimental ausgeschlachteten Kind-Szenen.
-- Keine Polizei, die alles lächerlich macht; Skepsis ja, Karikatur nein.
-- Keine Auflösung, bei der die Wahrheit nur durch ein letztes Gestandnis statt durch vorher gelegte Beweise sichtbar wird.
-- Keine Serie von Kapiteln, in denen nur "noch ein Beweisobjekt" hinzukommt.
-- Keine Täterin, die sich wie eine perfekte Alltags-Genialtäterin ohne Restfehler, Kosten oder Gegenreaktion bewegt.
-
-### Hook-Regel
-- Kapitel 1 beginnt mit der realen Behauptung der Kita, nicht mit Vorgeschichte.
-- Die erste Leitfrage lautet nicht: "Wurde Mila entführt?" sondern: "Wie kann es Beweise dafür geben, dass Eva etwas getan hat, was sie sicher nicht getan hat?"
-- Der Stoff ist früh kein klassisches Whodunit, sondern ein Suspense-Roman über Beweisbarkeit, Alltagsmacht und die ruhigere, glaubwürdigere Frau.
-
-### Ende-Regel
-- Die Wahrheit muss materiell belegbar werden: Kontaktlisten, App-Logik, Gewohnheiten, Handschrift, Zeitpunkt, Beobachtung.
-- Unklar bleiben darf, wie nah Nora psychisch vor dem totalen Übergriff schon war.
-- Klar werden muss, dass sie Mila nicht zufällig wollte, sondern Evas Alltag systematisch studiert und besetzt hat.
-- Der letzte Satz ist ein Konkretheitsbild aus Evas Rückgewinnung von Alltag, keine These über Mutterschaft.
-
-### X-Ray-Pflicht für jede Revision
-- Vor jedem grossen Überarbeitungslauf ein Kapitel-X-Ray mit genau einem Satz pro Kapitel:
-  `Eva will X, tut Y, verliert oder gewinnt Z.`
-- Wenn ein Kapitel in diesem Format keinen klaren Verlust, Gewinn oder Richtungswechsel hat, ist es Kandidat für Fusion oder Streichung.
-- Wenn zwei benachbarte Kapitel denselben Satzbau ergeben, tun sie sehr wahrscheinlich dieselbe Arbeit.
+- Dialog darf nie bloss atmosphärisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
+- Bedrohung bleibt alltagsnah, institutionell plausibel und ohne Thrillerlärm.
+- Im letzten Drittel keine Triumphprosa und keine Dämonisierung. Beweise schlagen härter als Lautstärke.
+- Kurze bis mittlere Kapitel bevorzugen. 1000-1500 Wörter sind Normalbereich; einzelne Schlüsselszenen dürfen bis etwa 1700 gehen, Kapitel 17, 23 und 27 als Fusionskapitel bei Bedarf auf etwa 1700-1950 Wörter. Diese Werte sind bevorzugte Rahmen, keine harte Zielerfüllung.
 
 ---
 
@@ -2572,27 +2544,6 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 3. Diese Objekte explizit in `Summary` und `Scene Card` halten.
 4. Nur dann eine `Director Note` setzen, wenn wirklich laufbezogene Feinkorrekturen nötig sind.
 5. Keine Director Note verwenden, um fehlende Scene-Card-Substanz zu überdecken.
-
-### Copy-Paste Writer Constitution (geschärft)
-- Nahe dritte Person auf Eva. Keine allwissende Erklärstimme.
-- Szenen steigen spät ein und gehen früh raus.
-- Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
-- Im Mittelteil nie länger als zwei reine Indizszenen hintereinander. Danach braucht es eine reale Folge für Zugriff, Loyalität, Institution oder Kinderroutine.
-- Die Übergänge zwischen Szenen müssen kausal lesbar sein. Beim Durchsehen muss zwischen zwei Kapiteln eher `deshalb` oder `aber` passen als `und dann`.
-- Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits trägt, folgt kein erklärender Satz.
-- Keine drei Atmosphärenbeobachtungen vor dem eigentlichen Schlag. Binnenprosa nur unter Zug.
-- Raum, Körper und Stimmung nur dann ausführen, wenn sie Beweislage, Glaubwürdigkeit, Zugriff oder Routine verändern.
-- Nora bleibt früh sozial plausibel, hilfreich lesbar und nie zu perfekt kuratiert bedrohlich.
-- Nora darf nie wie eine folgenlose Alltags-Supertäterin wirken. Jeder grössere Zug hinterlässt Restfehler, Gegendruck oder engeren Spielraum.
-- Eva unter Druck präzise, aber leicht überladen. Ihre Wahrnehmung darf kurz stolpern, ohne hysterisch zu werden.
-- Simon handelt aus Schutzlogik, Petra aus professioneller Vorsicht. Beide sind Menschen, keine Plotmaschinen. Wenn sie falsch reagieren, muss das Eva konkret etwas kosten.
-- Simon braucht vor seinem späten Kippmoment mindestens eine frühere aktive Fehlentscheidung, die aus Schutzlogik plausibel ist und Eva real Zugriff nimmt.
-- Objektspannung vor Reflexion. Dinge müssen zuerst handeln, bevor Gedanken sie ausdeuten.
-- Jede Szene verschiebt mindestens eines: Beweislage, Glaubwürdigkeit, Zugriff aufs Kind, Alltagsroutine oder Loyalität.
-- Dialog darf nie bloss atmosphärisch sein; er muss Vertrauen, Verfahren oder Zugriff verschieben.
-- Bedrohung bleibt alltagsnah, institutionell plausibel und ohne Thrillerlärm.
-- Im letzten Drittel keine Triumphprosa und keine Dämonisierung. Beweise schlagen härter als Lautstärke.
-- Kurze bis mittlere Kapitel bevorzugen. 1000-1500 Wörter sind Normalbereich; einzelne Schlüsselszenen dürfen bis etwa 1700 gehen, Kapitel 17, 23 und 27 als Fusionskapitel bei Bedarf auf etwa 1700-1950 Wörter. Diese Werte sind bevorzugte Rahmen, keine harte Zielerfüllung.
 
 ### Minimaler Director-Note-Block
 > Nur verwenden, wenn der Lauf sichtbar zu breit, zu erklärend oder zu laut wird. Dieser Block ist Zusatzsteuerung, nicht Standardersatz für gute Regie.
