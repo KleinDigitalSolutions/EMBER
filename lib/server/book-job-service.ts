@@ -1337,6 +1337,7 @@ function buildCoreSystemPrompt() {
     "Inner reflection must never run longer than the action that triggered it. One sentence maximum unless the scene beat is explicitly introspective.",
     "Never resolve a scene. End on pressure, an open question, or a shift in power — not on comfort or summary.",
     "Do not repeat information the reader already has. No recap gestures, no confirmatory inner monologue, no re-describing props already established.",
+    "Check physical blocking continuity: track each named character's physical state (standing, sitting, position in room) across the scene. Flag any character who stands or exits without having been seated, or sits without having stood.",
     "Dialogue: Characters do not answer the question asked. Sentences break off. Subtext carries the exchange. No stacked attribution after the reply."
   ].join("\n");
 }
