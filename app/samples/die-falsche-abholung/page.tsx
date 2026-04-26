@@ -200,6 +200,7 @@ const scenes: SampleReaderScene[] = [
     id: "scene-4",
     kicker: "Zwei Wahrheiten",
     title: "Die Liste",
+    summary: "",
     paragraphs: [
       "Auf dem Küchentisch lagen die Stapel in der Ordnung, in der Eva sie immer ablegte: links die Ausdrucke aus der Kita-App der letzten zwei Wochen, in der Mitte der Familienkalender, rechts der Ordner mit den Originalunterlagen aus der Anmeldung vor zwei Jahren. Mila schlief seit halb acht. Im Flur tickte die Heizung. Eva hatte sich Tee gemacht und nicht getrunken.",
       "Sie ging die App-Einträge zuerst durch, weil sie wusste, was dort stand, und es trotzdem noch einmal sehen musste. Abholung gestern, 15:42 Uhr. Unterschrift. Häkchen. Sie scrollte weiter, vor und zurück, suchte einen verschobenen Tag, eine doppelt eingetragene Woche, irgendetwas, das sich als Systemfehler lesen ließ. Die Einträge davor stimmten mit ihren Notizen überein. Montag 16:10, Dienstag 16:05, Mittwoch frei. Donnerstag, der Eintrag, den sie suchte, sass dort wie die anderen, nur nicht von ihr.",
