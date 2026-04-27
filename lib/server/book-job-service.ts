@@ -1228,7 +1228,7 @@ function dedupeHumanEditExamples(examples: BookHumanEditExample[]) {
   const byBusinessKey = new Map<string, BookHumanEditExample>();
 
   examples.forEach(function (example) {
-    const key = `${example.draftJobId}:${example.acceptedAt || ""}`;
+    const key = createHumanEditBusinessKey(example);
     const existing = byId.get(example.id) || byBusinessKey.get(key);
     
     const effective = existing ? { ...existing, ...example } : example;
@@ -1240,10 +1240,29 @@ function dedupeHumanEditExamples(examples: BookHumanEditExample[]) {
   return Array.from(byId.values());
 }
 
+function createHumanEditBusinessKey(example: Pick<BookHumanEditExample, "draftJobId" | "acceptedAt">) {
+  return `${example.draftJobId}:${normalizeHumanEditTimestampKey(example.acceptedAt)}`;
+}
+
+function normalizeHumanEditTimestampKey(value: string | null) {
+  if (!value) {
+    return "";
+  }
+
+  const timestamp = Date.parse(value);
+
+  if (Number.isNaN(timestamp)) {
+    return value;
+  }
+
+  return new Date(timestamp).toISOString();
+}
+
 function buildSystemPrompt(packet: SceneContextPacket, options?: DraftGenerationOptions) {
   return [
     buildCoreSystemPrompt(),
     buildStablePrefixPrompt(packet),
+    options ? buildProseStyleBrakePrompt() : "",
     options?.humanEditProfile || ""
   ].filter(Boolean).join("\n\n");
 }
@@ -1264,6 +1283,25 @@ function buildCoreSystemPrompt() {
     "The prose should feel immediate and necessary, not over-designed.",
     "Use only abstract technique guidance from EMBER. Never imitate, paraphrase, or echo recognizable phrasing from a specific author, comp title, or reference excerpt.",
     "If the technique profile asks for more pressure, achieve it through original scene construction, not through borrowed stylistic signatures."
+  ].join("\n");
+}
+
+function buildProseStyleBrakePrompt() {
+  return [
+    "EMBER prose style brake for drafting:",
+    "These are persistent style constraints. Apply them in every prose draft unless a scene card explicitly requires breaking one.",
+    "Do not explain an emotion immediately after an action has already shown it. Let the object, gesture, silence, body position, or practical consequence carry the effect.",
+    "Do not label a proof object as proof, evidence, symbol, clue, or meaning inside the prose. Place it materially in the scene and stop when the image has landed.",
+    "Avoid smooth interpretive hinge phrases in German prose, especially: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\", and \"nicht X, sondern Y\".",
+    "Use direct emotion nouns sparingly after action. Bad pattern: action, then named emotion. Better pattern: action, physical adjustment, object, changed behavior.",
+    "Pressure figures must not seem perfectly timed or all-knowing by default. Prefer one small wrong tone, overreach, late reaction, visible cost, or incomplete access.",
+    "Before/after preference:",
+    "Bad: Sie verstand, dass Nora längst näher war, als sie gedacht hatte.",
+    "Better: Auf dem Etikett stand M. Berger. Die Schrift war nicht ihre.",
+    "Bad: Das war der Beweis, dass jemand in der Wohnung gewesen war.",
+    "Better: Der Knoten lag rechts über links. Eva band links über rechts.",
+    "Bad: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
+    "Better: Sie legte den Schlüssel auf den Tisch. Er blieb nicht liegen. Sie nahm ihn wieder in die Hand."
   ].join("\n");
 }
 
@@ -1322,6 +1360,10 @@ function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket, optio
       type: "text" as const,
       text: buildStablePrefixPrompt(packet),
       cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
+    },
+    {
+      type: "text" as const,
+      text: buildProseStyleBrakePrompt()
     }
   ];
 

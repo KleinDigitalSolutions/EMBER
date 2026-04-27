@@ -82,7 +82,7 @@ Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
 
 | Sektion | Zweck | Pipeline-relevant? |
 |---|---|---|
-| MASTER BRIEF | Prämisse, Genre, POV-Strategie | Nein — menschlicher Kontext |
+| MASTER BRIEF | Prämisse, Genre, POV-Strategie, `Author Intent`, `Current Focus` | Teilweise — `Author Intent` und `Current Focus` gehen in den Draft-Kontext ein |
 | MARKET BRIEF | Vermarktungsziele, Comp Titles | Nein — menschlicher Kontext |
 | WRITER CONSTITUTION | Stilregeln Positiv/Negativ | Nein — Stilanker für Reviews |
 | WORLD BIBLE | Setting, Soziale Lage, Noras Zugriffslogik | Nein — Stilanker und Continuity-Referenz |
