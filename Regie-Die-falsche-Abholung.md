@@ -30,7 +30,7 @@ Die aktuelle Standardpipeline arbeitet in dieser Reihenfolge:
 Wichtig daraus:
 - Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **Scene Intention**.
 - Hart bleiben nur Kanon, POV, Ort/Zeit, Locked Facts, Namen und echte Kontinuitätsanker.
-- Felder wie `opening`, `dramaticBeat`, `ending`, `closingLine`, `proof_object`, `alltagswaffe` oder `kindmoment` sind **weiche Orientierung**, nicht Formulierungsdiktat.
+- Felder wie `opening`, `dramaticBeat`, `ending`, `proof_object`, `alltagswaffe` oder `kindmoment` sind **weiche Orientierung**, nicht Formulierungsdiktat. `coreAction` ist Handlungsorientierung, aber nicht automatisch Wendung; `closingLine` ist Legacy und höchstens optionales Schlussbild, kein Satzdiktat.
 - Aus diesen Feldern baut EMBER eine **Scene Intention**: `situation`, `want`, `pressure`, `concreteMaterial`, `intendedTurn`, `irreversibleChange`, `aftertaste`, `avoid`.
 - Wortziele sind **bevorzugte Szenenrahmen**, keine harten Qualitätsziele. Die Szene darf organisch kürzer oder länger werden.
 - `length_control` greift nur als Notfallbremse bei extrem kurzen oder extrem langen Szenen. Es soll keine gute Szene auf eine Zahl zwingen.
@@ -43,13 +43,16 @@ Wichtig daraus:
 | `pov` | Harte Laufzeit-Constraint. | Ohne POV-Lock droht Perspektivdrift. |
 | `ort` / `location` | Harte Laufzeit-Constraint. | Ohne klaren Ort wird die Szene räumlich weich. |
 | `uhrzeit` / `timeAnchor` | Harte Laufzeit-Constraint. | Fehlt sie, verliert der Ablauf Präzision. |
-| `object_anchor`, `prop_anchor`, `locked_object` | Harte Kontinuitätsanker. | Farbe, Funktion und Besitzlogik dürfen nicht driften. |
+| `object_anchor`, `prop_anchor`, `locked_object`, `locked_material` | Harte Kontinuitätsanker. | Farbe, Funktion, Besitzlogik oder konkretes Material dürfen nicht driften. |
 | `proof_object`, `beweisobjekt`, `alltagswaffe`, `kindmoment`, `mila_kindmoment` | Weiche Material-/Drucksignale. | Helfen der Szene, dürfen aber organisch gelöst werden. |
 | `ending_type` | Rhythmus- und Qualitätsanker für Audits. | Metadaten, kein Schreibauftrag. |
 | `false_friend_signal`, `ersetzungsmoment`, `*_plant`, `*_payoff`, `subtext` | Weiche Regie- und Payoff-Signale. | Helfen, roten Faden und falsche Hilfsangebote über mehrere Szenen zu halten. |
 | `word_target_min` / `word_target_max` | Bevorzugter Szenenrahmen und Budget-Hinweis. | Fehlen sie, greift der Default; die Länge bleibt trotzdem organisch. |
-| `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` | Weiche Scene-Intention-Materialien. | Dienen der Szenenfunktion, nicht dem Diktat einzelner Sätze. |
+| `objective`, `opening`, `dramaticBeat`, `ending` | Weiche Scene-Intention-Materialien. | Dienen der Szenenfunktion, nicht dem Diktat einzelner Sätze. |
+| `coreAction`, `closingLine` | Legacy-/Orientierungsfelder. | `coreAction` beschreibt Handlung, aber nicht automatisch den Turn. `closingLine` ist höchstens optionales Schlussbild, kein Aftertaste und kein Satzdiktat. |
 | `bad_version_risk`, `revision_focus`, `scene_promise`, `pressure_clock` usw. | Menschliche Produktionshilfe. | Hilft Agents, den Sinn der Szene zu verstehen und typische Fehlfassungen zu vermeiden. |
+
+`required_material` ist Legacy. Neue Regie verwendet stattdessen `locked_material` — und nur, wenn das Material echte Kontinuität schützt. Nicht für dramaturgisch gewünschte Objektpräsenz benutzen.
 
 **Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel sollten `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card tragen, damit der bevorzugte Rahmen die doppelte Szenenfunktion sichtbar macht. Das ist ein Rahmen, kein Zwang; die Szene folgt weiterhin ihrer organischen Dichte.
 
@@ -87,21 +90,21 @@ Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
 | Sektion | Zweck | Pipeline-relevant? |
 |---|---|---|
 | MASTER BRIEF | Prämisse, Genre, POV-Strategie, `Author Intent`, `Current Focus` | Teilweise — `Author Intent` und `Current Focus` gehen in den Draft-Kontext ein |
-| MARKET BRIEF | Vermarktungsziele, Comp Titles | Nein — menschlicher Kontext |
-| WRITER CONSTITUTION | Stilregeln Positiv/Negativ | Nein — Stilanker für Reviews |
-| WORLD BIBLE | Setting, Soziale Lage, Noras Zugriffslogik | Nein — Stilanker und Continuity-Referenz |
+| MARKET BRIEF | Vermarktungsziele, Comp Titles | Indirekt — Packaging-/Positionierungs-Kontext, nicht als Prosa-Draft-Dump |
+| WRITER CONSTITUTION | Stilregeln Positiv/Negativ | Teilweise — kurze Auswahl geht in den Prosa-Kontext; vollständige Liste bleibt Review-/Referenzmaterial |
+| WORLD BIBLE | Setting, Soziale Lage, Noras Zugriffslogik | Indirekt — Canon-/Context-Quelle, nicht als voller Dump in den Draft |
 | CANON FACTS | Unveränderliche Buchwahrheiten mit IDs | Indirekt — Continuity-Basis |
-| CHARACTER STATE LEDGER | Wunde, Arc, Speech Pattern pro Figur | Nein — Stilanker |
-| VOICE PACK | Satzebene-Führung pro Figur mit Positiv/Verboten-Mustern | Nein — Stilanker |
-| PROSA BENCHMARK | Konkrete Prosabeispiele als Stilanker | Nein — Stilanker |
+| CHARACTER STATE LEDGER | Wunde, Arc, Speech Pattern pro Figur | Indirekt — verdichtet relevant, kein vollständiger Draft-Kontext |
+| VOICE PACK | Satzebene-Führung pro Figur mit Positiv/Verboten-Mustern | Teilweise — Stilanker und Review-Referenz, nicht vollständig in jeden Draft |
+| PROSA BENCHMARK | Konkrete Prosabeispiele als Stilanker | Indirekt — Review- und Stilreferenz, kein Prosa-Dump |
 | CONTINUITY GUARDRAILS | Namensschutz, Produktionsregeln | **Ja** — treibt `auditSceneContinuityGuards` live |
-| NORA CAPABILITY MAP | Plausibilitätsgrenzen für Noras Zugriff | Nein — menschlich |
-| NORA COST LEDGER | Nora-Erfolge mit Restfehlern und Payoffs pro Kapitel | Nein — Dramaturgie-Referenz |
-| OPEN THREADS | Dramaturgische Fragebögen mit Payoff-Acts | Nein — menschlich |
-| LOSS LADDER | Act-Struktur, Verlustprogression, Beweisfolgen, interne Zeitachse | Nein — Dramaturgie-Referenz |
+| NORA CAPABILITY MAP | Plausibilitätsgrenzen für Noras Zugriff | Indirekt — Plausibilitäts- und Review-Quelle |
+| NORA COST LEDGER | Nora-Erfolge mit Restfehlern und Payoffs pro Kapitel | Indirekt — Dramaturgie-Referenz, nicht als Draft-Dump |
+| OPEN THREADS | Dramaturgische Fragebögen mit Payoff-Acts | Indirekt — wichtig für Regie/Review; nicht als langer Dump in den Draft |
+| LOSS LADDER | Act-Struktur, Verlustprogression, Beweisfolgen, interne Zeitachse | Indirekt — Dramaturgie-Referenz, nicht als Draft-Dump |
 | ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — zentrale Produktions- und Laufzeitgrundlage |
-| WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Nein — Human-Writer-Starthilfe |
-| OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | Ja — operative Hilfe, aber kein Ersatz für gute Scene Cards |
+| WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Human-/Review-Hilfe — nicht vollständig als Draft-Kontext verwenden |
+| OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | Operative Hilfe — nicht als Ersatz für gute Scene Cards und nicht als voller Draft-Kontext |
 
 ### Wie CONTINUITY GUARDRAILS die Pipeline beeinflusst
 
@@ -188,11 +191,11 @@ Ein Agent darf Autorideen nicht einfach in schöne Kapiteltexte umformulieren. E
 | zentrale Angst, Verlust, Thema | Master Brief / Thematic Core | Reader Promise, Ending Promise, verbotene Twists |
 | Verkaufsversprechen, Genregefühl | Market Brief | Hook, Category Lane, Cover Direction |
 | "das darf nie passieren" | Continuity Guardrails / Canon Facts | harte Schutzregel, nicht nur Stilwunsch |
-| wiederkehrendes Objekt oder Detail | World Bible / Proof Ladder / Scene Cards | `material`, `proof_object`, bei echter Kontinuitaet `object_anchor` / `prop_anchor` |
+| wiederkehrendes Objekt oder Detail | World Bible / Proof Ladder / Scene Cards | bevorzugt `material`; Legacy `proof_object`; bei echter Kontinuitaet `object_anchor` / `prop_anchor` / `locked_material` |
 | soziale Mechanik oder Institution | World Bible / Loss Ladder | Zugriff, Statusverlust, institutioneller Druck |
 | Figur verhält sich anders | Character State Ledger | Wunde, Agenda, Speech Pattern, Szenenwissen |
 | Verdacht oder Frage für später | Open Threads | Setup-Szene, Payoff-Szene, Priorität |
-| Kapitelhaken oder Schlussgefühl | Scene Card | `ending_type`, `ending`, `closingLine`, aber kein fertiger Satzzwang |
+| Kapitelhaken oder Schlussgefühl | Scene Card | `ending_type` als Audit-Metadatum, `ending` als weiche Orientierung, `closingLine` höchstens als optionales Schlussbild |
 
 Roter-Faden-Regel: Jede wichtige Autoridee muss mindestens eine Laufbahn bekommen. Eine Laufbahn besteht aus Setup, Wiederkehr, Eskalation und Payoff. Wenn eine Idee nur einmal in einer Scene Card auftaucht, ist sie kein roter Faden, sondern Dekor.
 
@@ -251,6 +254,8 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 
 ## MARKET BRIEF
 
+MARKET BRIEF ist Packaging-/Positionierungs-Kontext. Er soll nicht in den Prosa-Draft-Prompt wandern.
+
 | Feld | Inhalt |
 |---|---|
 | **Amazon Goal** | Standalone-Debüt mit hoher Kindle- und Paperback-Tauglichkeit, klarer Hook in einem Satz, starker Serienmöglichkeit für spätere Mutter/Alltagsspannungsstoffe |
@@ -284,7 +289,7 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 
 - Nahe dritte Person auf Eva. Keine allwissende Erklärstimme.
 - Szenen steigen spät ein und gehen früh raus.
-- Nach einem Proof-Image, Evidenzturn oder klaren Machtwechsel endet die Szene sofort. Kein Echo-Absatz.
+- Nach einem starken Proof-Image, Evidenzturn oder klaren Machtwechsel bevorzugt früh rausgehen. Kein routinemäßiger Echo-Absatz, wenn Bild oder Handlung bereits tragen.
 - Im Mittelteil nie länger als zwei reine Indizszenen hintereinander. Danach braucht es eine reale Folge für Zugriff, Loyalität, Institution oder Kinderroutine.
 - Die Übergänge zwischen Szenen müssen kausal lesbar sein. Beim Durchsehen muss zwischen zwei Kapiteln eher `deshalb` oder `aber` passen als `und dann`.
 - Wenn Objekt, Blick, Geste oder Verwaltungsdetail die Wirkung bereits trägt, folgt kein erklärender Satz.
@@ -874,7 +879,7 @@ Diese Treppe ordnet nicht den Plot nach Beweisobjekten, sondern den fortschreite
 ---
 ## ACTS & KAPITEL — SCENE CARDS
 
-> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Hart sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, Locked Facts, Canon-Namen und echte Objektanker wie `object_anchor`, `prop_anchor`, `locked_object`. Aus `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `avoid`, `aftertaste` sowie alten Feldern wie `objective`, `coreAction`, `proof_object`, `dramaticBeat`, `ending` und `closingLine` baut EMBER die Scene Intention. Diese Felder sind Regiehilfen für Szenenfunktion und Material, kein Formulierungszwang. `ending_type` bleibt Rhythmus-Metadatum; `word_target_min`/`word_target_max` setzen nur einen bevorzugten Rahmen. Vollständige technische Feldbeschreibung: siehe `BOOK_PIPELINE_AGENT_NOTES.md`.
+> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Hart sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, Locked Facts, Canon-Namen und echte Objektanker wie `object_anchor`, `prop_anchor`, `locked_object`, `locked_material`. Aus `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `avoid`, `aftertaste` sowie alten Feldern wie `objective`, `proof_object`, `dramaticBeat`, `ending`, `konkrete_folge`, `status_shift` und `cost` baut EMBER die Scene Intention. `coreAction` bleibt Handlungsorientierung, aber nicht automatisch Turn. `closingLine` ist Legacy und höchstens optionales Schlussbild, kein Satzdiktat und kein automatischer Aftertaste. `ending_type` bleibt Rhythmus-Metadatum; `word_target_min`/`word_target_max` setzen nur einen bevorzugten Rahmen. Vollständige technische Feldbeschreibung: siehe `BOOK_PIPELINE_AGENT_NOTES.md`.
 
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
@@ -2373,7 +2378,9 @@ Scene Card
 
 ## WRITER-SUMMARIES — KAPITEL 1 BIS 42
 
-Diese Sektion ist für den operativen Ember-Writer gedacht. Die Scene Cards bleiben der härteste Regieanker. Die folgenden Summaries verdichten frühe Kapitel so, dass Drafting nicht in Atmosphäre, Erklärung oder falsche Schwerpunkte driftet.
+Diese Sektion ist für den operativen Ember-Writer und menschliche Reviews gedacht. Sie darf nicht vollständig als Draft-Kontext an Opus gegeben werden. Die Scene Cards bleiben der härteste Regieanker; für den Draft zählt primär die Scene Card plus verdichtete Scene Intention.
+
+Die folgenden Summaries verdichten frühe Kapitel so, dass Drafting nicht in Atmosphäre, Erklärung oder falsche Schwerpunkte driftet.
 
 ### Kapitel 1 — „Gestern"
 **Writer Summary**
@@ -2605,6 +2612,8 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 
 ## OPERATIVE HINWEISE FUER EMBER
 
+Diese Hinweise sind Human-/Review-Hilfen und Copy-Paste-Material für einzelne Writer-Läufe. Sie dürfen nicht vollständig als Draft-Kontext an Opus gegeben werden. Wenn eine Szene nur mit langer Zusatzregie funktioniert, fehlen meistens `want`, `pressure`, `turn` oder `irreversible_change` in der Scene Card.
+
 ### Praktische Reihenfolge vor jedem Szenen-Draft
 1. Passende `Scene Card` prüfen.
 2. Relevante Alltagsbeweise und Trigger in den `Canon Facts` prüfen.
@@ -2758,7 +2767,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 
 ## SCHREIBREGIE — WIRKUNG UND AUSFUEHRUNG PRO SZENE
 
-> Diese Sektion ist fuer den Drafting-Moment gedacht. Sie ersetzt keine Scene Card und keine Writer Summary. Sie sagt dem Writer, wie die Szene wirken soll: Tempo, Ton, Leserzug, emotionale Temperatur und wichtigste Fehlspur-Vermeidung.
+> Diese Sektion ist Human-/Review-Hilfe für den Drafting-Moment. Sie ersetzt keine Scene Card und keine Writer Summary und darf nicht vollständig als Draft-Kontext an Opus gegeben werden. Für den Draft zählt primär die Scene Card plus verdichtete Scene Intention. Diese Hinweise sagen dem Writer, wie die Szene wirken soll: Tempo, Ton, Leserzug, emotionale Temperatur und wichtigste Fehlspur-Vermeidung.
 
 ### Kapitel 1 — „Gestern"
 Schreib vom normalen Arbeitstakt in den dokumentierten Schock hinein. Der Leser soll nicht ueber Vorerklaerung, sondern ueber eine ruhige App-Zeile hineingezogen werden, die unmoeglich stimmen kann. Eva bleibt zunaechst praktisch und kontrolliert; der Schrecken entsteht, weil System, Uhrzeit und Petra ruhiger sind als sie. Frankfurt ist ein harter Aktenanker, keine Rueckblendenflaeche. Ende auf dem Standbild der zweiten Eva, danach keine Deutung.
