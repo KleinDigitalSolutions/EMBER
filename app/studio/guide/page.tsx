@@ -200,15 +200,15 @@ export default function StudioGuidePage() {
           <div className="grid-item rule-pos">
             <span className="label">Blueprint</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Master Brief, Market Brief und Writer Constitution geben Richtung, Ton und
-              Grenzen vor. Wenn das weich ist, wird der Draft weich.
+              Master Brief, kurze Writer Rules und Canon geben Richtung und Grenzen vor.
+              Market Brief bleibt vor allem Verpackung, nicht Prosa-Käfig.
             </p>
           </div>
           <div className="grid-item rule-pos">
             <span className="label">Scene Cards</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Szene für Szene legst du klare Funktion, Objekte und Druck fest. Die Scene
-              Card ist die operative Einheit, nicht der Fliesstext.
+              Szene für Szene legst du Situation, Want, Pressure, Material, Turn und
+              irreversible Veränderung fest. Die Scene Card ist Kompass, nicht Checkliste.
             </p>
           </div>
           <div className="grid-item rule-pos">
@@ -234,15 +234,15 @@ export default function StudioGuidePage() {
           <div className="grid-item">
             <span className="label">Market Brief</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Hook, Category Lane und Verpackungslogik. Das hilft bei Positionierung und
-              Lesbarkeit.
+              Hook, Category Lane und Verpackungslogik. Das hilft bei Positionierung,
+              sollte aber den einzelnen Prosa-Draft nicht dominieren.
             </p>
           </div>
           <div className="grid-item">
             <span className="label">Writer Constitution</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Kurze, prüfbare Regeln. Keine weichen Ansagen wie „schöner schreiben“, sondern
-              konkrete Schreibvorgaben.
+              Kurze, prüfbare Regeln. Sie führen den Ton, ersetzen aber nicht die lebendige
+              Szene.
             </p>
           </div>
         </div>
@@ -257,8 +257,8 @@ export default function StudioGuidePage() {
       <section>
         <h2>3. Was eine Scene Card wirklich steuert</h2>
         <p>
-          Scene Cards werden als fenced Code Blocks gelesen. Direkt wirksam sind nur die
-          Felder, die der Parser kennt.
+          Scene Cards werden als fenced Code Blocks gelesen. Die Pipeline trennt dabei harte
+          Kontinuität von weicher Szenenintention.
         </p>
 
         <table>
@@ -278,12 +278,16 @@ export default function StudioGuidePage() {
               <td>Ort und Zeitanker für den Job-Kontext.</td>
             </tr>
             <tr>
-              <td><span className="code">objective</span> / <span className="code">ziel</span>, <span className="code">opening</span> / <span className="code">einstieg</span>, <span className="code">coreAction</span> / <span className="code">kern_aktion</span>, <span className="code">dramaticBeat</span> / <span className="code">beat</span>, <span className="code">ending</span> / <span className="code">ende</span>, <span className="code">closingLine</span> / <span className="code">letzter_satz</span></td>
-              <td>Handlungs- und Szenenführung. Wichtig, aber nicht als Satzdiktat zu lesen.</td>
+              <td><span className="code">situation</span>, <span className="code">want</span>, <span className="code">pressure</span>, <span className="code">material</span>, <span className="code">turn</span>, <span className="code">irreversible_change</span>, <span className="code">avoid</span></td>
+              <td>Scene Intention. Wichtig, aber nicht als Satzdiktat oder Objekt-Checkliste zu lesen.</td>
             </tr>
             <tr>
-              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span>, <span className="code">object_anchor</span> / <span className="code">prop_anchor</span></td>
-              <td>Harte Custom-Constraints, die im Draft sichtbar bleiben müssen.</td>
+              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span></td>
+              <td>Weiches Material- und Drucksignal. Opus darf organisch lösen, solange die Funktion erfüllt wird.</td>
+            </tr>
+            <tr>
+              <td><span className="code">object_anchor</span>, <span className="code">prop_anchor</span>, <span className="code">locked_object</span></td>
+              <td>Harte Kontinuitätsanker für Farbe, Funktion, Besitzlogik und Drift-Schutz.</td>
             </tr>
             <tr>
               <td><span className="code">ending_type</span>, <span className="code">false_friend_signal</span>, <span className="code">*_moment</span>, <span className="code">*_plant</span>, <span className="code">*_payoff</span>, <span className="code">subtext</span></td>
@@ -302,10 +306,14 @@ export default function StudioGuidePage() {
 Scene Card
   id: SC_1_2
   pov: EVA
-  objective: Eva will den App-Eintrag korrigieren.
-  coreAction: Eva fährt direkt zur Kita und prüft den Vorgang.
-  proof_object: Videoausschnitt, Unterschrift und gelber Becher
-  dramaticBeat: Aus dem vermuteten App-Fehler wird ein real protokollierter Abholvorgang.</div>
+  where_when: Kita Sonnengarten, später Nachmittag.
+  situation: Eva kommt wegen des falschen App-Eintrags in die Kita.
+  want: Eva will den Vorgang korrigieren, ohne instabil zu wirken.
+  pressure: Die Dokumentation der Kita ist ruhiger als ihre Erinnerung.
+  material: Videoausschnitt, Unterschrift, gelber Becher.
+  turn: Aus dem vermuteten App-Fehler wird ein real protokollierter Abholvorgang.
+  irreversible_change: Eva kann die Abholung nicht mehr als reinen Systemfehler behandeln.
+  avoid: Kein Technikmonolog, keine hysterische Eskalation.</div>
         </div>
       </section>
 

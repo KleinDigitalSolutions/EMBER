@@ -6,12 +6,11 @@ So gehst du in Ember vor
 
   1. Setze im Blueprint den Markt sauber: Premise, Reader Promise, Hook, Category Lane, Ending Promise. Verkäufe kommen
      nicht nur aus Prosa, sondern aus Verpackung und klarem Versprechen.
-  2. Schreibe 8 bis 12 harte Regeln in die Writer Constitution. Keine Adjektive wie „literarisch“, sondern prüfbare
-     Regeln.
+  2. Schreibe 5 bis 10 klare Writer Rules. Sie sind Kompass, nicht Käfig.
   3. Plane nicht in „300 Seiten“, sondern in Szenen. Für 300 Taschenbuchseiten bist du grob bei 75.000–90.000 Wörtern.
      In Ember heißt das meist 45–65 Szenen mit etwa 1.100–1.700 Wörtern.
   4. Gib jeder Szene eine belastbare Summary: Ziel, Widerstand, Wendung, Enddruck.
-  5. Setze pro Szene klare Regie: POV, Ort, Zeitanker, coreAction und proof_object zuerst; false_friend_signal und weitere Spezialfelder nur dort, wo sie wirklich Szenendruck tragen.
+  5. Setze pro Szene klare Intention: POV, Ort/Zeit falls wichtig, Situation, Want, Pressure, Material, Turn, irreversible Veränderung und Avoid.
   6. Nutze Director Note nur für den aktuellen Eingriff, nicht für die gesamte Poetik.
   7. Erzeuge Jobs szenenweise, übernimm nur starke Drafts, prüfe dann Review, offene Fäden und Kontinuität.
 
@@ -169,16 +168,17 @@ Die Summary ist der wichtigste direkte Arbeitsanker für die KI.
 
 Zusätzlich wichtig seit dem aktuellen Regie-Sync:
 
-- `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenregie
-- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `coreAction`, `proof_object`, `false_friend_signal` und freie Spezialfelder für Objekt-, Kind- und Alltagsanker
+- `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenintention
+- hart sind nur `pov`, `location`, `timeAnchor`, Locked Facts, Canon-Namen und explizite Kontinuitaetsanker wie `object_anchor`, `prop_anchor` oder `locked_object`
+- weich, aber wichtig, sind `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `thread`, `avoid`, `aftertaste` sowie alte Felder wie `objective`, `coreAction`, `proof_object`, `false_friend_signal`, `dramaticBeat`, `ending` und `closingLine`
 - `ending_type` ist wichtig für den Kapitelrhythmus: nicht jede Szene darf mit demselben Proof-, Objekt- oder Schockmechanismus schließen
-- Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` bleiben nützlich, sind aber Orientierung und kein Satzdiktat
+- `proof_object` ist heute eher `material`: ein konkreter Szenenanker, nicht automatisch ein harter Beweisauftrag
 
 Praktisch heißt das:
 
 - Regie bleibt die Quelle
 - die DB hält daraus eine normalisierte Runtime-Fassung
-- wenn Scene Card und Summary sich widersprechen, ist die Scene Card der härtere Anker
+- wenn Scene Card und Summary sich widersprechen, schützen harte Constraints Kanon; weiche Scene Guidance führt die Absicht, ohne die Prosa mechanisch zu diktieren
 
 Eine gute Szenen-Summary sollte enthalten:
 
@@ -186,6 +186,24 @@ Eine gute Szenen-Summary sollte enthalten:
 - was im Weg steht
 - was kippt
 - womit die Szene endet
+
+Eine gute Scene Card sollte knapp bleiben:
+
+```text
+pov:
+where_when:
+situation:
+want:
+pressure:
+material:
+turn:
+irreversible_change:
+thread:
+avoid:
+aftertaste:
+```
+
+Der wichtigste Anker ist `irreversible_change`: Was kann nach dieser Szene nicht mehr so sein wie vorher? `material` sollte 1 bis 3 konkrete Dinge liefern, keine Objekt-Checkliste. `avoid` verhindert Fehlfassungen, ohne Dialog oder Schlussbild vorzuschreiben.
 
 Beispiel:
 
@@ -321,7 +339,7 @@ Das bedeutet:
 - Du bekommst nicht nur einen Text.
 - Du bekommst auch verwertbare Produktionsdaten für Folgearbeit.
 - Die Prosa läuft bewusst schlanker als früher: kein separater Beat-Plan-Call, kein automatischer Rewrite-Pass, weniger Mikrosteuerung.
-- Die technischen Stages `beat_plan` und `rewrite` bleiben aus Kompatibilitätsgründen sichtbar, sind im Remote-Pfad aber normalerweise `skipped`: Der Draft entsteht direkt aus Scene Contract, Kontext und Director Note.
+- Die technischen Stages `beat_plan` und `rewrite` bleiben aus Kompatibilitätsgründen sichtbar, sind im Remote-Pfad aber normalerweise `skipped`: Der Draft entsteht direkt aus Scene Intention, Kontext, Human Edit Memory und Director Note.
 - Wortziele sind bevorzugte Rahmen. Wenn die Szene organisch früher schließt oder mehr Raum braucht, soll der Szenendruck Vorrang haben.
 - `length_control` ist nur noch eine Notfallprüfung gegen extreme Ausreißer, nicht das Qualitätsmaß der Szene.
 - Zusätzliche Qualitäts-Audits warnen vor zu glatten KI-Mustern, zu vielen abstrakten Deutungswörtern, zu perfekt getakteten Druckfiguren und monotonen `ending_type`-Folgen. Das sind Warnungen, keine automatischen Textänderungen und keine neuen Acceptance-Blocker.
@@ -564,6 +582,9 @@ Danach prüfst du in dieser Reihenfolge:
 - zu abstrakte Writer Constitution
 - Director Note voller Allgemeinplätze
 - zu viele Ziele in einer Szene gleichzeitig
+- zu viele harte Pflichtfelder in Scene Cards
+- jedes `proof_object` als zwingendes Beweisobjekt statt als weiches Material behandeln
+- fehlende `irreversible_change`
 - Modellqualität auf Basis von `local_fallback` beurteilen
 - Kontinuitätswarnungen ignorieren
 - einen ersten Lauf mit zu hohem Wortziel aufblasen

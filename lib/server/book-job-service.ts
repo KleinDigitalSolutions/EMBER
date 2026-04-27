@@ -101,12 +101,15 @@ type StateExtractionPayload = z.infer<typeof stateExtractionSchema>;
 type ContinuityAuditPayload = z.infer<typeof continuityAuditSchema>;
 type QualityEvalPayload = z.infer<typeof qualityEvalSchema>;
 
-type SceneContractPayload = {
-  openingPressure: string;
-  proofObject: string;
-  turn: string;
-  finalImage: string;
-  forbiddenExposition: string[];
+type SceneIntentionPayload = {
+  situation: string;
+  want: string;
+  pressure: string;
+  concreteMaterial: string;
+  intendedTurn: string;
+  irreversibleChange: string;
+  aftertaste: string;
+  avoid: string[];
 };
 
 type DraftGenerationOptions = {
@@ -1304,7 +1307,7 @@ function normalizeHumanEditTimestampKey(value: string | null) {
 function buildSystemPrompt(packet: SceneContextPacket, options?: DraftGenerationOptions) {
   return [
     buildCoreSystemPrompt(),
-    buildStablePrefixPrompt(packet),
+    options ? buildProseStablePrefixPrompt(packet) : buildAuditStablePrefixPrompt(packet),
     options ? buildProseStyleBrakePrompt() : "",
     options?.humanEditProfile || ""
   ].filter(Boolean).join("\n\n");
@@ -1315,8 +1318,8 @@ function buildCoreSystemPrompt() {
     "You are the drafting engine for EMBER Book Studio.",
     "Write all output in German. Use Präteritum throughout. Never switch tense within a scene.",
     "Honor canon, continuity, and scene-level causality.",
-    "Scene-specific hard constraints outrank generic style habits.",
-    "Hard anchors for names, colors, places, times, props, proof objects, and child routines are literal constraints, not inspiration.",
+    "Hard constraints protect canon. Scene guidance describes intention. Prose belongs to the model.",
+    "Hard anchors for names, colors, places, times, and explicitly locked objects are literal constraints, not inspiration.",
     "If context is insufficient, flag risk explicitly instead of inventing hidden facts.",
     "Favor scene truth, subtext, momentum, concrete observation, and readable prose over explanation-heavy interpretation.",
     "Show, do not over-explain. If an image, gesture, or action already carries meaning, do not add a second sentence that explains it.",
@@ -1331,13 +1334,13 @@ function buildCoreSystemPrompt() {
 
 function buildProseStyleBrakePrompt() {
   return [
-    "EMBER prose style brake for drafting:",
-    "These are persistent style constraints. Apply them in every prose draft unless a scene card explicitly requires breaking one.",
-    "Do not explain an emotion immediately after an action has already shown it. Let the object, gesture, silence, body position, or practical consequence carry the effect.",
-    "Do not label a proof object as proof, evidence, symbol, clue, or meaning inside the prose. Place it materially in the scene and stop when the image has landed.",
-    "Avoid smooth interpretive hinge phrases in German prose, especially: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\", and \"nicht X, sondern Y\".",
-    "Use direct emotion nouns sparingly after action. Bad pattern: action, then named emotion. Better pattern: action, physical adjustment, object, changed behavior.",
-    "Pressure figures must not seem perfectly timed or all-knowing by default. Prefer one small wrong tone, overreach, late reaction, visible cost, or incomplete access.",
+    "EMBER prose preferences:",
+    "Prefer concrete pressure over abstract interpretation.",
+    "Let images, actions, silence, bodies, and practical consequences carry meaning before explaining it.",
+    "Treat material details as lived scene texture. Do not label them as proof, evidence, symbol, clue, or meaning unless a character would naturally say so.",
+    "Use smooth interpretive hinge phrases sparingly in German prose, especially: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\", and \"nicht X, sondern Y\".",
+    "Use direct emotion nouns sparingly after action. Prefer action, physical adjustment, object, changed behavior.",
+    "Pressure figures can be competent, but they should not feel perfectly timed or all-knowing by default. A small wrong tone, overreach, late reaction, visible cost, or incomplete access often makes them more alive.",
     "Before/after preference:",
     "Bad: Sie verstand, dass Nora längst näher war, als sie gedacht hatte.",
     "Better: Auf dem Etikett stand M. Berger. Die Schrift war nicht ihre.",
@@ -1348,7 +1351,24 @@ function buildProseStyleBrakePrompt() {
   ].join("\n");
 }
 
-function buildStablePrefixPrompt(packet: SceneContextPacket) {
+function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
+  return [
+    `Premise: ${packet.stablePrefix.premise}`,
+    `Reader promise: ${packet.stablePrefix.readerPromise}`,
+    `Ending promise: ${packet.stablePrefix.endingPromise}`,
+    `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `Author intent: ${packet.stablePrefix.authorIntent || "not set"}`,
+    `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
+    formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
+    formatPromptList("Writer rules", packet.stablePrefix.writerConstitution.slice(0, 8)),
+    formatPromptList(
+      "Prose preferences",
+      formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).slice(0, 8)
+    )
+  ].join("\n");
+}
+
+function buildAuditStablePrefixPrompt(packet: SceneContextPacket) {
   return [
     `Premise: ${packet.stablePrefix.premise}`,
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
@@ -1382,7 +1402,7 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
     },
     {
       type: "text" as const,
-      text: buildStablePrefixPrompt(packet),
+      text: buildAuditStablePrefixPrompt(packet),
       cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
     },
     {
@@ -1401,7 +1421,7 @@ function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket, optio
     },
     {
       type: "text" as const,
-      text: buildStablePrefixPrompt(packet),
+      text: buildProseStablePrefixPrompt(packet),
       cache_control: { type: "ephemeral" as const, ttl: ANTHROPIC_CACHE_TTL }
     },
     {
@@ -1507,7 +1527,7 @@ function buildStateExtractionPrompt(
     "- Prefer empty arrays over speculative entries.",
     "- Uncertainty belongs only in continuityRisks.",
     buildSceneContextPrompt(packet),
-    buildSceneContractPrompt(packet),
+    buildSceneIntentionPrompt(packet),
     `Final scene text: ${finalSceneText}`
   ].join("\n");
 }
@@ -1528,7 +1548,7 @@ function buildContinuityAuditPrompt(
     "Check style against the prose technique profile and anti-imitation rules, not against named authors.",
     "Keep every listed issue compact.",
     buildSceneContextPrompt(packet),
-    buildSceneContractPrompt(packet),
+    buildSceneIntentionPrompt(packet),
     `Initial scene text: ${draftText}`,
     `Final scene text: ${finalSceneText}`,
     `Existing continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
@@ -1555,7 +1575,7 @@ function buildQualityEvalPrompt(
     "Keep every issue compact.",
     "Reward original prose that follows the technique profile without sounding derivative or overdesigned.",
     buildSceneContextPrompt(packet),
-    buildSceneContractPrompt(packet),
+    buildSceneIntentionPrompt(packet),
     `Extracted continuity risks: ${extractedState.continuityRisks.join(" | ") || "none"}`,
     `Final scene text: ${finalSceneText}`
   ].join("\n");
@@ -1576,16 +1596,8 @@ function buildAnthropicScenePrompt(params: {
         : `Emergency-compress the scene only enough to avoid a bloated outlier. Preserve necessary pressure.`;
 
   return [
-    `<market_traits>${escapeXml([params.packet.stablePrefix.categoryLane, params.packet.stablePrefix.marketHook].filter(Boolean).join(" | "))}</market_traits>`,
-    `<writer_constitution>${escapeXml(params.packet.stablePrefix.writerConstitution.join(" | "))}</writer_constitution>`,
-    `<prose_technique_profile>${escapeXml(
-      formatTechniqueProfile(params.packet.stablePrefix.proseTechniqueProfile).join(" | ")
-    )}</prose_technique_profile>`,
-    `<anti_imitation_rules>${escapeXml(
-      params.packet.stablePrefix.proseTechniqueProfile.antiImitationRules.join(" | ")
-    )}</anti_imitation_rules>`,
     `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
-    `<continuity>${escapeXml(buildContinuityContext(params.packet))}</continuity>`,
+    `<continuity>${escapeXml(buildProseContinuityContext(params.packet))}</continuity>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
       : "",
@@ -1604,6 +1616,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene card id: ${packet.dynamicContext.sceneCardLabel || "not set"}`,
     `Scene header hints: ${packet.dynamicContext.sceneHeaderHints.join(" || ") || "none"}`,
     `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" || ") || "none"}`,
+    `Soft scene guidance: ${packet.dynamicContext.sceneSoftGuidance.join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
@@ -1641,12 +1654,11 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
-    buildSceneContractPrompt(packet),
+    buildSceneIntentionPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
+    `Soft scene guidance: ${packet.dynamicContext.sceneSoftGuidance.join(" || ") || "none"}`,
     `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
-    `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
-    `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
         return `${entry.title}: ${entry.summary}`;
@@ -1678,49 +1690,46 @@ function filterProseHardConstraints(constraints: string[]) {
   });
 }
 
-function buildSceneContractPrompt(packet: SceneContextPacket) {
-  const contract = buildSceneContract(packet);
+function buildSceneIntentionPrompt(packet: SceneContextPacket) {
+  const intention = buildSceneIntention(packet);
 
   return [
-    "Scene contract:",
-    `Opening pressure: ${contract.openingPressure}`,
-    `Proof object: ${contract.proofObject}`,
-    `Turn: ${contract.turn}`,
-    `Final image: ${contract.finalImage}`,
-    `Forbidden exposition: ${contract.forbiddenExposition.join(" | ")}`
+    "Scene intention:",
+    "Use soft guidance as intention, not as a checklist. Do not mechanically include every listed object, phrase, or beat.",
+    "Preserve the scene's irreversible change; find the most natural path there.",
+    `Situation: ${intention.situation}`,
+    `Want: ${intention.want}`,
+    `Pressure: ${intention.pressure}`,
+    `Concrete material: ${intention.concreteMaterial}`,
+    `Intended turn: ${intention.intendedTurn}`,
+    `Irreversible change: ${intention.irreversibleChange}`,
+    `Aftertaste: ${intention.aftertaste}`,
+    `Avoid: ${intention.avoid.join(" | ") || "none"}`
   ].join("\n");
 }
 
-function buildSceneContract(packet: SceneContextPacket): SceneContractPayload {
-  const constraints = packet.dynamicContext.sceneHardConstraints;
+function buildSceneIntention(packet: SceneContextPacket): SceneIntentionPayload {
+  const softGuidance = packet.dynamicContext.sceneSoftGuidance;
   const outline = packet.dynamicContext.sceneCardOutline;
   const summary = packet.dynamicContext.sceneSummary || packet.dynamicContext.sceneTitle;
-  const opening = findConstraintValue(constraints, "Pflicht-Einstieg:");
-  const objective = findConstraintValue(constraints, "Szenenziel:");
-  const proofObject =
-    findConstraintValue(constraints, "Pflicht-Beweisobjekt:") ||
-    findConstraintValue(constraints, "Pflicht-Objektanker:") ||
-    findConstraintValue(constraints, "Pflicht-Alltagswaffe:") ||
-    findConstraintValue(constraints, "Pflicht-Ersetzungsmoment:") ||
-    findConstraintValue(constraints, "Pflicht-Kindmoment:");
-  const coreAction = findConstraintValue(constraints, "Pflicht-Kernaktion:");
-  const dramaticBeat = findConstraintValue(constraints, "Pflicht-Beat:");
-  const ending = findConstraintValue(constraints, "Pflicht-Ende:");
-  const closingLine = findConstraintValue(constraints, "Pflicht-Schlusssatz oder Schlussbild:");
   const firstOutline = outline[0] || "";
   const lastOutline = outline[outline.length - 1] || "";
 
   return {
-    openingPressure: cleanContractValue(opening || objective || firstOutline || summary),
-    proofObject: cleanContractValue(proofObject || "Use the concrete object, document, gesture, or physical trace that proves the scene pressure."),
-    turn: cleanContractValue(dramaticBeat || coreAction || ending || lastOutline || "Make the power, knowledge, or emotional pressure visibly shift."),
-    finalImage: cleanContractValue(closingLine || ending || lastOutline || "End on a concrete image, action, object, or sensory detail."),
-    forbiddenExposition: buildForbiddenExposition(packet)
+    situation: cleanIntentionValue(findGuidanceValue(softGuidance, "Situation:") || firstOutline || summary),
+    want: cleanIntentionValue(findGuidanceValue(softGuidance, "Want:") || "Let the POV character want something concrete in the scene."),
+    pressure: cleanIntentionValue(findGuidanceValue(softGuidance, "Pressure:") || "Let another person, institution, object, or routine make the want harder."),
+    concreteMaterial: cleanIntentionValue(findGuidanceValue(softGuidance, "Concrete material:") || "Use 1-3 concrete details that naturally belong in the room."),
+    intendedTurn: cleanIntentionValue(findGuidanceValue(softGuidance, "Intended turn:") || lastOutline || "Let knowledge, access, relationship, or self-image shift."),
+    irreversibleChange: cleanIntentionValue(findGuidanceValue(softGuidance, "Irreversible change:") || findGuidanceValue(softGuidance, "Aftertaste:") || "Make one thing unable to go back to how it was before."),
+    aftertaste: cleanIntentionValue(findGuidanceValue(softGuidance, "Aftertaste:") || lastOutline || "Leave a felt consequence without explaining the theme."),
+    avoid: buildAvoidGuidance(packet, softGuidance)
   };
 }
 
-function buildForbiddenExposition(packet: SceneContextPacket) {
+function buildAvoidGuidance(packet: SceneContextPacket, softGuidance: string[]) {
   return dedupeStrings([
+    findGuidanceValue(softGuidance, "Avoid:"),
     "No recap of facts already visible in documents, objects, dialogue, or action.",
     "No motive explanation after the image or gesture has carried the meaning.",
     "No future summary, diagnosis, or theme sentence at the end.",
@@ -1732,9 +1741,9 @@ function buildForbiddenExposition(packet: SceneContextPacket) {
   ]).filter(Boolean).slice(0, 4);
 }
 
-function findConstraintValue(constraints: string[], prefix: string) {
-  const match = constraints.find(function (constraint) {
-    return constraint.startsWith(prefix);
+function findGuidanceValue(guidance: string[], prefix: string) {
+  const match = guidance.find(function (entry) {
+    return entry.startsWith(prefix);
   });
 
   if (!match) {
@@ -1744,7 +1753,7 @@ function findConstraintValue(constraints: string[], prefix: string) {
   return match.slice(prefix.length).trim();
 }
 
-function cleanContractValue(value: string) {
+function cleanIntentionValue(value: string) {
   return truncateText(
     value
       .replace(/\s+/g, " ")
@@ -1778,6 +1787,18 @@ function buildContinuityContext(packet: SceneContextPacket) {
     `Active threads: ${packet.dynamicContext.activeThreads
       .map(function (thread) {
         return `${thread.label}: ${thread.detail}`;
+      })
+      .join(" | ") || "none"}`
+  ].join("\n");
+}
+
+function buildProseContinuityContext(packet: SceneContextPacket) {
+  return [
+    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" | ") || "none"}`,
+    `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" | ") || "none"}`,
+    `Relevant codex: ${packet.dynamicContext.relevantCodex
+      .map(function (entry) {
+        return `${entry.title}: ${entry.summary}`;
       })
       .join(" | ") || "none"}`
   ].join("\n");

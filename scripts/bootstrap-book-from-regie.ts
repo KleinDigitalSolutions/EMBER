@@ -1307,12 +1307,12 @@ function collectSceneObjectAnchorSources(scene: ParsedScene) {
     { value: scene.summary, hard: false },
     { value: scene.excerpt, hard: false },
     { value: scene.chapterGoal, hard: false },
-    { value: scene.directives.objective || "", hard: true },
-    { value: scene.directives.opening || "", hard: true },
-    { value: scene.directives.coreAction || "", hard: true },
-    { value: scene.directives.dramaticBeat || "", hard: true },
-    { value: scene.directives.ending || "", hard: true },
-    { value: scene.directives.closingLine || "", hard: true }
+    { value: scene.directives.objective || "", hard: false },
+    { value: scene.directives.opening || "", hard: false },
+    { value: scene.directives.coreAction || "", hard: false },
+    { value: scene.directives.dramaticBeat || "", hard: false },
+    { value: scene.directives.ending || "", hard: false },
+    { value: scene.directives.closingLine || "", hard: false }
   ]
 
   scene.outline.forEach(function (line) {
@@ -1322,7 +1322,7 @@ function collectSceneObjectAnchorSources(scene: ParsedScene) {
   scene.directives.custom.forEach(function (entry) {
     sources.push({
       value: entry.value,
-      hard: ["proof_object", "beweisobjekt", "alltagswaffe", "mila_kindmoment", "object_anchor", "prop_anchor"].includes(
+      hard: ["object_anchor", "prop_anchor", "locked_object", "required_material"].includes(
         normalizeKey(entry.key)
       )
     })

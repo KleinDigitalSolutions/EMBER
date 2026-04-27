@@ -3,12 +3,13 @@
 > Autor: Özgür Azap
 > Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads
 > Hinweis: Diese Regie ist auf Regie-zu-Blueprint Sync ausgelegt. Namen und Orte können später geändert werden, die Funktionslogik der Figuren aber nicht.
+> Agenten-/Pipeline-Meta liegt in `BOOK_PIPELINE_AGENT_NOTES.md`. Diese Datei ist die kreative Blueprint-Referenz; technische Hinweise hier sind nur Orientierung und sollen nicht als langer Draft-Kontext an Opus gegeben werden.
 
 ---
 
-## AGENT ONBOARDING — Lies das zuerst
+## AGENT ONBOARDING — Kurzfassung
 
-> Diese Sektion ist für neue Agents und alle, die neu ins Projekt einsteigen. Sie erklärt, wie diese Datei mit der aktuellen EMBER-Pipeline zusammenarbeitet. Ohne diese Sektion ist die Datei nur Dramaturgie; mit ihr wird sie zu einer belastbaren Produktionsgrundlage.
+> Die ausführliche technische Agenten-Referenz steht in `BOOK_PIPELINE_AGENT_NOTES.md`. Für Prosa-Drafts gilt: Kanon hart, Szene weich, Veränderung verbindlich, Prosa frei.
 
 ### Was diese Datei ist
 
@@ -17,7 +18,7 @@ Diese Regie-Datei ist gleichzeitig:
 - **Produktionsgrundlage**: Scene Cards, Canon und Charakterzustände definieren, was eine gute Szene materiell und dramaturgisch tragen muss
 - **Agenten-Referenz**: Diese Datei ist das Paradebeispiel dafür, wie EMBER-Regie aussehen soll, wenn daraus gute Szenen entstehen sollen
 
-EMBER liest Teile dieser Datei maschinell. Der Rest bleibt menschlich lesbar und dient als Stilanker, Kontinuitätsreferenz und Dramaturgie-Regie. Die aktuelle Pipeline ist bewusst schlanker als frühere Versuche: kein aktiver Beat-Plan im Schreiblauf, kein automatischer Rewrite-Pass, keine mikrogesteuerte Satzregie. Gute Szenen entstehen deshalb nicht mehr aus eng geführter Prompt-Polizei, sondern aus sauberem Material, präziser Szenenfunktion und klaren Alltagsankern.
+EMBER liest Teile dieser Datei maschinell. Der Rest bleibt menschlich lesbar und dient als Stilanker, Kontinuitätsreferenz und Dramaturgie-Regie. Gute Szenen entstehen nicht aus eng geführter Prompt-Polizei, sondern aus sauberem Kanon, klarer Szenenabsicht, konkretem Material und einer verbindlichen irreversiblen Veränderung.
 
 ### Was die aktuelle Pipeline wirklich mitnimmt
 
@@ -27,12 +28,13 @@ Die aktuelle Standardpipeline arbeitet in dieser Reihenfolge:
 - Danach folgen nur noch technische und qualitative Nachläufe: Notfall-Length-Control, State-Extraction, Continuity-Audit, Quality-Eval.
 
 Wichtig daraus:
-- Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **klare Szenenfunktion mit harten Faktenankern**.
-- Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` sind **Orientierung**, nicht Formulierungsdiktat.
-- Aus diesen Feldern baut EMBER einen **Scene Contract**: `openingPressure`, `proofObject`, `turn`, `finalImage`, `forbiddenExposition`.
+- Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **Scene Intention**.
+- Hart bleiben nur Kanon, POV, Ort/Zeit, Locked Facts, Namen und echte Kontinuitätsanker.
+- Felder wie `opening`, `dramaticBeat`, `ending`, `closingLine`, `proof_object`, `alltagswaffe` oder `kindmoment` sind **weiche Orientierung**, nicht Formulierungsdiktat.
+- Aus diesen Feldern baut EMBER eine **Scene Intention**: `situation`, `want`, `pressure`, `concreteMaterial`, `intendedTurn`, `irreversibleChange`, `aftertaste`, `avoid`.
 - Wortziele sind **bevorzugte Szenenrahmen**, keine harten Qualitätsziele. Die Szene darf organisch kürzer oder länger werden.
 - `length_control` greift nur als Notfallbremse bei extrem kurzen oder extrem langen Szenen. Es soll keine gute Szene auf eine Zahl zwingen.
-- Gute Regie beschreibt deshalb nicht die perfekte spätere Prosa, sondern die **richtige Situation, das richtige Beweisobjekt, den richtigen sozialen Druck und den richtigen Verlust**.
+- Gute Regie beschreibt deshalb nicht die perfekte spätere Prosa, sondern die **lebendige Situation, den Druck, 1-3 konkrete Materialien und die irreversible Veränderung**.
 
 ### Welche Scene-Card-Felder hart, weich oder rein menschlich sind
 
@@ -41,30 +43,32 @@ Wichtig daraus:
 | `pov` | Harte Laufzeit-Constraint. | Ohne POV-Lock droht Perspektivdrift. |
 | `ort` / `location` | Harte Laufzeit-Constraint. | Ohne klaren Ort wird die Szene räumlich weich. |
 | `uhrzeit` / `timeAnchor` | Harte Laufzeit-Constraint. | Fehlt sie, verliert der Ablauf Präzision. |
-| `proof_object` | Harter Materialanker plus Continuity-Guard. | Fehlt oder driftet, verliert die Szene ihren überprüfbaren Kern. |
-| `alltagswaffe`, `kindmoment`, `object_anchor`, `prop_anchor` | Harte Material-/Kindheitsanker. | Fehlen sie, wird Alltagsdruck zu abstrakt oder symbolisch. |
-| `ending_type` | Rhythmus- und Qualitätsanker für Kapitelenden. | Fehlt er, können Agents und Audits schlechter erkennen, ob zu viele Szenen gleich enden. |
-| `false_friend_signal`, `ersetzungsmoment`, `*_plant`, `*_payoff`, `subtext` | Regie- und Payoff-Signale. | Helfen, roten Faden und falsche Hilfsangebote über mehrere Szenen zu halten. |
+| `object_anchor`, `prop_anchor`, `locked_object` | Harte Kontinuitätsanker. | Farbe, Funktion und Besitzlogik dürfen nicht driften. |
+| `proof_object`, `beweisobjekt`, `alltagswaffe`, `kindmoment`, `mila_kindmoment` | Weiche Material-/Drucksignale. | Helfen der Szene, dürfen aber organisch gelöst werden. |
+| `ending_type` | Rhythmus- und Qualitätsanker für Audits. | Metadaten, kein Schreibauftrag. |
+| `false_friend_signal`, `ersetzungsmoment`, `*_plant`, `*_payoff`, `subtext` | Weiche Regie- und Payoff-Signale. | Helfen, roten Faden und falsche Hilfsangebote über mehrere Szenen zu halten. |
 | `word_target_min` / `word_target_max` | Bevorzugter Szenenrahmen und Budget-Hinweis. | Fehlen sie, greift der Default; die Länge bleibt trotzdem organisch. |
-| `coreAction` | Harte Handlungsorientierung. | Fehlt sie, fehlt der Handlungskern. |
-| `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` | Scene-Contract-Material. Dient der Szenenfunktion, nicht dem Diktat einzelner Sätze. | Fehlen sie, wird `openingPressure`, `turn` oder `finalImage` schwächer und muss aus Summary/Outline erraten werden. |
+| `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` | Weiche Scene-Intention-Materialien. | Dienen der Szenenfunktion, nicht dem Diktat einzelner Sätze. |
 | `bad_version_risk`, `revision_focus`, `scene_promise`, `pressure_clock` usw. | Menschliche Produktionshilfe. | Hilft Agents, den Sinn der Szene zu verstehen und typische Fehlfassungen zu vermeiden. |
 
 **Fusionskapitel-Regel (Kapitel 17, 23, 27):** Diese Kapitel sollten `word_target_min: 1700` und `word_target_max: 1950` in der Scene Card tragen, damit der bevorzugte Rahmen die doppelte Szenenfunktion sichtbar macht. Das ist ein Rahmen, kein Zwang; die Szene folgt weiterhin ihrer organischen Dichte.
 
-### Scene Contract: Was EMBER aus guten Scene Cards macht
+### Scene Intention: Was EMBER aus guten Scene Cards macht
 
-Der aktuelle Draft-Prompt liest nicht mehr "Beat Plan", sondern einen Scene Contract. Neue Agents müssen deshalb die Scene Cards so schreiben, dass diese fünf Felder automatisch stark werden:
+Der aktuelle Draft-Prompt liest keinen Beat-Plan und keinen alten Scene Contract, sondern eine Scene Intention. Neue Agents müssen deshalb Scene Cards so schreiben, dass diese Felder klar, aber nicht mechanisch werden:
 
-| Contract-Feld | Wird abgeleitet aus | Was ein Agent liefern muss |
+| Intention-Feld | Wird abgeleitet aus | Was ein Agent liefern muss |
 |---|---|---|
-| `openingPressure` | `opening`, sonst `objective`, erste Outline-Zeile oder Summary | Der konkrete Druck am Szenenanfang, nicht Stimmung. |
-| `proofObject` | `proof_object`, `beweisobjekt`, `object_anchor`, `prop_anchor`, `alltagswaffe`, `kindmoment` | Ein suchbares Ding, Dokument, Satz, Ort, Kleidungsstück, Routinedetail oder digitaler Rest. |
-| `turn` | `dramaticBeat`, `coreAction`, `ending`, letzte Outline-Zeile | Der Moment, in dem Macht, Wissen, Zugriff oder Status kippt. |
-| `finalImage` | `closingLine`, sonst `ending`, letzte Outline-Zeile | Ein konkretes Schlussbild oder eine Handlung, keine These. |
-| `forbiddenExposition` | Writer Constitution + Systemregeln | Was die Szene nicht erklären darf: Motivmonolog, Recap, Diagnose, Zukunftszusammenfassung. |
+| `situation` | `situation`, `opening`, Summary oder erste Outline-Zeile | Was ist schon falsch, wenn die Szene beginnt? |
+| `want` | `want`, `objective` | Was will die POV-Figur jetzt konkret? |
+| `pressure` | `pressure`, `szenenantrieb`, `alltagswaffe`, Beziehungsdruck | Wer oder was macht das Wollen schwer? |
+| `concreteMaterial` | `material`, `proof_object`, `kindmoment`, `alltagswaffe` | 1-3 konkrete Dinge, nicht eine Objekt-Checkliste. |
+| `intendedTurn` | `turn`, `dramaticBeat`, `reversal`, `coreAction` | Was kippt in Wissen, Zugriff, Beziehung oder Selbstbild? |
+| `irreversibleChange` | `irreversible_change`, `konkrete_folge`, `cost`, `status_shift` | Was kann danach nicht mehr so sein wie vorher? |
+| `aftertaste` | `aftertaste`, `ending`, `closingLine` | Was bleibt spürbar, ohne es als These zu erklären? |
+| `avoid` | `avoid`, `bad_version_risk`, `revision_focus` | Welche Fehlfassung soll die Szene vermeiden? |
 
-Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroht" sagen, muss der Agent daraus ein `proof_object`, einen sozialen Druck und einen `turn` machen. Ohne diese Übersetzung entsteht schwacher Output.
+Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroht" sagen, muss der Agent daraus Situation, Want, Pressure, Material, Turn, irreversible Veränderung und Avoid machen. Ohne diese Übersetzung entsteht schwacher Output.
 
 ### Quality-Audits: Was Agents beim Schreiben der Regie vermeiden müssen
 
@@ -104,7 +108,7 @@ Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
 Die Sektion `CONTINUITY GUARDRAILS` treibt den Guard `auditSceneContinuityGuards` direkt. Dieser Guard läuft nach jeder Draft-Generierung und prüft:
 - **Namensdrift**: Erscheinen die Kernfiguren unter falschen Namen?
 - **Farbdrift**: Werden Farbanker (z.B. gelber Becher) falsch verwendet?
-- **Proof-Object-Guard**: Ist das `proof_object` der Scene Card im Draft sichtbar?
+- **Material-/Objekt-Guard**: Driften explizit gelockte Objektanker, Farben oder Besitzlogiken?
 
 Diese Guards sind heute in erster Linie **Qualitäts- und Kontinuitätssignale**. Sie sollen Probleme sichtbar machen, nicht Prosa ersetzen. Wenn die CONTINUITY GUARDRAILS veraltete Figuren oder falsche Namen enthalten, produzieren sie systematisch falsche Warnungen. Diese Sektion muss bei jedem neuen Buch vollständig ersetzt werden.
 
@@ -114,17 +118,35 @@ Im aktuellen System gilt:
 - Schreibe keine Scene Card, die schon wie die fertige Szene klingt.
 - Schreibe eine Scene Card so, dass ein guter Agent sofort versteht:
   - Was will die Figur in dieser Szene?
-  - Wodurch wird das konkret, überprüfbar und alltagsnah?
+  - Wodurch wird das konkret, überprüfbar oder alltagsnah?
   - Was kippt sozial, institutionell oder emotional?
-  - Was kostet die Szene Eva real?
-  - Welches Objekt oder welcher Routinedetaildruck macht die Szene unverwechselbar?
+  - Was kann nach dieser Szene nicht mehr zurück?
+  - Welche 1-3 Materialien machen die Szene unverwechselbar?
+
+Empfohlenes kompaktes Format:
+
+```text
+id:
+title:
+pov:
+where_when:
+situation:
+want:
+pressure:
+material:
+turn:
+irreversible_change:
+thread:
+avoid:
+aftertaste:
+```
 
 Eine starke Scene Card liefert:
 - **klare Handlung**
 - **klare Verlust- oder Beweisbewegung**
 - **konkrete Alltagsobjekte**
 - **plausiblen sozialen Druck**
-- **einen starken Scene Contract**
+- **eine klare irreversible Veränderung**
 - **genug Freiheit für lebendige Prosa**
 
 Eine schwache Scene Card liefert:
@@ -147,13 +169,13 @@ Wenn ein neuer Chat ohne Kontext startet, muss der Agent rohe Gedanken und Notiz
 7. **CANON FACTS** mit den unveränderlichen Wahrheiten des neuen Buchs befüllen.
 8. **OPEN THREADS** mit den zentralen dramaturgischen Fragebögen neu schreiben.
 9. **CONTINUITY GUARDRAILS** mit den neuen Figurnamen und Schutzregeln ersetzen — diese treiben die Guards direkt.
-10. **Antagonisten-/Drucksystem ersetzen**: `NORA CAPABILITY MAP / COST LEDGER` durch eine äquivalente Map des neuen Drucksystems ersetzen.
-11. **LOSS LADDER** neu strukturieren: Was verliert die Hauptfigur in welchem Act, und welcher Beweis verändert Zugriff, Status oder Glaubwürdigkeit?
-12. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` oder ein äquivalenter Materialanker.
+10. **Antagonisten-/Drucksystem ersetzen**: `NORA CAPABILITY MAP / COST LEDGER` durch eine knappe Capability Map des neuen Drucksystems ersetzen: can know, can do, cannot do, cost.
+11. **ACT MAP / LOSS LADDER** knapp neu strukturieren: Was glaubt die Hauptfigur, was wird schlimmer, was wird nach dem Act unmöglich?
+12. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `where_when` oder `ort/location` + `uhrzeit/timeAnchor`, `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `avoid`.
 13. **`ending_type` pro Szene setzen**: Der Ending-Typ beschreibt die Funktion des Szenenendes, nicht den letzten Satz. Über fünf Szenen hinweg müssen Enden variieren.
-14. **Scene Contract pro Szene prüfen**: Jede Karte muss `openingPressure`, `proofObject`, `turn`, `finalImage` und `forbiddenExposition` ableitbar machen.
+14. **Scene Intention pro Szene prüfen**: Jede Karte muss eine lebendige Situation und eine irreversible Veränderung ableitbar machen.
 15. **Wortbereiche setzen, nicht erzwingen**: `word_target_min`/`word_target_max` nur setzen, wenn die Szene bewusst kurz, normal, lang oder fusioniert sein soll.
-16. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
+16. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine`, `proof_object` und `alltagswaffe` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
 17. **Quality-Rhythmus prüfen**: Gibt es zu viele Proof-/Objekt-Enden, zu viele Beweisszenen ohne Kindmoment oder eine zu perfekte Druckfigur? Dann Scene Cards vor dem Drafting variieren.
 18. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
 
@@ -166,7 +188,7 @@ Ein Agent darf Autorideen nicht einfach in schöne Kapiteltexte umformulieren. E
 | zentrale Angst, Verlust, Thema | Master Brief / Thematic Core | Reader Promise, Ending Promise, verbotene Twists |
 | Verkaufsversprechen, Genregefühl | Market Brief | Hook, Category Lane, Cover Direction |
 | "das darf nie passieren" | Continuity Guardrails / Canon Facts | harte Schutzregel, nicht nur Stilwunsch |
-| wiederkehrendes Objekt oder Detail | World Bible / Proof Ladder / Scene Cards | `proof_object`, `object_anchor`, `prop_anchor` |
+| wiederkehrendes Objekt oder Detail | World Bible / Proof Ladder / Scene Cards | `material`, `proof_object`, bei echter Kontinuitaet `object_anchor` / `prop_anchor` |
 | soziale Mechanik oder Institution | World Bible / Loss Ladder | Zugriff, Statusverlust, institutioneller Druck |
 | Figur verhält sich anders | Character State Ledger | Wunde, Agenda, Speech Pattern, Szenenwissen |
 | Verdacht oder Frage für später | Open Threads | Setup-Szene, Payoff-Szene, Priorität |
@@ -189,9 +211,9 @@ Agents sollen beim Aufbau eines neuen Buchprojekts nicht einfach schöne Absätz
 | Rohnotiz des Autors | Agent übersetzt nach |
 |---|---|
 | "Eine Mutter wird ersetzt" | Prämisse, Reader Promise, zentrale Verlustlogik, Open Thread |
-| "Die Kita glaubt ihr nicht" | Institutioneller Druck, WORLD BIBLE, Scene Card `coreAction`, `proof_object` |
+| "Die Kita glaubt ihr nicht" | Institutioneller Druck, WORLD BIBLE, Scene Card `pressure`, `material`, `irreversible_change` |
 | "Die andere Frau kennt zu viel" | Antagonisten-Capability, Cost Ledger, Loss Ladder |
-| "Das Kind verhält sich komisch" | Kindmoment, Character State, Scene Contract `turn` |
+| "Das Kind verhält sich komisch" | Kindmoment, Character State, Scene Intention `turn` / `irreversible_change` |
 | "Es soll sich real anfühlen" | Alltagsrealismus-Anker, konkrete Objekte, verbotene Übertreibungen |
 | "Am Ende soll man alles rückwirkend verstehen" | Ending Promise, Loss Ladder, Payoff-Szenen, Canon Facts |
 
@@ -199,9 +221,9 @@ Wenn eine Notiz abstrakt ist, muss der Agent nach dem konkreten Material fragen 
 
 ### Häufige Fehlerquellen für neue Agents
 
-- **`proof_object` zu abstrakt**: Wenn der Wert ein Konzept statt eines konkreten Dings/Namens/Dokuments ist (z.B. „Vertrauen" statt „Namensetiketten und alter Freigabelink"), kann der Guard nicht matchen. Immer konkrete, suchbare Begriffe verwenden.
+- **`material` / `proof_object` zu abstrakt**: Wenn der Wert ein Konzept statt eines konkreten Dings/Namens/Dokuments ist (z.B. „Vertrauen" statt „Namensetiketten und alter Freigabelink"), wird die Szene weich. Immer konkrete, suchbare Begriffe verwenden.
 - **`word_target_min`/`word_target_max` missverstehen**: Diese Werte sind bevorzugte Rahmen, keine harte Längenvorgabe. Sie helfen Rhythmus und Budget, dürfen aber keine organisch gute Szene kaputtsteuern.
-- **Scene Contract nicht ableitbar**: Wenn aus einer Karte kein `openingPressure`, `proofObject`, `turn` oder `finalImage` lesbar ist, muss die Karte nachgeschärft werden.
+- **Scene Intention nicht ableitbar**: Wenn aus einer Karte keine Situation, kein Want, kein Pressure, kein Material, kein Turn oder keine irreversible Veränderung lesbar ist, muss die Karte nachgeschärft werden.
 - **CONTINUITY GUARDRAILS nicht aktualisiert**: Diese Sektion enthält sonst alte Figurnamen und produziert falsche Warnungen.
 - **Scene Cards nicht als Fenced-Code-Block**: Die Pipeline parsed Scene Cards als Key-Value-Blöcke innerhalb von ` ``` `…` ``` `. Einrückung (2 Spaces) und `: ` als Trennzeichen müssen konsistent sein.
 - **Director Note vs. Scene Card verwechseln**: Die `directorNote` in der Writer-UI ist nur Zusatzsteuerung für einen Lauf. Die Scene Card bleibt die eigentliche Produktionsgrundlage.
@@ -852,7 +874,7 @@ Diese Treppe ordnet nicht den Plot nach Beweisobjekten, sondern den fortschreite
 ---
 ## ACTS & KAPITEL — SCENE CARDS
 
-> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Im aktuellen System sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` und harte Objekt-/Kindanker die wichtigsten Laufzeitfaktoren. Aus `opening`, `objective`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` und den Objektankern baut EMBER den Scene Contract. Diese Felder sind Regiehilfen für Szenenfunktion und Material, kein Formulierungszwang. `word_target_min`/`word_target_max` setzen nur einen bevorzugten Rahmen; Length-Control bleibt eine Notfallprüfung gegen extreme Ausreißer. Alle weiteren Felder helfen Agents, die Szene richtig zu lesen und Fehlfassungen zu vermeiden. Vollständige Feldbeschreibung: siehe Sektion AGENT ONBOARDING oben.
+> **Pipeline-Hinweis für Agents**: Scene Cards werden maschinell von EMBER gelesen. Hart sind `pov`, `ort/location`, `uhrzeit/timeAnchor`, Locked Facts, Canon-Namen und echte Objektanker wie `object_anchor`, `prop_anchor`, `locked_object`. Aus `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `avoid`, `aftertaste` sowie alten Feldern wie `objective`, `coreAction`, `proof_object`, `dramaticBeat`, `ending` und `closingLine` baut EMBER die Scene Intention. Diese Felder sind Regiehilfen für Szenenfunktion und Material, kein Formulierungszwang. `ending_type` bleibt Rhythmus-Metadatum; `word_target_min`/`word_target_max` setzen nur einen bevorzugten Rahmen. Vollständige technische Feldbeschreibung: siehe `BOOK_PIPELINE_AGENT_NOTES.md`.
 
 ### ACT 1 — „Der Eintrag"
 > Eröffnungs-Dokument: Kita-App: „Abholung bestätigt — Mila Berger, 15:42 Uhr.“
@@ -2732,7 +2754,7 @@ Nicht übererklären. Ruhe ist hier kein Leerlauf, sondern die verdiente Form de
 
 ### Kommentar für den Regie-zu-Blueprint Sync
 - Diese Datei ist auf `scripts/bootstrap-book-from-regie.ts` zugeschnitten.
-- Besonders wichtig für Rücklese-Checks sind `Nora` als feste Täterfunktion, die `Writer Constitution`, die offenen Threads zur Ersetzung und die Spezialfelder in den Scene Cards wie `beweisobjekt`, `alltagswaffe`, `ersetzungsmoment`, `false_friend_signal`, `closing_line`.
+- Besonders wichtig für Rücklese-Checks sind `Nora` als feste Täterfunktion, die kurze `Writer Constitution`, die offenen Threads zur Ersetzung und die Scene-Intention-Felder `material`, `pressure`, `turn`, `irreversible_change`, `avoid` sowie harte Objektanker nur dort, wo echte Kontinuitaet geschützt werden muss.
 
 ## SCHREIBREGIE — WIRKUNG UND AUSFUEHRUNG PRO SZENE
 

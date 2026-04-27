@@ -40,15 +40,10 @@ type ObjectColorAnchor = {
 };
 
 const HARD_CUSTOM_DIRECTIVE_KEYS = new Set([
-  "proof_object",
-  "beweisobjekt",
-  "alltagswaffe",
-  "ersetzungsmoment",
-  "false_friend_signal",
-  "mila_kindmoment",
-  "kindmoment",
   "object_anchor",
-  "prop_anchor"
+  "prop_anchor",
+  "locked_object",
+  "required_material"
 ]);
 
 const COLOR_WORD_PATTERN =
@@ -118,6 +113,7 @@ export type SceneContextPacket = {
     sceneCardLabel: string | null;
     sceneHeaderHints: string[];
     sceneHardConstraints: string[];
+    sceneSoftGuidance: string[];
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -342,6 +338,7 @@ export function buildSceneContextPacket(
       sceneCardLabel: timeline[sceneIndex]?.orderLabel ?? null,
       sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
       sceneHardConstraints: buildSceneHardConstraints(syncedStory, timeline[sceneIndex] ?? null),
+      sceneSoftGuidance: buildSceneSoftGuidance(timeline[sceneIndex] ?? null),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -2309,76 +2306,124 @@ function buildSceneHardConstraints(story: StoryDocument, sceneCard: TimelineBeat
     hardConstraints.push(constraint);
   });
 
-  if (directives.objective) {
-    hardConstraints.push(`Szenenziel: ${directives.objective}. Die Szene darf nicht in einen anderen Zweck abdriften.`)
-  }
-
-  if (directives.opening) {
-    hardConstraints.push(`Pflicht-Einstieg: ${directives.opening}`)
-  }
-
-  if (directives.coreAction) {
-    hardConstraints.push(`Pflicht-Kernaktion: ${directives.coreAction}`)
-  }
-
-  if (directives.dramaticBeat) {
-    hardConstraints.push(`Pflicht-Beat: ${directives.dramaticBeat}`)
-  }
-
-  if (directives.ending) {
-    hardConstraints.push(`Pflicht-Ende: ${directives.ending}`)
-  }
-
-  if (directives.closingLine) {
-    hardConstraints.push(`Pflicht-Schlusssatz oder Schlussbild: ${directives.closingLine}`)
-  }
-
   directives.custom.forEach(function (entry) {
     const normalizedKey = normalizeDirectiveKey(entry.key);
 
     if (HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey)) {
       hardConstraints.push(formatHardCustomDirective(normalizedKey, entry.value));
-      return;
-    }
-
-    if (
-      normalizedKey.endsWith("_moment") ||
-      normalizedKey.endsWith("_plant") ||
-      normalizedKey.endsWith("_payoff") ||
-      normalizedKey === "setup" ||
-      normalizedKey === "subtext" ||
-      normalizedKey === "charakter_subtext" ||
-      normalizedKey === "buch2_hinweis"
-    ) {
-      hardConstraints.push(`${entry.key}: ${entry.value}`)
     }
   });
 
   return dedupeStrings(hardConstraints).slice(0, 20);
 }
 
+function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
+  if (!sceneCard) {
+    return [];
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const custom = directives.custom;
+  const guidance: string[] = [];
+
+  addSoftGuidance(guidance, "Situation", readCustomDirectiveValue(custom, ["situation", "where_when"]) || directives.opening || sceneCard.summary);
+  addSoftGuidance(guidance, "Want", readCustomDirectiveValue(custom, ["want", "protagonist_wants"]) || directives.objective);
+  addSoftGuidance(guidance, "Pressure", readCustomDirectiveValue(custom, ["pressure", "szenenantrieb", "beziehungsdruck"]) || readCustomDirectiveValue(custom, ["alltagswaffe"]));
+  addSoftGuidance(guidance, "Concrete material", readCustomDirectiveValue(custom, [
+    "material",
+    "concrete_material",
+    "material_anchor",
+    "proof_object",
+    "beweisobjekt",
+    "kindmoment",
+    "mila_kindmoment",
+    "alltagswaffe"
+  ]));
+  addSoftGuidance(guidance, "Intended turn", readCustomDirectiveValue(custom, ["turn", "reversal"]) || directives.dramaticBeat || directives.coreAction);
+  addSoftGuidance(guidance, "Irreversible change", readCustomDirectiveValue(custom, [
+    "irreversible_change",
+    "irreversiblechange",
+    "konkrete_folge",
+    "cost",
+    "status_shift"
+  ]));
+  addSoftGuidance(guidance, "Thread", readCustomDirectiveValue(custom, ["thread", "main_question", "information_gap"]));
+  addSoftGuidance(guidance, "Avoid", readCustomDirectiveValue(custom, ["avoid", "bad_version_risk", "revision_focus"]));
+  addSoftGuidance(guidance, "Aftertaste", readCustomDirectiveValue(custom, ["aftertaste"]) || directives.ending || directives.closingLine);
+
+  custom.forEach(function (entry) {
+    const normalizedKey = normalizeDirectiveKey(entry.key);
+
+    if (
+      HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey) ||
+      isMappedSoftGuidanceKey(normalizedKey)
+    ) {
+      return;
+    }
+
+    if (normalizedKey === "ending_type" || normalizedKey === "endingtype") {
+      addSoftGuidance(guidance, "Ending rhythm metadata", entry.value);
+      return;
+    }
+
+    addSoftGuidance(guidance, entry.key, entry.value);
+  });
+
+  return dedupeStrings(guidance).slice(0, 16);
+}
+
+function addSoftGuidance(guidance: string[], label: string, value: string | null | undefined) {
+  const trimmed = value?.trim();
+
+  if (trimmed) {
+    guidance.push(`${label}: ${trimmed}`);
+  }
+}
+
+function isMappedSoftGuidanceKey(normalizedKey: string) {
+  return new Set([
+    "situation",
+    "where_when",
+    "want",
+    "protagonist_wants",
+    "pressure",
+    "szenenantrieb",
+    "beziehungsdruck",
+    "material",
+    "concrete_material",
+    "material_anchor",
+    "proof_object",
+    "beweisobjekt",
+    "kindmoment",
+    "mila_kindmoment",
+    "alltagswaffe",
+    "turn",
+    "reversal",
+    "irreversible_change",
+    "irreversiblechange",
+    "konkrete_folge",
+    "cost",
+    "status_shift",
+    "thread",
+    "main_question",
+    "information_gap",
+    "avoid",
+    "bad_version_risk",
+    "revision_focus",
+    "aftertaste"
+  ]).has(normalizedKey);
+}
+
 function formatHardCustomDirective(normalizedKey: string, value: string) {
-  if (normalizedKey === "proof_object" || normalizedKey === "beweisobjekt") {
-    return `Pflicht-Beweisobjekt: ${value}. Dieses Beweisobjekt darf nicht ersetzt, umgefaerbt oder weggelassen werden.`;
-  }
-
-  if (normalizedKey === "alltagswaffe") {
-    return `Pflicht-Alltagswaffe: ${value}. Diese Alltagslogik muss konkret sichtbar bleiben.`;
-  }
-
-  if (normalizedKey === "ersetzungsmoment") {
-    return `Pflicht-Ersetzungsmoment: ${value}. Die Szene darf diese Ersetzungslogik nicht verwischen.`;
-  }
-
-  if (normalizedKey === "mila_kindmoment" || normalizedKey === "kindmoment") {
-    return `Pflicht-Kindmoment: ${value}. Mila bleibt Kind; das Objekt oder die Handlung darf nicht symbolisch umgebaut werden.`;
-  }
-
   if (normalizedKey === "object_anchor" || normalizedKey === "prop_anchor") {
     return `Pflicht-Objektanker: ${value}. Farbe, Funktion und Besitzlogik duerfen nicht driften.`;
   }
 
-  return `Pflicht-False-Friend-Signal: ${value}. Das Hilfssignal muss plausibel bleiben und darf nicht villainhaft werden.`;
+  if (normalizedKey === "locked_object") {
+    return `Locked Object: ${value}. Dieses Objekt darf in Farbe, Funktion und Besitzlogik nicht driften.`;
+  }
+
+  return `Required Material: ${value}. Dieses konkrete Material ist als Kontinuitaetsanker verbindlich.`;
 }
 
 function buildSceneCharacterNameHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
@@ -2643,12 +2688,12 @@ function collectSceneCardTextEntriesWithHardness(sceneCard: TimelineBeat) {
     { value: sceneCard.summary, hard: false },
     { value: sceneCard.excerpt, hard: false },
     { value: sceneCard.chapterGoal, hard: false },
-    { value: directives.objective || "", hard: true },
-    { value: directives.opening || "", hard: true },
-    { value: directives.coreAction || "", hard: true },
-    { value: directives.dramaticBeat || "", hard: true },
-    { value: directives.ending || "", hard: true },
-    { value: directives.closingLine || "", hard: true }
+    { value: directives.objective || "", hard: false },
+    { value: directives.opening || "", hard: false },
+    { value: directives.coreAction || "", hard: false },
+    { value: directives.dramaticBeat || "", hard: false },
+    { value: directives.ending || "", hard: false },
+    { value: directives.closingLine || "", hard: false }
   ];
 
   sceneCard.outline.forEach(function (line) {
