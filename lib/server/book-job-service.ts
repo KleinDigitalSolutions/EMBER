@@ -1213,14 +1213,57 @@ function buildHumanEditProfilePrompt(
     ...included.slice(0, 8).map(function (example, index) {
       const tags = example.editTags.length ? ` Tags: ${example.editTags.join(", ")}.` : "";
       const delta = example.diffSummary.wordDelta === 0 ? "no word delta" : `${example.diffSummary.wordDelta > 0 ? "+" : ""}${example.diffSummary.wordDelta} words`;
+      const focusedSnippet = buildFocusedHumanEditSnippet(example);
 
       return [
         `${index + 1}. ${example.sceneTitle || "Untitled scene"}: ${example.diffSummary.summary} (${delta}).${tags}`,
-        `Before pattern: ${truncateText(example.diffSummary.sourcePreview, 180)}`,
-        `After pattern: ${truncateText(example.diffSummary.editedPreview, 180)}`
+        `Before pattern: ${focusedSnippet.before}`,
+        `After pattern: ${focusedSnippet.after}`
       ].join("\n");
     })
   ].join("\n");
+}
+
+function buildFocusedHumanEditSnippet(example: BookHumanEditExample) {
+  const sourceText = example.sourceText || example.diffSummary.sourcePreview;
+  const editedText = example.editedText || example.diffSummary.editedPreview;
+
+  if (!sourceText || !editedText || sourceText === editedText) {
+    return {
+      before: truncateText(example.diffSummary.sourcePreview, 180),
+      after: truncateText(example.diffSummary.editedPreview, 180)
+    };
+  }
+
+  const sourceWindow = getChangedTextWindow(sourceText, editedText);
+  const editedWindow = getChangedTextWindow(editedText, sourceText);
+
+  return {
+    before: truncateText(normalizePromptWhitespace(sourceWindow), 260),
+    after: truncateText(normalizePromptWhitespace(editedWindow), 260)
+  };
+}
+
+function getChangedTextWindow(primary: string, secondary: string) {
+  let start = 0;
+
+  while (start < primary.length && start < secondary.length && primary[start] === secondary[start]) {
+    start += 1;
+  }
+
+  let endPrimary = primary.length - 1;
+  let endSecondary = secondary.length - 1;
+
+  while (endPrimary >= start && endSecondary >= start && primary[endPrimary] === secondary[endSecondary]) {
+    endPrimary -= 1;
+    endSecondary -= 1;
+  }
+
+  return primary.slice(Math.max(0, start - 140), Math.min(primary.length, endPrimary + 141));
+}
+
+function normalizePromptWhitespace(value: string) {
+  return value.replace(/\s+/g, " ").trim();
 }
 
 function dedupeHumanEditExamples(examples: BookHumanEditExample[]) {
