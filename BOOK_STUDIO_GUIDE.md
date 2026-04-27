@@ -165,6 +165,7 @@ Zusätzlich wichtig seit dem aktuellen Regie-Sync:
 
 - `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenregie
 - dazu gehören u. a. `pov`, `location`, `timeAnchor`, `coreAction`, `proof_object`, `false_friend_signal` und freie Spezialfelder für Objekt-, Kind- und Alltagsanker
+- `ending_type` ist wichtig für den Kapitelrhythmus: nicht jede Szene darf mit demselben Proof-, Objekt- oder Schockmechanismus schließen
 - Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` bleiben nützlich, sind aber Orientierung und kein Satzdiktat
 
 Praktisch heißt das:
@@ -317,6 +318,7 @@ Das bedeutet:
 - Die technischen Stages `beat_plan` und `rewrite` bleiben aus Kompatibilitätsgründen sichtbar, sind im Remote-Pfad aber normalerweise `skipped`: Der Draft entsteht direkt aus Scene Contract, Kontext und Director Note.
 - Wortziele sind bevorzugte Rahmen. Wenn die Szene organisch früher schließt oder mehr Raum braucht, soll der Szenendruck Vorrang haben.
 - `length_control` ist nur noch eine Notfallprüfung gegen extreme Ausreißer, nicht das Qualitätsmaß der Szene.
+- Zusätzliche Qualitäts-Audits warnen vor zu glatten KI-Mustern, zu vielen abstrakten Deutungswörtern, zu perfekt getakteten Druckfiguren und monotonen `ending_type`-Folgen. Das sind Warnungen, keine automatischen Textänderungen und keine neuen Acceptance-Blocker.
 
 ## 8. Wie du Job-Ergebnisse richtig liest
 
@@ -381,6 +383,19 @@ Das ist kein alter Plot-Speicher, sondern ein Stil- und Präferenzsignal:
 - Welche Beispiele sind für zukünftige Jobs `included`, `excluded` oder `needs_review`?
 
 Aktive Beispiele laufen in spätere Draft-Prompts ein. Sie sollen Muster übertragen, aber keine alten Sätze, Namen oder Ereignisse kopieren.
+
+### Quality Warnings richtig lesen
+
+Quality-Warnungen sind Produktionshinweise, keine roten Stoppschilder.
+
+Typische Warnungen bedeuten:
+
+- **KI-glatte Marker**: Der Text deutet zu elegant. Prüfe, ob Handlung, Objekt und Körper stärker tragen können.
+- **abstrakte Deutungswörter**: Die Szene klingt nach Regie. Ersetze Konzepte durch sichtbare Dinge, Gesten, Dokumente, Routinen.
+- **zu perfekte Druckfigur**: Der Antagonist oder die Druckfigur wirkt zu exakt getaktet. Ein falscher Ton, kleiner Fehler oder unvollständiger Zugriff macht die Szene glaubwürdiger.
+- **monotone Enden**: Mehrere Scene Cards schließen mit ähnlichem `ending_type`. Variiere über Entscheidung, Schweigen, soziale Folge, scheinbare Entlastung, Kindmoment oder Zugriffverlust.
+
+Diese Warnungen gehören in die nächste Director Note, in eine Scene-Card-Schärfung oder in einen Human Edit. Sie sollen nicht blind wegoptimiert werden.
 
 ### Rewrite Notes
 

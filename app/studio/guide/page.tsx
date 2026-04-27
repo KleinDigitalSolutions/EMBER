@@ -286,8 +286,8 @@ export default function StudioGuidePage() {
               <td>Harte Custom-Constraints, die im Draft sichtbar bleiben müssen.</td>
             </tr>
             <tr>
-              <td><span className="code">false_friend_signal</span>, <span className="code">*_moment</span>, <span className="code">*_plant</span>, <span className="code">*_payoff</span>, <span className="code">subtext</span></td>
-              <td>Zusätzliche Regiesignale. Nicht jedes ist Proof-Object-Guard, aber sie können den Szenenkontext schärfen.</td>
+              <td><span className="code">ending_type</span>, <span className="code">false_friend_signal</span>, <span className="code">*_moment</span>, <span className="code">*_plant</span>, <span className="code">*_payoff</span>, <span className="code">subtext</span></td>
+              <td>Zusätzliche Regiesignale. <span className="code">ending_type</span> hilft, monotone Kapitelenden zu erkennen.</td>
             </tr>
             <tr>
               <td><span className="code">reversal</span> und ähnliche Regiehinweise</td>
@@ -343,6 +343,14 @@ Scene Card
             Der Remote-Pfad ist bewusst schlank: Beat-Plan und Rewrite bleiben als Stage-Namen
             sichtbar, werden aber normalerweise übersprungen. Der Draft kommt direkt aus Scene
             Contract, Kontext und Director Note; Length Control greift nur bei starken Ausreißern.
+          </p>
+        </div>
+        <div className="highlight-box">
+          <span className="label">Quality Warnings</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Smoothness, abstrakte Deutungswörter, zu perfekte Druckfiguren und wiederholte
+            {" "}<span className="code">ending_type</span>-Muster sind Warnungen. Sie ändern keine Prosa
+            automatisch und blockieren Accept nicht.
           </p>
         </div>
       </section>

@@ -43,6 +43,8 @@ Wichtig daraus:
 | `uhrzeit` / `timeAnchor` | Harte Laufzeit-Constraint. | Fehlt sie, verliert der Ablauf Präzision. |
 | `proof_object` | Harter Materialanker plus Continuity-Guard. | Fehlt oder driftet, verliert die Szene ihren überprüfbaren Kern. |
 | `alltagswaffe`, `kindmoment`, `object_anchor`, `prop_anchor` | Harte Material-/Kindheitsanker. | Fehlen sie, wird Alltagsdruck zu abstrakt oder symbolisch. |
+| `ending_type` | Rhythmus- und Qualitätsanker für Kapitelenden. | Fehlt er, können Agents und Audits schlechter erkennen, ob zu viele Szenen gleich enden. |
+| `false_friend_signal`, `ersetzungsmoment`, `*_plant`, `*_payoff`, `subtext` | Regie- und Payoff-Signale. | Helfen, roten Faden und falsche Hilfsangebote über mehrere Szenen zu halten. |
 | `word_target_min` / `word_target_max` | Bevorzugter Szenenrahmen und Budget-Hinweis. | Fehlen sie, greift der Default; die Länge bleibt trotzdem organisch. |
 | `coreAction` | Harte Handlungsorientierung. | Fehlt sie, fehlt der Handlungskern. |
 | `objective`, `opening`, `coreAction`, `dramaticBeat`, `ending`, `closingLine` | Scene-Contract-Material. Dient der Szenenfunktion, nicht dem Diktat einzelner Sätze. | Fehlen sie, wird `openingPressure`, `turn` oder `finalImage` schwächer und muss aus Summary/Outline erraten werden. |
@@ -63,6 +65,18 @@ Der aktuelle Draft-Prompt liest nicht mehr "Beat Plan", sondern einen Scene Cont
 | `forbiddenExposition` | Writer Constitution + Systemregeln | Was die Szene nicht erklären darf: Motivmonolog, Recap, Diagnose, Zukunftszusammenfassung. |
 
 Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroht" sagen, muss der Agent daraus ein `proof_object`, einen sozialen Druck und einen `turn` machen. Ohne diese Übersetzung entsteht schwacher Output.
+
+### Quality-Audits: Was Agents beim Schreiben der Regie vermeiden müssen
+
+Die aktuelle Pipeline prüft nicht nur harte Continuity, sondern auch weiche Qualitätsrisiken. Diese Warnungen verändern keine Prosa automatisch und sind keine Acceptance-Blocker. Sie zeigen, wo eine Regie oder ein Draft zu glatt, zu abstrakt oder zu gleichförmig geworden ist.
+
+Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
+
+- **zu glatte KI-Rhythmik**: Scene Cards dürfen nicht auf Sätze wie "in diesem Moment verstand sie" oder "nicht X, sondern Y" hinauslaufen. Schreibe lieber Handlung, Reaktion, Objekt, Körper.
+- **zu viele abstrakte Deutungswörter**: Begriffe wie Kontrolle, Wahrheit, Glaubwürdigkeit, Sicherheit oder Vertrauen gehören in die Analyse, aber die Prosa braucht Becher, Listen, Jacken, App-Einträge, Stimmen, Türen, Blicke.
+- **zu perfekt getaktete Druckfiguren**: Nora oder jede neue Druckfigur darf nicht immer genau rechtzeitig, schon vorbereitet und allwissend wirken. Jede gute Druckfigur braucht Kosten, Restfehler, blinde Stellen oder falschen Ton.
+- **monotone Enden**: `ending_type` muss über das Buch variieren. Nicht fünf Szenen hintereinander mit Objekt-/Proof-Intrusion schließen. Mische Proof Turn, Social Reframe, Access Loss, Quiet Countermove, Child Echo, Entscheidung, Schweigen oder scheinbare Entlastung.
+- **Beweis ohne Kind/Alltag**: Wenn mehrere Szenen Beweise sammeln, muss zwischendurch wieder sichtbarer Alltag oder Kindlogik auftreten. Mila darf nicht nur als Beweisfunktion existieren.
 
 ### Sections-Übersicht: Was wozu dient
 
@@ -136,10 +150,37 @@ Wenn ein neuer Chat ohne Kontext startet, muss der Agent rohe Gedanken und Notiz
 10. **Antagonisten-/Drucksystem ersetzen**: `NORA CAPABILITY MAP / COST LEDGER` durch eine äquivalente Map des neuen Drucksystems ersetzen.
 11. **LOSS LADDER** neu strukturieren: Was verliert die Hauptfigur in welchem Act, und welcher Beweis verändert Zugriff, Status oder Glaubwürdigkeit?
 12. **SCENE CARDS** neu schreiben. Zwingend sauber sein müssen: `id`, `pov`, `ort/location`, `uhrzeit/timeAnchor`, `coreAction`, `proof_object` oder ein äquivalenter Materialanker.
-13. **Scene Contract pro Szene prüfen**: Jede Karte muss `openingPressure`, `proofObject`, `turn`, `finalImage` und `forbiddenExposition` ableitbar machen.
-14. **Wortbereiche setzen, nicht erzwingen**: `word_target_min`/`word_target_max` nur setzen, wenn die Szene bewusst kurz, normal, lang oder fusioniert sein soll.
-15. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
-16. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
+13. **`ending_type` pro Szene setzen**: Der Ending-Typ beschreibt die Funktion des Szenenendes, nicht den letzten Satz. Über fünf Szenen hinweg müssen Enden variieren.
+14. **Scene Contract pro Szene prüfen**: Jede Karte muss `openingPressure`, `proofObject`, `turn`, `finalImage` und `forbiddenExposition` ableitbar machen.
+15. **Wortbereiche setzen, nicht erzwingen**: `word_target_min`/`word_target_max` nur setzen, wenn die Szene bewusst kurz, normal, lang oder fusioniert sein soll.
+16. **Scene Cards entgiften**: `opening`, `dramaticBeat`, `ending`, `closingLine` nicht als Formulierungszwang schreiben, sondern als szenische Orientierung.
+17. **Quality-Rhythmus prüfen**: Gibt es zu viele Proof-/Objekt-Enden, zu viele Beweisszenen ohne Kindmoment oder eine zu perfekte Druckfigur? Dann Scene Cards vor dem Drafting variieren.
+18. **OPERATIVE HINWEISE FUER EMBER** zuletzt anpassen. Die Director Note darf die Regie ergänzen, aber niemals schlechte Scene Cards reparieren sollen.
+
+### Workflow: Vom Autor-Gedanken zum roten Faden
+
+Ein Agent darf Autorideen nicht einfach in schöne Kapiteltexte umformulieren. Er muss zuerst entscheiden, auf welcher Ebene die Idee wirkt:
+
+| Autoridee | Gehört zuerst in | Dann konkretisieren als |
+|---|---|---|
+| zentrale Angst, Verlust, Thema | Master Brief / Thematic Core | Reader Promise, Ending Promise, verbotene Twists |
+| Verkaufsversprechen, Genregefühl | Market Brief | Hook, Category Lane, Cover Direction |
+| "das darf nie passieren" | Continuity Guardrails / Canon Facts | harte Schutzregel, nicht nur Stilwunsch |
+| wiederkehrendes Objekt oder Detail | World Bible / Proof Ladder / Scene Cards | `proof_object`, `object_anchor`, `prop_anchor` |
+| soziale Mechanik oder Institution | World Bible / Loss Ladder | Zugriff, Statusverlust, institutioneller Druck |
+| Figur verhält sich anders | Character State Ledger | Wunde, Agenda, Speech Pattern, Szenenwissen |
+| Verdacht oder Frage für später | Open Threads | Setup-Szene, Payoff-Szene, Priorität |
+| Kapitelhaken oder Schlussgefühl | Scene Card | `ending_type`, `ending`, `closingLine`, aber kein fertiger Satzzwang |
+
+Roter-Faden-Regel: Jede wichtige Autoridee muss mindestens eine Laufbahn bekommen. Eine Laufbahn besteht aus Setup, Wiederkehr, Eskalation und Payoff. Wenn eine Idee nur einmal in einer Scene Card auftaucht, ist sie kein roter Faden, sondern Dekor.
+
+Beim Umbau auf ein neues Buch muss der Agent deshalb nach jeder Rohidee fragen:
+
+1. Ist das Prämisse, Marktversprechen, Figurenzustand, Beweislogik, sozialer Druck oder Payoff?
+2. Wo wird es zuerst sichtbar?
+3. Welches Objekt, welche Handlung oder welche Institution macht es überprüfbar?
+4. In welcher Szene kehrt es verändert wieder?
+5. Welches `ending_type` trägt die Szene, damit der Rhythmus nicht monoton wird?
 
 ### Rohnotizen in systemfähige Regie übersetzen
 

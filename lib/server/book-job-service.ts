@@ -16,6 +16,7 @@ import {
   buildSceneContextPacket,
   createDraftJobFromPacket,
   createStageRun,
+  detectStyleDrift,
   type SceneContextPacket
 } from "@/lib/book-engine";
 import {
@@ -658,6 +659,27 @@ async function runScenePipeline(
       ).slice(0, 10)
     };
     warnings.push(`Continuity-Guard: ${guardContinuityRisks.join(" | ")}`);
+  }
+
+  const deterministicStyleNotes = detectStyleDrift(packet, finalSceneText);
+
+  if (deterministicStyleNotes.length) {
+    extractedState = {
+      ...extractedState,
+      styleDriftNotes: dedupeStrings(
+        extractedState.styleDriftNotes.concat(deterministicStyleNotes)
+      ).slice(0, 6)
+    };
+    continuityStage = {
+      ...continuityStage,
+      notes: dedupeStrings(
+        continuityStage.notes
+          .filter(function (note) {
+            return note !== "Keine offenen Continuity-Hinweise.";
+          })
+          .concat(deterministicStyleNotes)
+      ).slice(0, 10)
+    };
   }
 
   let qualityEval = createFallbackQualityEval(options, countWords(finalSceneText));

@@ -1441,13 +1441,22 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
     );
   }
 
+  auditSceneRhythm(story).forEach(function (warning) {
+    qualityWarnings.push(warning);
+  });
+
   jobs.forEach(function (job) {
     const packet = buildSceneContextPacket(story, job.sceneId);
     const deterministicRisks = packet ? auditSceneContinuityGuards(packet, job.rewriteText) : [];
+    const deterministicStyleWarnings = packet ? detectStyleDrift(packet, job.rewriteText) : [];
 
     deterministicRisks.forEach(function (risk) {
       continuityBlockers.push(`${job.sceneTitle}: ${risk}`);
     });
+
+    if (deterministicStyleWarnings.length) {
+      qualityWarnings.push(`${job.sceneTitle}: ${deterministicStyleWarnings.join(" ")}`);
+    }
 
     job.extractedState.memorySync.items
       .filter(function (item) {
@@ -1480,6 +1489,119 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
     qualityWarnings: dedupeStrings(qualityWarnings),
     marketWarnings: dedupeStrings(marketWarnings)
   };
+}
+
+export function auditSceneRhythm(story: StoryDocument): string[] {
+  const timeline = buildTimelineBeats(story);
+  const warnings: string[] = [];
+
+  for (let index = 0; index <= timeline.length - 5; index += 1) {
+    const window = timeline.slice(index, index + 5).map(readSceneRhythmSignals);
+    const objectProofEndingCount = window.filter(function (signals) {
+      return signals.isObjectProofEnding;
+    }).length;
+    const proofSceneCount = window.filter(function (signals) {
+      return signals.hasProofObject;
+    }).length;
+    const childMomentCount = window.filter(function (signals) {
+      return signals.hasChildMoment;
+    }).length;
+
+    if (objectProofEndingCount >= 4) {
+      warnings.push(
+        "Zu viele Objekt-/Proof-Enden in kurzer Folge. Ein Ende ueber Entscheidung, Schweigen, soziale Folge oder scheinbare Entlastung variieren."
+      );
+    }
+
+    if (proofSceneCount >= 4 && childMomentCount === 0) {
+      warnings.push(
+        "Viele Beweisszenen in Folge ohne Kind-Gegenwart. Pruefen, ob Mila als Kind statt als Beweis wieder sichtbar werden sollte."
+      );
+    }
+  }
+
+  let repeatedEndingType: string | null = null;
+  let repeatedEndingCount = 0;
+
+  timeline.forEach(function (beat) {
+    const endingType = readSceneRhythmSignals(beat).endingType;
+
+    if (!endingType) {
+      repeatedEndingType = null;
+      repeatedEndingCount = 0;
+      return;
+    }
+
+    if (endingType === repeatedEndingType) {
+      repeatedEndingCount += 1;
+    } else {
+      repeatedEndingType = endingType;
+      repeatedEndingCount = 1;
+    }
+
+    if (repeatedEndingCount >= 3) {
+      warnings.push(
+        "Mehrere Szenen enden mit demselben Ending-Typ. Kapitelrhythmus variieren."
+      );
+    }
+  });
+
+  return dedupeStrings(warnings).slice(0, 8);
+}
+
+type SceneRhythmSignals = {
+  endingType: string | null;
+  hasProofObject: boolean;
+  hasChildMoment: boolean;
+  isObjectProofEnding: boolean;
+};
+
+function readSceneRhythmSignals(beat: TimelineBeat): SceneRhythmSignals {
+  const directives = resolveSceneCardDirectives(beat);
+  const endingTypeValue = readCustomDirectiveValue(directives.custom, ["ending_type", "endingtype"]);
+  const hasProofObject = hasCustomDirective(directives.custom, ["proof_object", "beweisobjekt"]);
+  const hasChildMoment = hasCustomDirective(directives.custom, ["mila_kindmoment", "kindmoment"]);
+  const endingType = normalizeEndingType(endingTypeValue);
+
+  return {
+    endingType,
+    hasProofObject,
+    hasChildMoment,
+    isObjectProofEnding: isObjectProofEndingType(endingType)
+  };
+}
+
+function readCustomDirectiveValue(
+  custom: Array<{ key: string; value: string }>,
+  keys: string[]
+) {
+  const normalizedKeys = new Set(keys.map(normalizeDirectiveKey));
+  const entry = custom.find(function (candidate) {
+    return normalizedKeys.has(normalizeDirectiveKey(candidate.key));
+  });
+
+  return entry?.value ?? null;
+}
+
+function hasCustomDirective(custom: Array<{ key: string; value: string }>, keys: string[]) {
+  return Boolean(readCustomDirectiveValue(custom, keys));
+}
+
+function normalizeEndingType(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = normalizeDirectiveKey(value);
+  return normalized || null;
+}
+
+function isObjectProofEndingType(value: string | null) {
+  if (!value) {
+    return false;
+  }
+
+  return /(object|objekt|proof|beweis|child|kind)/i.test(value);
 }
 
 export function buildAmazonLaunchPackage(story: StoryDocument): AmazonLaunchPackage {
@@ -3001,7 +3123,7 @@ function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
+export function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
   const notes: string[] = [];
   const profile = packet.stablePrefix.proseTechniqueProfile;
   const paragraphs = splitIntoParagraphs(draftText);
@@ -3047,7 +3169,107 @@ function detectStyleDrift(packet: SceneContextPacket, draftText: string) {
     notes.push("Der Text erklaert zu viel direkt, statt Druck ueber Handlung und Wahrnehmung zu tragen.");
   }
 
-  return dedupeStrings(notes).slice(0, 4);
+  if (countSmoothnessMarkers(draftText) >= 5) {
+    notes.push(
+      "Zu viele KI-glatte Deutungs- oder Rhythmusmarker. Mehr konkrete Handlung, weniger elegante Interpretation."
+    );
+  }
+
+  if (countAbstractNouns(draftText) >= 8) {
+    notes.push(
+      "Zu viele abstrakte Deutungswoerter. Regie darf abstrakt sein; Prosa braucht Objekt, Koerper, Handlung."
+    );
+  }
+
+  if (countOverprecisionSignals(draftText) >= 3) {
+    notes.push(
+      "Die Druckfigur wirkt eventuell zu perfekt getaktet. Einen kleinen Fehler, falschen Ton oder ungenauen Zugriff pruefen."
+    );
+  }
+
+  if (countFunctionalLanguageSignals(draftText) >= 6) {
+    notes.push("Der Text klingt stellenweise nach Regie/Funktion statt nach gelebter Szene.");
+  }
+
+  return dedupeStrings(notes).slice(0, 8);
+}
+
+export function countSmoothnessMarkers(value: string): number {
+  const normalized = normalizeGuardText(value);
+  const patterns = [
+    /\bnicht\s+\S+(?:\s+\S+){0,5}\s+sondern\b/g,
+    /\bals\s+hatte\b/g,
+    /\bin\s+diesem\s+moment\b/g,
+    /\bsie\s+verstand\b/g,
+    /\bsie\s+begriff\b/g,
+    /\bgenau\s+darin\b/g,
+    /\bdas\s+bedeutete\b/g,
+    /\bplotzlich\b/g,
+    /\bihr\s+wurde\s+klar\b/g,
+    /\bzum\s+ersten\s+mal\b/g
+  ];
+
+  return countPatternMatches(normalized, patterns);
+}
+
+export function countAbstractNouns(value: string): number {
+  const normalized = normalizeGuardText(value);
+  const patterns = [
+    /\bangst\b/g,
+    /\bpanik\b/g,
+    /\bwahrheit(?:en)?\b/g,
+    /\bkontrolle\b/g,
+    /\bmutterrolle\b/g,
+    /\bdeutungshoheit\b/g,
+    /\bglaubwurdigkeit\b/g,
+    /\bverlasslichkeit\b/g,
+    /\bersetzung(?:en)?\b/g,
+    /\bbedrohung(?:en)?\b/g,
+    /\bzugriff(?:e|en)?\b/g,
+    /\bsicherheit\b/g,
+    /\binstabilitat\b/g,
+    /\bvertrauen\b/g
+  ];
+
+  return countPatternMatches(normalized, patterns);
+}
+
+export function countOverprecisionSignals(value: string): number {
+  const normalized = normalizeGuardText(value);
+  const patterns = [
+    /\bgenau\s+im\s+richtigen\s+moment\b/g,
+    /\bgenau\s+in\s+dem\s+moment\b/g,
+    /\brechtzeitig\b/g,
+    /\bschon\s+bereit\b/g,
+    /\bbereits\s+vorbereitet\b/g,
+    /\bwusste\s+es\s+schon\b/g,
+    /\bhatte\s+es\s+vorbereitet\b/g,
+    /\bstand\s+schon\b/g,
+    /\blag\s+schon\b/g,
+    /\bwartete\s+bereits\b/g
+  ];
+
+  return countPatternMatches(normalized, patterns);
+}
+
+function countFunctionalLanguageSignals(value: string): number {
+  const normalized = normalizeGuardText(value);
+  const patterns = [
+    /\bmuss\b/g,
+    /\bsoll\b/g,
+    /\bbraucht\b/g,
+    /\bdarf\s+nicht\b/g,
+    /\bfunktioniert\s+als\b/g,
+    /\bsteht\s+fur\b/g
+  ];
+
+  return countPatternMatches(normalized, patterns);
+}
+
+function countPatternMatches(value: string, patterns: RegExp[]) {
+  return patterns.reduce(function (sum, pattern) {
+    return sum + ((value.match(pattern) ?? []).length);
+  }, 0);
 }
 
 function hasEarlySensoryAnchor(value: string) {
