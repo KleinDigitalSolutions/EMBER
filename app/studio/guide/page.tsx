@@ -257,8 +257,9 @@ export default function StudioGuidePage() {
         <p>
           Denke in drei Ebenen: Blueprint ist die Strategie, Scene Cards sind die
           Produktionsanweisung, der Writer-Job ist nur der einzelne Modelllauf. Wenn eine
-          Szene nur mit langer Director Note funktioniert, ist meistens die Scene Card noch
-          nicht sauber genug.
+          Szene nur mit langer Director Note funktioniert, fehlt meistens in der Scene Card
+          <span className="code">want</span>, <span className="code">pressure</span>,
+          <span className="code">turn</span> oder <span className="code">irreversible_change</span>.
         </p>
 
         <div className="step-list">
@@ -280,7 +281,7 @@ export default function StudioGuidePage() {
           </div>
           <div className="step-item">
             <h3>Regie in die DB synchronisieren</h3>
-            <p>Nach größeren Änderungen an Regie, Scene Cards oder Runtime-Kontext muss das Book-Projekt neu synchronisiert werden, bevor du Jobs bewertest.</p>
+            <p>Nach größeren Änderungen an Regie, Scene Cards, Canon oder Narrative State muss das Book-Projekt neu synchronisiert werden, bevor du Jobs bewertest.</p>
           </div>
           <div className="step-item">
             <h3>Zwei Testszenen generieren</h3>
@@ -415,7 +416,7 @@ Scene Card
   thread:
   avoid:
   aftertaste:
-  ending_type:
+  ending_type: # nur Rhythmus-Metadatum, kein Schreibauftrag
 \`\`\``}</div>
         </div>
       </section>
@@ -499,8 +500,8 @@ Scene Card
             </tr>
             <tr>
               <td><span className="code">where_when</span></td>
-              <td>Ort und Zeit, wenn sie wichtig sind.</td>
-              <td>Wo findet der Druck statt?</td>
+              <td>Ort/Zeit als Szenenanker. Sobald konkret gesetzt, schützt es vor Drift.</td>
+              <td>Nur konkret setzen, wenn Drift falsch wäre.</td>
             </tr>
             <tr>
               <td><span className="code">situation</span></td>
@@ -562,7 +563,7 @@ Scene Card
   thread: Wer kennt Milas Kita-Routine gut genug?
   avoid: Keine Objektliste, kein Beweis-Monolog, kein hysterischer Ausbruch.
   aftertaste: Der freundlichste Satz der Erzieherin klingt nach Abstand.
-  ending_type: Object Intrusion`}</div>
+  ending_type: Object Intrusion # Audit only`}</div>
         </div>
 
         <div className="warning-box">
@@ -616,7 +617,7 @@ Scene Card
             <tr>
               <td>Legacy weich</td>
               <td><span className="code">proof_object</span>, <span className="code">alltagswaffe</span>, <span className="code">kindmoment</span>, <span className="code">closingLine</span></td>
-              <td>Material oder Orientierung, kein Pflichtsatz und keine Objektpflicht.</td>
+              <td>Material, Drucksignal oder optionales Schlussbild / Tonhinweis. Kein Satzdiktat und keine Objektpflicht.</td>
             </tr>
             <tr>
               <td>Audit</td>
@@ -747,8 +748,8 @@ Scene Card
         <div className="highlight-box">
           <span className="label">Provider</span>
           <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            In der UI nutzt du <strong>Auto</strong>, <strong>OpenAI</strong> oder
-            <strong> Anthropic</strong>. <span className="code">local_fallback</span> ist ein
+            In der UI nutzt du <strong>Auto</strong>, <strong>OpenAI</strong> oder{" "}
+            <strong>Anthropic</strong>. <span className="code">local_fallback</span> ist ein
             Sicherheitsweg, kein Qualitätsurteil über die Regie.
           </p>
         </div>
