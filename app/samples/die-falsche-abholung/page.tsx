@@ -517,6 +517,107 @@ const scenes: SampleReaderScene[] = [
       "Sie legte es weg. Sie sah die Brotdose an, den blauen Ring daneben, das saubere Ablagepapier darunter, das ohne Wasserrand war, obwohl etwas Frischgespültes darauf stand. Jemand hatte die Dose abgetrocknet, bevor er sie dort abstellte.",
       "Eva zog den Stuhl unter dem Küchentisch hervor und setzte sich nicht."
     ]
+  },
+  {
+    id: "scene-9",
+    kicker: "Der neue Riegel",
+    title: "Identisch",
+    summary: "Eva lässt das Schloss austauschen und stellt fest, dass Noras Hilfe eine Kehrseite hat: Es gibt Dinge, die kein Riegel aussperrt.",
+    paragraphs: [
+      "Der Schlüssel lag schwerer in der Hand, als er sollte. Eva hatte ihn aus der Schublade im Flur geholt, dort, wo sie seit Monaten nicht mehr gesucht hatte, und nun drehte sie ihn zwischen den Fingern, als müsste sie prüfen, ob er echt war. Reservezugang. Drei Buchstaben in ihrer eigenen Schrift, mit einem Filzstift auf Papierband geschrieben und um den Schaft gewickelt. R.Z.",
+      "Sie hatte damals zwei Zugänge verteilt. Den eigenen Bund in der Schublade. Und das Säckchen für Notfälle, unten im Keller, an einem Haken hinter dem Sicherungskasten, hinter Simons altem Wäscheständer. Damit Nora rankam, wenn Mila krank wurde und Eva noch im Büro saß. Damit Nora die Heizung aufdrehen konnte, wenn die Lieferung früher kam. Damit jemand da war, der nicht Simon war, weil Simon damals gerade nicht mehr da sein durfte.",
+      "Sie war nicht sicher, ob sie das Säckchen je zurückgeholt hatte.",
+      "Eva ging in den Keller. Das Treppenlicht reagierte träge, wie immer. Im dritten Tritt knirschte etwas unter der Sohle, sie sah hin, es war nur Salz. Sie zählte die Stufen, weil das Zählen ihr half, nicht zu rennen.",
+      "Der Sicherungskasten hing auf Augenhöhe. Dahinter, in der Ecke, der Wäscheständer, eingeklappt, Spinnweben zwischen den Streben. Sie schob ihn beiseite. Der Haken war an der Wand. Auf dem Haken hing nichts.",
+      "Sie blieb stehen, eine Sekunde zu lang. Dann tastete sie den Putz ab, weil das Säckchen vielleicht heruntergerutscht war, weil das Ding klein war, weil ein Stoffbeutel mit einem einzelnen Schlüssel sich überall verstecken konnte. Auf dem Boden lag nichts außer einer alten Mausefalle, die nie ausgelöst hatte.",
+      "Am Haken klebte ein heller Streifen. Schmal. Wie der Abdruck einer Schnur, die lange dort gehangen hatte und vor nicht allzu langer Zeit abgenommen worden war. Der Putz drumherum war dunkler.",
+      "Eva fotografierte den Haken. Sie wusste nicht, warum. Sie machte es trotzdem.",
+      "Oben in der Wohnung schloss sie die Tür hinter sich ab und drehte den Riegel. Der Riegel saß. Die Tür war fest. Das Schloss war eines von diesen alten Sicherheitsschlössern, die der Vermieter nie ausgetauscht hatte, weil sie noch funktionierten. Sie hatte selbst darauf bestanden, weil ein neues Schloss in der Trennungsphase wie eine Eskalation gewirkt hätte und Eva keine Eskalation wollte. Sie hatte Vertrauen wollen. Sie hatte Routinen wollen, die hielten.",
+      "Sie zog ihr Telefon aus der Tasche und tippte die Suche, bevor sie den Gedanken zu Ende gedacht hatte. *Schlüsseldienst Nacht*. Drei Treffer. Sie wählte den ersten.",
+      "„Heute noch?“, fragte der Mann am Telefon.",
+      "„Heute noch.“",
+      "„Was haben Sie für ein Schloss?“",
+      "Sie ging in den Flur, kniete sich vor die Tür, las die Bezeichnung am Rand des Beschlags vor. Der Mann nannte einen Preis, der ihr egal war. Er sagte, in vierzig Minuten. Sie sagte, gut.",
+      "Mila schlief. Eva hatte sie eine Stunde vorher hingelegt, mit der Tür einen Spalt offen, dem Stoffhasen unter dem Arm, dem Nachtlicht auf der niedrigsten Stufe. Sie ging zweimal hinein, in fünfzehn Minuten zweimal, und korrigierte beim zweiten Mal nichts, weil es nichts zu korrigieren gab. Mila lag auf der Seite, ein Knie hochgezogen, die Hand neben dem Mund. Sie atmete.",
+      "Eva setzte sich an den Küchentisch und wartete.",
+      "Sie versuchte, sich daran zu erinnern, wann sie Nora zum letzten Mal nach dem Reserveschlüssel gefragt hatte. Es musste im Frühjahr gewesen sein, als sie wieder regelmäßig arbeitete, als die akute Phase vorbei war. Brauchst du den Schlüssel noch? Nein, hatte Nora gesagt. Doch, doch, ich gebe ihn dir wieder. Sie hatte ihn dann auch wiedergegeben, in einem Briefumschlag, am Küchentisch, mit einem Lachen. Hier, deine Krise ist offiziell vorbei. Eva hatte den Umschlag in die Schublade gelegt. Sie hatte nie geprüft, ob unten noch etwas hing.",
+      "Sie holte ihn jetzt heraus und legte ihn auf den Tisch neben den, der oben an der Tür gesteckt hatte. Zwei Schlüssel. Sie sahen identisch aus. Sie waren identisch. Das hieß nichts.",
+      "Der Mann vom Schlüsseldienst kam um zweiundzwanzig nach zehn. Er trug einen blauen Overall und eine Werkzeugtasche und arbeitete schnell. Sieben Minuten für den Zylinder, fünf Minuten für die Probe, drei Minuten Papierkram. Er gab ihr drei neue Schlüssel und einen Sicherungsnachweis und fragte, ob sie eine Quittung wolle. Sie sagte ja, weil sie alles dokumentieren wollte, was sich heute geändert hatte.",
+      "Als er weg war, legte sie die alten Schlüssel in einen Briefumschlag und beschriftete den Umschlag mit Datum und Uhrzeit. *04.11., 22:34, Zylinder gewechselt.* Sie wusste, dass das nichts bewies. Aber Listen waren das, was sie hatte.",
+      "Sie versuchte zu schlafen. Sie schlief nicht. Sie stand um halb zwei wieder auf, weil sie etwas hörte, und das Etwas war das Heizungsrohr, und sie wusste, dass es das Heizungsrohr war, und ging trotzdem in den Flur und sah die Tür an.",
+      "Die Tür war zu. Der neue Riegel saß. An der Innenseite war nichts.",
+      "Sie dachte an alles, was Nora kannte und was kein Schloss aussperrte. Den Wochenplan an der Pinnwand. Das Stichwort für die Abholung im *Sonnengarten*, das sie einmal in Mila Anwesenheit gesagt hatte, damit Mila nicht erschrak, wenn Nora käme. Den Spitznamen, den nur Mila und sie verwendeten und den Eva einmal lachend Nora erzählt hatte. Die Lieblingsjacke. Die Marke der Brotdose. Den Tag, an dem Mila Sport hatte und das Haargummi rutschte, also brauchte sie ein zweites in der Tasche. Nora hatte dafür nichts aufbrechen müssen. Eva hatte es ihr zwischen Türrahmen, Kita-Flur und Küchentisch gesagt.",
+      "Sie ging zurück ins Bett und lag wach, bis es hell wurde.",
+      "Am Morgen, kurz nach acht, klingelte es. Eva war angezogen, Mila saß am Tisch und bröselte ein Brot, das sie nicht essen wollte. Eva ging zur Tür und sah durch den Spion. Nora.",
+      "Sie öffnete.",
+      "Nora hielt eine kleine Papiertüte in der Hand, eine von der Bäckerei am Eck, oben eingeschlagen. „Ich war schon unten. Ich hab Mila ein Schneckchen mitgebracht, falls sie nichts isst.“",
+      "„Danke“, sagte Eva. Sie nahm die Tüte nicht.",
+      "Nora sah sie an, kurz, freundlich, und dann sah sie an ihr vorbei, in den Flur. Auf den Boden. Auf den kleinen Haufen Metallspäne, den der Schlüsseldienst dagelassen hatte und den Eva übersehen hatte. Es waren wirklich nur Späne. Nora sah sie eine Sekunde an, vielleicht zwei.",
+      "„Hat es geklemmt?“, fragte sie.",
+      "Eva sagte nichts.",
+      "Nora lächelte, schob die Tüte ein Stück weiter vor. »Bei meinem alten Schloss hat es immer geklemmt, im November. Wenn die Heizung im Treppenhaus angeht. Das Holz arbeitet, und dann zieht der Riegel nicht mehr richtig.« Sie sah noch einmal auf die Späne. »Du hast es aber gleich machen lassen.«",
+      "Sie hielt die Tüte hin, bis Eva sie nahm.",
+      "„Sag Mila einen Gruß“, sagte Nora. „Ich bin den ganzen Tag da, falls was ist.“",
+      "Sie ging die Treppe hinunter, ohne sich umzudrehen. Eva hörte ihre Schritte bis zum Treppenabsatz, dann die Tür unten, dann nichts mehr.",
+      "Sie schloss ab. Drehte den neuen Riegel zweimal. Lehnte sich mit dem Rücken gegen die Tür und sah auf die Papiertüte in ihrer Hand, auf das Fett, das langsam durch den Boden zog.",
+      "Aus der Küche rief Mila, ob sie das Brot wegtun dürfe.",
+      "Eva legte die Tüte auf die Kommode, ungeöffnet, weit genug von Milas Platz entfernt, und ging zu ihrer Tochter."
+    ]
+  },
+  {
+    id: "scene-10",
+    kicker: "Der Elternabend",
+    title: "Die gelbe Hose",
+    summary: "Eva besucht den Elternabend und stellt fest, dass Noras 'Hilfsbereitschaft' bereits Kreise zieht, von denen die Kita noch gar nichts offiziell angekündigt hat.",
+    paragraphs: [
+      "Eva kam zu spät, obwohl sie zwölf Minuten zu früh losgegangen war. Sie hatte zweimal an der Hofeinfahrt gestanden und überlegt, ob es richtig war, heute hier aufzutauchen. Dann hatte sie den Mantel zugezogen und war gegangen, weil Wegbleiben schlimmer aussah als Kommen.",
+      "Im Gruppenraum der Sonnenkäfer waren die kleinen Stühle in einem Halbkreis aufgestellt. An der Tafel hing ein laminierter Plan für den Monat November, daneben eine Liste mit Geburtstagen. Auf dem Tisch in der Mitte standen Wasserflaschen, Plastikbecher und ein Teller mit halbierten Mandarinen. Eva sah die Mandarinen zuerst, dann die Becher. Keiner davon war gelb.",
+      "Sie suchte einen Platz, der nicht zu weit hinten und nicht direkt neben der Erzieherin lag. Frau Kuhlmann nickte ihr zu, freundlich, kurz. Niemand sagte etwas. Das war das Problem.",
+      "Vor zwei Wochen hätte Karin Lauer sich neben sie gesetzt und über die Frühstücksbox-Diskussion gestöhnt. Heute saß Karin zwei Stühle weiter, hielt das Handy in der Hand und las etwas, das offenbar dringend war. Auf der anderen Seite bog sich Henning, Lukas’ Vater, über sein Knie und band sich den Schuh, obwohl der Schuh nicht offen war.",
+      "Eva legte den Mantel über die Stuhllehne. Sie versuchte, nicht zu zählen, wer sie ansah und wer nicht. Es gelang ihr nicht.",
+      "„Schön, dass alle da sind“, sagte Frau Kuhlmann. „Wir haben heute ein paar organisatorische Punkte. Danach gerne Fragen.“",
+      "Sie redete über das Laternenfest, über den Bring- und Abholbereich, über die Garderobenhaken, an denen die Namensschilder verrutscht seien. Eva sah, wie eine Mutter in der ersten Reihe einen kleinen Block aus der Tasche zog und mitschrieb. Eva hatte ihren eigenen Block in der Tasche und ließ ihn drin.",
+      "„Punkt vier“, sagte Frau Kuhlmann, „die Abholregelung. Wir hatten in der letzten Woche einen Fall, der uns dazu gebracht hat, das Verfahren noch einmal genauer zu prüfen.“",
+      "Niemand drehte den Kopf zu Eva. Karin sah auf ihre Hände. Henning rückte seinen Stuhl einen Zentimeter zurück.",
+      "Frau Kuhlmann sprach ruhig weiter, ohne Namen, ohne Datum, in dem sauberen Ton, in dem Institutionen über Vorfälle sprechen, wenn sie keine Schuldigen benennen müssen. Sie erklärte, dass die Abholliste ab Montag schriftlich bestätigt werden solle, mit Unterschrift, einmal pro Quartal. Dass Notfallkontakte aktualisiert würden. Dass im Zweifel die Leitung verständigt werde.",
+      "„Im Zweifel woran?“, fragte jemand aus der hinteren Reihe.",
+      "„Im Zweifel an der Identität der abholenden Person“, sagte Frau Kuhlmann.",
+      "Eva sah auf ihre Hände. Sie hatte sie auf den Knien liegen, ruhig, was eine kleine Leistung war.",
+      "Karin schaltete das Handy aus und steckte es in die Tasche. Sie sah kurz zu Eva herüber, ein Blick, der nicht unfreundlich war, eher wie das schnelle Prüfen einer Wettervorhersage. Dann wandte sie sich wieder nach vorn.",
+      "Nach den organisatorischen Punkten kam die Runde der Wünsche. Eltern äußerten Wünsche an die Kita, die Kita äußerte Wünsche an die Eltern. Henning fragte, ob es möglich sei, beim Waldtag im Frühjahr die Eltern stärker einzubinden. Frau Kuhlmann hob die Augenbrauen.",
+      "„Welcher Waldtag?“",
+      "„Der Waldtag im Frühjahr“, sagte Henning. „Lukas hat erzählt, dass es einen geben soll.“",
+      "„Wir haben einen Waldtag in Planung“, sagte Frau Kuhlmann vorsichtig, „aber kommuniziert ist er noch nicht. Wir wollten die Information erst nächste Woche herausgeben, weil wir die Begleitperson noch nicht final haben.“",
+      "„Ach so“, sagte Henning. „Dann hat Lukas das wohl von woanders.“",
+      "Karin hob den Kopf. „Nora hat mir gestern gesagt, sie sammelt Regenhosengrößen. Ich dachte, das geht schon los.“",
+      "Eva hörte den Namen und blieb bei dem Becher vor sich hängen, durchsichtiges Plastik, ein Kalkrand am Boden. Nora hatte kein Kind in dieser Gruppe. Nora hatte überhaupt kein Kind in dieser Kita.",
+      "Frau Kuhlmann sah Karin an. „Frau Seidel?“",
+      "„Ja“, sagte Karin. „Sie hat im Hof gefragt. Wegen der Größen. Ich dachte, ihr habt sie gebeten, weil sie ja Eva manchmal hilft.“",
+      "Es war ein freundlicher Satz. Er war so freundlich, dass Eva den Tisch in der Mitte ansah, um sich nicht zu sehr zu verraten. Eine Mandarine war aufgeplatzt, der Saft stand hell auf der Schale. Eva schluckte.",
+      "„Wir haben Frau Seidel nicht beauftragt“, sagte Frau Kuhlmann. „Wir bitten generell nur Erziehungsberechtigte um solche Informationen.“",
+      "„Dann muss ich was falsch verstanden haben“, sagte Karin schnell.",
+      "„Kein Problem“, sagte Frau Kuhlmann. „Wir senden die Liste über die App, wenn der Termin steht.“",
+      "Eva spürte, wie die Eltern um sie herum die Schultern leicht entspannten, weil ein kleiner Faden gezogen und zurückgelegt worden war, ohne dass jemand ihn hätte ausziehen müssen. Nur sie selbst hatte den Faden noch in der Hand. Sie wusste nur nicht, an welchem Ende.",
+      "Frau Kuhlmann fragte, ob es weitere Punkte gebe. Eine Mutter wollte etwas zum Mittagessen sagen, eine andere zum Schuhschrank. Eva hörte zu und hörte nicht zu. Sie versuchte zu rekonstruieren, wann sie zuletzt mit Nora über den Waldtag gesprochen hatte. Sie konnte sich nicht erinnern, je mit Nora über einen Waldtag gesprochen zu haben.",
+      "Als Frau Kuhlmann den Abend beendete, standen die Eltern auf, schoben die Stühle zurück, griffen nach Mänteln. Karin trat auf Eva zu, halb verlegen.",
+      "„Tut mir leid wegen vorhin“, sagte sie. „Ich wollte dich nicht in eine doofe Position bringen.“",
+      "„Hast du nicht“, sagte Eva.",
+      "„Nora ist eben sehr hilfsbereit“, sagte Karin. „Sie hat mir letzte Woche das Rezept für den Apfelkuchen geschickt, den Mila so mag. Aus dem Elternverteiler. Sie war ja mal als Notfallkontakt drin, oder?“",
+      "„Sie war“, sagte Eva.",
+      "Karin nickte, als hätte sie das geahnt. Sie legte Eva kurz die Hand auf den Arm, einen Moment zu lang, einen Moment zu kurz. Dann ging sie.",
+      "Frau Kuhlmann fing Evas Blick an der Tür ab. Sie sagte nichts. Sie nickte nur einmal und sah dann zu der Liste auf ihrem Klemmbrett.",
+      "Eva ging über den Hof. Es regnete leicht. Die Pfützen unter der Lampe an der Einfahrt waren klein und schwarz. Sie hatte die Hände in den Manteltaschen, weil ihr kalt war, nicht, weil es kalt war.",
+      "Auf dem Heimweg ging sie schneller, als nötig. An der Ecke zur Lessingstraße rief Simon an. Sie ließ es klingeln. Sie wollte den Abend nicht erklären, bevor sie ihn selbst verstanden hatte.",
+      "Vor ihrer Wohnungstür im zweiten Stock lag etwas. Sie sah es schon vom oberen Treppenabsatz, weil das Licht im Flur auf das Plastik fiel, in dem es eingepackt war. Eine durchsichtige Tüte mit Henkeln, sauber zugeknotet. Daneben ein gefalteter Zettel.",
+      "Sie blieb stehen, bevor sie näher trat.",
+      "In der Tüte lag eine Regenhose. Gelb. Größe 116. Auf dem Innenetikett klebte ein kleiner weißer Streifen, mit Filzstift beschriftet: *M. Berger*. Die Schrift war nicht ihre.",
+      "Sie öffnete den Zettel nicht sofort. Sie tat es im Stehen, ohne die Tür aufzuschließen. Der Zettel war auf einem Briefpapier mit kleinem grauen Rand, Noras Papier, das sie kannte, weil es im Sommer mal eine Geburtstagskarte für Mila gegeben hatte.",
+      "Hab gehört, beim Waldtag werden Regenhosen gebraucht. Hatte noch eine, müsste ungefähr passen. Falls ihr sie nicht braucht, einfach zurück in den Hof. Lieb, N.",
+      "Eva las den Zettel zweimal. Sie las ihn ein drittes Mal, weil sie hoffte, dass beim dritten Mal etwas anderes dort stehen würde. Es stand nichts anderes dort.",
+      "Sie legte den Zettel in die Tüte zurück, knotete die Henkel wieder zu und stellte die Tüte neben die Tür, nicht in die Wohnung. Dann schloss sie auf, ging hinein und blieb mit dem Rücken an der geschlossenen Tür stehen.",
+      "Im Flur war es still. Auf dem Boden lag Milas Sportbeutel, halb offen, mit einem Stoffhasen darin, der seit Wochen nicht gewaschen worden war. Eva sah ihn an und sah ihn nicht an.",
+      "Vor der Tür, hinter dem dünnen Holz, stand die gelbe Regenhose für einen Termin, den die Kita selbst noch nicht angekündigt hatte."
+    ]
   }
 ];
 
@@ -526,7 +627,7 @@ export default function DieFalscheAbholungSamplePage() {
       sampleId="die-falsche-abholung"
       title="Die falsche Abholung"
       description="Ein Psychothriller über Kontrolle, Identität und die Zerbrechlichkeit des Alltags."
-      heroKicker="Buchprobe · Szenen 1–8"
+      heroKicker="Buchprobe · Szenen 1–10"
       heroTitle="Gestern"
       heroSummary="Eine verspätete Meldung in der Kita-App kippt Evas Alltag aus der Bahn: Laut System hat sie ihre Tochter Mila gestern selbst abgeholt – zu einer Zeit, als sie nachweislich hundert Kilometer entfernt in einem Meeting saß."
       scenes={scenes}

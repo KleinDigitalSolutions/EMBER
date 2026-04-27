@@ -1565,7 +1565,7 @@ function captureHumanEditExamples(
     existingExamples
       .concat(story.book.memory.humanEditExamples)
       .map(function (example) {
-        return `${example.draftJobId}:${example.acceptedAt || ""}`
+        return createHumanEditBusinessKey(example)
       })
   )
   const scenesById = new Map(
@@ -1586,7 +1586,10 @@ function captureHumanEditExamples(
       return job.status === "accepted" && Boolean(job.acceptedAt) && Boolean(job.rewriteText.trim())
     })
     .forEach(function (job) {
-      const key = `${job.id}:${job.acceptedAt || ""}`
+      const key = createHumanEditBusinessKey({
+        draftJobId: job.id,
+        acceptedAt: job.acceptedAt
+      })
       const scene = scenesById.get(job.sceneId)
 
       if (!scene || existingKeys.has(key)) {
@@ -1640,7 +1643,7 @@ function mergeHumanEditExamples(
   const byBusinessKey = new Map<string, BookHumanEditExample>()
 
   function track(example: BookHumanEditExample) {
-    const key = `${example.draftJobId}:${example.acceptedAt || ""}`
+    const key = createHumanEditBusinessKey(example)
     const existingById = byId.get(example.id)
     const existingByBusinessKey = byBusinessKey.get(key)
 
@@ -1670,6 +1673,24 @@ function mergeHumanEditExamples(
   return Array.from(byId.values()).sort(function (a, b) {
     return b.capturedAt.localeCompare(a.capturedAt)
   })
+}
+
+function createHumanEditBusinessKey(example: Pick<BookHumanEditExample, "draftJobId" | "acceptedAt">) {
+  return `${example.draftJobId}:${normalizeHumanEditTimestampKey(example.acceptedAt)}`
+}
+
+function normalizeHumanEditTimestampKey(value: string | null) {
+  if (!value) {
+    return ""
+  }
+
+  const timestamp = Date.parse(value)
+
+  if (Number.isNaN(timestamp)) {
+    return value
+  }
+
+  return new Date(timestamp).toISOString()
 }
 
 function buildHumanEditDiffSummary(sourceText: string, editedText: string): BookHumanEditExample["diffSummary"] {
