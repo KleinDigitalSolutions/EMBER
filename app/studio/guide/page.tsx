@@ -278,12 +278,16 @@ export default function StudioGuidePage() {
               <td>Ort und Zeitanker für den Job-Kontext.</td>
             </tr>
             <tr>
-              <td><span className="code">objective</span> / <span className="code">ziel</span>, <span className="code">opening</span> / <span className="code">einstieg</span>, <span className="code">coreAction</span> / <span className="code">kern_aktion</span>, <span className="code">dramaticBeat</span> / <span className="code">beat</span>, <span className="code">ending</span> / <span className="code">ende</span></td>
+              <td><span className="code">objective</span> / <span className="code">ziel</span>, <span className="code">opening</span> / <span className="code">einstieg</span>, <span className="code">coreAction</span> / <span className="code">kern_aktion</span>, <span className="code">dramaticBeat</span> / <span className="code">beat</span>, <span className="code">ending</span> / <span className="code">ende</span>, <span className="code">closingLine</span> / <span className="code">letzter_satz</span></td>
               <td>Handlungs- und Szenenführung. Wichtig, aber nicht als Satzdiktat zu lesen.</td>
             </tr>
             <tr>
-              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span>, <span className="code">object_anchor</span> / <span className="code">prop_anchor</span>, <span className="code">closingLine</span> / <span className="code">letzter_satz</span></td>
+              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span>, <span className="code">object_anchor</span> / <span className="code">prop_anchor</span></td>
               <td>Harte Custom-Constraints, die im Draft sichtbar bleiben müssen.</td>
+            </tr>
+            <tr>
+              <td><span className="code">false_friend_signal</span>, <span className="code">*_moment</span>, <span className="code">*_plant</span>, <span className="code">*_payoff</span>, <span className="code">subtext</span></td>
+              <td>Zusätzliche Regiesignale. Nicht jedes ist Proof-Object-Guard, aber sie können den Szenenkontext schärfen.</td>
             </tr>
             <tr>
               <td><span className="code">reversal</span> und ähnliche Regiehinweise</td>
@@ -334,6 +338,13 @@ Scene Card
             bedeutet: Sicherheitsnetz, nicht Qualitätsurteil.
           </p>
         </div>
+        <div className="highlight-box">
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Der Remote-Pfad ist bewusst schlank: Beat-Plan und Rewrite bleiben als Stage-Namen
+            sichtbar, werden aber normalerweise übersprungen. Der Draft kommt direkt aus Scene
+            Contract, Kontext und Director Note; Length Control greift nur bei starken Ausreißern.
+          </p>
+        </div>
       </section>
 
       <section>
@@ -362,6 +373,14 @@ Scene Card
               Erst danach ist der Stand in Supabase stabil und nicht nur ein lokaler Draft.
             </p>
           </div>
+        </div>
+        <div className="highlight-box">
+          <span className="label">Human Edit Memory</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Wenn du einen übernommenen Job vor dem Speichern weiterbearbeitest, speichert EMBER
+            die Differenz als Lernsignal. Aktive Beispiele beeinflussen spätere Drafts als Muster,
+            ohne alte Sätze oder Plotinhalte zu kopieren.
+          </p>
         </div>
       </section>
 

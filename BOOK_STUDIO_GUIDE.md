@@ -11,7 +11,7 @@ So gehst du in Ember vor
   3. Plane nicht in „300 Seiten“, sondern in Szenen. Für 300 Taschenbuchseiten bist du grob bei 75.000–90.000 Wörtern.
      In Ember heißt das meist 45–65 Szenen mit etwa 1.100–1.700 Wörtern.
   4. Gib jeder Szene eine belastbare Summary: Ziel, Widerstand, Wendung, Enddruck.
-  5. Setze pro Szene klare Regie: POV, Ort, Zeitanker, coreAction und proof_object zuerst; weitere Felder nur als Orientierung.
+  5. Setze pro Szene klare Regie: POV, Ort, Zeitanker, coreAction und proof_object zuerst; false_friend_signal und weitere Spezialfelder nur dort, wo sie wirklich Szenendruck tragen.
   6. Nutze Director Note nur für den aktuellen Eingriff, nicht für die gesamte Poetik.
   7. Erzeuge Jobs szenenweise, übernimm nur starke Drafts, prüfe dann Review, offene Fäden und Kontinuität.
 
@@ -164,7 +164,7 @@ Die Summary ist der wichtigste direkte Arbeitsanker für die KI.
 Zusätzlich wichtig seit dem aktuellen Regie-Sync:
 
 - `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenregie
-- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `coreAction`, `proof_object` und freie Spezialfelder für Objekt-, Kind- und Alltagsanker
+- dazu gehören u. a. `pov`, `location`, `timeAnchor`, `coreAction`, `proof_object`, `false_friend_signal` und freie Spezialfelder für Objekt-, Kind- und Alltagsanker
 - Felder wie `opening`, `dramaticBeat`, `ending` oder `closingLine` bleiben nützlich, sind aber Orientierung und kein Satzdiktat
 
 Praktisch heißt das:
@@ -314,6 +314,7 @@ Das bedeutet:
 - Du bekommst nicht nur einen Text.
 - Du bekommst auch verwertbare Produktionsdaten für Folgearbeit.
 - Die Prosa läuft bewusst schlanker als früher: kein separater Beat-Plan-Call, kein automatischer Rewrite-Pass, weniger Mikrosteuerung.
+- Die technischen Stages `beat_plan` und `rewrite` bleiben aus Kompatibilitätsgründen sichtbar, sind im Remote-Pfad aber normalerweise `skipped`: Der Draft entsteht direkt aus Scene Contract, Kontext und Director Note.
 - Wortziele sind bevorzugte Rahmen. Wenn die Szene organisch früher schließt oder mehr Raum braucht, soll der Szenendruck Vorrang haben.
 - `length_control` ist nur noch eine Notfallprüfung gegen extreme Ausreißer, nicht das Qualitätsmaß der Szene.
 
@@ -368,6 +369,18 @@ Das bedeutet konkret:
 Wenn du nur `Generate` drückst, aber nicht `Accept`, entsteht noch kein sichtbarer Szenentext in den Scene Blocks.
 
 Wenn du `Accept` gedrückt hast, aber der Save fehlschlägt, ist der Text nur lokal im Browser-Draft und nicht garantiert in Supabase.
+
+### Human Edit Memory
+
+Wenn du einen Job übernimmst und den Szenentext danach beim Speichern weiterbearbeitest, erfasst EMBER die Differenz als Human Edit Memory.
+
+Das ist kein alter Plot-Speicher, sondern ein Stil- und Präferenzsignal:
+
+- Welche Art von Kürzung, Verdichtung oder Erweiterung nimmst du nach KI-Drafts vor?
+- Welche Edit-Tags wiederholen sich?
+- Welche Beispiele sind für zukünftige Jobs `included`, `excluded` oder `needs_review`?
+
+Aktive Beispiele laufen in spätere Draft-Prompts ein. Sie sollen Muster übertragen, aber keine alten Sätze, Namen oder Ereignisse kopieren.
 
 ### Rewrite Notes
 

@@ -642,7 +642,7 @@ export function BookWriterPanel({
           <div className="book-writer-card__head">
             <div>
               <span className="scene-editor__eyebrow">AI Copilot</span>
-              <h4>OpenAI, Anthropic, Gemini, Groq</h4>
+              <h4>Auto, OpenAI, Anthropic</h4>
             </div>
           </div>
 
