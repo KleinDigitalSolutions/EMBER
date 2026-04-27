@@ -838,7 +838,9 @@ function parseRegie(
       premise,
       readerPromise: masterBriefRows["Reader Promise"] || "",
       endingPromise: masterBriefRows["Ending Promise"] || "",
-      thematicCore
+      thematicCore,
+      authorIntent: masterBriefRows["Author Intent"] || "",
+      currentFocus: masterBriefRows["Current Focus"] || ""
     },
     marketBrief,
     writerConstitution,

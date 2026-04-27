@@ -97,6 +97,8 @@ export type SceneContextPacket = {
     readerPromise: string;
     endingPromise: string;
     thematicCore: string;
+    authorIntent: string;
+    currentFocus: string;
     storyArchitecture: string[];
     categoryLane: string;
     marketHook: string;
@@ -146,9 +148,21 @@ export type BookDraftAudit = {
   acceptedJobs: number;
   pendingJobs: number;
   uncoveredSceneCount: number;
+  propagationDebtCount: number;
   continuityBlockers: string[];
   qualityWarnings: string[];
   marketWarnings: string[];
+  reviewQueue: BookReviewQueueItem[];
+};
+
+export type BookReviewQueueItem = {
+  id: string;
+  kind: "continuity" | "quality" | "market" | "propagation";
+  severity: "blocker" | "warning";
+  sceneId: string | null;
+  sceneTitle: string | null;
+  message: string;
+  source: string;
 };
 
 export type AmazonLaunchPackage = {
@@ -307,6 +321,8 @@ export function buildSceneContextPacket(
       readerPromise: syncedStory.book.masterBrief.readerPromise,
       endingPromise: syncedStory.book.masterBrief.endingPromise,
       thematicCore: syncedStory.book.masterBrief.thematicCore,
+      authorIntent: syncedStory.book.masterBrief.authorIntent,
+      currentFocus: syncedStory.book.masterBrief.currentFocus,
       storyArchitecture: syncedStory.book.masterBrief.storyArchitecture,
       categoryLane: syncedStory.book.marketBrief.categoryLane,
       marketHook: syncedStory.book.marketBrief.hook,
@@ -1406,6 +1422,7 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
   const continuityBlockers: string[] = [];
   const qualityWarnings: string[] = [];
   const marketWarnings: string[] = [];
+  const propagationDebt = auditPropagationDebt(story);
 
   const uncoveredSceneCount = scenes.filter(function (scene) {
     return !jobs.some(function (job) {
@@ -1440,6 +1457,10 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
       `${pendingMemorySyncCount} Memory-Sync-Extract(s) sind noch nicht bestaetigt.`
     );
   }
+
+  propagationDebt.forEach(function (warning) {
+    qualityWarnings.push(warning);
+  });
 
   auditSceneRhythm(story).forEach(function (warning) {
     qualityWarnings.push(warning);
@@ -1481,14 +1502,165 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
     }
   });
 
+  const dedupedContinuityBlockers = dedupeStrings(continuityBlockers);
+  const dedupedQualityWarnings = dedupeStrings(qualityWarnings);
+  const dedupedMarketWarnings = dedupeStrings(marketWarnings);
+
   return {
     acceptedJobs: acceptedJobs.length,
     pendingJobs,
     uncoveredSceneCount,
-    continuityBlockers: dedupeStrings(continuityBlockers),
-    qualityWarnings: dedupeStrings(qualityWarnings),
-    marketWarnings: dedupeStrings(marketWarnings)
+    propagationDebtCount: propagationDebt.length,
+    continuityBlockers: dedupedContinuityBlockers,
+    qualityWarnings: dedupedQualityWarnings,
+    marketWarnings: dedupedMarketWarnings,
+    reviewQueue: buildBookReviewQueue({
+      continuityBlockers: dedupedContinuityBlockers,
+      qualityWarnings: dedupedQualityWarnings,
+      marketWarnings: dedupedMarketWarnings,
+      propagationDebt
+    })
   };
+}
+
+export function auditPropagationDebt(story: StoryDocument): string[] {
+  const timeline = buildTimelineBeats(story);
+  const contextPacksBySceneId = new Map(
+    story.book.memory.contextPacks.map(function (pack) {
+      return [pack.sceneId, pack] as const;
+    })
+  );
+  const sceneById = new Map(
+    getAllScenes(story).map(function (scene) {
+      return [scene.id, scene] as const;
+    })
+  );
+  const sceneCardsBySceneId = new Map(
+    timeline.map(function (beat) {
+      return [beat.sceneId, beat] as const;
+    })
+  );
+  const warnings: string[] = [];
+
+  story.book.draftEngine.jobs.forEach(function (job) {
+    const scene = sceneById.get(job.sceneId);
+    const sceneCard = sceneCardsBySceneId.get(job.sceneId);
+    const contextPack = contextPacksBySceneId.get(job.sceneId);
+
+    if (
+      story.book.memory.lastSyncedAt &&
+      job.contextSnapshot.memorySyncedAt &&
+      story.book.memory.lastSyncedAt > job.contextSnapshot.memorySyncedAt
+    ) {
+      warnings.push(
+        `${job.sceneTitle}: Memory wurde nach diesem Job synchronisiert; Kontext-Pack vor weiterem Draft pruefen.`
+      );
+    }
+
+    if (scene && scene.summary !== job.contextSnapshot.sceneSummary) {
+      warnings.push(
+        `${job.sceneTitle}: Szenen-Summary hat sich seit dem Job geaendert; Draft kann veraltet sein.`
+      );
+    }
+
+    if (contextPack && contextPack.id !== job.contextSnapshot.contextPackId) {
+      warnings.push(
+        `${job.sceneTitle}: Aktuelles Context Pack unterscheidet sich vom Job-Snapshot.`
+      );
+    }
+
+    if (contextPack && contextPack.preparedAt > job.updatedAt) {
+      warnings.push(
+        `${job.sceneTitle}: Context Pack wurde nach dem Job vorbereitet; Draft sollte neu bewertet werden.`
+      );
+    }
+
+    if (
+      contextPack &&
+      sceneCard &&
+      contextPack.stablePrefixSignature !== buildStablePrefixSignature(story, sceneCard.chapterGoal)
+    ) {
+      warnings.push(
+        `${job.sceneTitle}: Blueprint- oder Writer-Regeln haben sich seit dem Context Pack verschoben.`
+      );
+    }
+  });
+
+  return dedupeStrings(warnings).slice(0, 12);
+}
+
+function buildBookReviewQueue(params: {
+  continuityBlockers: string[];
+  qualityWarnings: string[];
+  marketWarnings: string[];
+  propagationDebt: string[];
+}): BookReviewQueueItem[] {
+  return dedupeReviewQueueItems(
+    params.continuityBlockers.map(function (message, index) {
+      return createReviewQueueItem(message, "continuity", "blocker", `continuity_${index}`);
+    })
+      .concat(
+        params.qualityWarnings.map(function (message, index) {
+          const kind = params.propagationDebt.includes(message) ? "propagation" : "quality";
+          return createReviewQueueItem(message, kind, "warning", `${kind}_${index}`);
+        })
+      )
+      .concat(
+        params.marketWarnings.map(function (message, index) {
+          return createReviewQueueItem(message, "market", "warning", `market_${index}`);
+        })
+      )
+  ).slice(0, 24);
+}
+
+function createReviewQueueItem(
+  message: string,
+  kind: BookReviewQueueItem["kind"],
+  severity: BookReviewQueueItem["severity"],
+  fallbackId: string
+): BookReviewQueueItem {
+  const sceneSplit = splitScenePrefixedMessage(message);
+
+  return {
+    id: `${kind}_${normalizeGuardText(sceneSplit.sceneTitle || fallbackId).replace(/\s+/g, "_")}_${normalizeGuardText(sceneSplit.message).slice(0, 42).replace(/\s+/g, "_")}`,
+    kind,
+    severity,
+    sceneId: null,
+    sceneTitle: sceneSplit.sceneTitle,
+    message: sceneSplit.message,
+    source: kind === "propagation" ? "Propagation Debt" : kind === "continuity" ? "Continuity Audit" : kind === "market" ? "Market Audit" : "Quality Audit"
+  };
+}
+
+function splitScenePrefixedMessage(message: string) {
+  const separatorIndex = message.indexOf(": ");
+
+  if (separatorIndex <= 0 || separatorIndex > 90) {
+    return {
+      sceneTitle: null,
+      message
+    };
+  }
+
+  return {
+    sceneTitle: message.slice(0, separatorIndex),
+    message: message.slice(separatorIndex + 2)
+  };
+}
+
+function dedupeReviewQueueItems(items: BookReviewQueueItem[]) {
+  const seen = new Set<string>();
+
+  return items.filter(function (item) {
+    const key = `${item.kind}:${item.sceneTitle || ""}:${item.message}`;
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
 }
 
 export function auditSceneRhythm(story: StoryDocument): string[] {
@@ -1787,6 +1959,8 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
       story.id,
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
+      story.book.masterBrief.authorIntent,
+      story.book.masterBrief.currentFocus,
       story.book.masterBrief.storyArchitecture.join("|"),
       story.book.marketBrief.categoryLane,
       story.book.marketBrief.hook,

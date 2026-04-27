@@ -189,6 +189,8 @@ export type BookBlueprint = {
     readerPromise: string;
     endingPromise: string;
     thematicCore: string;
+    authorIntent: string;
+    currentFocus: string;
     storyArchitecture: string[];
   };
   marketBrief: {
@@ -928,6 +930,8 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
       readerPromise: "",
       endingPromise: "",
       thematicCore: "",
+      authorIntent: "",
+      currentFocus: "",
       storyArchitecture: DEFAULT_BOOK_STORY_ARCHITECTURE.slice()
     },
     marketBrief: {

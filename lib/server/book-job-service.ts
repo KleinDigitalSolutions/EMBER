@@ -1273,6 +1273,8 @@ function buildStablePrefixPrompt(packet: SceneContextPacket) {
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
     `Ending promise: ${packet.stablePrefix.endingPromise}`,
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
+    `Author intent: ${packet.stablePrefix.authorIntent || "not set"}`,
+    `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
     `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
     `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
     formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),

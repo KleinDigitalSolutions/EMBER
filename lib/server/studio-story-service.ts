@@ -1878,6 +1878,10 @@ function normalizeMasterBrief(
       typeof record.endingPromise === "string" ? record.endingPromise : fallback.endingPromise,
     thematicCore:
       typeof record.thematicCore === "string" ? record.thematicCore : fallback.thematicCore,
+    authorIntent:
+      typeof record.authorIntent === "string" ? record.authorIntent : fallback.authorIntent,
+    currentFocus:
+      typeof record.currentFocus === "string" ? record.currentFocus : fallback.currentFocus,
     storyArchitecture: normalizeBookRuleList(record.storyArchitecture, fallback.storyArchitecture)
   }
 }

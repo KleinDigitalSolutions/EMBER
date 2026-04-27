@@ -16,7 +16,8 @@ import {
   getDraftJobsForScene,
   updateDraftJobMemorySyncKindStatus,
   updateDraftJobMemorySyncStatus,
-  upsertDraftJob
+  upsertDraftJob,
+  type BookReviewQueueItem
 } from "@/lib/book-engine";
 import {
   BOOK_JOB_MODEL_STORAGE_KEY,
@@ -411,6 +412,28 @@ export function BookBlueprintPanel({
               />
             </label>
           </div>
+
+          <label className="editor-field" title="Langfristige Autorenabsicht: Was soll dieses Buch bleiben, auch wenn einzelne Szenen neu gedraftet werden?">
+            <span>Author Intent</span>
+            <textarea
+              className="editor-textarea"
+              value={story.book.masterBrief.authorIntent}
+              onChange={function (event) {
+                updateMasterBrief(onUpdateStory, story, "authorIntent", event.target.value);
+              }}
+            />
+          </label>
+
+          <label className="editor-field" title="Kurzfristiger Fokus fuer die naechsten 1-3 Szenen. Weiche Steuerung, kein harter Szenenbefehl.">
+            <span>Current Focus</span>
+            <textarea
+              className="editor-textarea"
+              value={story.book.masterBrief.currentFocus}
+              onChange={function (event) {
+                updateMasterBrief(onUpdateStory, story, "currentFocus", event.target.value);
+              }}
+            />
+          </label>
 
           <EditableStringListSection
             label="Architecture Guide"
@@ -849,6 +872,15 @@ export function BookBlueprintPanel({
                 className="flat-button"
                 type="button"
                 onClick={function () {
+                  exportStoryAsMarkdown(story);
+                }}
+              >
+                Manuskript Markdown
+              </button>
+              <button
+                className="flat-button"
+                type="button"
+                onClick={function () {
                   exportLaunchPackage(story, launchPackage);
                 }}
               >
@@ -1268,6 +1300,28 @@ export function BookBlueprintPanel({
             <Metric label="Pending Jobs" value={draftAudit.pendingJobs} />
             <Metric label="Uncovered Scenes" value={draftAudit.uncoveredSceneCount} />
             <Metric label="Blocker" value={draftAudit.continuityBlockers.length} />
+            <Metric label="Review Queue" value={draftAudit.reviewQueue.length} />
+            <Metric label="Propagation Debt" value={draftAudit.propagationDebtCount} />
+          </div>
+
+          <div className="book-context-stack">
+            <strong>Review Queue</strong>
+            <div className="book-mini-list">
+              {draftAudit.reviewQueue.length ? (
+                draftAudit.reviewQueue.map(function (item) {
+                  return (
+                    <article key={item.id} className="book-mini-card">
+                      <strong>{formatReviewQueueItemLabel(item)}</strong>
+                      <p>{item.sceneTitle ? `${item.sceneTitle}: ${item.message}` : item.message}</p>
+                    </article>
+                  );
+                })
+              ) : (
+                <article className="book-mini-card">
+                  <strong>Keine offenen Review-Items</strong>
+                </article>
+              )}
+            </div>
           </div>
 
           <div className="book-context-grid">
@@ -1955,7 +2009,7 @@ function EditableStringListSection({
 function updateMasterBrief(
   onUpdateStory: (updater: (story: StoryDocument) => StoryDocument) => void,
   story: StoryDocument,
-  key: "premise" | "readerPromise" | "endingPromise" | "thematicCore",
+  key: "premise" | "readerPromise" | "endingPromise" | "thematicCore" | "authorIntent" | "currentFocus",
   value: string
 ) {
   onUpdateStory(function (currentStory) {
@@ -1970,6 +2024,24 @@ function updateMasterBrief(
       }
     };
   });
+}
+
+function formatReviewQueueItemLabel(item: BookReviewQueueItem) {
+  const severity = item.severity === "blocker" ? "Blocker" : "Warnung";
+
+  if (item.kind === "continuity") {
+    return `${severity} · Continuity`;
+  }
+
+  if (item.kind === "propagation") {
+    return `${severity} · Propagation`;
+  }
+
+  if (item.kind === "market") {
+    return `${severity} · Market`;
+  }
+
+  return `${severity} · Quality`;
 }
 
 function updateMarketBrief(
@@ -2179,4 +2251,68 @@ function exportLaunchPackage(story: StoryDocument, launchPackage: ReturnType<typ
   link.click();
   link.remove();
   window.URL.revokeObjectURL(url);
+}
+
+function exportStoryAsMarkdown(story: StoryDocument) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const markdown = buildStoryMarkdownExport(story);
+  const blob = new window.Blob([markdown], { type: "text/markdown;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = window.document.createElement("a");
+
+  link.href = url;
+  link.download = `${slugifyFilename(story.title || "ember-book")}.md`;
+  window.document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+function buildStoryMarkdownExport(story: StoryDocument) {
+  const lines = [
+    `# ${story.title || "Untitled Book"}`,
+    story.authorName ? `Von ${story.authorName}` : "",
+    "",
+    "## Manuskript",
+    ""
+  ].filter(function (line, index, source) {
+    return line || source[index - 1] !== "";
+  });
+
+  story.acts.forEach(function (act) {
+    lines.push(`## ${act.title}`, "");
+
+    act.chapters.forEach(function (chapter) {
+      lines.push(`### ${chapter.title}`, "");
+
+      chapter.scenes.forEach(function (scene) {
+        const sceneText = scene.blocks
+          .map(function (block) {
+            return block.text.trim();
+          })
+          .filter(Boolean)
+          .join("\n\n");
+
+        if (sceneText) {
+          lines.push(sceneText, "");
+        }
+      });
+    });
+  });
+
+  return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trim()}\n`;
+}
+
+function slugifyFilename(value: string) {
+  const slug = value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug || "ember-book";
 }

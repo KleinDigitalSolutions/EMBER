@@ -2909,6 +2909,14 @@ function normalizeBookBlueprint(
         typeof candidate.masterBrief?.thematicCore === "string"
           ? candidate.masterBrief.thematicCore
           : fallback.masterBrief.thematicCore,
+      authorIntent:
+        typeof candidate.masterBrief?.authorIntent === "string"
+          ? candidate.masterBrief.authorIntent
+          : fallback.masterBrief.authorIntent,
+      currentFocus:
+        typeof candidate.masterBrief?.currentFocus === "string"
+          ? candidate.masterBrief.currentFocus
+          : fallback.masterBrief.currentFocus,
       storyArchitecture: normalizeBookRuleList(
         candidate.masterBrief?.storyArchitecture,
         fallback.masterBrief.storyArchitecture

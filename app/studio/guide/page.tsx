@@ -227,8 +227,8 @@ export default function StudioGuidePage() {
           <div className="grid-item">
             <span className="label">Master Brief</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Premise, Reader Promise, Ending Promise und thematischer Kern. Das ist die
-              Klammer der Story.
+              Premise, Reader Promise, Ending Promise, Author Intent, Current Focus und
+              thematischer Kern. Das ist die Klammer der Story.
             </p>
           </div>
           <div className="grid-item">
@@ -249,7 +249,7 @@ export default function StudioGuidePage() {
         <div className="highlight-box">
           <p style={{ margin: 0, fontSize: "0.95rem" }}>
             Für neue Nutzer reicht am Anfang oft schon diese Reihenfolge: erst Story-Kern,
-            dann Marktspur, dann klare Schreibregeln.
+            dann Marktspur, dann Author Intent und Current Focus, dann klare Schreibregeln.
           </p>
         </div>
       </section>
@@ -353,6 +353,13 @@ Scene Card
             automatisch und blockieren Accept nicht.
           </p>
         </div>
+        <div className="highlight-box">
+          <span className="label">Review Queue</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Die Blueprint-Review-Queue sammelt Continuity-Blocker, Quality-/Market-Warnungen
+            und Propagation Debt, wenn Jobs nach Kontextänderungen neu bewertet werden müssen.
+          </p>
+        </div>
       </section>
 
       <section>
@@ -388,6 +395,13 @@ Scene Card
             Wenn du einen übernommenen Job vor dem Speichern weiterbearbeitest, speichert EMBER
             die Differenz als Lernsignal. Aktive Beispiele beeinflussen spätere Drafts als Muster,
             ohne alte Sätze oder Plotinhalte zu kopieren.
+          </p>
+        </div>
+        <div className="highlight-box">
+          <span className="label">Export</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Im Amazon-Ops-Bereich kannst du den aktuellen Scene-Block-Stand als schlichtes
+            Markdown-Manuskript exportieren.
           </p>
         </div>
       </section>

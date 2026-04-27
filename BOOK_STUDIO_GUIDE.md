@@ -83,6 +83,12 @@ Hier definierst du den Kern der Geschichte.
 - `Thematic Core`  
   Welcher innere Konflikt oder welche Leitspannung arbeitet unter dem Plot?
 
+- `Author Intent`  
+  Was soll dieses Buch langfristig bleiben, auch wenn Szenen neu gedraftet oder umgebaut werden?
+
+- `Current Focus`  
+  Worauf sollen die nächsten 1 bis 3 Szenen wieder achten? Das ist eine weiche Steuerung, kein Ersatz für Scene Cards.
+
 - `Story Architecture`  
   Welche strukturellen Regeln gelten für das größere Ganze?
 
@@ -473,6 +479,18 @@ Besonders wichtig sind:
 - Kontinuitätswarnungen
 - unklare Besitz- oder Wissensstände
 - neue, noch nicht eingelöste offene Fäden
+- Review Queue Items aus Quality, Market und Propagation Debt
+- Propagation Debt, wenn ein Job nach Änderungen an Summary, Context Pack, Memory, Blueprint oder Writer Rules neu bewertet werden sollte
+
+## 10a. Export
+
+Im Amazon-Ops-Bereich kannst du zusätzlich zum Launch-Paket einen einfachen Markdown-Export des aktuellen Manuskripts erzeugen.
+
+Wichtig:
+
+- Der Export ist ein Arbeitsstand aus den aktuellen Scene Blocks.
+- Er ersetzt keinen KDP-EPUB- oder DOCX-Workflow.
+- Er ist bewusst schlicht, damit Manuskriptprüfung, externe Lektoratsdurchläufe oder spätere Formatierung nicht an der Studio-UI hängen.
 
 ## 11. Empfohlene Arbeitsweisen
 
