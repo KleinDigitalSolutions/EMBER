@@ -88,6 +88,22 @@ export default function StudioGuidePage() {
           margin: 2rem 0;
         }
 
+        .warning-box {
+          background: rgba(242, 161, 147, 0.08);
+          border: 1px solid rgba(242, 161, 147, 0.35);
+          padding: 1.5rem;
+          border-radius: 4px;
+          margin: 1.5rem 0;
+        }
+
+        .success-box {
+          background: rgba(163, 230, 53, 0.07);
+          border: 1px solid rgba(163, 230, 53, 0.32);
+          padding: 1.5rem;
+          border-radius: 4px;
+          margin: 1.5rem 0;
+        }
+
         .example-block {
           background: #16161a;
           border-left: 3px solid var(--accent);
@@ -154,6 +170,48 @@ export default function StudioGuidePage() {
           border-radius: 4px;
         }
 
+        .step-list {
+          counter-reset: guide-step;
+          display: grid;
+          gap: 1rem;
+          margin: 2rem 0;
+        }
+
+        .step-item {
+          counter-increment: guide-step;
+          border: 1px solid var(--line);
+          border-radius: 4px;
+          padding: 1.25rem 1.5rem 1.25rem 4rem;
+          position: relative;
+          background: var(--bg-sidebar);
+        }
+
+        .step-item::before {
+          content: counter(guide-step);
+          position: absolute;
+          left: 1.25rem;
+          top: 1.25rem;
+          width: 1.8rem;
+          height: 1.8rem;
+          border-radius: 999px;
+          display: grid;
+          place-items: center;
+          background: var(--accent);
+          color: #16161a;
+          font-weight: 800;
+          font-size: 0.8rem;
+        }
+
+        .step-item h3 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1rem;
+        }
+
+        .step-item p {
+          margin: 0;
+          font-size: 0.95rem;
+        }
+
         .rule-pos { border-top: 3px solid #a3e635; }
         .rule-neg { border-top: 3px solid #f2a193; }
 
@@ -184,247 +242,515 @@ export default function StudioGuidePage() {
       `}</style>
 
       <header>
-        <span className="kicker">Deep Dive | Book Track</span>
-        <h1>So arbeitet der Book-Bereich</h1>
+        <span className="kicker">Book Guide | Regie anlegen</span>
+        <h1>So baust du ein Book-Projekt in EMBER</h1>
         <p className="intro">
-          Der Book-Track ist kein normaler Texteditor. Du schärfst erst den Blueprint, dann
-          die Scene Cards, und erst danach startest du einen Draft-Job. Der aktuelle
-          Standardpfad ist bewusst schlank: direkter Draft, danach nur Kontrolle und
-          Übernahme.
+          EMBER schreibt nicht gut, weil du einen langen Prompt gibst. EMBER schreibt gut,
+          wenn du vorher eine klare Regie anlegst: Story-Kern, Regeln, Kanon und Scene Cards.
+          Diese Seite zeigt dir den praktischen Ablauf von der Rohidee bis zum ersten
+          testbaren Draft.
         </p>
       </header>
 
       <section>
-        <h2>1. Womit du anfängst</h2>
-        <div className="grid">
-          <div className="grid-item rule-pos">
-            <span className="label">Blueprint</span>
-            <p style={{ fontSize: "0.9rem" }}>
-              Master Brief, kurze Writer Rules und Canon geben Richtung und Grenzen vor.
-              Market Brief bleibt vor allem Verpackung, nicht Prosa-Käfig.
-            </p>
+        <h2>1. Der einfache Arbeitsplan</h2>
+        <p>
+          Denke in drei Ebenen: Blueprint ist die Strategie, Scene Cards sind die
+          Produktionsanweisung, der Writer-Job ist nur der einzelne Modelllauf. Wenn eine
+          Szene nur mit langer Director Note funktioniert, ist meistens die Scene Card noch
+          nicht sauber genug.
+        </p>
+
+        <div className="step-list">
+          <div className="step-item">
+            <h3>Story-Kern festlegen</h3>
+            <p>Schreibe Premise, Reader Promise, Ending Promise, Author Intent und Current Focus. Das ist der Rahmen, in dem jede Szene später gelesen wird.</p>
           </div>
-          <div className="grid-item rule-pos">
-            <span className="label">Scene Cards</span>
-            <p style={{ fontSize: "0.9rem" }}>
-              Szene für Szene legst du Situation, Want, Pressure, Material, Turn und
-              irreversible Veränderung fest. Die Scene Card ist Kompass, nicht Checkliste.
-            </p>
+          <div className="step-item">
+            <h3>Welt, Figuren und Kanon sammeln</h3>
+            <p>Lege Namen, Rollen, wichtige Orte, verbotene Twists, feste Fakten und echte Kontinuitätsanker fest.</p>
           </div>
-          <div className="grid-item rule-pos">
-            <span className="label">Joblauf</span>
-            <p style={{ fontSize: "0.9rem" }}>
-              Draft, Length Control, Extract, Continuity und Quality Eval laufen
-              nacheinander. Danach entscheidest du über Accept und Save.
-            </p>
+          <div className="step-item">
+            <h3>Akte und Szenen planen</h3>
+            <p>Plane nicht in Seiten, sondern in Szenen. Jede Szene braucht eine Funktion, einen Druck und eine Veränderung.</p>
+          </div>
+          <div className="step-item">
+            <h3>Scene Cards schreiben</h3>
+            <p>Für jede Szene formulierst du Situation, Want, Pressure, Material, Turn, irreversible Veränderung und Avoid.</p>
+          </div>
+          <div className="step-item">
+            <h3>Regie in die DB synchronisieren</h3>
+            <p>Nach größeren Änderungen an Regie, Scene Cards oder Runtime-Kontext muss das Book-Projekt neu synchronisiert werden, bevor du Jobs bewertest.</p>
+          </div>
+          <div className="step-item">
+            <h3>Zwei Testszenen generieren</h3>
+            <p>Teste zuerst eine objektlastige Szene und eine Beziehungs- oder Konfrontationsszene. Danach weißt du, ob die Regie trägt.</p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>2. Was im Blueprint sitzen muss</h2>
+        <h2>2. Wo du in der Plattform arbeitest</h2>
+        <p>
+          Du musst nicht alles auf einmal verstehen. Arbeite von links nach rechts: erst
+          Plan, dann Book, dann Review. Die Regie kann als Markdown-Vorlage entstehen oder
+          direkt im Studio über Blueprint, Szenen und Scene Cards aufgebaut werden.
+        </p>
+
         <div className="grid">
           <div className="grid-item">
-            <span className="label">Master Brief</span>
+            <span className="label">Plan / Blueprint</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Premise, Reader Promise, Ending Promise, Author Intent, Current Focus und
-              thematischer Kern. Das ist die Klammer der Story.
+              Hier liegen Master Brief, Market Brief, Writer Rules, Author Intent und
+              Current Focus. Das ist die strategische Regie des Buchs.
             </p>
           </div>
           <div className="grid-item">
-            <span className="label">Market Brief</span>
+            <span className="label">Book / Writer</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Hook, Category Lane und Verpackungslogik. Das hilft bei Positionierung,
-              sollte aber den einzelnen Prosa-Draft nicht dominieren.
+              Hier wählst du Szenen, bearbeitest Summary und Textblöcke, setzt eine kurze
+              Director Note und startest Draft-Jobs.
             </p>
           </div>
           <div className="grid-item">
-            <span className="label">Writer Constitution</span>
+            <span className="label">Scene Cards</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Kurze, prüfbare Regeln. Sie führen den Ton, ersetzen aber nicht die lebendige
-              Szene.
+              Sie sind die eigentliche Szenenregie. Eine Scene Card sagt, was die Szene
+              leisten muss, nicht welche Sätze geschrieben werden sollen.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Review</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Hier prüfst du Continuity, Quality Warnings, offene Fäden und Jobs, die nach
+              Kontextänderungen neu bewertet werden sollten.
             </p>
           </div>
         </div>
+
         <div className="highlight-box">
+          <span className="label">Merksatz</span>
           <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Für neue Nutzer reicht am Anfang oft schon diese Reihenfolge: erst Story-Kern,
-            dann Marktspur, dann Author Intent und Current Focus, dann klare Schreibregeln.
+            Blueprint erklärt das Buch. Scene Card erklärt die Szene. Director Note erklärt
+            nur den nächsten Lauf.
           </p>
         </div>
       </section>
 
       <section>
-        <h2>3. Was eine Scene Card wirklich steuert</h2>
+        <h2>3. Was eine Regie-Datei leisten muss</h2>
         <p>
-          Scene Cards werden als fenced Code Blocks gelesen. Die Pipeline trennt dabei harte
-          Kontinuität von weicher Szenenintention.
+          Eine Regie ist keine fertige Prosa und kein Prompt-Roman. Sie ist eine
+          Produktionsvorlage. Gute Regie übersetzt abstrakte Ideen in konkrete
+          Entscheidungen, sichtbaren Druck, Material und Folgen.
+        </p>
+
+        <div className="grid">
+          <div className="grid-item rule-pos">
+            <span className="label">Gute Regie</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Beschreibt, was in der Szene auf dem Spiel steht, was kippt und welche Folge
+              nicht zurückgedreht werden kann.
+            </p>
+          </div>
+          <div className="grid-item rule-neg">
+            <span className="label">Schwache Regie</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Diktiert einzelne Sätze, sammelt Symbolobjekte oder sagt nur „spannender,
+              emotionaler, literarischer“.
+            </p>
+          </div>
+        </div>
+
+        <div className="highlight-box">
+          <span className="label">Minimalstruktur</span>
+          <div className="example-block">
+{`# Regie: Arbeitstitel
+
+## Core
+Premise:
+Reader Promise:
+Ending Promise:
+Thematic Core:
+Author Intent:
+Current Focus:
+
+## World / Pressure System
+Welche Institutionen, Routinen, Orte oder sozialen Regeln erzeugen Druck?
+
+## Characters
+Name:
+Rolle:
+Want:
+Wunde / Angst:
+Grenze:
+
+## Canon Facts
+- Fakt, der nicht driften darf.
+- Verbotener Twist.
+- Fester Name, Ort oder Beziehungsstatus.
+
+## Open Threads
+- Frage, die über mehrere Szenen offen bleibt.
+- Setup, das später bezahlt werden muss.
+
+## Act Map
+Akt 1:
+Akt 2:
+Akt 3:
+
+## Scene Cards
+\`\`\`
+Scene Card
+  id:
+  title:
+  pov:
+  where_when:
+  situation:
+  want:
+  pressure:
+  material:
+  turn:
+  irreversible_change:
+  thread:
+  avoid:
+  aftertaste:
+  ending_type:
+\`\`\``}</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. Blueprint ausfüllen</h2>
+        <p>
+          Der Blueprint gibt jeder Szene Richtung. Er sollte kurz genug sein, dass du ihn
+          beim Lesen behalten kannst, aber konkret genug, dass ein Modell nicht in
+          allgemeine Atmosphäre ausweicht.
         </p>
 
         <table>
           <thead>
             <tr>
               <th>Feld</th>
-              <th>Wirkung</th>
+              <th>Was du hineinschreibst</th>
+              <th>Beispiel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span className="code">Premise</span></td>
+              <td>Die harte Ausgangslage des Buchs in einem Satz.</td>
+              <td>Eine Mutter muss beweisen, dass die dokumentierte Abholung ihres Kindes falsch ist, obwohl alle Systeme das Gegenteil zeigen.</td>
+            </tr>
+            <tr>
+              <td><span className="code">Reader Promise</span></td>
+              <td>Welche Erfahrung der Leser bekommt.</td>
+              <td>Psychologischer Druck, Alltagsparanoia, jede neue Information macht die Lage enger.</td>
+            </tr>
+            <tr>
+              <td><span className="code">Ending Promise</span></td>
+              <td>Was am Ende bezahlt werden muss.</td>
+              <td>Die Wahrheit über die Abholung erklärt nicht nur den Fall, sondern auch, wem Eva nie hätte vertrauen dürfen.</td>
+            </tr>
+            <tr>
+              <td><span className="code">Author Intent</span></td>
+              <td>Die langfristige Absicht des Buchs.</td>
+              <td>Ein Thriller über Kontrolle, institutionelle Kälte und den Moment, in dem Beweise gegen die eigene Erinnerung arbeiten.</td>
+            </tr>
+            <tr>
+              <td><span className="code">Current Focus</span></td>
+              <td>Worauf die nächsten 1 bis 3 Szenen besonders achten sollen.</td>
+              <td>Material natürlich einbauen, Dialog weniger funktional, Mila als Kind sichtbar halten.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="warning-box">
+          <span className="label">Nicht so</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            „Es geht um Schuld, Wahrheit und dunkle Geheimnisse.“ Das klingt nach Thema,
+            steuert aber keine Szene. Besser: Wer will was, wer verhindert es, welcher
+            Beweis oder soziale Druck macht die Lage enger?
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5. Scene Cards richtig schreiben</h2>
+        <p>
+          Die Scene Card ist die wichtigste operative Einheit. Sie soll nicht die fertige
+          Szene vorformulieren. Sie soll dem Modell sagen, welche lebendige Situation es
+          schreiben muss.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Feld</th>
+              <th>Bedeutung</th>
+              <th>Merksatz</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><span className="code">pov</span></td>
-              <td>Harte Perspektive der Szene.</td>
+              <td>Harte Perspektive.</td>
+              <td>Wer darf wahrnehmen?</td>
             </tr>
             <tr>
-              <td><span className="code">location</span> / <span className="code">ort</span>, <span className="code">timeAnchor</span> / <span className="code">uhrzeit</span></td>
-              <td>Ort und Zeitanker für den Job-Kontext.</td>
+              <td><span className="code">where_when</span></td>
+              <td>Ort und Zeit, wenn sie wichtig sind.</td>
+              <td>Wo findet der Druck statt?</td>
             </tr>
             <tr>
-              <td><span className="code">situation</span>, <span className="code">want</span>, <span className="code">pressure</span>, <span className="code">material</span>, <span className="code">turn</span>, <span className="code">irreversible_change</span>, <span className="code">avoid</span></td>
-              <td>Scene Intention. Wichtig, aber nicht als Satzdiktat oder Objekt-Checkliste zu lesen.</td>
+              <td><span className="code">situation</span></td>
+              <td>Was ist schon falsch, wenn die Szene beginnt?</td>
+              <td>Kein neutraler Start.</td>
             </tr>
             <tr>
-              <td><span className="code">proof_object</span> / <span className="code">beweisobjekt</span>, <span className="code">alltagswaffe</span>, <span className="code">ersetzungsmoment</span>, <span className="code">kindmoment</span> / <span className="code">mila_kindmoment</span></td>
-              <td>Weiches Material- und Drucksignal. Opus darf organisch lösen, solange die Funktion erfüllt wird.</td>
+              <td><span className="code">want</span></td>
+              <td>Was die POV-Figur jetzt konkret will.</td>
+              <td>Kein allgemeines Lebensziel.</td>
             </tr>
             <tr>
-              <td><span className="code">object_anchor</span>, <span className="code">prop_anchor</span>, <span className="code">locked_object</span></td>
-              <td>Harte Kontinuitätsanker für Farbe, Funktion, Besitzlogik und Drift-Schutz.</td>
+              <td><span className="code">pressure</span></td>
+              <td>Wer oder was macht das Want schwerer?</td>
+              <td>Person, Routine, Dokument, Zeitdruck, Institution.</td>
             </tr>
             <tr>
-              <td><span className="code">ending_type</span>, <span className="code">false_friend_signal</span>, <span className="code">*_moment</span>, <span className="code">*_plant</span>, <span className="code">*_payoff</span>, <span className="code">subtext</span></td>
-              <td>Zusätzliche Regiesignale. <span className="code">ending_type</span> hilft, monotone Kapitelenden zu erkennen.</td>
+              <td><span className="code">material</span></td>
+              <td>1 bis 3 konkrete Dinge, die natürlich in die Szene gehören.</td>
+              <td>Textur, keine Checkliste.</td>
             </tr>
             <tr>
-              <td><span className="code">reversal</span> und ähnliche Regiehinweise</td>
-              <td>Hilfreich für Dramaturgie, aber nicht der harte Parser-Kern.</td>
+              <td><span className="code">turn</span></td>
+              <td>Was kippt in Wissen, Zugriff, Beziehung oder Selbstbild?</td>
+              <td>Handlung allein ist noch keine Wendung.</td>
+            </tr>
+            <tr>
+              <td><span className="code">irreversible_change</span></td>
+              <td>Was kann danach nicht mehr so sein wie vorher?</td>
+              <td>Das wichtigste Feld.</td>
+            </tr>
+            <tr>
+              <td><span className="code">avoid</span></td>
+              <td>Welche Fehlfassung soll der Draft vermeiden?</td>
+              <td>Verbiete Muster, nicht Leben.</td>
+            </tr>
+            <tr>
+              <td><span className="code">aftertaste</span></td>
+              <td>Was bleibt spürbar?</td>
+              <td>Kein Pflicht-Schlusssatz.</td>
             </tr>
           </tbody>
         </table>
 
-        <div className="highlight-box">
-          <span className="label">Beispiel</span>
+        <div className="success-box">
+          <span className="label">Gute Scene Card</span>
           <div className="example-block">
-Scene Card
-  id: SC_1_2
-  pov: EVA
-  where_when: Kita Sonnengarten, später Nachmittag.
-  situation: Eva kommt wegen des falschen App-Eintrags in die Kita.
-  want: Eva will den Vorgang korrigieren, ohne instabil zu wirken.
-  pressure: Die Dokumentation der Kita ist ruhiger als ihre Erinnerung.
-  material: Videoausschnitt, Unterschrift, gelber Becher.
-  turn: Aus dem vermuteten App-Fehler wird ein real protokollierter Abholvorgang.
-  irreversible_change: Eva kann die Abholung nicht mehr als reinen Systemfehler behandeln.
-  avoid: Kein Technikmonolog, keine hysterische Eskalation.</div>
+{`Scene Card
+  id: scene13
+  title: Die Tasche
+  pov: Eva
+  where_when: Kita-Flur, 16:20.
+  situation: Eva bekommt Milas Tasche zurück, aber die Tasche wirkt nicht wie morgens gepackt.
+  want: Eva will herausfinden, wer an Milas Sachen war, ohne vor der Erzieherin die Kontrolle zu verlieren.
+  pressure: Die Erzieherin bleibt freundlich, aber behandelt jede Nachfrage als nervöse Mutterreaktion.
+  material: Tasche, Notizzettel, Brotdosen-Reserve.
+  turn: Aus einer vergessenen Tasche wird ein Hinweis, dass jemand Milas Routine kannte.
+  irreversible_change: Eva kann nicht mehr glauben, dass der Fehler nur in der App passiert ist.
+  thread: Wer kennt Milas Kita-Routine gut genug?
+  avoid: Keine Objektliste, kein Beweis-Monolog, kein hysterischer Ausbruch.
+  aftertaste: Der freundlichste Satz der Erzieherin klingt nach Abstand.
+  ending_type: Object Intrusion`}</div>
+        </div>
+
+        <div className="warning-box">
+          <span className="label">Schwache Scene Card</span>
+          <div className="example-block">
+{`Scene Card
+  title: Die Tasche
+  summary: Eva findet komische Dinge und merkt, dass alles schlimmer ist.
+  material: Tasche, Notizzettel, Brotdose, Jacke, Becher, Formular, Foto, App, Schlüssel.
+  ending: Eva versteht, dass sie niemandem mehr trauen kann.`}</div>
+          <p style={{ margin: "1rem 0 0 0", fontSize: "0.95rem" }}>
+            Das ist zu abstrakt und gleichzeitig zu voll. Es erklärt das Ergebnis, aber
+            gibt keine lebendige Situation, kein Want, keinen Druck und keine präzise
+            irreversible Veränderung.
+          </p>
         </div>
       </section>
 
       <section>
-        <h2>4. Wie ein Job läuft</h2>
+        <h2>6. Hart, weich und Audit</h2>
+        <p>
+          Diese Unterscheidung ist zentral. Harte Felder schützen Kanon. Weiche Felder
+          führen Absicht. Audit-Felder helfen beim Prüfen, sollen aber nicht als
+          Schreibauftrag im Prosa-Prompt landen.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Art</th>
+              <th>Felder</th>
+              <th>Wie du sie benutzt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hart</td>
+              <td><span className="code">pov</span>, <span className="code">location</span>, <span className="code">timeAnchor</span>, Locked Facts, Kanon-Namen</td>
+              <td>Nur setzen, wenn Drift wirklich falsch wäre.</td>
+            </tr>
+            <tr>
+              <td>Harte Objektanker</td>
+              <td><span className="code">object_anchor</span>, <span className="code">prop_anchor</span>, <span className="code">locked_object</span>, <span className="code">locked_material</span></td>
+              <td>Für Farbe, Besitz, Funktion oder Kontinuität. Nicht für „wäre schön, wenn es vorkommt“.</td>
+            </tr>
+            <tr>
+              <td>Weich</td>
+              <td><span className="code">situation</span>, <span className="code">want</span>, <span className="code">pressure</span>, <span className="code">material</span>, <span className="code">turn</span>, <span className="code">aftertaste</span></td>
+              <td>Das Modell darf organisch lösen, solange die Szenenfunktion stimmt.</td>
+            </tr>
+            <tr>
+              <td>Legacy weich</td>
+              <td><span className="code">proof_object</span>, <span className="code">alltagswaffe</span>, <span className="code">kindmoment</span>, <span className="code">closingLine</span></td>
+              <td>Material oder Orientierung, kein Pflichtsatz und keine Objektpflicht.</td>
+            </tr>
+            <tr>
+              <td>Audit</td>
+              <td><span className="code">ending_type</span></td>
+              <td>Für Rhythmusprüfung. Nicht als Prosa-Auftrag.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div className="warning-box">
+          <span className="label">Wichtig</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            <span className="code">required_material</span> ist kein Runtime-Key mehr.
+            Alte Regie kann beim Import nur dann auf <span className="code">locked_material</span>
+            gemappt werden, wenn dieses Material echte Kontinuität schützt.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>7. Director Note verwenden</h2>
+        <p>
+          Die Director Note ist kein Ersatz für Regie. Sie ist eine kurze Justierung für
+          genau diesen einen Lauf.
+        </p>
+
         <div className="grid">
-          <div className="grid-item">
-            <span className="label">Ablauf</span>
-            <ol style={{ fontSize: "0.9rem", paddingLeft: "1.2rem" }}>
-              <li>Context</li>
-              <li>Draft</li>
-              <li>Length Control</li>
-              <li>Extract</li>
-              <li>Continuity</li>
-              <li>Quality Eval</li>
-            </ol>
-          </div>
-          <div className="grid-item">
-            <span className="label">Provider</span>
+          <div className="grid-item rule-pos">
+            <span className="label">Gut</span>
             <p style={{ fontSize: "0.9rem" }}>
-              In der UI wählst du nur <strong>Auto</strong>, <strong>OpenAI</strong> oder
-              <strong> Anthropic</strong>. Wenn ein Key fehlt, läuft der Job im
-              <span className="code">local_fallback</span> weiter.
+              „Dialog weniger erklärend. Die Tasche soll in Handlung auftauchen, nicht als
+              Beweis benannt werden. Ende leiser.“
+            </p>
+          </div>
+          <div className="grid-item rule-neg">
+            <span className="label">Schlecht</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              „Schreib die Szene viel spannender, emotionaler, mit mehr Stil und dem Satz:
+              Jetzt wusste Eva alles.“
             </p>
           </div>
         </div>
+
         <div className="highlight-box">
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            <strong>remote</strong> bedeutet: echter Modelllauf. <strong>local_fallback</strong>
-            bedeutet: Sicherheitsnetz, nicht Qualitätsurteil.
-          </p>
-        </div>
-        <div className="highlight-box">
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Der Remote-Pfad ist bewusst schlank: Beat-Plan und Rewrite bleiben als Stage-Namen
-            sichtbar, werden aber normalerweise übersprungen. Der Draft kommt direkt aus Scene
-            Contract, Kontext und Director Note; Length Control greift nur bei starken Ausreißern.
-          </p>
-        </div>
-        <div className="highlight-box">
-          <span className="label">Quality Warnings</span>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Smoothness, abstrakte Deutungswörter, zu perfekte Druckfiguren und wiederholte
-            {" "}<span className="code">ending_type</span>-Muster sind Warnungen. Sie ändern keine Prosa
-            automatisch und blockieren Accept nicht.
-          </p>
-        </div>
-        <div className="highlight-box">
-          <span className="label">Review Queue</span>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Die Blueprint-Review-Queue sammelt Continuity-Blocker, Quality-/Market-Warnungen
-            und Propagation Debt, wenn Jobs nach Kontextänderungen neu bewertet werden müssen.
-          </p>
+          <span className="label">Copy-Paste Muster</span>
+          <div className="example-block">
+{`Fokus für diesen Lauf:
+- Material als Szenentextur, nicht als Beweisliste.
+- Dialog mit Subtext: Figuren wollen etwas, sagen aber nicht alles direkt.
+- Irreversible Veränderung klar halten.
+- Kein erklärender Schlussabsatz.`}</div>
         </div>
       </section>
 
       <section>
-        <h2>5. Generate, Accept, Save</h2>
+        <h2>8. Ersten Testlauf machen</h2>
         <p>
-          Erst wird generiert, dann geprüft, dann übernommen. Nur so landet der Text sauber
-          in Szene und Datenbank.
+          Nach größeren Regie-Änderungen nicht sofort zehn Szenen generieren. Teste zwei
+          Gegensätze. So siehst du schneller, ob die Regie Freiheit erzeugt oder wieder
+          mechanisch wird.
         </p>
 
         <div className="grid">
           <div className="grid-item">
-            <span className="label">1. Generate</span>
+            <span className="label">Test A: Objektlastige Szene</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Startet den Job und legt den Szenentext plus Notes an.
+              Tasche, Jacke, Formular, Becher oder App-Eintrag. Prüfe, ob Material natürlich
+              in Handlung und Dialog auftaucht statt als Liste.
             </p>
           </div>
           <div className="grid-item">
-            <span className="label">2. Accept</span>
+            <span className="label">Test B: Beziehungsszene</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Schreibt den finalen Job-Text in die Szene.
-            </p>
-          </div>
-          <div className="grid-item">
-            <span className="label">3. Save</span>
-            <p style={{ fontSize: "0.9rem" }}>
-              Erst danach ist der Stand in Supabase stabil und nicht nur ein lokaler Draft.
+              Mutter/Kind, Partner, Ermittler, Institution. Prüfe, ob Figuren eigene Ziele
+              haben und der Dialog weniger funktional klingt.
             </p>
           </div>
         </div>
+
         <div className="highlight-box">
-          <span className="label">Human Edit Memory</span>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Wenn du einen übernommenen Job vor dem Speichern weiterbearbeitest, speichert EMBER
-            die Differenz als Lernsignal. Aktive Beispiele beeinflussen spätere Drafts als Muster,
-            ohne alte Sätze oder Plotinhalte zu kopieren.
-          </p>
-        </div>
-        <div className="highlight-box">
-          <span className="label">Export</span>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>
-            Im Amazon-Ops-Bereich kannst du den aktuellen Scene-Block-Stand als schlichtes
-            Markdown-Manuskript exportieren.
-          </p>
+          <span className="label">Prüffragen</span>
+          <ol style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.95rem" }}>
+            <li>Klingt die Szene weniger nach abgearbeiteter Regie?</li>
+            <li>Bleibt die irreversible Veränderung klar?</li>
+            <li>Wird Material als Textur benutzt, nicht als Checkliste?</li>
+            <li>Driftet nichts bei Ort, POV, Zeit, Namen oder Locked Facts?</li>
+            <li>Wird der Dialog freier und weniger funktional?</li>
+          </ol>
         </div>
       </section>
 
       <section>
-        <h2>6. Erster Lauf für neue Nutzer</h2>
+        <h2>9. Generate, Accept, Save</h2>
+        <p>
+          Der Joblauf erzeugt erst einen Vorschlag. Du entscheidest danach, ob dieser Text
+          in die Szene gehört.
+        </p>
+
+        <div className="grid">
+          <div className="grid-item">
+            <span className="label">Generate</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Startet den Draft mit Scene Intention, Kontext, Human Edit Memory und kurzer
+              Director Note.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Review</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Lies Continuity und Quality Warnings. Warnungen sind Hinweise, keine
+              automatischen Rewrite-Befehle.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Accept</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Übernimmt den Job-Text in die Szene. Danach kannst du menschlich editieren.
+            </p>
+          </div>
+          <div className="grid-item">
+            <span className="label">Save</span>
+            <p style={{ fontSize: "0.9rem" }}>
+              Speichert den Stand in Supabase. Erst dann ist der Projektstand stabil.
+            </p>
+          </div>
+        </div>
+
         <div className="highlight-box">
-          <ol style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.95rem" }}>
-            <li>`npm run dev` starten.</li>
-            <li>`/studio` öffnen und eine Szene mit klarer Summary wählen.</li>
-            <li>Provider auf `OpenAI` oder `Anthropic` setzen.</li>
-            <li>Wortziel auf einen normalen Bereich setzen, nicht zu hoch.</li>
-            <li>Eine kurze operative Director Note schreiben.</li>
-            <li>Job starten, Ergebnis lesen, dann Accept und Save prüfen.</li>
-          </ol>
+          <span className="label">Provider</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            In der UI nutzt du <strong>Auto</strong>, <strong>OpenAI</strong> oder
+            <strong> Anthropic</strong>. <span className="code">local_fallback</span> ist ein
+            Sicherheitsweg, kein Qualitätsurteil über die Regie.
+          </p>
         </div>
       </section>
 

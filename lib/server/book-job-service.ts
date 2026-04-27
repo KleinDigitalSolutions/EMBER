@@ -1334,20 +1334,20 @@ function buildCoreSystemPrompt() {
 
 function buildProseStyleBrakePrompt() {
   return [
-    "EMBER prose preferences:",
-    "Prefer concrete pressure over abstract interpretation.",
-    "Let images, actions, silence, bodies, and practical consequences carry meaning before explaining it.",
-    "Treat material details as lived scene texture. Do not label them as proof, evidence, symbol, clue, or meaning unless a character would naturally say so.",
-    "Use smooth interpretive hinge phrases sparingly in German prose, especially: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\", and \"nicht X, sondern Y\".",
-    "Use direct emotion nouns sparingly after action. Prefer action, physical adjustment, object, changed behavior.",
-    "Pressure figures can be competent, but they should not feel perfectly timed or all-knowing by default. A small wrong tone, overreach, late reaction, visible cost, or incomplete access often makes them more alive.",
-    "Before/after preference:",
-    "Bad: Sie verstand, dass Nora längst näher war, als sie gedacht hatte.",
-    "Better: Auf dem Etikett stand M. Berger. Die Schrift war nicht ihre.",
-    "Bad: Das war der Beweis, dass jemand in der Wohnung gewesen war.",
-    "Better: Der Knoten lag rechts über links. Eva band links über rechts.",
-    "Bad: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
-    "Better: Sie legte den Schlüssel auf den Tisch. Er blieb nicht liegen. Sie nahm ihn wieder in die Hand."
+    "EMBER-Prosa-Praeferenzen:",
+    "Bevorzuge konkreten Druck vor abstrakter Deutung.",
+    "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen, bevor du sie erklaerst.",
+    "Materialdetails sind Szenentextur, keine automatisch zu benennenden Beweise. Nenne sie nur Beweis, Symbol, Spur oder Bedeutung, wenn eine Figur das natuerlich sagen wuerde.",
+    "Verwende glatte interpretierende Gelenksaetze in deutscher Prosa sparsam, besonders: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\" und \"nicht X, sondern Y\".",
+    "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
+    "Druckfiguren duerfen kompetent sein, aber nicht standardmaessig perfekt getaktet oder allwissend wirken. Ein falscher Ton, Uebergriff, eine verspaetete Reaktion, sichtbare Kosten oder unvollstaendiger Zugriff machen sie oft lebendiger.",
+    "Vorher/nachher-Praeferenz:",
+    "Schwach: Sie verstand, dass Nora längst näher war, als sie gedacht hatte.",
+    "Staerker: Auf dem Etikett stand M. Berger. Die Schrift war nicht ihre.",
+    "Schwach: Das war der Beweis, dass jemand in der Wohnung gewesen war.",
+    "Staerker: Der Knoten lag rechts über links. Eva band links über rechts.",
+    "Schwach: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
+    "Staerker: Sie legte den Schlüssel auf den Tisch. Er blieb nicht liegen. Sie nahm ihn wieder in die Hand."
   ].join("\n");
 }
 
@@ -1697,6 +1697,7 @@ function buildSceneIntentionPrompt(packet: SceneContextPacket) {
     "Scene intention:",
     "Use soft guidance as intention, not as a checklist. Do not mechanically include every listed object, phrase, or beat.",
     "Preserve the scene's irreversible change; find the most natural path there.",
+    "Aftertaste is not a required closing sentence.",
     `Situation: ${intention.situation}`,
     `Want: ${intention.want}`,
     `Pressure: ${intention.pressure}`,

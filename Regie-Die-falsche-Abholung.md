@@ -63,9 +63,9 @@ Der aktuelle Draft-Prompt liest keinen Beat-Plan und keinen alten Scene Contract
 | `want` | `want`, `objective` | Was will die POV-Figur jetzt konkret? |
 | `pressure` | `pressure`, `szenenantrieb`, `alltagswaffe`, Beziehungsdruck | Wer oder was macht das Wollen schwer? |
 | `concreteMaterial` | `material`, `proof_object`, `kindmoment`, `alltagswaffe` | 1-3 konkrete Dinge, nicht eine Objekt-Checkliste. |
-| `intendedTurn` | `turn`, `dramaticBeat`, `reversal`, `coreAction` | Was kippt in Wissen, Zugriff, Beziehung oder Selbstbild? |
+| `intendedTurn` | `turn`, `dramaticBeat`, `reversal`, `konkrete_folge`, `status_shift` | Was kippt in Wissen, Zugriff, Beziehung oder Selbstbild? `coreAction` beschreibt Handlung, nicht automatisch Wendung. |
 | `irreversibleChange` | `irreversible_change`, `konkrete_folge`, `cost`, `status_shift` | Was kann danach nicht mehr so sein wie vorher? |
-| `aftertaste` | `aftertaste`, `ending`, `closingLine` | Was bleibt spürbar, ohne es als These zu erklären? |
+| `aftertaste` | `aftertaste`, `ending` | Was bleibt spürbar, ohne es als These zu erklären? `closingLine` ist hoechstens optionales Schlussbild, kein Satzdiktat. |
 | `avoid` | `avoid`, `bad_version_risk`, `revision_focus` | Welche Fehlfassung soll die Szene vermeiden? |
 
 Agent-Regel: Wenn Rohnotizen nur "es wird spannend" oder "sie fühlt sich bedroht" sagen, muss der Agent daraus Situation, Want, Pressure, Material, Turn, irreversible Veränderung und Avoid machen. Ohne diese Übersetzung entsteht schwacher Output.

@@ -43,6 +43,45 @@ const HARD_CUSTOM_DIRECTIVE_KEYS = new Set([
   "object_anchor",
   "prop_anchor",
   "locked_object",
+  "locked_material"
+]);
+
+const MAPPED_SOFT_GUIDANCE_KEYS = new Set([
+  "situation",
+  "where_when",
+  "want",
+  "protagonist_wants",
+  "pressure",
+  "szenenantrieb",
+  "beziehungsdruck",
+  "material",
+  "concrete_material",
+  "material_anchor",
+  "proof_object",
+  "beweisobjekt",
+  "kindmoment",
+  "mila_kindmoment",
+  "alltagswaffe",
+  "turn",
+  "reversal",
+  "dramatic_beat",
+  "dramaticbeat",
+  "beat",
+  "irreversible_change",
+  "irreversiblechange",
+  "konkrete_folge",
+  "cost",
+  "status_shift",
+  "thread",
+  "main_question",
+  "information_gap",
+  "avoid",
+  "bad_version_risk",
+  "revision_focus",
+  "aftertaste",
+  "closing_line",
+  "closingline",
+  "letzter_satz",
   "required_material"
 ]);
 
@@ -2329,7 +2368,7 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
   addSoftGuidance(guidance, "Situation", readCustomDirectiveValue(custom, ["situation", "where_when"]) || directives.opening || sceneCard.summary);
   addSoftGuidance(guidance, "Want", readCustomDirectiveValue(custom, ["want", "protagonist_wants"]) || directives.objective);
   addSoftGuidance(guidance, "Pressure", readCustomDirectiveValue(custom, ["pressure", "szenenantrieb", "beziehungsdruck"]) || readCustomDirectiveValue(custom, ["alltagswaffe"]));
-  addSoftGuidance(guidance, "Concrete material", readCustomDirectiveValue(custom, [
+  addSoftGuidance(guidance, "Concrete material", limitConcreteMaterialGuidance(readCustomDirectiveValue(custom, [
     "material",
     "concrete_material",
     "material_anchor",
@@ -2338,8 +2377,14 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
     "kindmoment",
     "mila_kindmoment",
     "alltagswaffe"
-  ]));
-  addSoftGuidance(guidance, "Intended turn", readCustomDirectiveValue(custom, ["turn", "reversal"]) || directives.dramaticBeat || directives.coreAction);
+  ])));
+  addSoftGuidance(
+    guidance,
+    "Intended turn",
+    readCustomDirectiveValue(custom, ["turn", "reversal", "dramatic_beat", "dramaticbeat", "beat"]) ||
+      directives.dramaticBeat ||
+      readCustomDirectiveValue(custom, ["konkrete_folge", "status_shift", "cost"])
+  );
   addSoftGuidance(guidance, "Irreversible change", readCustomDirectiveValue(custom, [
     "irreversible_change",
     "irreversiblechange",
@@ -2349,20 +2394,17 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
   ]));
   addSoftGuidance(guidance, "Thread", readCustomDirectiveValue(custom, ["thread", "main_question", "information_gap"]));
   addSoftGuidance(guidance, "Avoid", readCustomDirectiveValue(custom, ["avoid", "bad_version_risk", "revision_focus"]));
-  addSoftGuidance(guidance, "Aftertaste", readCustomDirectiveValue(custom, ["aftertaste"]) || directives.ending || directives.closingLine);
+  addSoftGuidance(guidance, "Aftertaste", readCustomDirectiveValue(custom, ["aftertaste"]) || directives.ending);
 
   custom.forEach(function (entry) {
     const normalizedKey = normalizeDirectiveKey(entry.key);
 
     if (
       HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey) ||
-      isMappedSoftGuidanceKey(normalizedKey)
+      isMappedSoftGuidanceKey(normalizedKey) ||
+      normalizedKey === "ending_type" ||
+      normalizedKey === "endingtype"
     ) {
-      return;
-    }
-
-    if (normalizedKey === "ending_type" || normalizedKey === "endingtype") {
-      addSoftGuidance(guidance, "Ending rhythm metadata", entry.value);
       return;
     }
 
@@ -2380,38 +2422,29 @@ function addSoftGuidance(guidance: string[], label: string, value: string | null
   }
 }
 
+function limitConcreteMaterialGuidance(value: string | null | undefined) {
+  const trimmed = value?.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  const parts = trimmed
+    .split(/\s*(?:,|;|\|)\s*/u)
+    .map(function (part) {
+      return part.trim();
+    })
+    .filter(Boolean);
+
+  if (parts.length <= 3) {
+    return trimmed;
+  }
+
+  return parts.slice(0, 3).join(", ");
+}
+
 function isMappedSoftGuidanceKey(normalizedKey: string) {
-  return new Set([
-    "situation",
-    "where_when",
-    "want",
-    "protagonist_wants",
-    "pressure",
-    "szenenantrieb",
-    "beziehungsdruck",
-    "material",
-    "concrete_material",
-    "material_anchor",
-    "proof_object",
-    "beweisobjekt",
-    "kindmoment",
-    "mila_kindmoment",
-    "alltagswaffe",
-    "turn",
-    "reversal",
-    "irreversible_change",
-    "irreversiblechange",
-    "konkrete_folge",
-    "cost",
-    "status_shift",
-    "thread",
-    "main_question",
-    "information_gap",
-    "avoid",
-    "bad_version_risk",
-    "revision_focus",
-    "aftertaste"
-  ]).has(normalizedKey);
+  return MAPPED_SOFT_GUIDANCE_KEYS.has(normalizedKey);
 }
 
 function formatHardCustomDirective(normalizedKey: string, value: string) {
@@ -2423,7 +2456,11 @@ function formatHardCustomDirective(normalizedKey: string, value: string) {
     return `Locked Object: ${value}. Dieses Objekt darf in Farbe, Funktion und Besitzlogik nicht driften.`;
   }
 
-  return `Required Material: ${value}. Dieses konkrete Material ist als Kontinuitaetsanker verbindlich.`;
+  if (normalizedKey === "locked_material") {
+    return `Locked Material: ${value}. Dieses konkrete Material ist nur als Kontinuitaetsanker verbindlich. Nicht als Objektliste ausspielen.`;
+  }
+
+  return `Hard Custom Anchor: ${value}. Als Kontinuitaetsanker behandeln, nicht als Stilauftrag.`;
 }
 
 function buildSceneCharacterNameHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {

@@ -169,10 +169,11 @@ Die Summary ist der wichtigste direkte Arbeitsanker für die KI.
 Zusätzlich wichtig seit dem aktuellen Regie-Sync:
 
 - `book_scene_cards` tragen nicht mehr nur freie `outline`-Zeilen, sondern auch strukturierte Szenenintention
-- hart sind nur `pov`, `location`, `timeAnchor`, Locked Facts, Canon-Namen und explizite Kontinuitaetsanker wie `object_anchor`, `prop_anchor` oder `locked_object`
+- hart sind nur `pov`, `location`, `timeAnchor`, Locked Facts, Canon-Namen und explizite Kontinuitaetsanker wie `object_anchor`, `prop_anchor`, `locked_object` oder bevorzugt `locked_material`
 - weich, aber wichtig, sind `situation`, `want`, `pressure`, `material`, `turn`, `irreversible_change`, `thread`, `avoid`, `aftertaste` sowie alte Felder wie `objective`, `coreAction`, `proof_object`, `false_friend_signal`, `dramaticBeat`, `ending` und `closingLine`
 - `ending_type` ist wichtig für den Kapitelrhythmus: nicht jede Szene darf mit demselben Proof-, Objekt- oder Schockmechanismus schließen
 - `proof_object` ist heute eher `material`: ein konkreter Szenenanker, nicht automatisch ein harter Beweisauftrag
+- `required_material` ist kein Runtime-Key mehr; der Regie-Import mappt es nur fuer echte Kontinuitaetsfaelle auf `locked_material`
 
 Praktisch heißt das:
 

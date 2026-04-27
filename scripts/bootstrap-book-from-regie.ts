@@ -1084,7 +1084,7 @@ function parseSceneCardBlock(lines: string[]) {
       return
     }
 
-    custom.push({ key: rawKey, value })
+    custom.push({ key: normalized === "required_material" ? "locked_material" : rawKey, value })
   })
 
   directives.custom = custom
@@ -1322,7 +1322,7 @@ function collectSceneObjectAnchorSources(scene: ParsedScene) {
   scene.directives.custom.forEach(function (entry) {
     sources.push({
       value: entry.value,
-      hard: ["object_anchor", "prop_anchor", "locked_object", "required_material"].includes(
+      hard: ["object_anchor", "prop_anchor", "locked_object", "locked_material"].includes(
         normalizeKey(entry.key)
       )
     })

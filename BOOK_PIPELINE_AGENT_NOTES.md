@@ -30,7 +30,9 @@ Hard Constraints:
 - Canon-Namen
 - Objekt-/Farbkontinuitaet
 - `object_anchor`, `prop_anchor`, `locked_object`
-- `required_material` nur sehr sparsam, wenn ein konkretes Material wirklich unverzichtbar ist
+- `locked_material` nur fuer konkrete Continuity-Anker
+
+`required_material` ist kein harter Runtime-Key mehr. Der Regie-Import darf es nur dann auf `locked_material` mappen, wenn die Szene ohne genau dieses Material continuity-falsch wird. Nicht benutzen, nur weil ein Objekt dramaturgisch schoen, wichtig oder wahrscheinlich ist.
 
 Soft Guidance:
 - `objective`
@@ -44,10 +46,14 @@ Soft Guidance:
 - `ersetzungsmoment`
 - `kindmoment` / `mila_kindmoment`
 - `false_friend_signal`
-- `ending_type`
 - `bad_version_risk`, `revision_focus`, `avoid`
 
 Soft heisst nicht unwichtig. Soft heisst: Das Modell darf organisch loesen, solange die Szene dieselbe Funktion und irreversible Veraenderung erfuellt.
+
+`proof_object`, `alltagswaffe`, `kindmoment` und aehnliche Materialsignale duerfen nicht zu einer Objektliste anschwellen. Die Prosa-Intention sollte fuer Concrete material auf 1-3 natuerliche Details begrenzt bleiben.
+
+Audit Metadata:
+- `ending_type` gehoert in Rhythmus- und Qualitaetsauswertung, nicht in den Prosa-Prompt.
 
 ## Scene Intention
 
@@ -89,7 +95,8 @@ Optional:
 - `word_target_min`
 - `word_target_max`
 - `ending_type` nur fuer Rhythmus-Audit, nicht als Schreibauftrag
-- `object_anchor` / `prop_anchor` nur fuer echte Kontinuitaetsanker
+- `object_anchor` / `prop_anchor` / `locked_material` nur fuer echte Kontinuitaetsanker
+- Legacy `required_material` wird beim Import auf `locked_material` kanonisiert, nicht als eigener Runtime-Key weitergetragen.
 
 ## Mapping Alter Felder
 
@@ -101,7 +108,8 @@ Optional:
 - `alltagswaffe` -> `pressure` / `material`
 - `dramaticBeat` / `reversal` -> `turn`
 - `konkrete_folge` / `cost` / `status_shift` -> `irreversible_change`
-- `ending` / `closingLine` -> `aftertaste`
+- `ending` -> `aftertaste`
+- `closingLine` -> hoechstens optionales Schlussbild, kein automatischer Aftertaste und kein Schlusssatz-Diktat
 - `bad_version_risk` / `revision_focus` -> `avoid`
 - `main_question` / `information_gap` -> `thread`
 
