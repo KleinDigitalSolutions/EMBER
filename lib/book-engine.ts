@@ -2511,7 +2511,12 @@ function buildLockedFactHardConstraints(story: StoryDocument, sceneCard: Timelin
     lockedFacts.documentedPickupPerson &&
     (
       normalizedTextContainsTerm(sceneText, lockedFacts.documentedPickupPerson) ||
-      normalizedTextContainsTerm(sceneText, "abholung")
+      normalizedTextContainsTerm(sceneText, "dokumentierte abholperson") ||
+      normalizedTextContainsTerm(sceneText, "abholperson") ||
+      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
+      normalizedTextContainsTerm(sceneText, "abschlussvermerk") ||
+      normalizedTextContainsTerm(sceneText, "abholbuch") ||
+      normalizedTextContainsTerm(sceneText, "protokoll")
     )
   ) {
     constraints.push(`Locked Fact - Dokumentierte Abholperson: ${lockedFacts.documentedPickupPerson}.`);

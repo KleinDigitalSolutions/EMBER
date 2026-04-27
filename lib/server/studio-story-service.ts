@@ -1720,6 +1720,14 @@ function inferHumanEditTags(sourceText: string, editedText: string, wordDelta: n
   const tags: string[] = []
   const sourceLower = sourceText.toLowerCase()
   const editedLower = editedText.toLowerCase()
+  const sourceSmoothnessMarkers = countSmoothnessEditMarkers(sourceLower)
+  const editedSmoothnessMarkers = countSmoothnessEditMarkers(editedLower)
+  const sourceAbstractNouns = countAbstractEditNouns(sourceLower)
+  const editedAbstractNouns = countAbstractEditNouns(editedLower)
+  const sourceProofLabels = countProofCommentaryMarkers(sourceLower)
+  const editedProofLabels = countProofCommentaryMarkers(editedLower)
+  const sourceEmotionLabels = countEmotionLabelMarkers(sourceLower)
+  const editedEmotionLabels = countEmotionLabelMarkers(editedLower)
 
   if (wordDelta <= -30) tags.push("length_reduced")
   if (wordDelta >= 30) tags.push("length_expanded")
@@ -1735,8 +1743,67 @@ function inferHumanEditTags(sourceText: string, editedText: string, wordDelta: n
   if (countPattern(sourceLower, /fühlte|spürte|merkte|erkannte|wusste/g) > countPattern(editedLower, /fühlte|spürte|merkte|erkannte|wusste/g)) {
     tags.push("interiority_tightened")
   }
+  if (sourceSmoothnessMarkers > editedSmoothnessMarkers) {
+    tags.push("smoothness_reduced")
+  }
+  if (sourceAbstractNouns > editedAbstractNouns) {
+    tags.push("abstract_nouns_reduced")
+  }
+  if (sourceProofLabels > editedProofLabels) {
+    tags.push("proof_commentary_removed")
+  }
+  if (sourceEmotionLabels > editedEmotionLabels) {
+    tags.push("emotion_label_removed")
+  }
+  if (hasSameWordCountButMaterialChange(sourceText, editedText, wordDelta)) {
+    tags.push("wording_replaced")
+  }
 
   return Array.from(new Set(tags)).slice(0, 8)
+}
+
+function countSmoothnessEditMarkers(value: string) {
+  return countEditPatterns(value, [
+    /sie\s+(?:verstand|begriff|erkannte|merkte)\b/g,
+    /ihr\s+wurde\s+klar\b/g,
+    /in\s+diesem\s+moment\b/g,
+    /etwas\s+in\s+ihr\b/g,
+    /sie\s+spürte\s*,?\s+wie\b/g,
+    /nicht\s+[^.!?\n]{1,80}?\s+sondern\s+/g,
+    /das\s+bedeutete\b/g,
+    /genau\s+darin\b/g,
+    /zum\s+ersten\s+mal\b/g,
+    /plötzlich\b/g
+  ])
+}
+
+function countAbstractEditNouns(value: string) {
+  return countEditPatterns(value, [
+    /\b(?:angst|panik|wahrheit|kontrolle|mutterrolle|deutungshoheit|glaubwürdigkeit|verlässlichkeit|ersetzung|bedrohung|zugriff|sicherheit|instabilität|vertrauen)\b/g
+  ])
+}
+
+function countProofCommentaryMarkers(value: string) {
+  return countEditPatterns(value, [
+    /\b(?:beweis|beweise|beweisstück|hinweis|indiz|spur|zeichen|symbol|bedeutung)\b/g
+  ])
+}
+
+function countEmotionLabelMarkers(value: string) {
+  return countEditPatterns(value, [
+    /\b(?:angst|panik|schuld|scham|wut|erleichterung|misstrauen|verzweiflung|hilflosigkeit)\b/g,
+    /\b(?:fühlte|spürte)\s+(?:angst|panik|wut|schuld|scham|erleichterung|misstrauen)\b/g
+  ])
+}
+
+function countEditPatterns(value: string, patterns: RegExp[]) {
+  return patterns.reduce(function (total, pattern) {
+    return total + countPattern(value, pattern)
+  }, 0)
+}
+
+function hasSameWordCountButMaterialChange(sourceText: string, editedText: string, wordDelta: number) {
+  return wordDelta === 0 && estimateChangedChars(sourceText, editedText) >= 120
 }
 
 function isMeaningfulHumanEdit(sourceText: string, editedText: string, changedChars: number) {
