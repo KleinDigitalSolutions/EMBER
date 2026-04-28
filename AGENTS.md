@@ -40,3 +40,16 @@ For the Book pipeline, keep the docs aligned with the current runtime instead of
 - The Blueprint Review Queue is derived, not persisted. It combines continuity blockers, quality/market warnings, and propagation debt. Propagation debt warns when jobs may be stale because summaries, context packs, memory sync, Blueprint, or Writer Rules moved after the job.
 - Human Edit Memory is part of the writer loop. Accepted job text compared with later human edits is stored in `book_human_edit_examples`; preserve `included` / `excluded` / `needs_review` learning statuses when syncing.
 - Keep `book_writer_rules`, `book_scene_cards`, `book_context_packs`, `book_human_edit_examples`, `master_brief_runtime`, and `writer_rules_runtime` in sync when you touch the book bootstrap, save, or sync flow.
+
+### Book StateDiff Layer
+The Book pipeline now has a minimal typed StateDiff layer on top of the existing Draft Extraction flow. Keep this layer conservative and deterministic:
+
+- Core types live in `lib/story-schema.ts`: `BookStateDiff`, `BookObjectState`, `BookKnowledgeState`, `BookPromiseState`, and `BookObjectStateChange`.
+- Runtime logic lives in `lib/book-state-validator.ts`. It must stay deterministic and must not call OpenAI, Anthropic, Supabase, or any other remote/API service.
+- `BookMemoryBackbone` includes `objectLedger`, `knowledgeLedger`, and `promiseLedger`. Old stories without those fields must continue to normalize safely.
+- `BookDraftJob` includes `stateDiff` and `stateDiffStatus`. New jobs with a generated diff use `pending`; old or legacy jobs without a diff use `none`.
+- `approveBookStateDiff` may update the typed ledgers and promote `proposedCanonFacts`; `rejectBookStateDiff` must never mutate ledgers. Do not set `approved_manual` automatically.
+- `sceneLocalDetails` are scene-local only and must never be promoted into `canonLedger`. `proposedCanonFacts` may enter `canonLedger` only after explicit StateDiff approval.
+- The writer prompt should not be expanded for this layer. Keep the writer free; make validation and memory sync stricter instead.
+- Database support is in `supabase/migrations/20260428000001_add_book_state_diff.sql`. Apply it when deploying this layer to a remote Supabase project.
+- Verify StateDiff changes with `npm run typecheck` and `npm run test:book-state`.
