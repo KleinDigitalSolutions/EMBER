@@ -560,8 +560,8 @@ function buildActiveScenePacketPrompt(story: StoryDocument, contextSelection: As
       4
     ),
     "Next Beat:",
-    packet.dynamicContext.nextBeat
-      ? `- ${packet.dynamicContext.nextBeat.orderLabel} ${packet.dynamicContext.nextBeat.sceneTitle}: ${trimPromptText(packet.dynamicContext.nextBeat.summary, 220)}`
+    packet.dynamicContext.nextBeatTitle
+      ? `- ${packet.dynamicContext.nextBeatTitle}`
       : "- Kein nächster Beat im Packet.",
     "Packet Canon:",
     formatPromptList(
@@ -814,7 +814,7 @@ function buildScopedContextPrompt(story: StoryDocument, contextSelection: Assist
     `Vorherige Beats: ${packet.dynamicContext.previousBeats.map(function (beat) {
       return beat.sceneTitle;
     }).join(" | ") || "keine"}`,
-    `Nächster Beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "keiner"}`,
+    `Nächster Beat: ${packet.dynamicContext.nextBeatTitle || "keiner"}`,
     `Relevanter Codex: ${packet.dynamicContext.relevantCodex.map(function (entry) {
       return entry.title;
     }).join(" | ") || "keiner"}`,
@@ -974,7 +974,7 @@ function buildDynamicContextLines(
     `- Previous Beats: ${packet.dynamicContext.previousBeats.map(function (beat) {
       return `${beat.sceneTitle} (${beat.orderLabel})`;
     }).join(" | ") || "keine"}.`,
-    `- Next Beat: ${packet.dynamicContext.nextBeat ? `${packet.dynamicContext.nextBeat.sceneTitle} (${packet.dynamicContext.nextBeat.orderLabel})` : "keiner"}.`,
+    `- Next Beat: ${packet.dynamicContext.nextBeatTitle || "keiner"}.`,
     `- Relevanter Codex: ${packet.dynamicContext.relevantCodex.map(function (entry) {
       return `${entry.title}: ${entry.summary}`;
     }).join(" | ") || "keiner"}.`,
@@ -1001,7 +1001,7 @@ function buildPipelineFitLines(
   }
 
   return [
-    `- Outline-Input wird nicht aus einem separaten Scene-Card-Feld gelesen, sondern aus Summary, aktivem Thread, relevantem Codex und Next Beat der Szene "${packet.dynamicContext.sceneTitle}" abgeleitet.`,
+    `- Outline-Input wird nicht aus einem separaten Scene-Card-Feld gelesen, sondern aus Summary, aktivem Thread und relevantem Codex der Szene "${packet.dynamicContext.sceneTitle}" abgeleitet.`,
     `- Draft-Anker: ${packet.dynamicContext.sceneSummary || story.book.masterBrief.premise || "Summary/Premise fehlt."}`,
     `- Extractor-Ziele: new_canon_facts, character_state_updates, open_threads_created, open_threads_resolved, foreshadowing_added, continuity_risks, style_drift_notes.`,
     `- Ledger-Status: Character States referenzieren jetzt Snapshot-Historie; Continuity sollte auf widersprüchliche Zustandswechsel zwischen benachbarten Snapshots prüfen.`,
@@ -1021,7 +1021,7 @@ function buildRegieNextSteps(
 
   if (packet) {
     nextSteps.push(
-      `- Für ${packet.dynamicContext.sceneTitle} die nächste Verschiebung explizit gegen ${packet.dynamicContext.nextBeat?.sceneTitle || "den Folge-Beat"} planen, damit Outline und Rewrite denselben Zug halten.`
+      `- Für ${packet.dynamicContext.sceneTitle} den Szenennachhall explizit aus der aktuellen Scene Card planen, damit Outline und Rewrite denselben Zug halten.`
     );
   } else {
     nextSteps.push("- Für eine belastbare Regie-Datei den Scope auf eine konkrete Szene setzen; erst dann sind Packet-, Extract- und Continuity-Aussagen präzise.")

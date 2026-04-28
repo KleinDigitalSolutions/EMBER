@@ -1384,7 +1384,6 @@ function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
   return [
     `Premise: ${packet.stablePrefix.premise}`,
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
-    `Ending promise: ${packet.stablePrefix.endingPromise}`,
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
     `Author intent: ${packet.stablePrefix.authorIntent || "not set"}`,
     `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
@@ -1657,7 +1656,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
         return `${beat.sceneTitle}: ${beat.summary || beat.excerpt}`;
       })
       .join(" || ") || "none"}`,
-    `Next beat: ${packet.dynamicContext.nextBeat?.sceneTitle || "none"}`,
+    `Next beat: ${packet.dynamicContext.nextBeatTitle || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
         return `${entry.title}: ${entry.summary}`;
@@ -2229,7 +2228,7 @@ function buildPacketEvidenceTerms(packet: SceneContextPacket) {
           })
         )
         .concat([
-          packet.dynamicContext.nextBeat?.sceneTitle || "",
+          packet.dynamicContext.nextBeatTitle || "",
           packet.stablePrefix.premise,
           packet.stablePrefix.readerPromise,
           packet.stablePrefix.thematicCore

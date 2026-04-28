@@ -176,7 +176,7 @@ export type SceneContextPacket = {
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
-    nextBeat: TimelineBeat | null;
+    nextBeatTitle: string | null;
     relevantCodex: CanonLedgerEntry[];
     relevantCharacterStates: CharacterStateEntry[];
     activeThreads: OpenThread[];
@@ -344,9 +344,10 @@ export function buildSceneContextPacket(
     memory.contextPacks.find(function (pack) {
       return pack.sceneId === sceneId;
     }) ?? null;
-  const activeThreads = resolveThreadsForPacket(memory, sceneId, contextPack);
+  const activeThreads = resolveThreadsForPacket(syncedStory, memory, sceneId, contextPack);
   const relevantCodex = resolveCanonForPacket(syncedStory, sceneId, contextPack, canonLedger).slice(0, 4);
   const relevantCharacterStates = resolveCharacterStatesForPacket(
+    syncedStory,
     sceneId,
     contextPack,
     characterLedger,
@@ -402,7 +403,7 @@ export function buildSceneContextPacket(
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
-      nextBeat,
+      nextBeatTitle: nextBeat?.sceneTitle ?? null,
       relevantCodex,
       relevantCharacterStates,
       activeThreads: activeThreads.slice(0, 4),
@@ -1225,7 +1226,7 @@ function resolveCanonForPacket(
   canonLedger: CanonLedgerEntry[]
 ) {
   if (contextPack?.relevantCanonEntryIds.length) {
-    return contextPack.relevantCanonEntryIds
+    const contextCanon = contextPack.relevantCanonEntryIds
       .map(function (entryId) {
         return canonLedger.find(function (entry) {
           return entry.entryId === entryId;
@@ -1234,52 +1235,56 @@ function resolveCanonForPacket(
       .filter(function (entry): entry is CanonLedgerEntry {
         return Boolean(entry);
       });
+
+    return filterVisibleCanonForScene(story, sceneId, contextCanon);
   }
 
   return rankRelevantCodexForScene(story, sceneId, canonLedger);
 }
 
 function resolveCharacterStatesForPacket(
+  story: StoryDocument,
   sceneId: string,
   contextPack: ContextPack | null,
   characterLedger: CharacterStateEntry[],
   relevantCodex: CanonLedgerEntry[]
 ) {
-  if (contextPack?.relevantCharacterStateIds.length) {
-    return contextPack.relevantCharacterStateIds
-      .map(function (stateId) {
-        return characterLedger.find(function (entry) {
-          return entry.id === stateId;
-        }) ?? null;
-      })
-      .filter(function (entry): entry is CharacterStateEntry {
-        return Boolean(entry);
-      });
-  }
+  const candidates = contextPack?.relevantCharacterStateIds.length
+    ? contextPack.relevantCharacterStateIds
+        .map(function (stateId) {
+          return characterLedger.find(function (entry) {
+            return entry.id === stateId;
+          }) ?? null;
+        })
+        .filter(function (entry): entry is CharacterStateEntry {
+          return Boolean(entry);
+        })
+    : rankCharacterStatesForScene(sceneId, characterLedger, relevantCodex);
 
-  return rankCharacterStatesForScene(sceneId, characterLedger, relevantCodex);
+  return filterVisibleCharacterStatesForScene(story, sceneId, candidates);
 }
 
 function resolveThreadsForPacket(
+  story: StoryDocument,
   memory: StoryDocument["book"]["memory"],
   sceneId: string,
   contextPack: ContextPack | null
 ) {
-  if (contextPack?.activeThreadIds.length) {
-    return contextPack.activeThreadIds
-      .map(function (threadId) {
-        return memory.openThreads.find(function (thread) {
-          return thread.id === threadId;
-        }) ?? null;
-      })
-      .filter(function (thread): thread is OpenThread {
-        return Boolean(thread);
+  const candidates = contextPack?.activeThreadIds.length
+    ? contextPack.activeThreadIds
+        .map(function (threadId) {
+          return memory.openThreads.find(function (thread) {
+            return thread.id === threadId;
+          }) ?? null;
+        })
+        .filter(function (thread): thread is OpenThread {
+          return Boolean(thread);
+        })
+    : memory.openThreads.filter(function (thread) {
+        return thread.sourceSceneId === sceneId || thread.status === "active";
       });
-  }
 
-  return memory.openThreads.filter(function (thread) {
-    return thread.sourceSceneId === sceneId || thread.status === "active";
-  });
+  return filterVisibleThreadsForScene(story, sceneId, candidates);
 }
 
 export function upsertDraftJob(story: StoryDocument, job: BookDraftJob): StoryDocument {
@@ -1918,9 +1923,8 @@ function rankRelevantCodexForScene(
   });
   const currentBeat = timeline[sceneIndex];
   const previousBeat = timeline[sceneIndex - 1] ?? null;
-  const nextBeat = timeline[sceneIndex + 1] ?? null;
 
-  return ledger
+  return filterVisibleCanonForScene(story, sceneId, ledger)
     .map(function (entry) {
       let score = 0;
 
@@ -1930,10 +1934,6 @@ function rankRelevantCodexForScene(
 
       if (previousBeat && entry.sceneIds.includes(previousBeat.sceneId)) {
         score += 2;
-      }
-
-      if (nextBeat && entry.sceneIds.includes(nextBeat.sceneId)) {
-        score += 1;
       }
 
       if (entry.kind === "character") {
@@ -1954,6 +1954,145 @@ function rankRelevantCodexForScene(
     .map(function (item) {
       return item.entry;
     });
+}
+
+function filterVisibleCanonForScene(
+  story: StoryDocument,
+  sceneId: string,
+  entries: CanonLedgerEntry[]
+) {
+  const sceneOrderMap = buildSceneOrderMap(story);
+  const currentSceneOrder = sceneOrderMap.get(sceneId);
+
+  return entries.filter(function (entry) {
+    if (entry.status !== "active") {
+      return false;
+    }
+
+    if (currentSceneOrder === undefined) {
+      return entry.sceneIds.includes(sceneId);
+    }
+
+    return entry.sceneIds.some(function (entrySceneId) {
+      const entrySceneOrder = sceneOrderMap.get(entrySceneId);
+      return entrySceneOrder !== undefined && entrySceneOrder <= currentSceneOrder;
+    });
+  });
+}
+
+function filterVisibleThreadsForScene(
+  story: StoryDocument,
+  sceneId: string,
+  threads: OpenThread[]
+) {
+  const sceneOrderMap = buildSceneOrderMap(story);
+  const currentSceneOrder = sceneOrderMap.get(sceneId);
+
+  return threads.filter(function (thread) {
+    if (thread.status === "resolved") {
+      return false;
+    }
+
+    if (currentSceneOrder === undefined) {
+      return thread.sourceSceneId === sceneId;
+    }
+
+    const sourceOrder = sceneOrderMap.get(thread.sourceSceneId);
+    return sourceOrder !== undefined && sourceOrder <= currentSceneOrder;
+  });
+}
+
+function filterVisibleCharacterStatesForScene(
+  story: StoryDocument,
+  sceneId: string,
+  entries: CharacterStateEntry[]
+): CharacterStateEntry[] {
+  const sceneOrderMap = buildSceneOrderMap(story);
+  const currentSceneOrder = sceneOrderMap.get(sceneId);
+
+  if (currentSceneOrder === undefined) {
+    return entries;
+  }
+
+  return entries
+    .map(function (entry) {
+      const visibleSnapshots = entry.snapshots.filter(function (snapshot) {
+        if (snapshot.scope === "baseline") {
+          return true;
+        }
+
+        if (!snapshot.sourceSceneId) {
+          return false;
+        }
+
+        const sourceOrder = sceneOrderMap.get(snapshot.sourceSceneId);
+        return sourceOrder !== undefined && sourceOrder <= currentSceneOrder;
+      });
+
+      if (!visibleSnapshots.length) {
+        return null;
+      }
+
+      const ordered = [...visibleSnapshots].sort(function (left, right) {
+        return left.sortOrder - right.sortOrder;
+      });
+      const latest = ordered[ordered.length - 1];
+      const updatedFromOrder = sceneOrderMap.get(entry.updatedFromSceneId);
+      const updatedFromVisible =
+        entry.updatedFromSceneId &&
+        updatedFromOrder !== undefined &&
+        updatedFromOrder <= currentSceneOrder;
+
+      return {
+        ...entry,
+        snapshots: ordered,
+        currentState: updatedFromVisible ? entry.currentState : latest.currentState,
+        innerShift: updatedFromVisible ? entry.innerShift : latest.innerShift,
+        agenda: updatedFromVisible ? entry.agenda : latest.agenda,
+        updatedFromSceneId: updatedFromVisible
+          ? entry.updatedFromSceneId
+          : latest.sourceSceneId ?? entry.updatedFromSceneId
+      };
+    })
+    .filter(function (entry): entry is CharacterStateEntry {
+      return Boolean(entry);
+    });
+}
+
+function buildSceneOrderMap(story: StoryDocument) {
+  const sceneOrderMap = new Map<string, number>();
+  const timeline = story.book.memory.sceneCards.length
+    ? story.book.memory.sceneCards
+    : deriveTimelineBeats(story);
+
+  timeline.forEach(function (beat, index) {
+    sceneOrderMap.set(beat.sceneId, parseSceneOrderLabel(beat.orderLabel) ?? index);
+  });
+
+  let sceneIndex = 0;
+  story.acts.forEach(function (act) {
+    act.chapters.forEach(function (chapter) {
+      chapter.scenes.forEach(function (scene) {
+        if (!sceneOrderMap.has(scene.id)) {
+          sceneOrderMap.set(scene.id, sceneIndex);
+        }
+
+        sceneIndex += 1;
+      });
+    });
+  });
+
+  return sceneOrderMap;
+}
+
+function parseSceneOrderLabel(orderLabel: string) {
+  const match = orderLabel.match(/SC[_\s-]*(\d+)/iu);
+
+  if (!match) {
+    return null;
+  }
+
+  return Math.max(0, Number.parseInt(match[1], 10) - 1);
 }
 
 function rankCharacterStatesForScene(
@@ -2162,7 +2301,7 @@ function buildOutlineSteps(packet: SceneContextPacket) {
       : "",
     `Druck aufbauen: ${packet.dynamicContext.activeThreads[0]?.label || "eine offene Frage"} konkretisieren.`,
     `Wendung: ${packet.dynamicContext.relevantCodex[0]?.title || "der Kernkonflikt"} neu rahmen.`,
-    `Nachhall: in ${packet.dynamicContext.nextBeat?.sceneTitle || "den naechsten Plot-Schritt"} ueberleiten.`
+    "Nachhall: Die Szene endet mit Nachhall, nicht mit Aufloesung."
   ];
 
   return steps.filter(Boolean);
@@ -2174,7 +2313,6 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
   const thread = packet.dynamicContext.activeThreads[0];
   const previousBeat =
     packet.dynamicContext.previousBeats[packet.dynamicContext.previousBeats.length - 1] ?? null;
-  const nextBeat = packet.dynamicContext.nextBeat;
   const targetWords = Math.max(320, Math.min(targetWordsMin, 1200));
 
   const paragraphs = [
@@ -2201,9 +2339,6 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       previousBeat
         ? `Direkt davor stand ${previousBeat.sceneTitle}: ${previousBeat.summary || previousBeat.excerpt}`
         : "Es gibt keinen langen Rueckblick; die Szene steigt schnell in die aktuelle Lage ein.",
-      packet.stablePrefix.storyArchitecture[1]
-        ? `Der Szenendruck bleibt kompatibel mit dem groesseren Strukturziel: ${packet.stablePrefix.storyArchitecture[1]}`
-        : "",
       thread
         ? `Der offene Thread lautet im Kern: ${thread.label}. ${thread.detail}`
         : "Der Druck kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
@@ -2217,9 +2352,7 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       packet.stablePrefix.categoryLane
         ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
         : "",
-      nextBeat
-        ? `Am Ende muss genug Zug in Richtung ${nextBeat.sceneTitle} bleiben.`
-        : "Das Ende muss wie ein bewusst gesetzter Nachhall wirken."
+      "Die Szene endet mit Nachhall, nicht mit Aufloesung."
     ].join(" ")
   ];
 
@@ -2255,9 +2388,7 @@ function extractDraftState(
       })
       .slice(0, 2),
     openThreadsResolved: [],
-    foreshadowingAdded: packet.dynamicContext.nextBeat
-      ? [`Die Szene bereitet ${packet.dynamicContext.nextBeat.sceneTitle} lesbar vor.`]
-      : [],
+    foreshadowingAdded: [],
     continuityRisks: detectContinuityRisks(packet, draftText),
     styleDriftNotes: detectStyleDrift(packet, draftText)
   };
@@ -2300,9 +2431,7 @@ function buildRewriteText(
     })
     .join(" ");
 
-  const ending = packet.dynamicContext.nextBeat
-    ? `Die Szene endet so, dass ${packet.dynamicContext.nextBeat.sceneTitle} logisch und mit Zug folgen kann.`
-    : "Die Szene endet auf einem Nachhall, nicht auf einer neutralen Ausblendung.";
+  const ending = "Die Szene endet auf einem Nachhall, nicht auf einer neutralen Ausblendung.";
 
   return [
     draftText,

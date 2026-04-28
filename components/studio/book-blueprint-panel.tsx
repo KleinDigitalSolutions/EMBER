@@ -775,14 +775,9 @@ export function BookBlueprintPanel({
                 </div>
 
                 <strong>Danach</strong>
-                {contextPacket.dynamicContext.nextBeat ? (
+                {contextPacket.dynamicContext.nextBeatTitle ? (
                   <article className="book-mini-card">
-                    <strong>{contextPacket.dynamicContext.nextBeat.sceneTitle}</strong>
-                    <p>
-                      {contextPacket.dynamicContext.nextBeat.summary ||
-                        contextPacket.dynamicContext.nextBeat.excerpt ||
-                        "Kein Ausblick hinterlegt."}
-                    </p>
+                    <strong>{contextPacket.dynamicContext.nextBeatTitle}</strong>
                   </article>
                 ) : (
                   <article className="book-mini-card">
