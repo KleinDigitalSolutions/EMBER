@@ -47,6 +47,7 @@ type RemoteStoryChatProvider = "openai" | "anthropic";
 type StoryChatDraftJob = StoryDocument["book"]["draftEngine"]["jobs"][number];
 const DEFAULT_LOCAL_GEMMA_COMMAND = "/Users/bucci369/mlx-gemma4/.venv/bin/mlx_vlm.generate";
 const DEFAULT_LOCAL_GEMMA_MODEL = "mlx-community/gemma-4-e4b-it-mxfp4";
+const DEFAULT_LOCAL_GEMMA_SERVER_URL = "http://127.0.0.1:18080";
 
 const STORY_CHAT_STAGE_ORDER = [
   "context",
@@ -297,22 +298,46 @@ async function generateWithLocalGemma(
   const temperature = process.env.LOCAL_GEMMA_TEMPERATURE || "0.35";
   const prompt = buildLocalGemmaUserPrompt(story, threadId, outputMode, contextSelection);
   const systemPrompt = buildLocalGemmaSystemPrompt(outputMode);
-  const rawOutput = await execLocalGemma(command, [
-    "--model",
-    modelName,
-    "--system",
-    systemPrompt,
-    "--prompt",
-    prompt,
-    "--max-tokens",
-    maxTokens,
-    "--temperature",
-    temperature,
-    "--skip-special-tokens"
-  ]);
-  const reply = normalizeLocalGemmaOutput(rawOutput);
+  const serverUrl = normalizeLocalGemmaServerUrl(
+    process.env.LOCAL_GEMMA_SERVER_URL ?? DEFAULT_LOCAL_GEMMA_SERVER_URL
+  );
+  let reply = "";
 
-  if (reply.length < 20) {
+  if (serverUrl) {
+    try {
+      reply = await requestLocalGemmaServer({
+        serverUrl,
+        modelName,
+        systemPrompt,
+        prompt,
+        maxTokens,
+        temperature
+      });
+    } catch (error) {
+      if (process.env.LOCAL_GEMMA_SERVER_ONLY === "true") {
+        throw error;
+      }
+    }
+  }
+
+  if (!reply) {
+    const rawOutput = await execLocalGemma(command, [
+      "--model",
+      modelName,
+      "--system",
+      systemPrompt,
+      "--prompt",
+      prompt,
+      "--max-tokens",
+      maxTokens,
+      "--temperature",
+      temperature,
+      "--skip-special-tokens"
+    ]);
+    reply = normalizeLocalGemmaOutput(rawOutput);
+  }
+
+  if (reply.length < (outputMode === "chat" ? 3 : 20)) {
     throw new Error("Gemma lieferte keine verwertbare Antwort.");
   }
 
@@ -344,6 +369,76 @@ async function generateWithLocalGemma(
     modelName,
     data
   };
+}
+
+function normalizeLocalGemmaServerUrl(value: string | undefined) {
+  const trimmed = value?.trim() ?? "";
+
+  if (!trimmed || trimmed === "0" || trimmed.toLowerCase() === "false" || trimmed.toLowerCase() === "off") {
+    return null;
+  }
+
+  return trimmed.replace(/\/+$/, "");
+}
+
+async function requestLocalGemmaServer(params: {
+  serverUrl: string;
+  modelName: string;
+  systemPrompt: string;
+  prompt: string;
+  maxTokens: string;
+  temperature: string;
+}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(function () {
+    controller.abort();
+  }, Number(process.env.LOCAL_GEMMA_SERVER_TIMEOUT_MS || 60000));
+
+  try {
+    const response = await fetch(`${params.serverUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        model: params.modelName,
+        messages: [
+          {
+            role: "system",
+            content: params.systemPrompt
+          },
+          {
+            role: "user",
+            content: params.prompt
+          }
+        ],
+        max_tokens: Number(params.maxTokens),
+        temperature: Number(params.temperature)
+      }),
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error(`Gemma Server HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const payload = await response.json() as {
+      choices?: Array<{
+        message?: {
+          content?: unknown;
+        };
+      }>;
+    };
+    const content = payload.choices?.[0]?.message?.content;
+
+    if (typeof content !== "string" || !content.trim()) {
+      throw new Error("Gemma Server lieferte keine Chat-Completion-Antwort.");
+    }
+
+    return stripLocalGemmaMetaNotes(content.trim());
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function execLocalGemma(command: string, args: string[]) {
