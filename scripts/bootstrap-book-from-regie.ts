@@ -1564,10 +1564,11 @@ function inferBookEngineMode(params: {
   }
 
   const hasTeenSignal =
-    /\bya\b|young adult|teen|teenager|jugend|schule|school/.test(normalizedSignals)
+    /\bya\b|young adult|teen|teenager|teen hero|teen heroes|jugend|jugendlich|jugendliche|schule|school|schuler|schueler/.test(normalizedSignals)
   const hasSuperheroSignal =
-    /superheld|superhero|superkraft|superkrafte|krafte|powers?/.test(normalizedSignals)
-  const hasOriginSignal = /origin|ursprung/.test(normalizedSignals)
+    /superheld|superhelden|superhero|super hero|superheldenroman|superhelden-roman|heldenroman|superkraft|superkrafte|krafte|powers?/.test(normalizedSignals)
+  const hasOriginSignal =
+    /origin|ursprung|entstehung|werdung|heldenursprung|helden-ursprung|superheldenursprung|superhelden-ursprung/.test(normalizedSignals)
 
   if (hasSuperheroSignal && (hasTeenSignal || hasOriginSignal)) {
     return "ya_superhero_origin"

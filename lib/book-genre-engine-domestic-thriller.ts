@@ -14,7 +14,21 @@ export type DomesticSuspenseThrillerSignals = {
 export function detectDomesticSuspenseThrillerSignals(normalizedSignals: string): DomesticSuspenseThrillerSignals {
   const isDomesticSuspense =
     normalizedSignals.includes("domestic suspense") ||
-    normalizedSignals.includes("psychological thriller");
+    normalizedSignals.includes("domestic thriller") ||
+    normalizedSignals.includes("psychological thriller") ||
+    normalizedSignals.includes("psychothriller") ||
+    normalizedSignals.includes("psychologischer thriller") ||
+    normalizedSignals.includes("psychologische suspense") ||
+    normalizedSignals.includes("alltagsnaher thriller") ||
+    normalizedSignals.includes("alltags thriller") ||
+    normalizedSignals.includes("hauslicher thriller") ||
+    normalizedSignals.includes("haeuslicher thriller") ||
+    normalizedSignals.includes("familien-suspense") ||
+    normalizedSignals.includes("familien suspense") ||
+    normalizedSignals.includes("familiensuspense") ||
+    normalizedSignals.includes("familien thriller") ||
+    normalizedSignals.includes("familienthriller") ||
+    normalizedSignals.includes("institutioneller thriller");
   const alltagsnah =
     normalizedSignals.includes("alltags") ||
     normalizedSignals.includes("routine") ||
