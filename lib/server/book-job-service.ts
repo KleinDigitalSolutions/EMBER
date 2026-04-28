@@ -1424,7 +1424,7 @@ function buildProseStyleBrakePrompt() {
     "Staerker: Sie legte den Gegenstand ab. Er blieb nicht dort. Sie nahm ihn wieder in die Hand.",
     "Schwach: Sie spürte, wie die Angst in ihr wuchs, als sie realisierte, dass sie nicht mehr sicher war.",
     "Staerker: Sie wich nicht mehr aus. Ihre Schritte wurden schneller, unregelmäßiger. Sie konnte nicht mehr klar denken.",
-    "Vermeide die Standard-Satzlänge. Variiere zwischen kurzen, harten Beobachtungen und längeren, fließenden Bewegungen. Wenn die Spannung steigt, werden die Sätze kürzer."
+    "Vermeide die Standard-Satzlänge. Variiere zwischen kurzen, harten Beobachtungen und längeren, fließenden Bewegungen. Wenn die Spannung steigt, darf die Syntax knapper, härter oder brüchiger werden; erzwinge dieses Muster nicht mechanisch."
   ].join("\n");
 }
 
@@ -1566,6 +1566,11 @@ function buildDraftProsePrompt(
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "If the scene closes naturally before the preferred range or needs more space, follow the scene.",
     "Do not pad the scene to satisfy length. Do not compress away necessary pressure.",
+    "Do not summarize the intended scene. Build it through action, dialogue, objects, pressure, silence, and consequence.",
+    "Do not explain character psychology before or after the scene has made it visible.",
+    "Let the scene turn through a concrete action, discovery, refusal, mistake, interruption, withheld answer, or changed access.",
+    "End on a visible change in behavior, access, risk, knowledge, or physical situation; do not end by explaining what the change means.",
+    "After a gesture, image, object, or line of dialogue has carried meaning, do not add a second sentence that interprets it for the reader.",
     "This is a fast but complete scene pass. Stay scene-bound and keep exposition compressed.",
     "Write the scene directly from the material at hand. Keep some sentences raw enough that the prose stays alive.",
     "Follow the prose technique profile as an abstract craft brief, not as author imitation.",
@@ -1582,10 +1587,12 @@ function buildExpandPrompt(
 ) {
   return [
     "Expand the scene while preserving continuity and voice.",
+    "Expand only where the current scene skips over a decision, reaction, obstacle, sensory turn, or relationship beat.",
+    "Do not add decorative description. Every added paragraph must change access, pressure, knowledge, emotion, or timing.",
     "Return prose only.",
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "This is an emergency length repair. Add only necessary scene substance, not padding.",
-    "Deepen the existing scene movement. Add tension, physical detail, reaction, and pressure. Do not add side plots.",
+    "Deepen the existing scene movement. Add only pressure-bearing physical detail, reaction, and tension. Do not add side plots.",
     "Preserve the technique profile. Do not drift into explanatory filler or recognizable borrowed voice.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
@@ -1604,6 +1611,7 @@ function buildCompressPrompt(
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "This is an emergency length repair. Cut only material that weakens scene pressure.",
     "Cut exposition, repeated reflection, redundant gestures, and duplicate information. Do not cut the dramatic turn or closing hook.",
+    "Do not compress away ambiguity, subtext, narrator color, or the emotional consequence of the turn.",
     "Preserve the technique profile. Remove explanation before you remove pressure-bearing objects, reversals, or hook images.",
     buildProseSceneContextPrompt(packet),
     `Current scene text: ${finalSceneText}`
@@ -1621,7 +1629,11 @@ function buildStateExtractionPrompt(
     "Return only structured output matching the requested schema.",
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Rules:",
-    "- sceneNotes must describe visible strengths or editorial observations in plain compact language.",
+    "- Character updates should capture changed behavior, trust, fear, status, secrecy, pressure, or relationship movement, not vague emotions.",
+    "- Open threads should prefer unresolved choices, secrets, risks, promises, threats, or unanswered questions created by the scene.",
+    "- Foreshadowing must be concrete: object, phrase, behavior, absence, warning, pattern, or contradiction. No thematic guesses.",
+    "- Do not extract a fact just because it is beautifully phrased. Extract only if it changes future continuity.",
+    "- sceneNotes must describe useful editorial observations, not praise.",
     "- sceneNotes: 1 to 4 items, each under 100 characters.",
     "- Every extractedState list: 0 to 3 items, each under 100 characters.",
     "- Every extractedState entry must be a plain string. No objects.",
@@ -1650,8 +1662,15 @@ function buildContinuityAuditPrompt(
     "Return only structured output matching the requested schema.",
     `Preferred scene range: ${options.targetSceneWordsMin}-${options.targetSceneWordsMax} words.`,
     "Do not rewrite the scene. Only flag issues that matter for canon or stylistic consistency.",
+    "Do not flag theoretical issues. Only flag risks supported by the scene text, packet context, or established rules.",
     "Check style against the prose technique profile and anti-imitation rules, not against named authors.",
     "Keep every listed issue compact.",
+    "Check whether character behavior matches established psychology, pressure, fear, desire, and relationship state.",
+    "Check whether powers, technology, mentors, institutions, or antagonists solve problems too easily.",
+    "Check whether the scene advances or preserves the intended tension instead of flattening it through explanation.",
+    "Check whether narrator distance and narrator commentary match the established narrator contract.",
+    "Check whether new information changes who knows what, and whether any character reacts to knowledge they should not have.",
+    "Check whether escalation is plausible: no institution, threat, power, or relationship should jump ahead without setup.",
     buildSceneContextPrompt(packet),
     buildSceneIntentionPrompt(packet),
     `Initial scene text: ${draftText}`,
@@ -1677,7 +1696,12 @@ function buildQualityEvalPrompt(
     `wordActual must equal the actual word count of the scene text.`,
     "Do not penalize organic scene length inside normal bounds. Flag only if the scene feels underdeveloped or bloated.",
     "Issues should be short, concrete, and user-facing.",
+    "Each issue should name the problem and the likely repair direction, not just a vague weakness.",
     "Keep every issue compact.",
+    "Score harshly. 7 means usable, not excellent. 8 means strong with minor issues. 9-10 require vivid scene movement, specific pressure, clean prose, and no major continuity or style weakness.",
+    "Penalize generic emotional explanation, decorative description, exposition disguised as dialogue, and scenes that fulfill plot without changing relationships or pressure.",
+    "Market fit means the scene satisfies the project's lane and reader promise, not generic commercial polish.",
+    "Specificity means concrete objects, actions, bodily behavior, social pressure, and scene-specific language.",
     "Reward original prose that follows the technique profile without sounding derivative or overdesigned.",
     buildSceneContextPrompt(packet),
     buildSceneIntentionPrompt(packet),
@@ -1695,10 +1719,30 @@ function buildAnthropicScenePrompt(params: {
 }) {
   const modeInstruction =
     params.mode === "draft"
-      ? `Write the scene with a preferred range of ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words. If the scene closes naturally before that or needs more space, follow the scene. Do not pad for length.`
+      ? [
+          `Write the scene with a preferred range of ${params.options.targetSceneWordsMin}-${params.options.targetSceneWordsMax} words.`,
+          "If the scene closes naturally before that or needs more space, follow the scene.",
+          "Do not pad for length.",
+          "Do not summarize the intended scene. Build it through action, dialogue, objects, pressure, silence, and consequence.",
+          "Do not explain character psychology before or after the scene has made it visible.",
+          "Let the scene turn through a concrete action, discovery, refusal, mistake, interruption, withheld answer, or changed access.",
+          "End on a visible change in behavior, access, risk, knowledge, or physical situation; do not end by explaining what the change means.",
+          "After a gesture, image, object, or line of dialogue has carried meaning, do not add a second sentence that interprets it for the reader."
+        ].join(" ")
       : params.mode === "expand"
-        ? `Emergency-expand the scene only enough to avoid an underdeveloped fragment. Add necessary pressure, not padding.`
-        : `Emergency-compress the scene only enough to avoid a bloated outlier. Preserve necessary pressure.`;
+        ? [
+            "Emergency-expand the scene only enough to avoid an underdeveloped fragment.",
+            "Expand only where the current scene skips over a decision, reaction, obstacle, sensory turn, or relationship beat.",
+            "Do not add decorative description.",
+            "Every added paragraph must change access, pressure, knowledge, emotion, or timing.",
+            "Add necessary pressure, not padding."
+          ].join(" ")
+        : [
+            "Emergency-compress the scene only enough to avoid a bloated outlier.",
+            "Preserve necessary pressure.",
+            "Cut exposition, repeated reflection, redundant gestures, and duplicate information first.",
+            "Do not compress away ambiguity, subtext, narrator color, or the emotional consequence of the turn."
+          ].join(" ");
 
   return [
     `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
@@ -1800,6 +1844,7 @@ function buildSceneIntentionPrompt(packet: SceneContextPacket) {
 
   return [
     "Scene intention:",
+    "Do not announce the irreversible change. Let the reader infer it from altered access, behavior, knowledge, relationship, or risk.",
     "Use soft guidance as intention, not as a checklist. Do not mechanically include every listed object, phrase, or beat.",
     "Preserve the scene's irreversible change; find the most natural path there.",
     "Aftertaste is not a required closing sentence.",
