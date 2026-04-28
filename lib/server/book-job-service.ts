@@ -1390,7 +1390,7 @@ function buildCoreSystemPrompt() {
     "If context is insufficient, flag risk explicitly instead of inventing hidden facts.",
     "Favor scene truth, subtext, momentum, concrete observation, and readable prose over explanation-heavy interpretation.",
     "Show, do not over-explain. If an image, gesture, or action already carries meaning, do not add a second sentence that explains it.",
-    "POV discipline: Stay within the perceptual boundary of the POV character. No knowledge, emotion, or observation the character cannot access. Third-person limited; no omniscient intrusions.",
+    "Narrator and POV discipline: Follow the project-specific narrator contract when one is provided. If no narrator contract is provided, stay within the perceptual boundary of the POV character; do not add knowledge, emotion, or observation the scene cannot support.",
     "Keep inner reflection shorter than the action that triggers it unless the scene is explicitly introspective.",
     "Do not recap the scene to the reader. Let pressure, objects, and interaction carry the movement.",
     "The prose should feel immediate and necessary, not over-designed.",
@@ -1404,6 +1404,8 @@ function buildProseStyleBrakePrompt() {
     "EMBER-Prosa-Praeferenzen:",
     "Bevorzuge konkreten Druck vor abstrakter Deutung.",
     "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen, bevor du sie erklaerst.",
+    "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihr natuerlicher Druck anders liegt.",
+    "Nutze pro Szene nur wenige konkrete Kontextdetails aktiv. Der Rest dient als Sicherheitsnetz gegen Fehler.",
     "Materialdetails sind Szenentextur, keine automatisch zu benennenden Beweise. Nenne sie nur Beweis, Symbol, Spur oder Bedeutung, wenn eine Figur das natuerlich sagen wuerde.",
     "Verwende glatte interpretierende Gelenksaetze in deutscher Prosa sparsam, besonders: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\" und \"nicht X, sondern Y\".",
     "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
@@ -1419,6 +1421,9 @@ function buildProseStyleBrakePrompt() {
 }
 
 function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
+  const narratorContract = extractNarratorContractRules(packet.stablePrefix.writerConstitution);
+  const writerRules = extractProseWriterRules(packet.stablePrefix.writerConstitution);
+
   return [
     `Premise: ${packet.stablePrefix.premise}`,
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
@@ -1426,7 +1431,8 @@ function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
     `Author intent: ${packet.stablePrefix.authorIntent || "not set"}`,
     `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
     formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
-    formatPromptList("Writer rules", packet.stablePrefix.writerConstitution.slice(0, 8)),
+    formatPromptList("Narrator contract", narratorContract),
+    formatPromptList("Writer rules", writerRules),
     formatPromptList(
       "Prose preferences",
       formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).slice(0, 8)
@@ -1434,7 +1440,34 @@ function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
   ].join("\n");
 }
 
+function extractNarratorContractRules(rules: string[]) {
+  return rules.filter(isNarratorContractRule).slice(0, 16);
+}
+
+function extractProseWriterRules(rules: string[]) {
+  const proseRules = rules.filter(function (rule) {
+    return !isNarratorContractRule(rule);
+  });
+  const priorityRules = proseRules.filter(function (rule) {
+    return /aftershock-regel|lebendigkeitsregel|keine einfachen loesungen|keine einfachen lösungen|druck, kosten, risiko|teenager-reibung/i.test(rule);
+  });
+  const regularRules = proseRules.filter(function (rule) {
+    return !priorityRules.includes(rule);
+  });
+
+  return priorityRules.concat(regularRules).slice(0, 12);
+}
+
+function isNarratorContractRule(rule: string) {
+  return (
+    /^NARRATOR:/i.test(rule) ||
+    /erzaehler|erzähler|auktorial|figurenfaerbung|figurenfärbung|stilanker|liebevoll-spoettisch|liebevoll-spöttisch|wirklich-jetzt|seltener, leiser|kontrollblick/i.test(rule)
+  );
+}
+
 function buildAuditStablePrefixPrompt(packet: SceneContextPacket) {
+  const narratorContract = extractNarratorContractRules(packet.stablePrefix.writerConstitution);
+
   return [
     `Premise: ${packet.stablePrefix.premise}`,
     `Reader promise: ${packet.stablePrefix.readerPromise}`,
@@ -1453,6 +1486,7 @@ function buildAuditStablePrefixPrompt(packet: SceneContextPacket) {
       "Anti-imitation rules",
       packet.stablePrefix.proseTechniqueProfile.antiImitationRules
     ),
+    formatPromptList("Narrator contract", narratorContract),
     formatPromptList("Story architecture", packet.stablePrefix.storyArchitecture),
     formatPromptList("Writer constitution", packet.stablePrefix.writerConstitution),
     formatPromptList("Continuity guardrails", packet.stablePrefix.continuityGuardrails),

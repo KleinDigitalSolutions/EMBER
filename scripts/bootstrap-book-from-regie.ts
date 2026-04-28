@@ -1505,6 +1505,32 @@ function deriveProseTechniqueProfile(params: {
     normalizedSignals.includes("keine thrillershow") ||
     normalizedSignals.includes("nicht wie tech-thriller") ||
     normalizedSignals.includes("nicht wie ein thrillerbeweis")
+  const isSpeculativeTeen =
+    normalizedSignals.includes("young adult") ||
+    normalizedSignals.includes("teenager") ||
+    normalizedSignals.includes("superheld") ||
+    normalizedSignals.includes("sci-fi") ||
+    normalizedSignals.includes("science-fiction")
+
+  if (isSpeculativeTeen) {
+    return {
+      ...fallback,
+      narrativeIntent:
+        "Moderne Teen-Superhelden-Prosa: filmisch, konkret, humorfaehig und druckvoll; Superkraefte aus Alltag, Koerperreaktion, Technik und sozialer Reibung entwickeln statt als fertige Power-Fantasie ausstellen.",
+      povDistance: normalizedSignals.includes("auktorial") ? "auktorial_controlled" : fallback.povDistance,
+      sensoryWeight: "medium_high",
+      dialogueMode: "subtext_energy_and_pressure",
+      anchorPolicy: "each_scene_needs_a_concrete_science_school_or_body_anchor",
+      techniqueRules: uniqueStrings(
+        fallback.techniqueRules.concat([
+          "Halte Teenager-Alltag, Humor und ernste Konsequenz gleichzeitig sichtbar.",
+          "Zeige Kraefte zuerst klein, stoerend und unkontrolliert, bevor sie kampftauglich werden.",
+          "Lass technische Details plausibel wirken, aber nicht als Allzweckloesung.",
+          "Erzaehlerkommentare muessen aus Verhalten, Timing und Beobachtung entstehen, nicht aus nachtraeglicher Pointe."
+        ])
+      )
+    }
+  }
 
   if (!isDomesticSuspense && !alltagsnah) {
     return fallback
