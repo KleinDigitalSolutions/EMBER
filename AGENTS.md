@@ -2,9 +2,25 @@
 
 
 # TODO IMPORTEN ASK USER! 
-Schick ihm am besten:
 
-Danke. Bitte poste noch die exakten rg-Commands + Ergebnis für diese zwei Suchen:
+0. lib/story-schema.ts
+
+Warum: Da sind jetzt nicht mehr nur Types drin, sondern auch viel Normalisierung/Legacy-Adapter/Helper:
+
+BookCommonLockedFacts
+BookDomesticSuspenseThrillerLockedFacts
+BookYaSuperheroOriginLockedFacts
+neues BookLockedFacts
+normalizeBookLockedFacts(...)
+Legacy-Mapping von alten flachen Feldern
+Getter wie getCommonLockedFacts, getDomesticSuspenseLockedFacts, getYaSuperheroLockedFacts
+Guards wie hasBookLockedFacts, hasDomesticSuspenseLockedFacts
+
+Sauberer wäre später vermutlich, das auszulagern nach z. B.:
+
+lib/book-locked-facts.ts
+
+Und story-schema.ts würde dann wieder schlanker bleiben: Types entweder dort lassen oder auch teils rüberziehen, aber Normalizer/Getter/Helper raus.
 
 1. Bootstrap darf keine Projektliterale enthalten:
 rg "Eva|Mila|Nora|Simon|Sonnengarten|Kita|Abholzeit|Leitungsbüro|Kundentermin|evaAlibiLocation|evaAlibiWindow|documentedPickupPerson" scripts/bootstrap-book-from-regie.ts
