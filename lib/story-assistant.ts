@@ -130,6 +130,21 @@ export function appendAssistantArtifact(story: StoryDocument, artifact: Assistan
   };
 }
 
+export function deleteAssistantThread(story: StoryDocument, threadId: string): StoryDocument {
+  return {
+    ...story,
+    assistant: {
+      ...story.assistant,
+      threads: story.assistant.threads.filter(function (thread) {
+        return thread.id !== threadId;
+      }),
+      artifacts: story.assistant.artifacts.filter(function (artifact) {
+        return artifact.threadId !== threadId;
+      })
+    }
+  };
+}
+
 export function appendAssistantThread(story: StoryDocument, thread: AssistantThread): StoryDocument {
   return {
     ...story,

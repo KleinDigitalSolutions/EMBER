@@ -8,15 +8,15 @@ export const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember_book_job_provider";
 export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
 
 export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
-  openai: "gpt-5.4-pro",
-  anthropic: "claude-opus-4-7",
-  anthropicContinuity: "claude-opus-4-7"
+  openai: "gpt-5.4",
+  anthropic: "claude-sonnet-4-6",
+  anthropicContinuity: "claude-sonnet-4-6"
 };
 
 export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
-  openai: ["gpt-5.4-pro", "gpt-5.4-thinking", "gpt-5.4-mini"],
-  anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
-  anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-7"]
+  openai: ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"],
+  anthropic: ["claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+  anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-6"]
 };
 
 export function createEmptyBookJobModelSelection(): BookJobModelSelection {
@@ -31,13 +31,13 @@ export function parseBookJobModelSelection(value: string | null): BookJobModelSe
   try {
     const parsed = value ? JSON.parse(value) : {};
     return {
-      openai: typeof parsed.openai === "string" ? parsed.openai : "",
-      anthropic: typeof parsed.anthropic === "string" ? parsed.anthropic : "",
+      openai: typeof parsed.openai === "string" ? normalizeKnownModelAlias(parsed.openai) ?? "" : "",
+      anthropic: typeof parsed.anthropic === "string" ? normalizeKnownModelAlias(parsed.anthropic) ?? "" : "",
       anthropicContinuity:
         parsed.anthropicContinuity === "claude-haiku-4-5-20251001"
-          ? "claude-opus-4-7"
+          ? "claude-sonnet-4-6"
           : typeof parsed.anthropicContinuity === "string"
-            ? parsed.anthropicContinuity
+            ? normalizeKnownModelAlias(parsed.anthropicContinuity) ?? ""
             : ""
     };
   } catch {
@@ -60,19 +60,31 @@ export function resolveBookJobModelValue(
   environmentValue: string | undefined | null,
   fallbackValue: string
 ) {
-  const override = overrideValue?.trim();
+  const override = normalizeKnownModelAlias(overrideValue?.trim());
 
   if (override) {
     return override;
   }
 
-  const environment = environmentValue?.trim();
+  const environment = normalizeKnownModelAlias(environmentValue?.trim());
 
   if (environment) {
     return environment;
   }
 
   return fallbackValue;
+}
+
+function normalizeKnownModelAlias(value: string | undefined) {
+  if (value === "claude-opus-4-7") {
+    return "claude-opus-4-6";
+  }
+
+  if (value === "gpt-5.4-pro" || value === "gpt-5.4-thinking") {
+    return "gpt-5.4";
+  }
+
+  return value;
 }
 
 export function isBookJobProviderOption(value: string): value is BookJobProviderOption {

@@ -33,9 +33,9 @@ const OUTPUT_MODE_OPTIONS: Array<{
   id: AssistantOutputMode;
   label: string;
 }> = [
-  { id: "chat", label: "Antwort" },
+  { id: "chat", label: "Chatten" },
   { id: "note", label: "Notiz" },
-  { id: "regie", label: "Regie-Vorlage" }
+  { id: "regie", label: "Regie erstellen" }
 ];
 
 const CONTEXT_SCOPE_OPTIONS: Array<{
@@ -170,10 +170,12 @@ export function ChatWorkspace({
                 className="editor-input editor-select"
                 value={story.assistant.preferences.provider}
                 onChange={function (event) {
+                  const provider = event.target.value as AssistantProvider;
+
                   onUpdatePreferences(function (preferences) {
                     return {
                       ...preferences,
-                      provider: event.target.value as AssistantProvider
+                      provider
                     };
                   });
                 }}
@@ -192,7 +194,7 @@ export function ChatWorkspace({
               <span>Modell</span>
               <select
                 className="editor-input editor-select"
-                value={modelKey ? story.assistant.preferences.modelSelection[modelKey] : ""}
+                value={modelKey ? normalizeLegacyChatModel(story.assistant.preferences.modelSelection[modelKey]) : ""}
                 disabled={!modelKey}
                 onChange={function (event) {
                   if (!modelKey) {
@@ -478,11 +480,15 @@ export function ChatWorkspace({
               ) : null}
 
               <label className="editor-field">
-                <span>Prompt · {formatAssistantContextLabel(contextSelection, story)}</span>
+                <span>{story.assistant.preferences.outputMode === "regie" ? "Regie-Auftrag" : "Prompt"} · {formatAssistantContextLabel(contextSelection, story)}</span>
                 <textarea
                   className="editor-textarea chat-composer__textarea"
                   value={prompt}
-                  placeholder="Frage nach Strategie, Figurenlogik, Marktpositionierung oder fordere eine Notiz oder Regie-Vorlage an."
+                  placeholder={
+                    story.assistant.preferences.outputMode === "regie"
+                      ? "Beschreibe die Ideensammlung oder das Ziel der Regie. Vorhandene Fakten werden gesichert, echte Lücken separat markiert."
+                      : "Frage nach Strategie, Figurenlogik, Marktpositionierung oder fordere eine Notiz an."
+                  }
                   onChange={function (event) {
                     setPrompt(event.target.value);
                   }}
@@ -590,9 +596,21 @@ function resolveProviderModelKey(provider: AssistantProvider) {
   return null;
 }
 
+function normalizeLegacyChatModel(value: string) {
+  if (value === "claude-opus-4-7") {
+    return "claude-opus-4-6";
+  }
+
+  if (value === "gpt-5.4-pro" || value === "gpt-5.4-thinking") {
+    return "gpt-5.4";
+  }
+
+  return value;
+}
+
 function formatOutputModeLabel(mode: AssistantOutputMode) {
   if (mode === "regie") {
-    return "Regie-Vorlage";
+    return "Regie";
   }
 
   if (mode === "note") {

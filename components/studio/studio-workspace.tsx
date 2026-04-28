@@ -20,6 +20,7 @@ import {
   createAssistantArtifact,
   createAssistantMessage,
   createAssistantThread,
+  deleteAssistantThread,
   deriveThreadTitleFromPrompt,
   getAssistantArtifact,
   getAssistantThread,
@@ -754,11 +755,65 @@ export function StudioWorkspace({
     setIsMobileSidebarOpen(false);
   }
 
+  function handleDeleteAssistantThread(threadId: string) {
+    const targetThread = draftStory.assistant.threads.find(function (thread) {
+      return thread.id === threadId;
+    });
+
+    if (!targetThread) {
+      return;
+    }
+
+    const shouldDelete = window.confirm(`Chat "${targetThread.title}" löschen? Zugehörige Dokumente werden ebenfalls entfernt.`);
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    const remainingThreads = draftStory.assistant.threads.filter(function (thread) {
+      return thread.id !== threadId;
+    });
+    const targetIndex = draftStory.assistant.threads.findIndex(function (thread) {
+      return thread.id === threadId;
+    });
+    const nextThread =
+      remainingThreads[targetIndex] ??
+      remainingThreads[targetIndex - 1] ??
+      remainingThreads[0] ??
+      null;
+    const remainingArtifacts = draftStory.assistant.artifacts.filter(function (artifact) {
+      return artifact.threadId !== threadId;
+    });
+    const nextArtifact = nextThread
+      ? remainingArtifacts.find(function (artifact) {
+          return artifact.threadId === nextThread.id;
+        }) ?? null
+      : remainingArtifacts[0] ?? null;
+
+    commitStoryUpdate(function (currentStory) {
+      return deleteAssistantThread(currentStory, threadId);
+    });
+
+    if (selectedAssistantThreadId === threadId) {
+      setSelectedAssistantThreadId(nextThread?.id ?? "");
+      setSelectedAssistantArtifactId(nextArtifact?.id ?? "");
+    } else if (selectedAssistantArtifactId) {
+      const selectedArtifactWasDeleted = draftStory.assistant.artifacts.some(function (artifact) {
+        return artifact.id === selectedAssistantArtifactId && artifact.threadId === threadId;
+      });
+
+      if (selectedArtifactWasDeleted) {
+        setSelectedAssistantArtifactId(nextArtifact?.id ?? "");
+      }
+    }
+  }
+
   async function handleSubmitAssistantPrompt(params: {
     prompt: string;
     outputMode: AssistantOutputMode;
     contextSelection: AssistantContextSelection;
   }) {
+    const assistantProvider = draftStory.assistant.preferences.provider;
     const baseThread =
       selectedAssistantThread ??
       createAssistantThread(
@@ -769,7 +824,7 @@ export function StudioWorkspace({
       role: "user",
       content: params.prompt,
       outputMode: params.outputMode,
-      provider: draftStory.assistant.preferences.provider,
+      provider: assistantProvider,
       context: params.contextSelection
     });
     let nextStory = draftStory;
@@ -803,7 +858,7 @@ export function StudioWorkspace({
         body: JSON.stringify({
           story: nextStory,
           threadId: baseThread.id,
-          provider: nextStory.assistant.preferences.provider,
+          provider: assistantProvider,
           modelSelection: nextStory.assistant.preferences.modelSelection,
           outputMode: params.outputMode,
           contextSelection: params.contextSelection
@@ -1436,23 +1491,39 @@ export function StudioWorkspace({
               <div className="sidebar-codex-list">
                 {filteredAssistantThreads.map(function (thread) {
                   return (
-                    <button
+                    <div
                       key={thread.id}
                       className={
-                        "codex-row" + (thread.id === selectedAssistantThreadId ? " codex-row--active" : "")
+                        "chat-thread-row" + (thread.id === selectedAssistantThreadId ? " chat-thread-row--active" : "")
                       }
-                      type="button"
-                      onClick={function () {
-                        setSelectedAssistantThreadId(thread.id);
-                        const firstArtifact = draftStory.assistant.artifacts.find(function (artifact) {
-                          return artifact.threadId === thread.id;
-                        });
-                        setSelectedAssistantArtifactId(firstArtifact?.id ?? "");
-                      }}
                     >
-                      <h3>{thread.title}</h3>
-                      <p>{thread.summary || "Noch keine Assistant-Antwort."}</p>
-                    </button>
+                      <button
+                        className="codex-row chat-thread-row__open"
+                        type="button"
+                        onClick={function () {
+                          setSelectedAssistantThreadId(thread.id);
+                          const firstArtifact = draftStory.assistant.artifacts.find(function (artifact) {
+                            return artifact.threadId === thread.id;
+                          });
+                          setSelectedAssistantArtifactId(firstArtifact?.id ?? "");
+                        }}
+                      >
+                        <h3>{thread.title}</h3>
+                        <p>{thread.summary || "Noch keine Assistant-Antwort."}</p>
+                      </button>
+                      <button
+                        className="chat-thread-row__delete"
+                        type="button"
+                        aria-label={`Chat ${thread.title} löschen`}
+                        title="Chat löschen"
+                        disabled={isAssistantLoading}
+                        onClick={function () {
+                          handleDeleteAssistantThread(thread.id);
+                        }}
+                      >
+                        <span className="mini-icon mini-icon--trash" />
+                      </button>
+                    </div>
                   );
                 })}
 

@@ -121,6 +121,10 @@ export async function generateStoryChat(params: {
       const message =
         error instanceof Error ? error.message : "Lokales Gemma-Modell konnte nicht ausgeführt werden.";
 
+      if (outputMode === "regie") {
+        throw new Error(`Gemma-Regie-Test fehlgeschlagen. Kein lokaler Template-Fallback wurde erzeugt: ${message}`);
+      }
+
       return createLocalExecution(
         params.story,
         thread.id,
@@ -134,6 +138,10 @@ export async function generateStoryChat(params: {
   const remoteProvider = resolveRemoteProvider(provider);
 
   if (!remoteProvider) {
+    if (outputMode === "regie") {
+      throw new Error("Regie-Erstellung braucht einen aktiven OPENAI_API_KEY oder ANTHROPIC_API_KEY. Lokaler Fallback ist für Regie deaktiviert.");
+    }
+
     return createLocalExecution(
       params.story,
       thread.id,
@@ -172,6 +180,10 @@ export async function generateStoryChat(params: {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Story-Chat konnte nicht remote erzeugt werden.";
+
+    if (outputMode === "regie") {
+      throw new Error(`Regie-Erstellung über ${remoteProvider} fehlgeschlagen. Kein lokaler Fallback: ${message}`);
+    }
 
     return createLocalExecution(params.story, thread.id, outputMode, contextSelection, message);
   }
@@ -710,6 +722,10 @@ function buildSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode
 function getAssistantOutputModeInstructions(outputMode: AssistantOutputMode) {
   if (outputMode === "regie") {
     return [
+      "REGIE-MODUS IST KEIN NORMALER CHAT: Erzeuge ein importnahes Arbeitsdokument, nicht nur Rat oder Brainstorming.",
+      "Sichere zuerst vorhandene Fakten aus dem Kontext. Markiere etwas nur als Lücke, wenn es im Kontext wirklich nicht vorhanden ist.",
+      "Wenn eine Angabe teilweise vorhanden ist, übernimm den vorhandenen Stand und markiere nur die fehlende Präzisierung.",
+      "Verwandle konkrete vorhandene Details nie wieder in generische Lücken.",
       "Wenn du ein Dokument erzeugst, baue eine EMBER-Regie-Vorlage nach der aktuellen Regie_Anleitung.md-Logik.",
       "Die Regie-Vorlage ist ein Rohentwurf für späteren Import, kein alter Regiebrief.",
       "Nutze die echten Pipeline-Sektionen: MASTER BRIEF, MARKET BRIEF, WRITER CONSTITUTION, WORLD BIBLE, CANON FACTS, CHARACTER STATE LEDGER, CONTINUITY GUARDRAILS, OPEN THREADS, LOSS LADDER / ACT MAP, ACTS & KAPITEL — SCENE CARDS.",
@@ -775,6 +791,9 @@ function buildUserPrompt(
     "Wenn OUTPUT_MODE note ist, muss artifact.content diese Abschnitte enthalten: ## Entscheidungen, ## Risiken, ## Material, ## Offene Fragen, ## Nächste Schritte.",
     "Wenn OUTPUT_MODE regie ist, erzeuge ein Markdown-Artifact mit kind regie.",
     "Wenn OUTPUT_MODE regie ist, muss artifact.content die neue Regie-Vorlagenstruktur anlegen: # EMBER Story Document, ## MASTER BRIEF, ## MARKET BRIEF, ## WRITER CONSTITUTION, ## WORLD BIBLE, ## CANON FACTS, ## CHARACTER STATE LEDGER, ## CONTINUITY GUARDRAILS, ## OPEN THREADS, ## LOSS LADDER / ACT MAP, ## ACTS & KAPITEL — SCENE CARDS, ## LÜCKEN VOR IMPORT.",
+    "Wenn OUTPUT_MODE regie ist, sichere alle vorhandenen konkreten Angaben aus PROJECT_CONTEXT, bevor du Lücken benennst.",
+    "Wenn OUTPUT_MODE regie ist, darfst du Hook, Setting, Figuren, Kräfte, Regeln, Organisation, Mentor, Unfallmechanik oder Act-Material nicht als Lücke markieren, wenn PROJECT_CONTEXT dazu bereits verwertbare Angaben enthält.",
+    "Wenn OUTPUT_MODE regie ist, formuliere teilweise vorhandene Angaben als Arbeitsstand plus gezielte offene Präzisierung.",
     "Wenn OUTPUT_MODE regie ist, sind Canon Facts und Scene Cards Rohentwurf/Kandidaten, bis ein Dry-Run sie geprüft hat.",
     "Wenn du eine Lücke benennst, sage explizit, ob sie heute ein echter Datenmodell- oder Persistenzmangel ist oder nur ein geplanter Ausbau laut Struktur.",
     "Der reply-Text bleibt knapp und sagt, was du entschieden oder erzeugt hast."
