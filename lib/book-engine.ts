@@ -1,6 +1,7 @@
 import {
   createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
+  hasBookLockedFacts,
   normalizeBookKnowledgeStates,
   normalizeBookObjectStates,
   normalizeBookPromiseStates,
@@ -724,7 +725,7 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
     sceneCards,
     contextPacks,
     lockedFacts:
-      Object.values(story.book.memory.lockedFacts).some(Boolean)
+      hasBookLockedFacts(story.book.memory.lockedFacts)
         ? story.book.memory.lockedFacts
         : story.book.masterBriefRuntime.lockedFacts,
     continuityGuardrails:

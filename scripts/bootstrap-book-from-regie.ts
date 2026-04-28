@@ -4,14 +4,18 @@ import { createUuid } from "../lib/id"
 import type { BookEngineMode } from "../lib/book-engine-modes"
 import {
   buildDomesticSuspenseThrillerProseTechniqueProfile,
+  deriveDomesticSuspenseLockedFacts,
   detectDomesticSuspenseThrillerSignals
 } from "../lib/book-genre-engine-domestic-thriller"
+import { deriveYaSuperheroOriginLockedFacts } from "../lib/book-genre-engine-ya-superhero"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
   createEmptyBookLockedFacts,
   createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
+  getDomesticSuspenseLockedFacts,
+  getYaSuperheroLockedFacts,
   type BookCharacterState,
   type BookContextPack,
   type BookLockedFacts,
@@ -824,6 +828,7 @@ function parseRegie(
   const premise = getFirstTableValue(masterBriefRows, ["Prämisse", "Praemisse"])
   const thematicCore = getFirstTableValue(masterBriefRows, ["Thematischer Kern"])
   const lockedFacts = deriveLockedFacts({
+    engineMode,
     continuityGuardrailsSection,
     continuityGuardrails,
     canonFacts,
@@ -1433,65 +1438,56 @@ function buildOutlineLines(
 }
 
 function deriveLockedFacts(params: {
+  engineMode: BookEngineMode
   continuityGuardrailsSection: string
   continuityGuardrails: string[]
   canonFacts: ParsedCanonFact[]
   characters: ParsedCharacter[]
   scenes: ParsedScene[]
 }): BookLockedFacts {
-  const fallback = createEmptyBookLockedFacts()
+  const lockedFacts = createEmptyBookLockedFacts()
   const section = params.continuityGuardrailsSection
   const firstScene = params.scenes[0]
   const opening = firstScene?.directives.opening || ""
   const firstSceneText = [opening, firstScene?.directives.coreAction || "", firstScene?.summary || ""].join(" ")
-  const protagonist = params.characters.find(function (character) {
-    return /mutter/i.test(character.role) || normalizeText(character.name) === "eva berger"
-  })?.name || null
-  const child = params.characters.find(function (character) {
-    return /kind/i.test(character.role) || normalizeText(character.name) === "mila berger"
-  })?.name || null
-  const antagonist = params.characters.find(function (character) {
-    return /vertraute/i.test(character.role) || normalizeText(character.name) === "nora seidel"
-  })?.name || null
-  const coparent = params.characters.find(function (character) {
-    return /vater/i.test(character.role) || normalizeText(character.name) === "simon berger"
-  })?.name || null
-  const institutionName =
-    matchSingle(section, /`([^`]+)` bleibt die Kita/) ||
-    matchSingle(params.canonFacts.map(function (fact) {
+  const fullSignalText = [
+    section,
+    firstSceneText,
+    params.canonFacts.map(function (fact) {
       return fact.fact
-    }).join("\n"), /Kita ([A-ZÄÖÜ][\p{L}-]+)/u) ||
-    null
-  const incidentTime =
-    matchSingle(section, /Abholzeitpunkt ist (\d{1,2}:\d{2}) Uhr/) ||
-    matchSingle(firstSceneText, /(\d{1,2}:\d{2}) Uhr/) ||
-    null
-  const notificationTime =
-    matchSingle(section, /Heute um (\d{1,2}:\d{2}) Uhr sieht sie den verspäteten App-Eintrag/) ||
-    firstScene?.directives.timeAnchor?.match(/(\d{1,2}:\d{2})/)?.[1] ||
-    null
-  const firstOfficeTime =
-    matchSingle(section, /sitzt um (\d{1,2}:\d{2}) Uhr im Leitungsbüro/) ||
-    matchSingle(params.scenes[1]?.directives.timeAnchor || "", /(\d{1,2}:\d{2})/) ||
-    null
-  const evaAlibiLocation =
-    matchSingle(section, /nachweisbar in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
-    matchSingle(firstSceneText, /Kundentermin in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
-    null
+    }).join("\n")
+  ].join("\n")
+  const domesticLockedFacts = deriveDomesticSuspenseLockedFacts({
+    engineMode: params.engineMode,
+    characters: params.characters,
+    signalText: fullSignalText,
+    firstSceneText,
+    firstSceneTimeAnchor: firstScene?.directives.timeAnchor,
+    secondSceneTimeAnchor: params.scenes[1]?.directives.timeAnchor
+  })
+  const yaSuperheroLockedFacts = deriveYaSuperheroOriginLockedFacts({
+    engineMode: params.engineMode,
+    characters: params.characters,
+    signalText: fullSignalText
+  })
 
-  return {
-    ...fallback,
-    protagonistName: protagonist,
-    childName: child,
-    antagonistName: antagonist,
-    coparentName: coparent,
-    institutionName,
-    incidentTime,
-    notificationTime,
-    firstOfficeTime,
-    evaAlibiLocation,
-    documentedPickupPerson: protagonist
-  }
+  lockedFacts.common.protagonistNames = uniqueStrings([
+    ...(domesticLockedFacts.common.protagonistNames ?? []),
+    ...(yaSuperheroLockedFacts.common.protagonistNames ?? [])
+  ])
+  lockedFacts.common.antagonistNames = uniqueStrings(domesticLockedFacts.common.antagonistNames ?? [])
+  lockedFacts.common.institutionNames = uniqueStrings([
+    ...(domesticLockedFacts.common.institutionNames ?? []),
+    ...(yaSuperheroLockedFacts.common.institutionNames ?? [])
+  ])
+  lockedFacts.common.keyObjectNames = uniqueStrings(yaSuperheroLockedFacts.common.keyObjectNames ?? [])
+  lockedFacts.common.fixedLocations = uniqueStrings(domesticLockedFacts.common.fixedLocations ?? [])
+
+  lockedFacts.profiles.domestic_suspense_thriller = domesticLockedFacts.profile
+
+  lockedFacts.profiles.ya_superhero_origin = yaSuperheroLockedFacts.profile
+
+  return lockedFacts
 }
 
 function deriveProseTechniqueProfile(params: {
@@ -1588,12 +1584,25 @@ function applyLockedFactOverrides(
     evaAlibiWindow: string | null
   }
 ) {
+  const domesticFacts = getDomesticSuspenseLockedFacts(parsed.lockedFacts)
   return {
     ...parsed,
     lockedFacts: {
       ...parsed.lockedFacts,
-      incidentDate: overrides.incidentDate || parsed.lockedFacts.incidentDate,
-      evaAlibiWindow: overrides.evaAlibiWindow || parsed.lockedFacts.evaAlibiWindow
+      common: {
+        ...parsed.lockedFacts.common,
+        fixedDates: uniqueStrings(parsed.lockedFacts.common.fixedDates.concat(
+          overrides.incidentDate ? [overrides.incidentDate] : []
+        ))
+      },
+      profiles: {
+        ...parsed.lockedFacts.profiles,
+        domestic_suspense_thriller: {
+          ...domesticFacts,
+          incidentDate: overrides.incidentDate || domesticFacts.incidentDate,
+          alibiWindow: overrides.evaAlibiWindow || domesticFacts.alibiWindow
+        }
+      }
     }
   }
 }
@@ -1615,15 +1624,46 @@ function mergeBookRuntimeContext(
 }
 
 function mergeBookLockedFacts(existing: BookLockedFacts, incoming: BookLockedFacts) {
-  const empty = createEmptyBookLockedFacts()
-  const merged = { ...empty }
-  const keys = Object.keys(empty) as Array<keyof BookLockedFacts>
+  const existingDomestic = getDomesticSuspenseLockedFacts(existing)
+  const incomingDomestic = getDomesticSuspenseLockedFacts(incoming)
+  const existingYa = getYaSuperheroLockedFacts(existing)
+  const incomingYa = getYaSuperheroLockedFacts(incoming)
 
-  keys.forEach(function (key) {
-    merged[key] = incoming[key] || existing[key] || null
-  })
-
-  return merged
+  return {
+    common: {
+      protagonistNames: uniqueStrings(existing.common.protagonistNames.concat(incoming.common.protagonistNames)),
+      antagonistNames: uniqueStrings(existing.common.antagonistNames.concat(incoming.common.antagonistNames)),
+      institutionNames: uniqueStrings(existing.common.institutionNames.concat(incoming.common.institutionNames)),
+      keyObjectNames: uniqueStrings(existing.common.keyObjectNames.concat(incoming.common.keyObjectNames)),
+      fixedLocations: uniqueStrings(existing.common.fixedLocations.concat(incoming.common.fixedLocations)),
+      fixedDates: uniqueStrings(existing.common.fixedDates.concat(incoming.common.fixedDates))
+    },
+    profiles: {
+      domestic_suspense_thriller: {
+        childName: incomingDomestic.childName || existingDomestic.childName,
+        coparentName: incomingDomestic.coparentName || existingDomestic.coparentName,
+        institutionName: incomingDomestic.institutionName || existingDomestic.institutionName,
+        incidentDate: incomingDomestic.incidentDate || existingDomestic.incidentDate,
+        incidentTime: incomingDomestic.incidentTime || existingDomestic.incidentTime,
+        notificationTime: incomingDomestic.notificationTime || existingDomestic.notificationTime,
+        firstOfficeTime: incomingDomestic.firstOfficeTime || existingDomestic.firstOfficeTime,
+        documentedPickupPerson:
+          incomingDomestic.documentedPickupPerson || existingDomestic.documentedPickupPerson,
+        alibiLocation: incomingDomestic.alibiLocation || existingDomestic.alibiLocation,
+        alibiWindow: incomingDomestic.alibiWindow || existingDomestic.alibiWindow
+      },
+      ya_superhero_origin: {
+        teamMemberNames: uniqueStrings(existingYa.teamMemberNames.concat(incomingYa.teamMemberNames)),
+        substanceName: incomingYa.substanceName || existingYa.substanceName,
+        aiCompanionName: incomingYa.aiCompanionName || existingYa.aiCompanionName,
+        experimentLocation: incomingYa.experimentLocation || existingYa.experimentLocation,
+        organizationName: incomingYa.organizationName || existingYa.organizationName,
+        triggerEvent: incomingYa.triggerEvent || existingYa.triggerEvent,
+        accidentMechanism: incomingYa.accidentMechanism || existingYa.accidentMechanism,
+        powerOrigin: incomingYa.powerOrigin || existingYa.powerOrigin
+      }
+    }
+  }
 }
 
 function mergeProseTechniqueProfile(

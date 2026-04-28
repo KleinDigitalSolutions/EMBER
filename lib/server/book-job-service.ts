@@ -25,6 +25,9 @@ import {
   validateBookStateDiff
 } from "@/lib/book-state-validator";
 import {
+  getCommonLockedFacts,
+  getDomesticSuspenseLockedFacts,
+  getYaSuperheroLockedFacts,
   normalizeBookDraftTargets,
   type BookStateDiff,
   type BookDraftJob,
@@ -1438,7 +1441,7 @@ function buildProseStablePrefixPrompt(packet: SceneContextPacket) {
     `Thematic core: ${packet.stablePrefix.thematicCore}`,
     `Author intent: ${packet.stablePrefix.authorIntent || "not set"}`,
     `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
-    formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
+    formatPromptList("Locked facts", formatLockedFacts(packet)),
     formatPromptList("Narrator contract", narratorContract),
     formatPromptList("Writer rules", writerRules),
     formatPromptList(
@@ -1477,7 +1480,7 @@ function buildAuditStablePrefixPrompt(packet: SceneContextPacket) {
     `Current focus: ${packet.stablePrefix.currentFocus || "not set"}`,
     `Commercial lane: ${packet.stablePrefix.categoryLane || "not set"}`,
     `Commercial hook: ${packet.stablePrefix.marketHook || "not set"}`,
-    formatPromptList("Locked facts", formatLockedFacts(packet.stablePrefix.lockedFacts)),
+    formatPromptList("Locked facts", formatLockedFacts(packet)),
     formatPromptList(
       "Prose technique profile",
       formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile)
@@ -1770,7 +1773,7 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
     `Scene excerpt: ${packet.dynamicContext.sceneExcerpt}`,
     `Scene card outline: ${packet.dynamicContext.sceneCardOutline.join(" || ") || "none"}`,
     `Context pack id: ${packet.dynamicContext.contextPackId || "generated_locally"}`,
-    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
+    `Locked facts: ${formatLockedFacts(packet).join(" || ") || "none"}`,
     `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" || ") || "none"}`,
     `Previous beats: ${packet.dynamicContext.previousBeats
       .map(function (beat) {
@@ -1806,7 +1809,7 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     buildSceneIntentionPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
     `Soft scene guidance: ${packet.dynamicContext.sceneSoftGuidance.join(" || ") || "none"}`,
-    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" || ") || "none"}`,
+    `Locked facts: ${formatLockedFacts(packet).join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
@@ -1920,7 +1923,7 @@ function buildSceneContextXml(packet: SceneContextPacket) {
 
 function buildContinuityContext(packet: SceneContextPacket) {
   return [
-    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" | ") || "none"}`,
+    `Locked facts: ${formatLockedFacts(packet).join(" | ") || "none"}`,
     `Prose technique profile: ${formatTechniqueProfile(packet.stablePrefix.proseTechniqueProfile).join(" | ") || "none"}`,
     `Anti-imitation rules: ${packet.stablePrefix.proseTechniqueProfile.antiImitationRules.join(" | ") || "none"}`,
     `Continuity guardrails: ${packet.stablePrefix.continuityGuardrails.join(" | ") || "none"}`,
@@ -1945,7 +1948,7 @@ function buildContinuityContext(packet: SceneContextPacket) {
 
 function buildProseContinuityContext(packet: SceneContextPacket) {
   return [
-    `Locked facts: ${formatLockedFacts(packet.stablePrefix.lockedFacts).join(" | ") || "none"}`,
+    `Locked facts: ${formatLockedFacts(packet).join(" | ") || "none"}`,
     `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" | ") || "none"}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
       .map(function (entry) {
@@ -1969,13 +1972,69 @@ function formatPromptList(label: string, items: string[]) {
   return `${label}: ${compactItems.join(" | ")}`;
 }
 
-function formatLockedFacts(lockedFacts: SceneContextPacket["stablePrefix"]["lockedFacts"]) {
-  return Object.entries(lockedFacts)
+function formatLockedFacts(packet: SceneContextPacket) {
+  const lockedFacts = packet.stablePrefix.lockedFacts;
+  const common = getCommonLockedFacts(lockedFacts);
+  const items = [
+    ...formatLockedFactArray("common.protagonistNames", common.protagonistNames),
+    ...formatLockedFactArray("common.antagonistNames", common.antagonistNames),
+    ...formatLockedFactArray("common.institutionNames", common.institutionNames),
+    ...formatLockedFactArray("common.keyObjectNames", common.keyObjectNames),
+    ...formatLockedFactArray("common.fixedLocations", common.fixedLocations),
+    ...formatLockedFactArray("common.fixedDates", common.fixedDates)
+  ];
+
+  if (
+    packet.stablePrefix.engineMode === "domestic_suspense_thriller" ||
+    packet.stablePrefix.engineMode === "default"
+  ) {
+    const domestic = getDomesticSuspenseLockedFacts(lockedFacts);
+    items.push(
+      ...formatLockedFactObject("domestic_suspense_thriller", {
+        childName: domestic.childName,
+        coparentName: domestic.coparentName,
+        institutionName: domestic.institutionName,
+        incidentDate: domestic.incidentDate,
+        incidentTime: domestic.incidentTime,
+        notificationTime: domestic.notificationTime,
+        firstOfficeTime: domestic.firstOfficeTime,
+        documentedPickupPerson: domestic.documentedPickupPerson,
+        alibiLocation: domestic.alibiLocation,
+        alibiWindow: domestic.alibiWindow
+      })
+    );
+  }
+
+  if (packet.stablePrefix.engineMode === "ya_superhero_origin") {
+    const yaSuperhero = getYaSuperheroLockedFacts(lockedFacts);
+    items.push(
+      ...formatLockedFactArray("ya_superhero_origin.teamMemberNames", yaSuperhero.teamMemberNames),
+      ...formatLockedFactObject("ya_superhero_origin", {
+        substanceName: yaSuperhero.substanceName,
+        aiCompanionName: yaSuperhero.aiCompanionName,
+        experimentLocation: yaSuperhero.experimentLocation,
+        organizationName: yaSuperhero.organizationName,
+        triggerEvent: yaSuperhero.triggerEvent,
+        accidentMechanism: yaSuperhero.accidentMechanism,
+        powerOrigin: yaSuperhero.powerOrigin
+      })
+    );
+  }
+
+  return items;
+}
+
+function formatLockedFactArray(label: string, values: string[]) {
+  return values.length ? [`${label}=${values.join(", ")}`] : [];
+}
+
+function formatLockedFactObject(prefix: string, values: Record<string, string | null>) {
+  return Object.entries(values)
     .filter(function ([, value]) {
       return typeof value === "string" && value.trim().length > 0;
     })
     .map(function ([key, value]) {
-      return `${key}=${value}`;
+      return `${prefix}.${key}=${value}`;
     });
 }
 

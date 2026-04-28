@@ -1,5 +1,9 @@
 import type { BookEngineMode } from "./book-engine-modes";
 import {
+  getDomesticSuspenseLockedFacts,
+  hasDomesticSuspenseLockedFacts,
+  type BookCommonLockedFacts,
+  type BookDomesticSuspenseThrillerLockedFacts,
   type BookLockedFacts,
   type BookProseTechniqueProfile
 } from "./story-schema";
@@ -9,6 +13,18 @@ export type DomesticSuspenseThrillerSignals = {
   alltagsnah: boolean;
   noThrillerLoudness: boolean;
   matches: boolean;
+};
+
+export type DomesticSuspenseLockedFactInput = {
+  engineMode: BookEngineMode;
+  characters: Array<{
+    name: string;
+    role: string;
+  }>;
+  signalText: string;
+  firstSceneText: string;
+  firstSceneTimeAnchor?: string | null;
+  secondSceneTimeAnchor?: string | null;
 };
 
 export function detectDomesticSuspenseThrillerSignals(normalizedSignals: string): DomesticSuspenseThrillerSignals {
@@ -45,6 +61,69 @@ export function detectDomesticSuspenseThrillerSignals(normalizedSignals: string)
     alltagsnah,
     noThrillerLoudness,
     matches: isDomesticSuspense || alltagsnah
+  };
+}
+
+export function deriveDomesticSuspenseLockedFacts(params: DomesticSuspenseLockedFactInput): {
+  common: Partial<BookCommonLockedFacts>;
+  profile: BookDomesticSuspenseThrillerLockedFacts;
+} {
+  if (params.engineMode !== "domestic_suspense_thriller" && params.engineMode !== "default") {
+    return {
+      common: {},
+      profile: createEmptyDomesticSuspenseLockedFacts()
+    };
+  }
+
+  const protagonist = findCharacterByRole(params.characters, /mutter|vater|elternteil|sorgeberechtigt|protagonist/i);
+  const child = findCharacterByRole(params.characters, /kind|tochter|sohn/i);
+  const antagonist = findCharacterByRole(params.characters, /vertraute|freundin|freund|gegenkraft|antagonist|verdacht/i);
+  const coparent = findCharacterByRole(
+    params.characters.filter(function (character) {
+      return character.name !== protagonist;
+    }),
+    /mutter|vater|coparent|co-parent|ex|elternteil/i
+  );
+  const institutionName =
+    matchSingle(params.signalText, /`([^`]+)` bleibt die (?:Kita|Einrichtung|Institution)/u) ||
+    matchSingle(params.signalText, /\b(?:Kita|Kindergarten|Schule|Einrichtung)\s+([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    null;
+  const incidentTime =
+    matchSingle(params.signalText, /(?:Abholzeitpunkt|Abholzeit|Vorfallszeit|Zeitpunkt) ist (\d{1,2}:\d{2}) Uhr/u) ||
+    matchSingle(params.firstSceneText, /(\d{1,2}:\d{2}) Uhr/u) ||
+    null;
+  const notificationTime =
+    matchSingle(params.signalText, /Heute um (\d{1,2}:\d{2}) Uhr sieht sie den verspäteten App-Eintrag/u) ||
+    params.firstSceneTimeAnchor?.match(/(\d{1,2}:\d{2})/)?.[1] ||
+    null;
+  const firstOfficeTime =
+    matchSingle(params.signalText, /sitzt um (\d{1,2}:\d{2}) Uhr im Leitungsbüro/u) ||
+    params.secondSceneTimeAnchor?.match(/(\d{1,2}:\d{2})/)?.[1] ||
+    null;
+  const alibiLocation =
+    matchSingle(params.signalText, /nachweisbar in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    matchSingle(params.firstSceneText, /Kundentermin in ([A-ZÄÖÜ][\p{L}-]+)/u) ||
+    null;
+
+  return {
+    common: {
+      protagonistNames: uniqueStrings([protagonist].filter(isString)),
+      antagonistNames: uniqueStrings([antagonist].filter(isString)),
+      institutionNames: uniqueStrings([institutionName].filter(isString)),
+      fixedLocations: uniqueStrings([alibiLocation].filter(isString))
+    },
+    profile: {
+      childName: child,
+      coparentName: coparent,
+      institutionName,
+      incidentDate: null,
+      incidentTime,
+      notificationTime,
+      firstOfficeTime,
+      documentedPickupPerson: protagonist,
+      alibiLocation,
+      alibiWindow: null
+    }
   };
 }
 
@@ -145,20 +224,10 @@ export function buildDomesticSuspenseLockedFactHardConstraints(params: {
   sceneText: string;
   containsTerm: (normalizedText: string, rawTerm: string) => boolean;
 }) {
-  const lockedFacts = params.lockedFacts;
+  const lockedFacts = getDomesticSuspenseLockedFacts(params.lockedFacts);
   const sceneText = params.sceneText;
   const containsTerm = params.containsTerm;
-  const hasDomesticLockedFacts = Boolean(
-    lockedFacts.childName ||
-    lockedFacts.coparentName ||
-    lockedFacts.incidentDate ||
-    lockedFacts.incidentTime ||
-    lockedFacts.notificationTime ||
-    lockedFacts.firstOfficeTime ||
-    lockedFacts.evaAlibiLocation ||
-    lockedFacts.evaAlibiWindow ||
-    lockedFacts.documentedPickupPerson
-  );
+  const hasDomesticLockedFacts = hasDomesticSuspenseLockedFacts(params.lockedFacts);
   const constraints: string[] = [];
   const shouldUseDomesticConstraints =
     params.engineMode === "domestic_suspense_thriller" ||
@@ -225,27 +294,27 @@ export function buildDomesticSuspenseLockedFactHardConstraints(params: {
   }
 
   if (
-    lockedFacts.evaAlibiLocation &&
+    lockedFacts.alibiLocation &&
     (
-      containsTerm(sceneText, lockedFacts.evaAlibiLocation) ||
+      containsTerm(sceneText, lockedFacts.alibiLocation) ||
       containsTerm(sceneText, "nachweisbar") ||
       containsTerm(sceneText, "kundentermin") ||
       containsTerm(sceneText, "alibi")
     )
   ) {
-    constraints.push(`Locked Fact - Alibi-Ort: ${lockedFacts.evaAlibiLocation}.`);
+    constraints.push(`Locked Fact - Alibi-Ort: ${lockedFacts.alibiLocation}.`);
   }
 
   if (
-    lockedFacts.evaAlibiWindow &&
+    lockedFacts.alibiWindow &&
     (
-      containsTerm(sceneText, lockedFacts.evaAlibiWindow) ||
+      containsTerm(sceneText, lockedFacts.alibiWindow) ||
       containsTerm(sceneText, "kundentermin") ||
       containsTerm(sceneText, "alibi") ||
       containsTerm(sceneText, "termin")
     )
   ) {
-    constraints.push(`Locked Fact - Alibi-Zeitfenster: ${lockedFacts.evaAlibiWindow}.`);
+    constraints.push(`Locked Fact - Alibi-Zeitfenster: ${lockedFacts.alibiWindow}.`);
   }
 
   if (
@@ -270,4 +339,36 @@ function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.map(function (value) {
     return value.trim();
   }).filter(Boolean)));
+}
+
+function createEmptyDomesticSuspenseLockedFacts(): BookDomesticSuspenseThrillerLockedFacts {
+  return {
+    childName: null,
+    coparentName: null,
+    institutionName: null,
+    incidentDate: null,
+    incidentTime: null,
+    notificationTime: null,
+    firstOfficeTime: null,
+    documentedPickupPerson: null,
+    alibiLocation: null,
+    alibiWindow: null
+  };
+}
+
+function findCharacterByRole(
+  characters: DomesticSuspenseLockedFactInput["characters"],
+  rolePattern: RegExp
+) {
+  return characters.find(function (character) {
+    return rolePattern.test(character.role);
+  })?.name || null;
+}
+
+function matchSingle(value: string, pattern: RegExp) {
+  return value.match(pattern)?.[1]?.trim() ?? null;
+}
+
+function isString(value: string | null): value is string {
+  return Boolean(value);
 }
