@@ -10,6 +10,7 @@ import {
   resolveBookJobModelValue,
   type BookJobModelOverrides
 } from "@/lib/book-job-models";
+import { buildGenreEnginePrompt } from "@/lib/book-genre-engines";
 import {
   auditSceneContinuityGuards,
   buildNarrativeSceneCardOutlineSteps,
@@ -1374,6 +1375,7 @@ function normalizeHumanEditTimestampKey(value: string | null) {
 function buildSystemPrompt(packet: SceneContextPacket, options?: DraftGenerationOptions) {
   return [
     buildCoreSystemPrompt(),
+    buildGenreEnginePrompt(packet.stablePrefix.engineMode),
     options ? buildProseStablePrefixPrompt(packet) : buildAuditStablePrefixPrompt(packet),
     options ? buildProseStyleBrakePrompt() : "",
     options?.humanEditProfile || ""
@@ -1403,7 +1405,7 @@ function buildProseStyleBrakePrompt() {
   return [
     "EMBER-Prosa-Praeferenzen:",
     "Bevorzuge konkreten Druck vor abstrakter Deutung.",
-    "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen, bevor du sie erklaerst.",
+    "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen.",
     "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihr natuerlicher Druck anders liegt.",
     "Nutze pro Szene nur wenige konkrete Kontextdetails aktiv. Der Rest dient als Sicherheitsnetz gegen Fehler.",
     "Materialdetails sind Szenentextur, keine automatisch zu benennenden Beweise. Nenne sie nur Beweis, Symbol, Spur oder Bedeutung, wenn eine Figur das natuerlich sagen wuerde.",
@@ -1411,12 +1413,12 @@ function buildProseStyleBrakePrompt() {
     "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
     "Druckfiguren duerfen kompetent sein, aber nicht standardmaessig perfekt getaktet oder allwissend wirken. Ein falscher Ton, Uebergriff, eine verspaetete Reaktion, sichtbare Kosten oder unvollstaendiger Zugriff machen sie oft lebendiger.",
     "Vorher/nachher-Praeferenz:",
-    "Schwach: Sie verstand, dass Nora längst näher war, als sie gedacht hatte.",
-    "Staerker: Auf dem Etikett stand M. Berger. Die Schrift war nicht ihre.",
-    "Schwach: Das war der Beweis, dass jemand in der Wohnung gewesen war.",
-    "Staerker: Der Knoten lag rechts über links. Eva band links über rechts.",
+    "Schwach: Die Figur verstand, dass die Lage gefaehrlicher war, als sie gedacht hatte.",
+    "Staerker: Der Name auf dem Zettel stimmte nicht mit dem Umschlag ueberein.",
+    "Schwach: Das zeigte eindeutig, dass jemand ihre Grenze ueberschritten hatte.",
+    "Staerker: Der Stuhl stand nicht mehr unter dem Tisch. Sie schob ihn nicht zurueck.",
     "Schwach: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
-    "Staerker: Sie legte den Schlüssel auf den Tisch. Er blieb nicht liegen. Sie nahm ihn wieder in die Hand."
+    "Staerker: Sie legte den Gegenstand ab. Er blieb nicht dort. Sie nahm ihn wieder in die Hand."
   ].join("\n");
 }
 
@@ -1445,17 +1447,9 @@ function extractNarratorContractRules(rules: string[]) {
 }
 
 function extractProseWriterRules(rules: string[]) {
-  const proseRules = rules.filter(function (rule) {
+  return rules.filter(function (rule) {
     return !isNarratorContractRule(rule);
-  });
-  const priorityRules = proseRules.filter(function (rule) {
-    return /aftershock-regel|lebendigkeitsregel|keine einfachen loesungen|keine einfachen lösungen|druck, kosten, risiko|teenager-reibung/i.test(rule);
-  });
-  const regularRules = proseRules.filter(function (rule) {
-    return !priorityRules.includes(rule);
-  });
-
-  return priorityRules.concat(regularRules).slice(0, 12);
+  }).slice(0, 12);
 }
 
 function isNarratorContractRule(rule: string) {
@@ -1495,11 +1489,14 @@ function buildAuditStablePrefixPrompt(packet: SceneContextPacket) {
 }
 
 function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
+  const genrePrompt = buildGenreEnginePrompt(packet.stablePrefix.engineMode);
+
   return [
     {
       type: "text" as const,
       text: buildCoreSystemPrompt()
     },
+    ...(genrePrompt ? [{ type: "text" as const, text: genrePrompt }] : []),
     {
       type: "text" as const,
       text: buildAuditStablePrefixPrompt(packet),
@@ -1514,11 +1511,13 @@ function buildAnthropicSystemPromptBlocks(packet: SceneContextPacket) {
 }
 
 function buildAnthropicProseSystemPromptBlocks(packet: SceneContextPacket, options: DraftGenerationOptions) {
+  const genrePrompt = buildGenreEnginePrompt(packet.stablePrefix.engineMode);
   const blocks = [
     {
       type: "text" as const,
       text: buildCoreSystemPrompt()
     },
+    ...(genrePrompt ? [{ type: "text" as const, text: genrePrompt }] : []),
     {
       type: "text" as const,
       text: buildProseStablePrefixPrompt(packet),

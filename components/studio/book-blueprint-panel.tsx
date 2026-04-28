@@ -30,6 +30,11 @@ import {
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
+  BOOK_ENGINE_MODE_OPTIONS,
+  formatBookEngineModeLabel,
+  isBookEngineMode
+} from "@/lib/book-engine-modes";
+import {
   analyzeBookDraftPreparation,
   countStoryStats,
   isBranchingStory,
@@ -230,10 +235,46 @@ export function BookBlueprintPanel({
             </div>
           </div>
 
+          <div className="book-engine-control">
+            <label className="editor-field">
+              <span>Book Engine</span>
+              <select
+                className="editor-input editor-select"
+                value={story.book.engineMode}
+                onChange={function (event) {
+                  const nextMode = event.target.value;
+
+                  if (!isBookEngineMode(nextMode)) {
+                    return;
+                  }
+
+                  onUpdateStory(function (currentStory) {
+                    return {
+                      ...currentStory,
+                      book: {
+                        ...currentStory.book,
+                        engineMode: nextMode
+                      }
+                    };
+                  });
+                }}
+              >
+                {BOOK_ENGINE_MODE_OPTIONS.map(function (option) {
+                  return (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+          </div>
+
           <div className="book-metrics">
             <Metric label="Acts" value={stats.actCount} />
             <Metric label="Kapitel" value={stats.chapterCount} />
             <Metric label="Szenen" value={stats.sceneCount} />
+            <Metric label="Engine" value={formatBookEngineModeLabel(story.book.engineMode)} />
             <Metric label="Modus" value={story.mode === "book" ? "Buch" : "Branching"} />
             <Metric label="Woerter" value={stats.wordCount.toLocaleString("de-DE")} />
           </div>

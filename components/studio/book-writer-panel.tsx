@@ -23,6 +23,10 @@ import {
   type BookJobProviderOption
 } from "@/lib/book-job-models";
 import {
+  BOOK_ENGINE_MODE_OPTIONS,
+  isBookEngineMode
+} from "@/lib/book-engine-modes";
+import {
   analyzeBookDraftPreparation,
   countSceneWords,
   countStoryStats,
@@ -645,6 +649,39 @@ export function BookWriterPanel({
               <h4>Auto, OpenAI, Anthropic</h4>
             </div>
           </div>
+
+          <label className="editor-field" title="Genre-spezifische Prompt-Schicht fuer neue Draft-Jobs.">
+            <span>Book Engine</span>
+            <select
+              className="editor-input editor-select"
+              value={story.book.engineMode}
+              onChange={function (event) {
+                const nextMode = event.target.value;
+
+                if (!isBookEngineMode(nextMode)) {
+                  return;
+                }
+
+                onUpdateStory(function (currentStory) {
+                  return {
+                    ...currentStory,
+                    book: {
+                      ...currentStory.book,
+                      engineMode: nextMode
+                    }
+                  };
+                });
+              }}
+            >
+              {BOOK_ENGINE_MODE_OPTIONS.map(function (option) {
+                return (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
 
           <div className="book-writer-provider-grid">
             {PROVIDER_OPTIONS.map(function (option) {

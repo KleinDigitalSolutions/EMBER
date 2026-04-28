@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises"
 import path from "node:path"
 import { createUuid } from "../lib/id"
+import type { BookEngineMode } from "../lib/book-engine-modes"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
@@ -68,6 +69,7 @@ type ParsedRegie = {
   title: string
   authorName: string
   genre: string
+  engineMode: BookEngineMode
   targetLengthWords: number
   masterBrief: StoryDocument["book"]["masterBrief"]
   marketBrief: StoryDocument["book"]["marketBrief"]
@@ -106,6 +108,7 @@ async function main() {
           regiePath,
           storyId: options.storyId,
           title: parsed.title,
+          engineMode: parsed.engineMode,
           authorName: parsed.authorName,
           acts: Array.from(new Set(parsed.scenes.map(function (scene) {
             return scene.actTitle
@@ -149,6 +152,7 @@ async function main() {
         storyId: savedStory.id,
         workspaceId: savedStory.workspaceId,
         title: savedStory.title,
+        engineMode: savedStory.book.engineMode,
         activePhase: savedStory.book.activePhase,
         acts: savedStory.acts.length,
         scenes: savedStory.acts.reduce(function (sum, act) {
@@ -494,6 +498,7 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
   const nextBook = {
     ...blueprint,
     activePhase: "phase_2_memory" as const,
+    engineMode: parsed.engineMode,
     targetLengthWords: parsed.targetLengthWords,
     masterBrief: parsed.masterBrief,
     marketBrief: parsed.marketBrief,
@@ -802,6 +807,15 @@ function parseRegie(
   const defaultBook = createDefaultBookBlueprint(titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt")
   const title = titleOverride || masterBriefRows["Arbeitstitel"] || headerTitle || "Neues Projekt"
   const genre = masterBriefRows["Genre"] || ""
+  const engineMode = inferBookEngineMode({
+    title,
+    genre,
+    masterBriefRows,
+    marketBriefRows,
+    writerSection,
+    worldBibleSection,
+    canonFacts
+  })
   const targetLengthWords = parseTargetWordCount(masterBriefRows["Ziel-Wortanzahl"]) || defaultBook.targetLengthWords
   const premise = getFirstTableValue(masterBriefRows, ["Prämisse", "Praemisse"])
   const thematicCore = getFirstTableValue(masterBriefRows, ["Thematischer Kern"])
@@ -826,6 +840,7 @@ function parseRegie(
   }
   const proseTechniqueProfile = deriveProseTechniqueProfile({
     genre,
+    engineMode,
     marketBrief,
     writerConstitution,
     continuityGuardrails
@@ -835,6 +850,7 @@ function parseRegie(
     title,
     authorName,
     genre,
+    engineMode,
     targetLengthWords,
     masterBrief: {
       ...defaultBook.masterBrief,
@@ -1476,11 +1492,17 @@ function deriveLockedFacts(params: {
 
 function deriveProseTechniqueProfile(params: {
   genre: string
+  engineMode: BookEngineMode
   marketBrief: StoryDocument["book"]["marketBrief"]
   writerConstitution: string[]
   continuityGuardrails: string[]
 }): BookProseTechniqueProfile {
   const fallback = createDefaultBookProseTechniqueProfile()
+
+  if (params.engineMode !== "default") {
+    return fallback
+  }
+
   const signalText = [
     params.genre,
     params.marketBrief.categoryLane,
@@ -1505,32 +1527,6 @@ function deriveProseTechniqueProfile(params: {
     normalizedSignals.includes("keine thrillershow") ||
     normalizedSignals.includes("nicht wie tech-thriller") ||
     normalizedSignals.includes("nicht wie ein thrillerbeweis")
-  const isSpeculativeTeen =
-    normalizedSignals.includes("young adult") ||
-    normalizedSignals.includes("teenager") ||
-    normalizedSignals.includes("superheld") ||
-    normalizedSignals.includes("sci-fi") ||
-    normalizedSignals.includes("science-fiction")
-
-  if (isSpeculativeTeen) {
-    return {
-      ...fallback,
-      narrativeIntent:
-        "Moderne Teen-Superhelden-Prosa: filmisch, konkret, humorfaehig und druckvoll; Superkraefte aus Alltag, Koerperreaktion, Technik und sozialer Reibung entwickeln statt als fertige Power-Fantasie ausstellen.",
-      povDistance: normalizedSignals.includes("auktorial") ? "auktorial_controlled" : fallback.povDistance,
-      sensoryWeight: "medium_high",
-      dialogueMode: "subtext_energy_and_pressure",
-      anchorPolicy: "each_scene_needs_a_concrete_science_school_or_body_anchor",
-      techniqueRules: uniqueStrings(
-        fallback.techniqueRules.concat([
-          "Halte Teenager-Alltag, Humor und ernste Konsequenz gleichzeitig sichtbar.",
-          "Zeige Kraefte zuerst klein, stoerend und unkontrolliert, bevor sie kampftauglich werden.",
-          "Lass technische Details plausibel wirken, aber nicht als Allzweckloesung.",
-          "Erzaehlerkommentare muessen aus Verhalten, Timing und Beobachtung entstehen, nicht aus nachtraeglicher Pointe."
-        ])
-      )
-    }
-  }
 
   if (!isDomesticSuspense && !alltagsnah) {
     return fallback
@@ -1588,6 +1584,42 @@ function deriveProseTechniqueProfile(params: {
       )
     )
   }
+}
+
+function inferBookEngineMode(params: {
+  title: string
+  genre: string
+  masterBriefRows: Record<string, string>
+  marketBriefRows: Record<string, string>
+  writerSection: string
+  worldBibleSection: string
+  canonFacts: ParsedCanonFact[]
+}): BookEngineMode {
+  const normalizedSignals = normalizeText(
+    [
+      params.title,
+      params.genre,
+      Object.values(params.masterBriefRows).join(" "),
+      Object.values(params.marketBriefRows).join(" "),
+      params.writerSection,
+      params.worldBibleSection,
+      params.canonFacts.map(function (fact) {
+        return fact.fact
+      }).join(" ")
+    ].join(" ")
+  )
+
+  if (normalizedSignals.includes("aftershock")) {
+    return "ya_superhero_origin"
+  }
+
+  const hasTeenSignal =
+    /\bya\b|young adult|teen|teenager|jugend|schule|school/.test(normalizedSignals)
+  const hasSuperheroSignal =
+    /superheld|superhero|superkraft|superkrafte|krafte|powers?/.test(normalizedSignals)
+  const hasOriginSignal = /origin|ursprung/.test(normalizedSignals)
+
+  return hasSuperheroSignal && (hasTeenSignal || hasOriginSignal) ? "ya_superhero_origin" : "default"
 }
 
 function applyLockedFactOverrides(

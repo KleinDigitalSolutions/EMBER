@@ -11,6 +11,7 @@ import { PlaytestPanel } from "@/components/studio/playtest-panel";
 import { ReviewPanel } from "@/components/studio/review-panel";
 import { SceneEditor } from "@/components/studio/scene-editor";
 import { syncStoryBookArtifacts } from "@/lib/book-engine";
+import { isBookEngineMode } from "@/lib/book-engine-modes";
 import { createUuid, isUuid } from "@/lib/id";
 import {
   appendAssistantArtifact,
@@ -2956,6 +2957,7 @@ function normalizeBookBlueprint(
   return {
     priority: candidate.priority === "secondary" ? "secondary" : fallback.priority,
     activePhase: isBookPhase(candidate.activePhase) ? candidate.activePhase : fallback.activePhase,
+    engineMode: isBookEngineMode(candidate.engineMode) ? candidate.engineMode : fallback.engineMode,
     targetFormat:
       candidate.targetFormat === "novella" ||
       candidate.targetFormat === "novel" ||

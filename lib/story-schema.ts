@@ -1,4 +1,5 @@
 import { createUuid } from "@/lib/id";
+import type { BookEngineMode } from "@/lib/book-engine-modes";
 
 export type StoryStatus = "draft" | "playtest" | "submitted";
 export type StoryMode = "book" | "branching";
@@ -182,6 +183,7 @@ export type BookBlueprint = {
     | "phase_3_drafting"
     | "phase_4_continuity"
     | "phase_5_market";
+  engineMode: BookEngineMode;
   targetFormat: "novella" | "novel" | "series";
   targetLengthWords: number;
   masterBrief: {
@@ -1234,6 +1236,7 @@ export function createDefaultBookBlueprint(title = "Untitled Book"): BookBluepri
   return {
     priority: "primary",
     activePhase: "phase_1_foundation",
+    engineMode: "default",
     targetFormat: "novel",
     targetLengthWords: 70000,
     masterBrief: {

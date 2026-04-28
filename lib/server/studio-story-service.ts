@@ -1,4 +1,5 @@
 import { createFallbackDraftStageRuns, syncStoryBookArtifacts } from "@/lib/book-engine"
+import { isBookEngineMode } from "@/lib/book-engine-modes"
 import {
   createDefaultBookBlueprint,
   createEmptyStoryDocument,
@@ -333,6 +334,7 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
             ? ("secondary" as const)
             : ("primary" as const),
         activePhase: normalizeBookPhase(bookProject.active_phase),
+        engineMode: normalizeBookEngineMode(storyMeta.bookEngineMode),
         targetFormat: normalizeTargetFormat(bookProject.target_format),
         targetLengthWords: toNumber(bookProject.target_length_words, fallbackBook.targetLengthWords),
         masterBrief: normalizeMasterBrief(bookProject.master_brief, fallbackBook.masterBrief),
@@ -646,6 +648,7 @@ async function saveStudioStoryInternal(
   const meta = {
     ...nextStory.meta,
     assistant: nextStory.assistant,
+    bookEngineMode: nextStory.book.engineMode || "default",
     draftEngine: {
       targetSceneWordsMin: nextStory.book.draftEngine.targetSceneWordsMin,
       targetSceneWordsMax: nextStory.book.draftEngine.targetSceneWordsMax,
@@ -1961,6 +1964,14 @@ function normalizeBookPhase(value: unknown): StoryDocument["book"]["activePhase"
   }
 
   return "phase_1_foundation"
+}
+
+function normalizeBookEngineMode(value: unknown): StoryDocument["book"]["engineMode"] {
+  if (isBookEngineMode(value)) {
+    return value
+  }
+
+  return "default"
 }
 
 function normalizeTargetFormat(value: unknown): StoryDocument["book"]["targetFormat"] {

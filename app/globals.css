@@ -273,6 +273,10 @@ textarea {
   font-size: 0.88rem;
 }
 
+.book-engine-control {
+  max-width: 28rem;
+}
+
 .book-rule-list,
 .book-architecture-list {
   display: grid;

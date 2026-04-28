@@ -146,6 +146,7 @@ const CONTINUITY_GUARD_STOPWORDS = new Set([
 export type SceneContextPacket = {
   sceneId: string;
   stablePrefix: {
+    engineMode: StoryDocument["book"]["engineMode"];
     premise: string;
     readerPromise: string;
     endingPromise: string;
@@ -373,6 +374,7 @@ export function buildSceneContextPacket(
   return {
     sceneId,
     stablePrefix: {
+      engineMode: syncedStory.book.engineMode || "default",
       premise: syncedStory.book.masterBrief.premise,
       readerPromise: syncedStory.book.masterBrief.readerPromise,
       endingPromise: syncedStory.book.masterBrief.endingPromise,
@@ -2189,6 +2191,7 @@ function buildStablePrefixSignature(story: StoryDocument, chapterGoal: string) {
   return clampText(
     [
       story.id,
+      story.book.engineMode,
       story.book.masterBrief.premise,
       story.book.masterBrief.readerPromise,
       story.book.masterBrief.authorIntent,
