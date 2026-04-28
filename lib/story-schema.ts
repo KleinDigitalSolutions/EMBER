@@ -103,7 +103,7 @@ export type StoryDocument = {
 };
 
 export type AssistantProvider = "auto" | "openai" | "anthropic" | "local";
-export type AssistantOutputMode = "chat" | "regie";
+export type AssistantOutputMode = "chat" | "note" | "regie";
 export type AssistantArtifactKind = "regie" | "note";
 export type AssistantContextScope = "project" | "act" | "chapter" | "scene";
 export type AssistantContextSelection = {
@@ -1992,7 +1992,11 @@ function normalizeAssistantProvider(value: unknown): AssistantProvider {
 }
 
 function normalizeAssistantOutputMode(value: unknown): AssistantOutputMode {
-  return value === "regie" ? "regie" : "chat";
+  if (value === "regie" || value === "note") {
+    return value;
+  }
+
+  return "chat";
 }
 
 function normalizeAssistantModelSelection(value: unknown): AssistantModelSelection {

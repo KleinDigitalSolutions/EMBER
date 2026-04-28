@@ -26,7 +26,16 @@ const CHAT_PROVIDERS: Array<{
 const QUICK_PROMPTS = [
   "Schärfe den Hook, damit der Stoff kommerzieller und klarer wirkt.",
   "Welche drei Risiken siehst du aktuell im Manuskript?",
-  "Erstelle einen Regiebrief für den aktuellen Projektstand."
+  "Erstelle eine pipeline-kompatible Regie-Vorlage für den aktuellen Projektstand."
+];
+
+const OUTPUT_MODE_OPTIONS: Array<{
+  id: AssistantOutputMode;
+  label: string;
+}> = [
+  { id: "chat", label: "Antwort" },
+  { id: "note", label: "Notiz" },
+  { id: "regie", label: "Regie-Vorlage" }
 ];
 
 const CONTEXT_SCOPE_OPTIONS: Array<{
@@ -223,25 +232,25 @@ export function ChatWorkspace({
             <label className="editor-field chat-control-field">
               <span>Output</span>
               <div className="pill-group" aria-label="Output">
-                {(["chat", "regie"] as AssistantOutputMode[]).map(function (mode) {
+                {OUTPUT_MODE_OPTIONS.map(function (option) {
                   return (
                     <button
-                      key={mode}
+                      key={option.id}
                       className={
                         "pill-button" +
-                        (story.assistant.preferences.outputMode === mode ? " pill-button--active" : "")
+                        (story.assistant.preferences.outputMode === option.id ? " pill-button--active" : "")
                       }
                       type="button"
                       onClick={function () {
                         onUpdatePreferences(function (preferences) {
                           return {
                             ...preferences,
-                            outputMode: mode
+                            outputMode: option.id
                           };
                         });
                       }}
                     >
-                      {mode === "chat" ? "Antwort" : "Regie"}
+                      {option.label}
                     </button>
                   );
                 })}
@@ -406,7 +415,7 @@ export function ChatWorkspace({
                       <div className="chat-message__meta">
                         <strong>{message.role === "assistant" ? "Assistant" : "Du"}</strong>
                         <span>{formatTimestamp(message.createdAt)}</span>
-                        <span>{message.outputMode === "regie" ? "Regie" : "Antwort"}</span>
+                        <span>{formatOutputModeLabel(message.outputMode)}</span>
                         <span>{formatAssistantContextLabel(message.context, story)}</span>
                         {message.modelName ? <span>{message.modelName}</span> : null}
                       </div>
@@ -473,7 +482,7 @@ export function ChatWorkspace({
                 <textarea
                   className="editor-textarea chat-composer__textarea"
                   value={prompt}
-                  placeholder="Frage nach Strategie, Figurenlogik, Marktpositionierung oder fordere direkt einen Regiebrief an."
+                  placeholder="Frage nach Strategie, Figurenlogik, Marktpositionierung oder fordere eine Notiz oder Regie-Vorlage an."
                   onChange={function (event) {
                     setPrompt(event.target.value);
                   }}
@@ -487,7 +496,13 @@ export function ChatWorkspace({
                   + Thread
                 </button>
                 <button className="flat-button" type="button" onClick={handleSubmit} disabled={!prompt.trim() || isLoading}>
-                  {isLoading ? "Läuft..." : story.assistant.preferences.outputMode === "regie" ? "Regie erzeugen" : "Senden"}
+                  {isLoading
+                    ? "Läuft..."
+                    : story.assistant.preferences.outputMode === "regie"
+                      ? "Regie-Vorlage erzeugen"
+                      : story.assistant.preferences.outputMode === "note"
+                        ? "Notiz erzeugen"
+                        : "Senden"}
                 </button>
               </div>
             </div>
@@ -573,6 +588,18 @@ function resolveProviderModelKey(provider: AssistantProvider) {
   }
 
   return null;
+}
+
+function formatOutputModeLabel(mode: AssistantOutputMode) {
+  if (mode === "regie") {
+    return "Regie-Vorlage";
+  }
+
+  if (mode === "note") {
+    return "Notiz";
+  }
+
+  return "Antwort";
 }
 
 function createContextSelectionFromSceneContext(sceneContext: SceneContext): AssistantContextSelection {

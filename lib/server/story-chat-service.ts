@@ -293,7 +293,7 @@ async function generateWithLocalGemma(
 ) {
   const command = process.env.LOCAL_GEMMA_COMMAND || DEFAULT_LOCAL_GEMMA_COMMAND;
   const modelName = process.env.LOCAL_GEMMA_MODEL || DEFAULT_LOCAL_GEMMA_MODEL;
-  const maxTokens = process.env.LOCAL_GEMMA_MAX_TOKENS || (outputMode === "regie" ? "1600" : "900");
+  const maxTokens = process.env.LOCAL_GEMMA_MAX_TOKENS || (outputMode === "regie" ? "2200" : outputMode === "note" ? "1200" : "900");
   const temperature = process.env.LOCAL_GEMMA_TEMPERATURE || "0.35";
   const prompt = buildLocalGemmaUserPrompt(story, threadId, outputMode, contextSelection);
   const systemPrompt = buildLocalGemmaSystemPrompt(outputMode);
@@ -318,14 +318,23 @@ async function generateWithLocalGemma(
 
   const data: StoryChatPayload = {
     reply: outputMode === "regie"
-      ? "Gemma lokal hat einen Roh-Regieentwurf erzeugt. Bitte als Vorarbeit prüfen, nicht ungeprüft als finalen Importvertrag verwenden."
+      ? "Gemma lokal hat eine Roh-Regie-Vorlage erzeugt. Bitte gegen Regie_Anleitung.md und per Dry-Run prüfen, bevor sie importiert wird."
+      : outputMode === "note"
+        ? "Gemma lokal hat eine Arbeitsnotiz erzeugt. Nutze sie als Vorarbeit, nicht als finalen Pipeline-Vertrag."
       : reply,
-    suggestedThreadTitle: deriveLocalThreadTitle(getLastUserMessage(story, threadId), outputMode === "regie" ? "Gemma Regie" : "Gemma"),
-    artifact: outputMode === "regie"
+    suggestedThreadTitle: deriveLocalThreadTitle(
+      getLastUserMessage(story, threadId),
+      outputMode === "regie" ? "Gemma Regie" : outputMode === "note" ? "Gemma Notiz" : "Gemma"
+    ),
+    artifact: outputMode !== "chat"
       ? {
-          title: `Gemma-Rohregie — ${story.title}`,
-          kind: "regie",
-          summary: "Lokaler Rohentwurf aus Gemma; für Brainstorming und Vorstrukturierung gedacht.",
+          title: outputMode === "regie"
+            ? `Gemma-Regie-Vorlage — ${story.title}`
+            : `Gemma-Notiz — ${story.title}`,
+          kind: outputMode === "regie" ? "regie" : "note",
+          summary: outputMode === "regie"
+            ? "Lokale Roh-Regie-Vorlage aus Gemma; vor Import gegen Regie_Anleitung.md prüfen."
+            : "Lokale Arbeitsnotiz aus Gemma; für Brainstorming und Vorstrukturierung gedacht.",
           content: reply
         }
       : null
@@ -367,8 +376,10 @@ function buildLocalGemmaSystemPrompt(outputMode: AssistantOutputMode) {
     "Erfinde keine harten Canon-Fakten. Markiere Lücken klar.",
     "Finale Pipeline-Kompatibilität muss später geprüft werden.",
     outputMode === "regie"
-      ? "Erzeuge Markdown als Roh-Regieentwurf mit klaren Abschnitten, aber kennzeichne unsichere Stellen."
-      : "Antworte kompakt mit konkreten Listen, Entscheidungen und nächsten Schritten."
+      ? "Erzeuge Markdown als Roh-Regie-Vorlage nach der neuen EMBER-Struktur. Kennzeichne unsichere Stellen."
+      : outputMode === "note"
+        ? "Erzeuge eine kompakte Markdown-Arbeitsnotiz mit Entscheidungen, Risiken und nächsten Schritten."
+        : "Antworte kompakt mit konkreten Listen, Entscheidungen und nächsten Schritten."
   ].join("\n");
 }
 
@@ -414,10 +425,18 @@ function buildLocalGemmaUserPrompt(
     outputMode === "regie"
       ? [
           "AUFGABE:",
-          "Erzeuge einen Roh-Regieentwurf als Markdown.",
-          "Nutze diese Abschnitte: ## Core, ## World/Pressure System, ## Characters, ## Canon Facts Kandidaten, ## Open Threads, ## Act Map, ## Scene-Card-Rohentwurf, ## Lücken.",
+          "Erzeuge eine Roh-Regie-Vorlage als Markdown nach Regie_Anleitung.md.",
+          "Nutze diese Hauptabschnitte: # EMBER Story Document, ## MASTER BRIEF, ## MARKET BRIEF, ## WRITER CONSTITUTION, ## WORLD BIBLE, ## CANON FACTS, ## CHARACTER STATE LEDGER, ## CONTINUITY GUARDRAILS, ## OPEN THREADS, ## LOSS LADDER / ACT MAP, ## ACTS & KAPITEL — SCENE CARDS.",
           "Canon Facts Kandidaten müssen als Kandidaten markiert bleiben.",
-          "Scene Cards nur als Rohentwurf, nicht als finaler Import."
+          "Scene Cards nur als einfache key: value Codeblöcke skizzieren.",
+          "Markiere am Ende ## LÜCKEN VOR IMPORT."
+        ].join("\n")
+      : outputMode === "note"
+        ? [
+            "AUFGABE:",
+            "Erzeuge eine kompakte Arbeitsnotiz als Markdown.",
+            "Nutze diese Abschnitte: ## Entscheidungen, ## Risiken, ## Material, ## Offene Fragen, ## Nächste Schritte.",
+            "Keine finale Regie-Datei bauen."
         ].join("\n")
       : [
           "AUFGABE:",
@@ -475,20 +494,7 @@ function getLastUserMessage(story: StoryDocument, threadId: string) {
 }
 
 function buildSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode) {
-  const modeInstruction =
-    outputMode === "regie"
-      ? [
-          "Wenn du ein Dokument erzeugst, arbeite im Stil eines internen EMBER-Regiebriefs.",
-          "Das Dokument muss in sauberem Markdown erscheinen, mit klaren Überschriften, knappen Leitplanken und verwertbaren Entscheidungen.",
-          "Bilde die reale EMBER-Struktur ab: Stable Prefix, Writer Constitution, Dynamic Context, Pipeline-Fit, Extractor/Ledger und nächste Schritte.",
-          "Trenne positive Schreibregeln und negative Constraints sauber, wenn die Writer Constitution solche Einträge enthält.",
-          "Behaupte keine Datenfelder, die im Kontext nicht existieren. Wenn etwas nur abgeleitet statt persistiert ist, benenne das präzise.",
-          "Kein lockerer Ton, keine Meta-Erklärung über den Modellprozess."
-        ]
-      : [
-          "Arbeite wie ein präziser Story-Strategist und Editor.",
-          "Gib keine Watte, sondern klare Hebel, Risiken und nächste Schritte."
-        ];
+  const modeInstruction = getAssistantOutputModeInstructions(outputMode);
 
   return [
     "Du bist die integrierte Story-Assistentin von EMBER Studio.",
@@ -498,6 +504,32 @@ function buildSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode
     ...modeInstruction,
     `Projektmodus: ${story.mode === "book" ? "Buch" : "Branching"}.`
   ].join("\n");
+}
+
+function getAssistantOutputModeInstructions(outputMode: AssistantOutputMode) {
+  if (outputMode === "regie") {
+    return [
+      "Wenn du ein Dokument erzeugst, baue eine EMBER-Regie-Vorlage nach der aktuellen Regie_Anleitung.md-Logik.",
+      "Die Regie-Vorlage ist ein Rohentwurf für späteren Import, kein alter Regiebrief.",
+      "Nutze die echten Pipeline-Sektionen: MASTER BRIEF, MARKET BRIEF, WRITER CONSTITUTION, WORLD BIBLE, CANON FACTS, CHARACTER STATE LEDGER, CONTINUITY GUARDRAILS, OPEN THREADS, LOSS LADDER / ACT MAP, ACTS & KAPITEL — SCENE CARDS.",
+      "Scene Cards müssen als einfache key: value Codeblöcke gedacht werden. Keine YAML-Listen, keine verschachtelten reviewOnly-Felder.",
+      "Trenne harte Canon-Kandidaten, weiche Scene-Intention und Review-only Material sauber.",
+      "Markiere Lücken vor Import explizit."
+    ];
+  }
+
+  if (outputMode === "note") {
+    return [
+      "Erzeuge eine interne Arbeitsnotiz, keinen Regie-Importvertrag.",
+      "Arbeite mit klaren Entscheidungen, Risiken, Material, offenen Fragen und nächsten Schritten.",
+      "Halte harte Canon- oder Pipeline-Entscheidungen als Prüfpunkt fest, wenn sie nicht sicher aus dem Kontext folgen."
+    ];
+  }
+
+  return [
+    "Arbeite wie ein präziser Story-Strategist und Editor.",
+    "Gib keine Watte, sondern klare Hebel, Risiken und nächste Schritte."
+  ];
 }
 
 function buildAnthropicSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode) {
@@ -538,8 +570,11 @@ function buildUserPrompt(
     "Nutze PROJECT_CONTEXT als Quelle der Wahrheit: Blueprint, Memory, Pipeline und aktiver Scope sind wichtiger als allgemeine Schreibratschläge.",
     "Wenn die Nutzerfrage unklar ist, antworte trotzdem hilfreich aus dem aktiven Scope und markiere die wichtigste fehlende Entscheidung.",
     "Wenn OUTPUT_MODE chat ist, soll artifact null sein.",
-    "Wenn OUTPUT_MODE regie ist, erzeuge ein kompaktes, hochwertiges Markdown-Dokument als artifact.",
-    "Wenn OUTPUT_MODE regie ist, muss artifact.content diese Abschnitte enthalten: ## Strukturabgleich, ## Stable Prefix, ## Writer Constitution, ## Dynamic Context, ## Pipeline-Fit, ## Nächste Schritte.",
+    "Wenn OUTPUT_MODE note ist, erzeuge ein kompaktes Markdown-Artifact mit kind note.",
+    "Wenn OUTPUT_MODE note ist, muss artifact.content diese Abschnitte enthalten: ## Entscheidungen, ## Risiken, ## Material, ## Offene Fragen, ## Nächste Schritte.",
+    "Wenn OUTPUT_MODE regie ist, erzeuge ein Markdown-Artifact mit kind regie.",
+    "Wenn OUTPUT_MODE regie ist, muss artifact.content die neue Regie-Vorlagenstruktur anlegen: # EMBER Story Document, ## MASTER BRIEF, ## MARKET BRIEF, ## WRITER CONSTITUTION, ## WORLD BIBLE, ## CANON FACTS, ## CHARACTER STATE LEDGER, ## CONTINUITY GUARDRAILS, ## OPEN THREADS, ## LOSS LADDER / ACT MAP, ## ACTS & KAPITEL — SCENE CARDS, ## LÜCKEN VOR IMPORT.",
+    "Wenn OUTPUT_MODE regie ist, sind Canon Facts und Scene Cards Rohentwurf/Kandidaten, bis ein Dry-Run sie geprüft hat.",
     "Wenn du eine Lücke benennst, sage explizit, ob sie heute ein echter Datenmodell- oder Persistenzmangel ist oder nur ein geplanter Ausbau laut Struktur.",
     "Der reply-Text bleibt knapp und sagt, was du entschieden oder erzeugt hast."
   ].join("\n");
@@ -840,15 +875,19 @@ function createLocalExecution(
       return message.role === "user";
     })?.content ?? "";
 
-  if (outputMode === "regie") {
-    const artifact = buildLocalRegieArtifact(story, contextSelection, lastUserMessage);
+  if (outputMode !== "chat") {
+    const artifact = outputMode === "regie"
+      ? buildLocalRegieTemplateArtifact(story, contextSelection, lastUserMessage)
+      : buildLocalNoteArtifact(story, contextSelection, lastUserMessage);
 
     return {
       provider: "local",
       mode: "local_fallback",
       modelName: null,
-      reply: "Ich habe einen Regiebrief auf Basis des aktuellen Projektstands erzeugt. Prüfe vor allem Fokus, Verbote und die nächsten operativen Schritte.",
-      suggestedThreadTitle: deriveLocalThreadTitle(lastUserMessage, "Regie"),
+      reply: outputMode === "regie"
+        ? "Ich habe eine Regie-Vorlage im neuen Pipeline-Format als lokalen Fallback erzeugt. Prüfe sie vor Import mit dem Regie-Dry-Run."
+        : "Ich habe eine Arbeitsnotiz auf Basis des aktuellen Projektstands erzeugt.",
+      suggestedThreadTitle: deriveLocalThreadTitle(lastUserMessage, outputMode === "regie" ? "Regie-Vorlage" : "Notiz"),
       artifact,
       warning
     };
@@ -878,77 +917,230 @@ function buildLocalReply(story: StoryDocument, contextSelection: AssistantContex
   ].join("\n\n");
 }
 
-function buildLocalRegieArtifact(
+function buildLocalNoteArtifact(
+  story: StoryDocument,
+  contextSelection: AssistantContextSelection,
+  prompt: string
+) {
+  const packet = contextSelection.sceneId ? buildSceneContextPacket(story, contextSelection.sceneId) : null;
+  const hook = story.book.marketBrief.hook || story.book.masterBrief.premise || "Hook noch nicht gesetzt.";
+  const content = [
+    `# Arbeitsnotiz — „${story.title}”`,
+    "",
+    "## Entscheidungen",
+    "",
+    `- Aktiver Fokus: ${prompt || buildContextLabel(story, contextSelection) || "Projekt schärfen."}`,
+    `- Stärkster aktueller Hook: ${hook}`,
+    "",
+    "## Risiken",
+    "",
+    packet
+      ? `- Szene ${packet.dynamicContext.sceneTitle}: Scene Intention und harte Constraints vor Draft prüfen.`
+      : "- Kein einzelnes Scene Context Packet aktiv; Entscheidungen bleiben auf Projekt-/Kapitelebene.",
+    story.book.masterBrief.premise ? "" : "- Prämisse fehlt oder ist noch zu weich.",
+    story.book.masterBrief.currentFocus ? "" : "- Current Focus fehlt; die nächsten 1-3 Szenen sind nicht klar gesteuert.",
+    "",
+    "## Material",
+    "",
+    formatPromptList(
+      story.worldBible.slice(0, 5).map(function (entry) {
+        return `${entry.title}: ${trimPromptText(entry.summary, 180)}`;
+      }),
+      "Noch kein belastbares Material im World-Bible-Kontext.",
+      5
+    ),
+    "",
+    "## Offene Fragen",
+    "",
+    "- Welche Fakten sind harte Canon-Wahrheit und welche nur Review-/Payoff-Material?",
+    "- Welche Scene Cards brauchen konkrete Objekte, Dokumente, Routinen oder soziale Kosten?",
+    "",
+    "## Nächste Schritte",
+    "",
+    "- Rohideen in Core, Pressure System, Characters, Open Threads und Act Map sortieren.",
+    "- Danach erst eine Regie-Vorlage nach Regie_Anleitung.md bauen und per Dry-Run prüfen."
+  ].filter(function (line) {
+    return line !== "";
+  }).join("\n");
+
+  return {
+    title: `Arbeitsnotiz — ${story.title}`,
+    kind: "note" as const,
+    summary: `Arbeitsnotiz für ${story.title}${packet ? ` mit Fokus auf ${packet.dynamicContext.sceneTitle}` : ""}.`,
+    content
+  };
+}
+
+function buildLocalRegieTemplateArtifact(
   story: StoryDocument,
   contextSelection: AssistantContextSelection,
   prompt: string
 ) {
   const packet = contextSelection.sceneId ? buildSceneContextPacket(story, contextSelection.sceneId) : null;
   const today = new Date().toISOString().slice(0, 10);
-  const writerRules = splitWriterConstitution(story.book.writerConstitution);
-  const structureNotes = buildStructureAlignmentNotes(story, packet);
-  const dynamicContextLines = buildDynamicContextLines(packet, contextSelection, story);
-  const pipelineFitLines = buildPipelineFitLines(packet, story);
-  const nextSteps = buildRegieNextSteps(story, packet);
+  const firstScene = packet?.dynamicContext;
   const content = [
-    `# REGIE — „${story.title}”`,
-    `> Format: EMBER Regiebrief v1 | Stand: ${today}`,
-    `> Fokus: ${prompt || "Strategische Verdichtung des aktuellen Projektstands"}`,
+    `# EMBER Story Document — „${story.title || "[ARBEITSTITEL]"}"`,
     "",
-    "---",
+    `> Format: EMBER Book Blueprint v2 | Rohentwurf: ${today}`,
+    `> Autor: ${story.authorName || "[AUTOR]"}`,
+    "> Hinweis: Lokaler Fallback-Entwurf. Vor Import gegen Regie_Anleitung.md prüfen und mit bootstrap-book-from-regie.ts --dry-run validieren.",
     "",
-    "## STRUKTURABGLEICH",
-    "",
-    structureNotes.join("\n"),
-    "",
-    "## STABLE PREFIX",
+    "## MASTER BRIEF",
     "",
     "| Feld | Inhalt |",
     "|---|---|",
-    `| **Prämisse** | ${story.book.masterBrief.premise || "Noch nicht gesetzt."} |`,
-    `| **Reader Promise** | ${story.book.masterBrief.readerPromise || "Noch nicht gesetzt."} |`,
-    `| **Ending Promise** | ${story.book.masterBrief.endingPromise || "Noch nicht gesetzt."} |`,
-    `| **Thematischer Kern** | ${story.book.masterBrief.thematicCore || "Noch nicht gesetzt."} |`,
-    `| **Hook** | ${story.book.marketBrief.hook || "Noch nicht gesetzt."} |`,
-    `| **Category Lane** | ${story.book.marketBrief.categoryLane || "Noch nicht gesetzt."} |`,
-    `| **Serienpotenzial** | ${story.book.marketBrief.seriesPotential || "Noch nicht gesetzt."} |`,
-    `| **Cover-Richtung** | ${story.book.marketBrief.coverDirection || "Noch nicht gesetzt."} |`,
+    `| **Prämisse** | ${story.book.masterBrief.premise || "[Prämisse ergänzen.]"} |`,
+    `| **Reader Promise** | ${story.book.masterBrief.readerPromise || "[Reader Promise ergänzen.]"} |`,
+    `| **Ending Promise** | ${story.book.masterBrief.endingPromise || "[Ending Promise ohne Finale-Leak ergänzen.]"} |`,
+    `| **Thematischer Kern** | ${story.book.masterBrief.thematicCore || "[Thematischen Kern ergänzen.]"} |`,
+    `| **Author Intent** | ${story.book.masterBrief.authorIntent || "[Author Intent ergänzen.]"} |`,
+    `| **Current Focus** | ${story.book.masterBrief.currentFocus || prompt || "[Current Focus für die nächsten 1-3 Szenen ergänzen.]"} |`,
+    `| **Arbeitstitel** | ${story.title || "[ARBEITSTITEL]"} |`,
+    `| **Genre** | ${story.meta.genre || "[Genre ergänzen.]"} |`,
+    `| **Ziel-Wortanzahl** | ${story.book.targetLengthWords || "[Zielumfang ergänzen.]"} Wörter |`,
+    "| **POV-Strategie** | [POV-Strategie ergänzen.] |",
+    "",
+    "## MARKET BRIEF",
+    "",
+    "| Feld | Inhalt |",
+    "|---|---|",
+    `| **Amazon Goal** | ${story.book.marketBrief.amazonGoal || "[Amazon Goal ergänzen.]"} |`,
+    `| **Category Lane** | ${story.book.marketBrief.categoryLane || "[Category Lane ergänzen.]"} |`,
+    "| **Comp Titles** | [Comp Titles und Negativgrenzen ergänzen.] |",
+    `| **Commercial Hook** | ${story.book.marketBrief.hook || "[Commercial Hook ergänzen.]"} |`,
+    `| **Serienpotenzial** | ${story.book.marketBrief.seriesPotential || "[Serienpotenzial ergänzen.]"} |`,
+    `| **Cover-Richtung** | ${story.book.marketBrief.coverDirection || "[Cover-Richtung ergänzen.]"} |`,
     "",
     "## WRITER CONSTITUTION",
     "",
-    "### Positive Leitplanken",
+    formatPromptList(story.book.writerConstitution.slice(0, 10), "Keine Writer Constitution gesetzt.", 10),
     "",
-    writerRules.positive.length
-      ? writerRules.positive.map(function (rule) {
-          return `- ${rule}`;
-        }).join("\n")
-      : "- Keine positiven Leitplanken hinterlegt.",
+    "## WORLD BIBLE",
     "",
-    "### Negative Constraints",
+    formatPromptList(
+      story.worldBible.slice(0, 8).map(function (entry) {
+        return `- **${entry.title}:** ${trimPromptText(entry.summary, 220)}`;
+      }),
+      "- [World-Bible-Gegenwartszustand ergänzen.]",
+      8
+    ),
     "",
-    writerRules.negative.length
-      ? writerRules.negative.map(function (rule) {
-          return `- ${rule}`;
-        }).join("\n")
-      : "- Keine expliziten Negativregeln hinterlegt.",
+    "## CANON FACTS (Initial — Stand: vor Kapitel 1)",
     "",
-    "## DYNAMIC CONTEXT",
+    "```json",
+    JSON.stringify({
+      canon_facts: [
+        {
+          id: "CF001",
+          fact: "KANDIDAT: Aus dem aktuellen Projektkontext ableiten und vor Import prüfen.",
+          status: "needs_review"
+        }
+      ]
+    }, null, 2),
+    "```",
     "",
-    dynamicContextLines.join("\n"),
+    "## CHARACTER STATE LEDGER",
     "",
-    "## PIPELINE-FIT",
+    "### [HAUPTFIGUR NAME] — „[Funktion]\"",
+    "```json",
+    JSON.stringify({
+      character_id: "PROTAGONIST",
+      name: "[HAUPTFIGUR NAME]",
+      role: "[Rolle ergänzen]",
+      background: "[Gegenwartsnahe Vorgeschichte ergänzen]",
+      wunde: {
+        was_passiert_ist: "[ergänzen]",
+        was_es_heute_macht: "[ergänzen]",
+        was_er_niemals_tut: "[ergänzen]",
+        arc_abschluss: "[ergänzen]"
+      },
+      initial_state: {
+        physisch: "[ergänzen]",
+        psychisch: "[ergänzen]",
+        verhaeltnis_zum_konflikt: "[ergänzen]"
+      },
+      speech_pattern: "[ergänzen]"
+    }, null, 2),
+    "```",
     "",
-    pipelineFitLines.join("\n"),
+    "## CONTINUITY GUARDRAILS (Arbeitsstand Entwurf)",
     "",
-    "## NÄCHSTE SCHRITTE",
+    "- [Vollständige Figurnamen und Funktionen ergänzen.]",
+    "- [Objektfarben und harte Objektanker ergänzen.]",
+    "- Keine Auflösungsleaks in World Bible oder Scene Card.",
     "",
-    nextSteps.join("\n")
+    "## OPEN THREADS (Initial)",
+    "",
+    "```json",
+    JSON.stringify({
+      open_threads: [
+        {
+          id: "OT001",
+          thread: "[Zentrale dramaturgische Frage ergänzen.]",
+          status: "offen",
+          payoff_act: "Act 3"
+        }
+      ]
+    }, null, 2),
+    "```",
+    "",
+    "## LOSS LADDER / ACT MAP",
+    "",
+    "### Act 1 — [Titel]",
+    "- **Startglaube:** [ergänzen]",
+    "- **Erster Verlust:** [ergänzen]",
+    "- **Was unbewiesen bleibt:** [ergänzen]",
+    "",
+    "### Act 2 — [Titel]",
+    "- **Vertiefung:** [ergänzen]",
+    "- **Kosten:** [ergänzen]",
+    "- **Act-2-Kippmoment:** [ergänzen]",
+    "",
+    "### Act 3 — [Titel]",
+    "- **Rueckeroberung:** [ergänzen]",
+    "- **Einloesung:** [ergänzen]",
+    "",
+    "## ACTS & KAPITEL — SCENE CARDS",
+    "",
+    "### ACT 1 — „[Act-Titel]\"",
+    "",
+    `#### Kapitel 1: „${firstScene?.sceneTitle || "[Kapitel-Titel]"}"`,
+    "",
+    "```",
+    "Scene Card",
+    "id: SC_1_1",
+    `title: ${firstScene?.sceneTitle || "[Kapitel-Titel]"}`,
+    "pov: [Vorname Nachname]",
+    "ort: [Konkreter Ort]",
+    "uhrzeit: [Zeitanker]",
+    `objective: ${firstScene?.sceneSummary || "[Konkretes Szenenziel]"}`,
+    `situation: ${firstScene?.sceneSummary || "[Was ist schon falsch, wenn die Szene beginnt?]"}`,
+    "want: [Spielbares Ziel]",
+    "pressure: [Konkretes Hindernis]",
+    "material: [1-3 konkrete Materialien]",
+    "turn: [Konkrete Verschiebung]",
+    "irreversible_change: [Direkte Folge]",
+    "thread: OT001",
+    "avoid: [Fehlfassung vermeiden]",
+    "aftertaste: [Schlusswirkung]",
+    "ending_type: [access_loss | relationship_shift | proof_turn | deadline_shift | moral_reframe | social_exposure | quiet_countermove | choice_cost]",
+    "word_target_min: 1000",
+    "word_target_max: 1500",
+    "```",
+    "",
+    "## LÜCKEN VOR IMPORT",
+    "",
+    "- Canon Facts sind Kandidaten und müssen geprüft werden.",
+    "- Character Ledger ist Platzhalter und muss projektspezifisch ersetzt werden.",
+    "- Scene Cards brauchen echte POV-, Ort-, Zeit-, Want-, Pressure-, Material- und Turn-Werte.",
+    "- Danach Dry-Run: `npx tsx scripts/bootstrap-book-from-regie.ts --regie <datei> --dry-run`."
   ].join("\n");
 
   return {
-    title: `Regiebrief — ${story.title}`,
+    title: `Regie-Vorlage — ${story.title}`,
     kind: "regie" as const,
-    summary: `Strategischer Regiebrief für ${story.title}${packet ? ` mit Fokus auf ${packet.dynamicContext.sceneTitle}` : ""}.`,
+    summary: `Pipeline-kompatibler Rohentwurf für ${story.title}; vor Import prüfen.`,
     content
   };
 }
@@ -1150,101 +1342,6 @@ function buildMemorySnapshotPrompt(story: StoryDocument, contextSelection: Assis
     `Context packs: ${story.book.memory.contextPacks.length}`,
     packet ? `Aktiver Scene-Packet: ${packet.dynamicContext.sceneTitle} (${packet.dynamicContext.contextPackId || "lokal"})` : `Aktiver Scope: ${buildContextLabel(story, contextSelection)}`
   ].join("\n");
-}
-
-function buildStructureAlignmentNotes(
-  story: StoryDocument,
-  packet: ReturnType<typeof buildSceneContextPacket>
-) {
-  const writerRules = splitWriterConstitution(story.book.writerConstitution);
-
-  return [
-    `- Writer Constitution liegt heute bereits als versionierbare Regelliste im Blueprint und im Stable Prefix, nicht als einzelner Prosa-Block.${writerRules.negative.length ? " Negative Regeln sind vorhanden und werden hier separat als Constraints geführt." : " Explizite Negativregeln fehlen aktuell oder sind nicht sauber markiert."}`,
-    `- Scene Cards tragen aktuell Summary, Excerpt und Chapter Goal, aber kein persistiertes Outline-Feld. Der Outline-Schritt wird im Draft-Job aus Szenen-Context, offenen Threads, relevantem Codex und Next Beat abgeleitet.${packet ? " Für den aktuellen Scope ist dieser Ableitungspfad unten konkretisiert." : ""}`,
-    "- Character States tragen jetzt Szenen- und Kapitel-Snapshots pro Figur; `currentState` ist nur die verdichtete Spitze dieses Verlaufs.",
-    "- Wenn ein Constraint hart im Prompt landen soll, gehört er als eigener Writer-Constitution-Eintrag in die Regelbasis und nicht nur in Freitext oder Chat-Prosa."
-  ];
-}
-
-function buildDynamicContextLines(
-  packet: ReturnType<typeof buildSceneContextPacket>,
-  contextSelection: AssistantContextSelection,
-  story: StoryDocument
-) {
-  if (!packet) {
-    return [
-      `- Scope: ${buildContextLabel(story, contextSelection)}.`,
-      "- Kein einzelner Scene Context Packet aktiv; der Regiebrief bleibt deshalb auf Projekt-, Act- oder Kapitel-Ebene.",
-      `- Memory Backbone: ${story.book.memory.sceneCards.length} Scene Cards, ${story.book.memory.characterLedger.length} Character States, ${story.book.memory.openThreads.length} Open Threads.`
-    ];
-  }
-
-  return [
-    `- Scope: Szene · ${packet.dynamicContext.sceneTitle}.`,
-    `- Act/Kapitel: ${packet.dynamicContext.actTitle} / ${packet.dynamicContext.chapterTitle}.`,
-    `- Summary: ${packet.dynamicContext.sceneSummary || "Keine Summary hinterlegt."}`,
-    `- Context Pack: ${packet.dynamicContext.contextPackId || "noch nicht persistiert"}.`,
-    `- Previous Beats: ${packet.dynamicContext.previousBeats.map(function (beat) {
-      return `${beat.sceneTitle} (${beat.orderLabel})`;
-    }).join(" | ") || "keine"}.`,
-    `- Next Beat: ${packet.dynamicContext.nextBeatTitle || "keiner"}.`,
-    `- Relevanter Codex: ${packet.dynamicContext.relevantCodex.map(function (entry) {
-      return `${entry.title}: ${entry.summary}`;
-    }).join(" | ") || "keiner"}.`,
-    `- Character States: ${packet.dynamicContext.relevantCharacterStates.map(function (entry) {
-      return `${entry.characterName} — ${entry.currentState} [Snapshots: ${entry.snapshots.slice(-2).map(function (snapshot) {
-        return snapshot.sourceLabel || snapshot.currentState;
-      }).join(" | ") || "keine"}]`;
-    }).join(" | ") || "keine"}.`,
-    `- Offene Threads: ${packet.dynamicContext.activeThreads.map(function (thread) {
-      return `${thread.label} (${thread.status})`;
-    }).join(" | ") || "keine"}.`
-  ];
-}
-
-function buildPipelineFitLines(
-  packet: ReturnType<typeof buildSceneContextPacket>,
-  story: StoryDocument
-) {
-  if (!packet) {
-    return [
-      "- Der aktuelle Regiebrief ist kein Draft-Job-Paket auf Szenenebene; Outline-, Extract- und Rewrite-Details bleiben deshalb vorläufig.",
-      "- Für echte Pipeline-Härte muss der Scope auf eine konkrete Szene gesetzt werden, damit Context Pack, Beats und Character States referenziert werden können."
-    ];
-  }
-
-  return [
-    `- Outline-Input wird nicht aus einem separaten Scene-Card-Feld gelesen, sondern aus Summary, aktivem Thread und relevantem Codex der Szene "${packet.dynamicContext.sceneTitle}" abgeleitet.`,
-    `- Draft-Anker: ${packet.dynamicContext.sceneSummary || story.book.masterBrief.premise || "Summary/Premise fehlt."}`,
-    `- Extractor-Ziele: new_canon_facts, character_state_updates, open_threads_created, open_threads_resolved, foreshadowing_added, continuity_risks, style_drift_notes.`,
-    `- Ledger-Status: Character States referenzieren jetzt Snapshot-Historie; Continuity sollte auf widersprüchliche Zustandswechsel zwischen benachbarten Snapshots prüfen.`,
-    `- Operativer Fokus: Hook "${story.book.marketBrief.hook || "nicht gesetzt"}" und thematischer Kern "${story.book.masterBrief.thematicCore || "nicht gesetzt"}" müssen im selben Konflikt sichtbar werden.`
-  ];
-}
-
-function buildRegieNextSteps(
-  story: StoryDocument,
-  packet: ReturnType<typeof buildSceneContextPacket>
-) {
-  const nextSteps = [
-    "- Writer-Constitution-Regeln, die als harte Verbote gelten sollen, als eigene knappe Regelzeilen formulieren statt in Fließtext verstecken.",
-    "- Scene Summary so schärfen, dass daraus ohne Interpretationssprung die Outline-Beats abgeleitet werden können.",
-    "- Extractor-Updates nach akzeptierten Drafts prüfen, damit Snapshot-Verlauf, `updatedFromSceneId` und offene Threads sauber mitlaufen."
-  ];
-
-  if (packet) {
-    nextSteps.push(
-      `- Für ${packet.dynamicContext.sceneTitle} den Szenennachhall explizit aus der aktuellen Scene Card planen, damit Outline und Rewrite denselben Zug halten.`
-    );
-  } else {
-    nextSteps.push("- Für eine belastbare Regie-Datei den Scope auf eine konkrete Szene setzen; erst dann sind Packet-, Extract- und Continuity-Aussagen präzise.")
-  }
-
-  if (!story.book.marketBrief.hook || !story.book.masterBrief.thematicCore) {
-    nextSteps.push("- Hook und thematischen Kern im Blueprint vervollständigen; sonst bleibt der Regiebrief strukturell korrekt, aber dramaturgisch zu weich.");
-  }
-
-  return nextSteps;
 }
 
 function getScopedSceneContexts(story: StoryDocument, contextSelection: AssistantContextSelection) {
