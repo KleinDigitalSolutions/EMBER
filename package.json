@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:book-state": "npx tsx --no-cache scripts/book-state-validator.test.ts",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
