@@ -426,6 +426,13 @@ export type BookObjectStateChange = {
   confidence: number;
 };
 
+export type BookStateObjectCandidate = {
+  objectName: string;
+  sourceField: string;
+  hardness: "hard" | "soft";
+  sceneId: string;
+};
+
 export type BookStateDiff = {
   sceneId: string;
   objectChanges: BookObjectStateChange[];

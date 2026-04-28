@@ -930,7 +930,7 @@ function hydrateDraftJob(
     fallbackCreatedAt: now,
     defaultStatus: "pending"
   });
-  const stateDiff = buildValidatedStateDiff(packet.sceneId, extractedState);
+  const stateDiff = buildValidatedStateDiff(packet.sceneId, extractedState, packet);
 
   return {
     id: createLocalId("draft_job"),
@@ -971,11 +971,14 @@ function hydrateDraftJob(
 
 function buildValidatedStateDiff(
   sceneId: string,
-  extractedState: DraftExtractionState
+  extractedState: DraftExtractionState,
+  packet?: SceneContextPacket
 ): BookStateDiff {
   const stateDiff = buildStateDiffFromExtraction({
     sceneId,
-    extractedState
+    extractedState,
+    objectCandidates: packet?.dynamicContext.objectCandidates ?? [],
+    sceneSoftGuidance: packet?.dynamicContext.sceneSoftGuidance ?? []
   });
   const validation = validateBookStateDiff(null, stateDiff);
 

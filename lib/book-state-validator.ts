@@ -7,6 +7,7 @@ import {
   type BookObjectState,
   type BookObjectStateChange,
   type BookPromiseState,
+  type BookStateObjectCandidate,
   type BookStateDiff,
   type BookStateDiffValidationResult,
   type DraftExtractionState,
@@ -16,10 +17,38 @@ import {
 export function buildStateDiffFromExtraction(params: {
   sceneId: string;
   extractedState: DraftExtractionState;
+  objectCandidates?: BookStateObjectCandidate[];
+  sceneSoftGuidance?: string[];
 }): BookStateDiff {
+  const objectCandidates = params.objectCandidates ?? [];
+  const extractionText = buildExtractionSearchText(params.extractedState);
+  const hardObjectChanges = objectCandidates
+    .filter(function (candidate) {
+      return candidate.hardness === "hard" || candidateAppearsInExtraction(candidate, extractionText);
+    })
+    .filter(function (candidate) {
+      return candidate.hardness === "hard";
+    })
+    .map(function (candidate): BookObjectStateChange {
+      return {
+        objectName: candidate.objectName,
+        conditionChange: `Scene-card anchor from ${candidate.sourceField}`,
+        evidenceQuote: `${candidate.sourceField}: ${candidate.objectName}`,
+        confidence: 0.75
+      };
+    });
+  const softSceneLocalDetails = objectCandidates
+    .filter(function (candidate) {
+      return candidate.hardness === "soft" && candidateAppearsInExtraction(candidate, extractionText);
+    })
+    .map(function (candidate) {
+      return `Soft object candidate (${candidate.sourceField}): ${candidate.objectName}`;
+    });
+  const knowledgeLocalDetails = extractKnowledgeLocalDetails(params.sceneSoftGuidance ?? []);
+
   return {
     sceneId: params.sceneId,
-    objectChanges: [],
+    objectChanges: dedupeObjectChanges(hardObjectChanges),
     knowledgeChanges: [],
     promiseUpdates: [],
     characterStateUpdates: params.extractedState.characterStateUpdates.slice(0, 6),
@@ -27,10 +56,44 @@ export function buildStateDiffFromExtraction(params: {
     proposedCanonFacts: params.extractedState.newCanonFacts
       .concat(params.extractedState.foreshadowingAdded)
       .slice(0, 6),
-    sceneLocalDetails: [],
+    sceneLocalDetails: dedupeStrings(softSceneLocalDetails.concat(knowledgeLocalDetails)).slice(0, 8),
     conflicts: [],
-    requiresHumanReview: false
+    requiresHumanReview: softSceneLocalDetails.length > 0 || knowledgeLocalDetails.length > 0
   };
+}
+
+function buildExtractionSearchText(extractedState: DraftExtractionState) {
+  return normalizeKey(
+    extractedState.newCanonFacts
+      .concat(extractedState.foreshadowingAdded)
+      .concat(extractedState.characterStateUpdates)
+      .join(" ")
+  );
+}
+
+function candidateAppearsInExtraction(candidate: BookStateObjectCandidate, extractionText: string) {
+  return extractionText.includes(normalizeKey(candidate.objectName));
+}
+
+function extractKnowledgeLocalDetails(sceneSoftGuidance: string[]) {
+  return sceneSoftGuidance
+    .filter(function (entry) {
+      const normalized = normalizeKey(entry);
+      return normalized.startsWith("wissensgrenze") || normalized.startsWith("information_gap");
+    })
+    .map(function (entry) {
+      return `Scene knowledge note: ${entry}`;
+    });
+}
+
+function dedupeObjectChanges(changes: BookObjectStateChange[]) {
+  const byName = new Map<string, BookObjectStateChange>();
+
+  changes.forEach(function (change) {
+    byName.set(normalizeKey(change.objectName), change);
+  });
+
+  return Array.from(byName.values());
 }
 
 export function validateBookStateDiff(

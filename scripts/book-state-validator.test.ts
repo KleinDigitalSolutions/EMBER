@@ -4,12 +4,18 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   approveBookStateDiff,
+  buildStateDiffFromExtraction,
   rejectBookStateDiff,
   validateBookStateDiff
 } from "@/lib/book-state-validator";
 import {
+  buildObjectCandidatesFromSceneCard,
+  type TimelineBeat
+} from "@/lib/book-engine";
+import {
   appendActToStory,
   appendSceneToChapter,
+  createEmptyBookSceneCardDirectives,
   createEmptyStoryDocument,
   normalizeBookStateDiff,
   normalizeBookStateDiffStatus,
@@ -62,19 +68,19 @@ function createStory() {
   story.acts[0].title = "Akt 1";
   story.acts[0].chapters[0].title = "Kapitel 1";
   story.acts[0].chapters[0].scenes[0].title = "Setup";
-  story.acts[0].chapters[0].scenes[0].summary = "Mara findet den gelben Umschlag.";
+  story.acts[0].chapters[0].scenes[0].summary = "Die Figur findet den silbernen Ring.";
   story.acts[0].chapters[0].scenes[1].title = "Reveal";
-  story.acts[0].chapters[0].scenes[1].summary = "Der Umschlag wird erklaert.";
+  story.acts[0].chapters[0].scenes[1].summary = "Der Ring wird erklaert.";
 
   story.book.memory.objectLedger = [
     {
       id: "object_state_1",
       objectEntryId: "object_entry_1",
-      objectName: "gelber Umschlag",
-      currentHolderCharacterName: "Mara",
+      objectName: "silberner Ring",
+      currentHolderCharacterName: "Lea",
       currentLocationName: null,
       condition: "intakt",
-      knownByCharacterNames: ["Mara"],
+      knownByCharacterNames: ["Lea"],
       lastSeenSceneId: story.acts[0].chapters[0].scenes[0].id,
       updatedAt: "2026-04-28T00:00:00.000Z"
     }
@@ -96,6 +102,92 @@ function assertConflict(result: ReturnType<typeof validateBookStateDiff>, expect
 
 async function main() {
 {
+  const sceneCard = createTestSceneCard("scene_object_hard", [
+    { key: "object_anchor", value: "silberner Ring" }
+  ]);
+  const candidates = buildObjectCandidatesFromSceneCard(sceneCard);
+
+  assert.deepEqual(candidates, [
+    {
+      objectName: "silberner Ring",
+      sourceField: "object_anchor",
+      hardness: "hard",
+      sceneId: "scene_object_hard"
+    }
+  ]);
+}
+
+{
+  const sceneCard = createTestSceneCard("scene_object_soft", [
+    { key: "proof_object", value: "alter Mietvertrag" }
+  ]);
+  const candidates = buildObjectCandidatesFromSceneCard(sceneCard);
+
+  assert.equal(candidates.length, 1);
+  assert.ok(candidates.every(function (candidate) {
+    return candidate.hardness === "soft";
+  }));
+  assert.ok(candidates.some(function (candidate) {
+    return candidate.objectName === "alter Mietvertrag";
+  }));
+}
+
+{
+  const diff = buildStateDiffFromExtraction({
+    sceneId: "scene_soft_object",
+    extractedState: createExtractionState({
+      newCanonFacts: ["alter Mietvertrag liegt im Safe."]
+    }),
+    objectCandidates: [
+      {
+        objectName: "alter Mietvertrag",
+        sourceField: "proof_object",
+        hardness: "soft",
+        sceneId: "scene_soft_object"
+      }
+    ]
+  });
+
+  assert.equal(diff.objectChanges.length, 0);
+  assert.equal(diff.requiresHumanReview, true);
+  assert.match(diff.sceneLocalDetails.join("\n"), /Soft object candidate/);
+}
+
+{
+  const diff = buildStateDiffFromExtraction({
+    sceneId: "scene_hard_object",
+    extractedState: createExtractionState({}),
+    objectCandidates: [
+      {
+        objectName: "silberner Ring",
+        sourceField: "locked_object",
+        hardness: "hard",
+        sceneId: "scene_hard_object"
+      }
+    ]
+  });
+
+  assert.equal(diff.objectChanges.length, 1);
+  assert.equal(diff.objectChanges[0].objectName, "silberner Ring");
+}
+
+{
+  const diff = buildStateDiffFromExtraction({
+    sceneId: "scene_knowledge_note",
+    extractedState: createExtractionState({}),
+    sceneSoftGuidance: [
+      "wissensgrenze: Die Figur weiss noch nicht, wer den Mietvertrag unterschrieben hat.",
+      "information_gap: Wer hat den Mietvertrag unterschrieben?"
+    ]
+  });
+
+  assert.equal(diff.knowledgeChanges.length, 0);
+  assert.equal(diff.requiresHumanReview, true);
+  assert.match(diff.sceneLocalDetails.join("\n"), /wissensgrenze/);
+  assert.match(diff.sceneLocalDetails.join("\n"), /information_gap/);
+}
+
+{
   const missingDiff = normalizeBookStateDiff(null, "scene_legacy");
   const legacyStatus = missingDiff
     ? normalizeBookStateDiffStatus("approved", "pending")
@@ -112,10 +204,10 @@ async function main() {
     ...baseDiff(sceneId),
     objectChanges: [
       {
-        objectName: "gelber Umschlag",
-        toHolderCharacterName: "Mara",
-        toLocationName: "Kueche",
-        evidenceQuote: "Mara haelt den Umschlag in der Kueche.",
+        objectName: "silberner Ring",
+        toHolderCharacterName: "Lea",
+        toLocationName: "Safe",
+        evidenceQuote: "Lea haelt den Ring am Safe.",
         confidence: 0.9
       }
     ]
@@ -131,10 +223,10 @@ async function main() {
     ...baseDiff(sceneId),
     objectChanges: [
       {
-        objectName: "gelber Umschlag",
-        fromHolderCharacterName: "Eva",
-        toLocationName: "Kueche",
-        evidenceQuote: "Der Umschlag liegt auf dem Tisch.",
+        objectName: "silberner Ring",
+        fromHolderCharacterName: "Noah",
+        toLocationName: "Safe",
+        evidenceQuote: "Der Ring liegt im Safe.",
         confidence: 0.8
       }
     ]
@@ -152,10 +244,10 @@ async function main() {
     knowledgeChanges: [
       {
         id: "knowledge_1",
-        proposition: "Mara weiss, wer Mila abgeholt hat.",
+        proposition: "Lea weiss, wer den Mietvertrag unterschrieben hat.",
         truthStatus: "true",
-        knownByCharacterNames: ["Mara"],
-        believedByCharacterNames: ["Mara"],
+        knownByCharacterNames: ["Lea"],
+        believedByCharacterNames: ["Lea"],
         hiddenFromCharacterNames: [],
         readerState: "confirmed",
         sourceSceneId: firstSceneId,
@@ -175,14 +267,14 @@ async function main() {
     promiseUpdates: [
       {
         id: "promise_1",
-        label: "Wer hat Mila abgeholt?",
+        label: "Wer hat den Mietvertrag unterschrieben?",
         kind: "mystery",
         status: "paid",
         setupSceneId: sceneId,
         reinforcementSceneIds: [],
         plannedPayoffSceneId: null,
         actualPayoffSceneId: sceneId,
-        logicalPayoff: "Eva hat es dokumentiert.",
+        logicalPayoff: "Der Notar hat es dokumentiert.",
         emotionalPayoff: ""
       }
     ]
@@ -231,8 +323,8 @@ async function main() {
             },
             stateDiff: {
               ...baseDiff(sceneId),
-              proposedCanonFacts: ["Umschlag: Mara nimmt den Umschlag an sich."],
-              sceneLocalDetails: ["Die Tasse steht links neben der Spuele."]
+              proposedCanonFacts: ["Ring: Lea nimmt den silbernen Ring an sich."],
+              sceneLocalDetails: ["Die Lampe steht links neben dem Safe."]
             },
             stateDiffStatus: "pending",
             stages: {
@@ -265,8 +357,8 @@ async function main() {
     return `${entry.title}: ${entry.summary}`;
   }).join("\n");
 
-  assert.match(canonText, /Umschlag/);
-  assert.doesNotMatch(canonText, /Tasse steht links/);
+  assert.match(canonText, /Ring/);
+  assert.doesNotMatch(canonText, /Lampe steht links/);
 }
 
 {
@@ -313,7 +405,7 @@ async function main() {
             },
             stateDiff: {
               ...baseDiff(sceneId),
-              proposedCanonFacts: ["Geheimer Beleg: Mara findet den Beleg."]
+              proposedCanonFacts: ["Geheimer Beleg: Die Figur findet den Beleg."]
             },
             stateDiffStatus: "pending",
             stages: {
@@ -385,6 +477,44 @@ function createStage() {
     qualityScore: null,
     qualityIssues: [],
     notes: []
+  };
+}
+
+function createTestSceneCard(
+  sceneId: string,
+  custom: Array<{ key: string; value: string }>
+): TimelineBeat {
+  return {
+    sceneId,
+    sceneTitle: "Test Scene",
+    actTitle: "Act",
+    chapterTitle: "Chapter",
+    summary: "Test summary",
+    excerpt: "",
+    orderLabel: "SC_TEST",
+    chapterGoal: "Test goal",
+    directives: {
+      ...createEmptyBookSceneCardDirectives(),
+      custom
+    },
+    outline: []
+  };
+}
+
+function createExtractionState(
+  overrides: Partial<Parameters<typeof buildStateDiffFromExtraction>[0]["extractedState"]>
+): Parameters<typeof buildStateDiffFromExtraction>[0]["extractedState"] {
+  return {
+    newCanonFacts: overrides.newCanonFacts ?? [],
+    characterStateUpdates: overrides.characterStateUpdates ?? [],
+    openThreadsCreated: overrides.openThreadsCreated ?? [],
+    openThreadsResolved: overrides.openThreadsResolved ?? [],
+    foreshadowingAdded: overrides.foreshadowingAdded ?? [],
+    continuityRisks: overrides.continuityRisks ?? [],
+    styleDriftNotes: overrides.styleDriftNotes ?? [],
+    memorySync: overrides.memorySync ?? {
+      items: []
+    }
   };
 }
 

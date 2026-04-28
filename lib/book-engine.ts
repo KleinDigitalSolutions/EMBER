@@ -14,6 +14,8 @@ import {
   type BookDraftStageRun,
   type BookDraftStageRuns,
   type BookJobProvider,
+  type BookPromiseState,
+  type BookStateObjectCandidate,
   type DraftMemorySyncItemKind,
   type DraftMemorySyncStatus,
   type DraftExtractionState,
@@ -35,6 +37,15 @@ export type CharacterStateSnapshotEntry =
 export type TimelineBeat = StoryDocument["book"]["memory"]["sceneCards"][number];
 export type OpenThread = StoryDocument["book"]["memory"]["openThreads"][number];
 type ContextPack = StoryDocument["book"]["memory"]["contextPacks"][number];
+
+export type BookPromiseCandidate = {
+  label: string;
+  sourceField: string;
+  sceneId: string;
+  status: BookPromiseState["status"] | null;
+  logicalPayoff: string;
+  emotionalPayoff: string;
+};
 
 type CanonImportance = CanonLedgerEntry["importance"];
 type ObjectColorAnchor = {
@@ -59,6 +70,7 @@ const MAPPED_SOFT_GUIDANCE_KEYS = new Set([
   "want",
   "protagonist_wants",
   "pressure",
+  "pressure_clock",
   "szenenantrieb",
   "beziehungsdruck",
   "material",
@@ -160,6 +172,7 @@ export type SceneContextPacket = {
     sceneHeaderHints: string[];
     sceneHardConstraints: string[];
     sceneSoftGuidance: string[];
+    objectCandidates: BookStateObjectCandidate[];
     contextPackId: string | null;
     memorySyncedAt: string | null;
     previousBeats: TimelineBeat[];
@@ -385,6 +398,7 @@ export function buildSceneContextPacket(
       sceneHeaderHints: buildSceneHeaderHints(timeline[sceneIndex] ?? null),
       sceneHardConstraints: buildSceneHardConstraints(syncedStory, timeline[sceneIndex] ?? null),
       sceneSoftGuidance: buildSceneSoftGuidance(timeline[sceneIndex] ?? null),
+      objectCandidates: buildObjectCandidatesFromSceneCard(timeline[sceneIndex] ?? null),
       contextPackId: contextPack?.id ?? null,
       memorySyncedAt: memory.lastSyncedAt,
       previousBeats,
@@ -463,7 +477,9 @@ export function createDraftJobFromPacket(
   const actualWords = countWords(rewriteText);
   const stateDiff = buildStateDiffFromExtraction({
     sceneId: packet.sceneId,
-    extractedState
+    extractedState,
+    objectCandidates: packet.dynamicContext.objectCandidates,
+    sceneSoftGuidance: packet.dynamicContext.sceneSoftGuidance
   });
   const stateDiffValidation = validateBookStateDiff(null, stateDiff);
 
@@ -2408,7 +2424,7 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
 
   addSoftGuidance(guidance, "Situation", readCustomDirectiveValue(custom, ["situation", "where_when"]) || directives.opening || sceneCard.summary);
   addSoftGuidance(guidance, "Want", readCustomDirectiveValue(custom, ["want", "protagonist_wants"]) || directives.objective);
-  addSoftGuidance(guidance, "Pressure", readCustomDirectiveValue(custom, ["pressure", "szenenantrieb", "beziehungsdruck"]) || readCustomDirectiveValue(custom, ["alltagswaffe"]));
+  addSoftGuidance(guidance, "Pressure", readCustomDirectiveValue(custom, ["pressure", "szenenantrieb", "pressure_clock", "beziehungsdruck"]) || readCustomDirectiveValue(custom, ["alltagswaffe"]));
   addSoftGuidance(guidance, "Concrete material", limitConcreteMaterialGuidance(readCustomDirectiveValue(custom, [
     "material",
     "concrete_material",
@@ -2453,6 +2469,107 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
   });
 
   return dedupeStrings(guidance).slice(0, 16);
+}
+
+export function buildObjectCandidatesFromSceneCard(
+  sceneCard: TimelineBeat | null
+): BookStateObjectCandidate[] {
+  if (!sceneCard) {
+    return [];
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const candidates = directives.custom.flatMap(function (entry) {
+    const normalizedKey = normalizeDirectiveKey(entry.key);
+    const hardness = HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey)
+      ? "hard" as const
+      : normalizedKey === "proof_object" || normalizedKey === "beweisobjekt"
+        ? "soft" as const
+        : null;
+
+    if (!hardness) {
+      return [];
+    }
+
+    return splitObjectCandidateValue(entry.value).map(function (objectName) {
+      return {
+        objectName,
+        sourceField: normalizedKey,
+        hardness,
+        sceneId: sceneCard.sceneId
+      };
+    });
+  });
+
+  return dedupeObjectCandidates(candidates).slice(0, 12);
+}
+
+export function buildPromiseCandidatesFromSceneCard(
+  sceneCard: TimelineBeat | null
+): BookPromiseCandidate[] {
+  if (!sceneCard) {
+    return [];
+  }
+
+  const directives = resolveSceneCardDirectives(sceneCard);
+  const custom = directives.custom;
+  const label = readCustomDirectiveValue(custom, ["promise", "scene_promise", "thread", "main_question"]);
+
+  if (!label) {
+    return [];
+  }
+
+  return [
+    {
+      label,
+      sourceField: "scene_card",
+      sceneId: sceneCard.sceneId,
+      status: normalizePromiseCandidateStatus(readCustomDirectiveValue(custom, ["promise_status"])),
+      logicalPayoff: readCustomDirectiveValue(custom, ["logical_payoff"]) || "",
+      emotionalPayoff: readCustomDirectiveValue(custom, ["emotional_payoff"]) || ""
+    }
+  ];
+}
+
+function splitObjectCandidateValue(value: string) {
+  return value
+    .split(/\s*(?:,|;|\bund\b|\boder\b|\/|\+)\s*/iu)
+    .map(function (entry) {
+      return entry.trim();
+    })
+    .filter(function (entry) {
+      return entry.length >= 3;
+    })
+    .slice(0, 6);
+}
+
+function dedupeObjectCandidates(candidates: BookStateObjectCandidate[]) {
+  const byKey = new Map<string, BookStateObjectCandidate>();
+
+  candidates.forEach(function (candidate) {
+    const key = `${candidate.sceneId}:${candidate.sourceField}:${normalizeText(candidate.objectName)}`;
+    const existing = byKey.get(key);
+
+    if (!existing || existing.hardness === "soft" && candidate.hardness === "hard") {
+      byKey.set(key, candidate);
+    }
+  });
+
+  return Array.from(byKey.values());
+}
+
+function normalizePromiseCandidateStatus(value: string | null): BookPromiseState["status"] | null {
+  if (
+    value === "open" ||
+    value === "reinforced" ||
+    value === "partially_paid" ||
+    value === "paid" ||
+    value === "dropped"
+  ) {
+    return value;
+  }
+
+  return null;
 }
 
 function addSoftGuidance(guidance: string[], label: string, value: string | null | undefined) {
