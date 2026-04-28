@@ -1,5 +1,6 @@
 import "server-only";
 
+import { execFile } from "node:child_process";
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import OpenAI from "openai";
@@ -44,6 +45,8 @@ const storyChatSchema = z.object({
 type StoryChatPayload = z.infer<typeof storyChatSchema>;
 type RemoteStoryChatProvider = "openai" | "anthropic";
 type StoryChatDraftJob = StoryDocument["book"]["draftEngine"]["jobs"][number];
+const DEFAULT_LOCAL_GEMMA_COMMAND = "/Users/bucci369/mlx-gemma4/.venv/bin/mlx_vlm.generate";
+const DEFAULT_LOCAL_GEMMA_MODEL = "mlx-community/gemma-4-e4b-it-mxfp4";
 
 const STORY_CHAT_STAGE_ORDER = [
   "context",
@@ -97,13 +100,34 @@ export async function generateStoryChat(params: {
     params.contextSelection ?? thread.context ?? createDefaultAssistantContextSelection();
 
   if (provider === "local") {
-    return createLocalExecution(
-      params.story,
-      thread.id,
-      outputMode,
-      contextSelection,
-      "Lokaler Provider explizit gewählt."
-    );
+    try {
+      const payload = await generateWithLocalGemma(
+        params.story,
+        thread.id,
+        outputMode,
+        contextSelection
+      );
+
+      return {
+        provider: "local",
+        mode: "local_fallback",
+        modelName: payload.modelName,
+        reply: payload.data.reply,
+        suggestedThreadTitle: payload.data.suggestedThreadTitle,
+        artifact: payload.data.artifact ?? undefined
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Lokales Gemma-Modell konnte nicht ausgeführt werden.";
+
+      return createLocalExecution(
+        params.story,
+        thread.id,
+        outputMode,
+        contextSelection,
+        `Gemma lokal fehlgeschlagen; deterministischer lokaler Fallback verwendet. ${message}`
+      );
+    }
   }
 
   const remoteProvider = resolveRemoteProvider(provider);
@@ -259,6 +283,195 @@ async function generateWithAnthropic(
     modelName,
     data: message.parsed_output
   };
+}
+
+async function generateWithLocalGemma(
+  story: StoryDocument,
+  threadId: string,
+  outputMode: AssistantOutputMode,
+  contextSelection: AssistantContextSelection
+) {
+  const command = process.env.LOCAL_GEMMA_COMMAND || DEFAULT_LOCAL_GEMMA_COMMAND;
+  const modelName = process.env.LOCAL_GEMMA_MODEL || DEFAULT_LOCAL_GEMMA_MODEL;
+  const maxTokens = process.env.LOCAL_GEMMA_MAX_TOKENS || (outputMode === "regie" ? "1600" : "900");
+  const temperature = process.env.LOCAL_GEMMA_TEMPERATURE || "0.35";
+  const prompt = buildLocalGemmaUserPrompt(story, threadId, outputMode, contextSelection);
+  const systemPrompt = buildLocalGemmaSystemPrompt(outputMode);
+  const rawOutput = await execLocalGemma(command, [
+    "--model",
+    modelName,
+    "--system",
+    systemPrompt,
+    "--prompt",
+    prompt,
+    "--max-tokens",
+    maxTokens,
+    "--temperature",
+    temperature,
+    "--skip-special-tokens"
+  ]);
+  const reply = normalizeLocalGemmaOutput(rawOutput);
+
+  if (reply.length < 20) {
+    throw new Error("Gemma lieferte keine verwertbare Antwort.");
+  }
+
+  const data: StoryChatPayload = {
+    reply: outputMode === "regie"
+      ? "Gemma lokal hat einen Roh-Regieentwurf erzeugt. Bitte als Vorarbeit prüfen, nicht ungeprüft als finalen Importvertrag verwenden."
+      : reply,
+    suggestedThreadTitle: deriveLocalThreadTitle(getLastUserMessage(story, threadId), outputMode === "regie" ? "Gemma Regie" : "Gemma"),
+    artifact: outputMode === "regie"
+      ? {
+          title: `Gemma-Rohregie — ${story.title}`,
+          kind: "regie",
+          summary: "Lokaler Rohentwurf aus Gemma; für Brainstorming und Vorstrukturierung gedacht.",
+          content: reply
+        }
+      : null
+  };
+
+  return {
+    modelName,
+    data
+  };
+}
+
+function execLocalGemma(command: string, args: string[]) {
+  return new Promise<string>(function (resolve, reject) {
+    execFile(
+      command,
+      args,
+      {
+        timeout: Number(process.env.LOCAL_GEMMA_TIMEOUT_MS || 180000),
+        maxBuffer: 1024 * 1024 * 8
+      },
+      function (error, stdout, stderr) {
+        if (error) {
+          const detail = [error.message, stderr].filter(Boolean).join("\n").trim();
+          reject(new Error(detail || "MLX-Prozess fehlgeschlagen."));
+          return;
+        }
+
+        resolve([stdout, stderr].filter(Boolean).join("\n"));
+      }
+    );
+  });
+}
+
+function buildLocalGemmaSystemPrompt(outputMode: AssistantOutputMode) {
+  return [
+    "Du bist Gemma lokal im EMBER Studio.",
+    "Antworte auf Deutsch.",
+    "Deine Rolle: billige Vorarbeit, Brainstorming, Sortierung und Rohentwurf.",
+    "Erfinde keine harten Canon-Fakten. Markiere Lücken klar.",
+    "Finale Pipeline-Kompatibilität muss später geprüft werden.",
+    outputMode === "regie"
+      ? "Erzeuge Markdown als Roh-Regieentwurf mit klaren Abschnitten, aber kennzeichne unsichere Stellen."
+      : "Antworte kompakt mit konkreten Listen, Entscheidungen und nächsten Schritten."
+  ].join("\n");
+}
+
+function buildLocalGemmaUserPrompt(
+  story: StoryDocument,
+  threadId: string,
+  outputMode: AssistantOutputMode,
+  contextSelection: AssistantContextSelection
+) {
+  const thread = story.assistant.threads.find(function (candidate) {
+    return candidate.id === threadId;
+  });
+  const recentMessages = (thread?.messages ?? []).slice(-6).map(function (message) {
+    return `${message.role === "assistant" ? "ASSISTANT" : "USER"}: ${trimPromptText(message.content, 900)}`;
+  });
+  const scopedScenes = getScopedSceneContexts(story, contextSelection).slice(0, 10);
+  const sceneLines = scopedScenes.map(function (sceneContext) {
+    return `- ${sceneContext.sceneTitle}: ${trimPromptText(sceneContext.summary || "", 180)}`;
+  });
+
+  return [
+    `OUTPUT_MODE: ${outputMode}`,
+    `AKTIVER_KONTEXT: ${buildContextLabel(story, contextSelection) || "Gesamtprojekt"}`,
+    "",
+    "PROJEKT:",
+    `Titel: ${story.title}`,
+    `Genre: ${story.meta.genre || "nicht gesetzt"}`,
+    `Prämisse: ${trimPromptText(story.book.masterBrief.premise || "nicht gesetzt", 420)}`,
+    `Reader Promise: ${trimPromptText(story.book.masterBrief.readerPromise || "nicht gesetzt", 360)}`,
+    `Thematischer Kern: ${trimPromptText(story.book.masterBrief.thematicCore || "nicht gesetzt", 360)}`,
+    `Author Intent: ${trimPromptText(story.book.masterBrief.authorIntent || "nicht gesetzt", 300)}`,
+    `Current Focus: ${trimPromptText(story.book.masterBrief.currentFocus || "nicht gesetzt", 300)}`,
+    "",
+    "WRITER CONSTITUTION AUSZUG:",
+    formatPromptList(story.book.writerConstitution.slice(0, 8), "Keine Writer Constitution gesetzt.", 8),
+    "",
+    "AKTIVE SZENEN:",
+    sceneLines.length ? sceneLines.join("\n") : "- Keine Szenen im aktiven Scope.",
+    "",
+    "LETZTE NACHRICHTEN:",
+    recentMessages.length ? recentMessages.join("\n") : "- Keine bisherigen Nachrichten.",
+    "",
+    outputMode === "regie"
+      ? [
+          "AUFGABE:",
+          "Erzeuge einen Roh-Regieentwurf als Markdown.",
+          "Nutze diese Abschnitte: ## Core, ## World/Pressure System, ## Characters, ## Canon Facts Kandidaten, ## Open Threads, ## Act Map, ## Scene-Card-Rohentwurf, ## Lücken.",
+          "Canon Facts Kandidaten müssen als Kandidaten markiert bleiben.",
+          "Scene Cards nur als Rohentwurf, nicht als finaler Import."
+        ].join("\n")
+      : [
+          "AUFGABE:",
+          "Beantworte die letzte Nutzerfrage. Nutze Gemma nur für Vorarbeit: sortieren, brainstormen, extrahieren, Varianten bilden.",
+          "Gib bei harten Entscheidungen an, was später mit starkem Modell oder Dry-Run geprüft werden muss."
+        ].join("\n")
+  ].join("\n");
+}
+
+function normalizeLocalGemmaOutput(output: string) {
+  const withoutProgress = output
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .filter(function (line) {
+      return !line.includes("Fetching ") && !line.includes("it/s]");
+    })
+    .join("\n")
+    .trim();
+  const modelMatch = withoutProgress.match(/<\|turn\>model\s*\n+([\s\S]*?)\n=+\s*(?:Prompt:|$)/);
+
+  if (modelMatch?.[1]) {
+    return modelMatch[1].trim();
+  }
+
+  const sections = withoutProgress.split("==========").map(function (section) {
+    return section.trim();
+  }).filter(Boolean);
+  const responseSection = sections.find(function (section) {
+    return section.includes("<|turn>model");
+  });
+
+  if (responseSection) {
+    const parts = responseSection.split("<|turn>model");
+    return (parts[1] ?? responseSection)
+      .replace(/^Prompt:.*$/gm, "")
+      .trim();
+  }
+
+  return withoutProgress
+    .replace(/^Files:.*$/gm, "")
+    .replace(/^Prompt:.*$/gm, "")
+    .replace(/^Generation:.*$/gm, "")
+    .replace(/^Peak memory:.*$/gm, "")
+    .trim();
+}
+
+function getLastUserMessage(story: StoryDocument, threadId: string) {
+  const thread = story.assistant.threads.find(function (candidate) {
+    return candidate.id === threadId;
+  });
+
+  return [...(thread?.messages ?? [])].reverse().find(function (message) {
+    return message.role === "user";
+  })?.content ?? "";
 }
 
 function buildSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode) {

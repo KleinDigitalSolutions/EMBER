@@ -14,12 +14,13 @@ import {
 } from "@/lib/story-schema";
 
 const CHAT_PROVIDERS: Array<{
-  id: Exclude<AssistantProvider, "local">;
+  id: AssistantProvider;
   label: string;
 }> = [
   { id: "auto", label: "Auto" },
   { id: "openai", label: "OpenAI" },
-  { id: "anthropic", label: "Anthropic" }
+  { id: "anthropic", label: "Anthropic" },
+  { id: "local", label: "Gemma lokal" }
 ];
 
 const QUICK_PROMPTS = [
@@ -163,7 +164,7 @@ export function ChatWorkspace({
                   onUpdatePreferences(function (preferences) {
                     return {
                       ...preferences,
-                      provider: event.target.value as Exclude<AssistantProvider, "local">
+                      provider: event.target.value as AssistantProvider
                     };
                   });
                 }}
@@ -201,7 +202,11 @@ export function ChatWorkspace({
                 }}
               >
                 <option value="">
-                  {modelKey ? `Standard (${DEFAULT_BOOK_JOB_MODELS[modelKey]})` : "Automatisch"}
+                  {story.assistant.preferences.provider === "local"
+                    ? "MLX lokal"
+                    : modelKey
+                      ? `Standard (${DEFAULT_BOOK_JOB_MODELS[modelKey]})`
+                      : "Automatisch"}
                 </option>
                 {modelKey
                   ? BOOK_JOB_MODEL_PRESETS[modelKey].map(function (model) {
