@@ -32,11 +32,14 @@ import {
   appendSceneToChapter,
   createDefaultAssistantContextSelection,
   normalizeAssistantWorkspace,
+  normalizeBookKnowledgeStates,
   countStoryStats,
   createDefaultBookBlueprint,
   findSceneContext,
   isBranchingStory,
   normalizeBookLockedFacts,
+  normalizeBookObjectStates,
+  normalizeBookPromiseStates,
   normalizeBookProseTechniqueProfile,
   normalizeBookDraftTargets,
   normalizeBookRuleList,
@@ -3155,6 +3158,15 @@ function normalizeBookMemoryBackbone(
             };
           })
         : fallback.characterLedger,
+    objectLedger: Array.isArray(candidate.objectLedger)
+      ? normalizeBookObjectStates(candidate.objectLedger)
+      : fallback.objectLedger,
+    knowledgeLedger: Array.isArray(candidate.knowledgeLedger)
+      ? normalizeBookKnowledgeStates(candidate.knowledgeLedger)
+      : fallback.knowledgeLedger,
+    promiseLedger: Array.isArray(candidate.promiseLedger)
+      ? normalizeBookPromiseStates(candidate.promiseLedger)
+      : fallback.promiseLedger,
     openThreads: Array.isArray(candidate.openThreads) ? candidate.openThreads : fallback.openThreads,
     sceneCards: Array.isArray(candidate.sceneCards)
       ? candidate.sceneCards.map(function (sceneCard) {

@@ -237,6 +237,8 @@ export type BookDraftJob = {
   rewriteText: string;
   rewriteNotes: string[];
   extractedState: DraftExtractionState;
+  stateDiff: BookStateDiff | null;
+  stateDiffStatus: BookStateDiffStatus;
   stages: BookDraftStageRuns;
   contextSnapshot: {
     contextPackId: string | null;
@@ -283,6 +285,9 @@ export type BookMemoryBackbone = {
   lastSyncedAt: string | null;
   canonLedger: BookCanonFact[];
   characterLedger: BookCharacterState[];
+  objectLedger: BookObjectState[];
+  knowledgeLedger: BookKnowledgeState[];
+  promiseLedger: BookPromiseState[];
   openThreads: BookOpenThread[];
   sceneCards: BookSceneCard[];
   contextPacks: BookContextPack[];
@@ -371,6 +376,75 @@ export type BookCharacterStateSnapshot = {
   innerShift: string;
   agenda: string;
   capturedAt: string;
+};
+
+export type BookObjectState = {
+  id: string;
+  objectEntryId: string;
+  objectName: string;
+  currentHolderCharacterName: string | null;
+  currentLocationName: string | null;
+  condition: string;
+  knownByCharacterNames: string[];
+  lastSeenSceneId: string | null;
+  updatedAt: string;
+};
+
+export type BookKnowledgeState = {
+  id: string;
+  proposition: string;
+  truthStatus: "true" | "false" | "unknown" | "contested";
+  knownByCharacterNames: string[];
+  believedByCharacterNames: string[];
+  hiddenFromCharacterNames: string[];
+  readerState: "unknown" | "suspected" | "confirmed";
+  sourceSceneId: string | null;
+  revealSceneId: string | null;
+};
+
+export type BookPromiseState = {
+  id: string;
+  label: string;
+  kind: "mystery" | "emotional" | "object" | "relationship" | "plot" | "thematic";
+  status: "open" | "reinforced" | "partially_paid" | "paid" | "dropped";
+  setupSceneId: string | null;
+  reinforcementSceneIds: string[];
+  plannedPayoffSceneId: string | null;
+  actualPayoffSceneId: string | null;
+  logicalPayoff: string;
+  emotionalPayoff: string;
+};
+
+export type BookObjectStateChange = {
+  objectName: string;
+  fromHolderCharacterName?: string | null;
+  toHolderCharacterName?: string | null;
+  fromLocationName?: string | null;
+  toLocationName?: string | null;
+  conditionChange?: string | null;
+  evidenceQuote: string;
+  confidence: number;
+};
+
+export type BookStateDiff = {
+  sceneId: string;
+  objectChanges: BookObjectStateChange[];
+  knowledgeChanges: BookKnowledgeState[];
+  promiseUpdates: BookPromiseState[];
+  characterStateUpdates: string[];
+  relationshipNotes: string[];
+  proposedCanonFacts: string[];
+  sceneLocalDetails: string[];
+  conflicts: string[];
+  requiresHumanReview: boolean;
+};
+
+export type BookStateDiffStatus = "none" | "pending" | "approved" | "rejected" | "approved_manual";
+
+export type BookStateDiffValidationResult = {
+  valid: boolean;
+  conflicts: string[];
+  requiresHumanReview: boolean;
 };
 
 export type BookOpenThread = {
@@ -667,6 +741,9 @@ export function createDefaultBookMemoryBackbone(): BookMemoryBackbone {
     lastSyncedAt: null,
     canonLedger: [],
     characterLedger: [],
+    objectLedger: [],
+    knowledgeLedger: [],
+    promiseLedger: [],
     openThreads: [],
     sceneCards: [],
     contextPacks: [],
@@ -693,6 +770,233 @@ export function createEmptyBookLockedFacts(): BookLockedFacts {
     evaAlibiWindow: null,
     documentedPickupPerson: null
   };
+}
+
+export function createEmptyBookStateDiff(sceneId = ""): BookStateDiff {
+  return {
+    sceneId,
+    objectChanges: [],
+    knowledgeChanges: [],
+    promiseUpdates: [],
+    characterStateUpdates: [],
+    relationshipNotes: [],
+    proposedCanonFacts: [],
+    sceneLocalDetails: [],
+    conflicts: [],
+    requiresHumanReview: false
+  };
+}
+
+export function normalizeBookStateDiff(
+  value: unknown,
+  fallbackSceneId = ""
+): BookStateDiff | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Partial<BookStateDiff>;
+  const sceneId = typeof record.sceneId === "string" && record.sceneId.trim()
+    ? record.sceneId.trim()
+    : fallbackSceneId;
+
+  return {
+    sceneId,
+    objectChanges: normalizeBookObjectStateChanges(record.objectChanges),
+    knowledgeChanges: normalizeBookKnowledgeStates(record.knowledgeChanges),
+    promiseUpdates: normalizeBookPromiseStates(record.promiseUpdates),
+    characterStateUpdates: normalizeDraftExtractArray(record.characterStateUpdates),
+    relationshipNotes: normalizeDraftExtractArray(record.relationshipNotes),
+    proposedCanonFacts: normalizeDraftExtractArray(record.proposedCanonFacts),
+    sceneLocalDetails: normalizeDraftExtractArray(record.sceneLocalDetails),
+    conflicts: normalizeDraftExtractArray(record.conflicts),
+    requiresHumanReview:
+      typeof record.requiresHumanReview === "boolean"
+        ? record.requiresHumanReview
+        : normalizeDraftExtractArray(record.conflicts).length > 0
+  };
+}
+
+export function normalizeBookStateDiffStatus(
+  value: unknown,
+  fallback: BookStateDiffStatus = "none"
+): BookStateDiffStatus {
+  if (
+    value === "none" ||
+    value === "pending" ||
+    value === "approved" ||
+    value === "rejected" ||
+    value === "approved_manual"
+  ) {
+    return value;
+  }
+
+  return fallback;
+}
+
+export function normalizeBookObjectStates(value: unknown): BookObjectState[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(function (entry): entry is Partial<BookObjectState> {
+      return Boolean(entry) && typeof entry === "object";
+    })
+    .map(function (entry) {
+      return {
+        id: typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : createUuid(),
+        objectEntryId:
+          typeof entry.objectEntryId === "string" && entry.objectEntryId.trim()
+            ? entry.objectEntryId.trim()
+            : "",
+        objectName: typeof entry.objectName === "string" ? entry.objectName.trim() : "",
+        currentHolderCharacterName:
+          typeof entry.currentHolderCharacterName === "string" && entry.currentHolderCharacterName.trim()
+            ? entry.currentHolderCharacterName.trim()
+            : null,
+        currentLocationName:
+          typeof entry.currentLocationName === "string" && entry.currentLocationName.trim()
+            ? entry.currentLocationName.trim()
+            : null,
+        condition:
+          typeof entry.condition === "string" && entry.condition.trim()
+            ? entry.condition.trim()
+            : "unknown",
+        knownByCharacterNames: normalizeDraftExtractArray(entry.knownByCharacterNames),
+        lastSeenSceneId:
+          typeof entry.lastSeenSceneId === "string" && entry.lastSeenSceneId.trim()
+            ? entry.lastSeenSceneId.trim()
+            : null,
+        updatedAt:
+          typeof entry.updatedAt === "string" && entry.updatedAt.trim()
+            ? entry.updatedAt.trim()
+            : new Date().toISOString()
+      };
+    })
+    .filter(function (entry) {
+      return Boolean(entry.objectName);
+    });
+}
+
+export function normalizeBookKnowledgeStates(value: unknown): BookKnowledgeState[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(function (entry): entry is Partial<BookKnowledgeState> {
+      return Boolean(entry) && typeof entry === "object";
+    })
+    .map(function (entry) {
+      return {
+        id: typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : createUuid(),
+        proposition:
+          typeof entry.proposition === "string" && entry.proposition.trim()
+            ? entry.proposition.trim()
+            : "",
+        truthStatus: normalizeBookTruthStatus(entry.truthStatus),
+        knownByCharacterNames: normalizeDraftExtractArray(entry.knownByCharacterNames),
+        believedByCharacterNames: normalizeDraftExtractArray(entry.believedByCharacterNames),
+        hiddenFromCharacterNames: normalizeDraftExtractArray(entry.hiddenFromCharacterNames),
+        readerState: normalizeBookReaderState(entry.readerState),
+        sourceSceneId:
+          typeof entry.sourceSceneId === "string" && entry.sourceSceneId.trim()
+            ? entry.sourceSceneId.trim()
+            : null,
+        revealSceneId:
+          typeof entry.revealSceneId === "string" && entry.revealSceneId.trim()
+            ? entry.revealSceneId.trim()
+            : null
+      };
+    })
+    .filter(function (entry) {
+      return Boolean(entry.proposition);
+    });
+}
+
+export function normalizeBookPromiseStates(value: unknown): BookPromiseState[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(function (entry): entry is Partial<BookPromiseState> {
+      return Boolean(entry) && typeof entry === "object";
+    })
+    .map(function (entry) {
+      return {
+        id: typeof entry.id === "string" && entry.id.trim() ? entry.id.trim() : createUuid(),
+        label: typeof entry.label === "string" && entry.label.trim() ? entry.label.trim() : "",
+        kind: normalizeBookPromiseKind(entry.kind),
+        status: normalizeBookPromiseStatus(entry.status),
+        setupSceneId:
+          typeof entry.setupSceneId === "string" && entry.setupSceneId.trim()
+            ? entry.setupSceneId.trim()
+            : null,
+        reinforcementSceneIds: normalizeDraftExtractArray(entry.reinforcementSceneIds),
+        plannedPayoffSceneId:
+          typeof entry.plannedPayoffSceneId === "string" && entry.plannedPayoffSceneId.trim()
+            ? entry.plannedPayoffSceneId.trim()
+            : null,
+        actualPayoffSceneId:
+          typeof entry.actualPayoffSceneId === "string" && entry.actualPayoffSceneId.trim()
+            ? entry.actualPayoffSceneId.trim()
+            : null,
+        logicalPayoff:
+          typeof entry.logicalPayoff === "string" ? entry.logicalPayoff.trim() : "",
+        emotionalPayoff:
+          typeof entry.emotionalPayoff === "string" ? entry.emotionalPayoff.trim() : ""
+      };
+    })
+    .filter(function (entry) {
+      return Boolean(entry.label);
+    });
+}
+
+function normalizeBookObjectStateChanges(value: unknown): BookObjectStateChange[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(function (entry): entry is Partial<BookObjectStateChange> {
+      return Boolean(entry) && typeof entry === "object";
+    })
+    .map(function (entry) {
+      return {
+        objectName: typeof entry.objectName === "string" ? entry.objectName.trim() : "",
+        fromHolderCharacterName:
+          typeof entry.fromHolderCharacterName === "string" && entry.fromHolderCharacterName.trim()
+            ? entry.fromHolderCharacterName.trim()
+            : null,
+        toHolderCharacterName:
+          typeof entry.toHolderCharacterName === "string" && entry.toHolderCharacterName.trim()
+            ? entry.toHolderCharacterName.trim()
+            : null,
+        fromLocationName:
+          typeof entry.fromLocationName === "string" && entry.fromLocationName.trim()
+            ? entry.fromLocationName.trim()
+            : null,
+        toLocationName:
+          typeof entry.toLocationName === "string" && entry.toLocationName.trim()
+            ? entry.toLocationName.trim()
+            : null,
+        conditionChange:
+          typeof entry.conditionChange === "string" && entry.conditionChange.trim()
+            ? entry.conditionChange.trim()
+            : null,
+        evidenceQuote:
+          typeof entry.evidenceQuote === "string" ? entry.evidenceQuote.trim() : "",
+        confidence:
+          typeof entry.confidence === "number" && Number.isFinite(entry.confidence)
+            ? Math.min(1, Math.max(0, entry.confidence))
+            : 0
+      };
+    })
+    .filter(function (entry) {
+      return Boolean(entry.objectName);
+    });
 }
 
 export function normalizeBookLockedFacts(value: unknown): BookLockedFacts {
@@ -1164,6 +1468,51 @@ function normalizeDraftExtractArray(value: string[] | undefined) {
         })
         .filter(Boolean)
     : [];
+}
+
+function normalizeBookTruthStatus(value: unknown): BookKnowledgeState["truthStatus"] {
+  if (value === "true" || value === "false" || value === "unknown" || value === "contested") {
+    return value;
+  }
+
+  return "unknown";
+}
+
+function normalizeBookReaderState(value: unknown): BookKnowledgeState["readerState"] {
+  if (value === "unknown" || value === "suspected" || value === "confirmed") {
+    return value;
+  }
+
+  return "unknown";
+}
+
+function normalizeBookPromiseKind(value: unknown): BookPromiseState["kind"] {
+  if (
+    value === "mystery" ||
+    value === "emotional" ||
+    value === "object" ||
+    value === "relationship" ||
+    value === "plot" ||
+    value === "thematic"
+  ) {
+    return value;
+  }
+
+  return "plot";
+}
+
+function normalizeBookPromiseStatus(value: unknown): BookPromiseState["status"] {
+  if (
+    value === "open" ||
+    value === "reinforced" ||
+    value === "partially_paid" ||
+    value === "paid" ||
+    value === "dropped"
+  ) {
+    return value;
+  }
+
+  return "open";
 }
 
 function createDraftMemorySyncKey(kind: DraftMemorySyncItemKind, value: string) {

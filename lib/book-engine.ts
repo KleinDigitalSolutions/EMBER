@@ -1,6 +1,9 @@
 import {
   createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
+  normalizeBookKnowledgeStates,
+  normalizeBookObjectStates,
+  normalizeBookPromiseStates,
   type BookDraftStageId,
   countWords,
   findSceneContext,
@@ -19,6 +22,10 @@ import {
   type WorldBibleEntry,
   withDraftMemorySync
 } from "@/lib/story-schema";
+import {
+  buildStateDiffFromExtraction,
+  validateBookStateDiff
+} from "@/lib/book-state-validator";
 import { createUuid, isUuid } from "@/lib/id";
 
 export type CanonLedgerEntry = StoryDocument["book"]["memory"]["canonLedger"][number];
@@ -454,6 +461,11 @@ export function createDraftJobFromPacket(
   const rewriteNotes = buildRewriteNotes(packet, draftText, extractedState);
   const rewriteText = buildRewriteText(packet, draftText, rewriteNotes);
   const actualWords = countWords(rewriteText);
+  const stateDiff = buildStateDiffFromExtraction({
+    sceneId: packet.sceneId,
+    extractedState
+  });
+  const stateDiffValidation = validateBookStateDiff(null, stateDiff);
 
   return {
     id: createLocalId("draft_job"),
@@ -471,6 +483,12 @@ export function createDraftJobFromPacket(
     rewriteText,
     rewriteNotes,
     extractedState,
+    stateDiff: {
+      ...stateDiff,
+      conflicts: stateDiffValidation.conflicts,
+      requiresHumanReview: stateDiffValidation.requiresHumanReview
+    },
+    stateDiffStatus: "pending" as const,
     stages: createCompletedDraftStageRuns({
       provider: "local",
       modelName: null,
@@ -679,6 +697,9 @@ function buildBookMemoryBackbone(story: StoryDocument): StoryDocument["book"]["m
     lastSyncedAt: syncedAt,
     canonLedger,
     characterLedger,
+    objectLedger: normalizeBookObjectStates(story.book.memory.objectLedger),
+    knowledgeLedger: normalizeBookKnowledgeStates(story.book.memory.knowledgeLedger),
+    promiseLedger: normalizeBookPromiseStates(story.book.memory.promiseLedger),
     openThreads,
     sceneCards,
     contextPacks,
@@ -787,6 +808,26 @@ function deriveCanonLedger(story: StoryDocument): CanonLedgerEntry[] {
         status: "watch"
       });
     });
+
+    if (
+      (job.stateDiffStatus === "approved" || job.stateDiffStatus === "approved_manual") &&
+      job.stateDiff
+    ) {
+      job.stateDiff.proposedCanonFacts
+        .filter(function (fact) {
+          return !detectMemorySyncValueDrift(story, fact).length;
+        })
+        .forEach(function (fact) {
+          const parsed = parseLedgerFact(fact, createLocalId("state_diff_fact"), "scene_fact");
+          mergeCanonFact(ledger, {
+            ...parsed,
+            sceneIds: [job.sceneId],
+            mentionCount: 1,
+            importance: "medium",
+            status: job.status === "accepted" ? "active" : "watch"
+          });
+        });
+    }
   });
 
   return Array.from(ledger.values()).sort(function (left, right) {

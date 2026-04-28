@@ -20,7 +20,12 @@ import {
   type SceneContextPacket
 } from "@/lib/book-engine";
 import {
+  buildStateDiffFromExtraction,
+  validateBookStateDiff
+} from "@/lib/book-state-validator";
+import {
   normalizeBookDraftTargets,
+  type BookStateDiff,
   type BookDraftJob,
   type BookDraftStageRuns,
   type DraftExtractionState,
@@ -921,6 +926,11 @@ function hydrateDraftJob(
   }
 ): BookDraftJob {
   const now = new Date().toISOString();
+  const extractedState = withDraftMemorySync(payload.extractedState, {
+    fallbackCreatedAt: now,
+    defaultStatus: "pending"
+  });
+  const stateDiff = buildValidatedStateDiff(packet.sceneId, extractedState);
 
   return {
     id: createLocalId("draft_job"),
@@ -937,10 +947,9 @@ function hydrateDraftJob(
     draftText: payload.draftText,
     rewriteText: payload.finalSceneText,
     rewriteNotes: payload.sceneNotes,
-    extractedState: withDraftMemorySync(payload.extractedState, {
-      fallbackCreatedAt: now,
-      defaultStatus: "pending"
-    }),
+    extractedState,
+    stateDiff,
+    stateDiffStatus: "pending" as const,
     stages: payload.stages,
     contextSnapshot: {
       contextPackId: packet.dynamicContext.contextPackId || null,
@@ -957,6 +966,23 @@ function hydrateDraftJob(
         return thread.label;
       })
     }
+  };
+}
+
+function buildValidatedStateDiff(
+  sceneId: string,
+  extractedState: DraftExtractionState
+): BookStateDiff {
+  const stateDiff = buildStateDiffFromExtraction({
+    sceneId,
+    extractedState
+  });
+  const validation = validateBookStateDiff(null, stateDiff);
+
+  return {
+    ...stateDiff,
+    conflicts: validation.conflicts,
+    requiresHumanReview: validation.requiresHumanReview
   };
 }
 

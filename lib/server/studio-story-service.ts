@@ -4,10 +4,15 @@ import {
   createEmptyStoryDocument,
   createDefaultAssistantWorkspace,
   normalizeBookLockedFacts,
+  normalizeBookKnowledgeStates,
+  normalizeBookObjectStates,
+  normalizeBookPromiseStates,
   normalizeBookProseTechniqueProfile,
   normalizeBookRuntimeContext,
   normalizeBookSceneCardDirectives,
   normalizeBookRuleList,
+  normalizeBookStateDiff,
+  normalizeBookStateDiffStatus,
   normalizeAssistantWorkspace,
   withDraftMemorySync,
   type BookDraftJob,
@@ -392,6 +397,9 @@ export async function loadStudioStory(preferredStoryId?: string | null) {
               })
             }
           }),
+          objectLedger: normalizeBookObjectStates(bookProject.object_ledger),
+          knowledgeLedger: normalizeBookKnowledgeStates(bookProject.knowledge_ledger),
+          promiseLedger: normalizeBookPromiseStates(bookProject.promise_ledger),
           openThreads: (openThreadsResult.data ?? []).map(function (row) {
             const sourceScene = sceneMap.get((row.source_scene_id as string) ?? "")
 
@@ -678,6 +686,9 @@ async function saveStudioStoryInternal(
       writer_rules_runtime: nextStory.book.writerRulesRuntime,
       threat_model: nextStory.book.threatModel,
       amazon_ops: nextStory.book.amazonOps,
+      object_ledger: nextStory.book.memory.objectLedger,
+      knowledge_ledger: nextStory.book.memory.knowledgeLedger,
+      promise_ledger: nextStory.book.memory.promiseLedger,
       memory_last_synced_at: nextStory.book.memory.lastSyncedAt
     })
 
@@ -992,6 +1003,8 @@ async function saveStudioStoryInternal(
         rewrite_text: job.rewriteText,
         rewrite_notes: job.rewriteNotes,
         extracted_state: job.extractedState,
+        state_diff: job.stateDiff,
+        state_diff_status: job.stateDiffStatus,
         stage_runs: job.stages,
         accepted_at: job.acceptedAt
       }
@@ -1505,6 +1518,10 @@ function buildDraftJobs(params: {
       status: row.status,
       fallbackCreatedAt: updatedAt || ((row.created_at as string) ?? "")
     })
+    const stateDiff = normalizeBookStateDiff(row.state_diff, sceneId)
+    const stateDiffStatus = stateDiff
+      ? normalizeBookStateDiffStatus(row.state_diff_status, "pending")
+      : "none"
 
     return {
       id: row.id as string,
@@ -1522,6 +1539,8 @@ function buildDraftJobs(params: {
       rewriteText: (row.rewrite_text as string) ?? "",
       rewriteNotes,
       extractedState,
+      stateDiff,
+      stateDiffStatus,
       stages: normalizeStageRuns(row.stage_runs, {
         provider,
         modelName,
