@@ -2,6 +2,10 @@ import { readFile } from "node:fs/promises"
 import path from "node:path"
 import { createUuid } from "../lib/id"
 import type { BookEngineMode } from "../lib/book-engine-modes"
+import {
+  buildDomesticSuspenseThrillerProseTechniqueProfile,
+  detectDomesticSuspenseThrillerSignals
+} from "../lib/book-genre-engine-domestic-thriller"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
@@ -1498,11 +1502,6 @@ function deriveProseTechniqueProfile(params: {
   continuityGuardrails: string[]
 }): BookProseTechniqueProfile {
   const fallback = createDefaultBookProseTechniqueProfile()
-
-  if (params.engineMode !== "default") {
-    return fallback
-  }
-
   const signalText = [
     params.genre,
     params.marketBrief.categoryLane,
@@ -1514,76 +1513,27 @@ function deriveProseTechniqueProfile(params: {
     .concat(params.continuityGuardrails)
     .join(" ")
   const normalizedSignals = normalizeText(signalText)
-  const isDomesticSuspense =
-    normalizedSignals.includes("domestic suspense") ||
-    normalizedSignals.includes("psychological thriller")
-  const alltagsnah =
-    normalizedSignals.includes("alltags") ||
-    normalizedSignals.includes("routine") ||
-    normalizedSignals.includes("institution") ||
-    normalizedSignals.includes("verwaltungs")
-  const noThrillerLoudness =
-    normalizedSignals.includes("ohne thrillerlarm") ||
-    normalizedSignals.includes("keine thrillershow") ||
-    normalizedSignals.includes("nicht wie tech-thriller") ||
-    normalizedSignals.includes("nicht wie ein thrillerbeweis")
+  const domesticSignals = detectDomesticSuspenseThrillerSignals(normalizedSignals)
 
-  if (!isDomesticSuspense && !alltagsnah) {
+  if (params.engineMode === "domestic_suspense_thriller") {
+    return buildDomesticSuspenseThrillerProseTechniqueProfile({
+      alltagsnah: true,
+      noThrillerLoudness: domesticSignals.noThrillerLoudness
+    })
+  }
+
+  if (params.engineMode !== "default") {
     return fallback
   }
 
-  return {
-    narrativeIntent:
-      "Alltagsnahe psychologische Suspense: dokumentierte Stoerung, sozialer Druck und ruhiger Verlust von Zugriff statt lauter Schauwerte.",
-    povDistance: "tight_close",
-    tensionMode: "progressive_escalation",
-    expositionMode: "embedded_only",
-    sensoryWeight: "medium_high",
-    interiorityMode: "micro_reactions",
-    sentenceDynamics: {
-      baseline: "controlled_medium",
-      underStress: "shorter_and_tighter",
-      fragmentation: "occasional_under_peak_stress"
-    },
-    sceneHooks: {
-      opening: "disturbance_first",
-      ending: "proof_image_or_status_threat"
-    },
-    dialogueMode: "subtext_and_procedural_friction",
-    revealPattern: "withhold_then_validate",
-    anchorPolicy: "every_scene_needs_a_concrete_object_or_document_anchor",
-    techniqueRules: uniqueStrings(
-      [
-        "Beginne so nah wie moeglich am ersten realen Angriff oder Stoermoment.",
-        "Fuehre Spannung ueber Dokumente, Objekte, Routinen und soziale Reaktionen statt ueber Showeffekte.",
-        "Backstory nur unter Bewegung; Vergangenheit kommt in kleinen spaeten Einsprengseln, nie als Bremsblock.",
-        "Innenleben ueber Koerper, Wahrnehmung, Mikroentscheidung und kurzen Deutungsdruck tragen.",
-        "Satzlaenge unter Druck sichtbar verdichten, ohne in abgehackte Dauerstakkati zu kippen.",
-        "Nach Proof-Image, Evidenzturn oder klarem Machtwechsel sofort oder sehr frueh aus der Szene gehen.",
-        "Dialog muss Vertrauen, Verfahren, Zugriff oder Machtbalance verschieben."
-      ].concat(
-        noThrillerLoudness
-          ? [
-              "Keine Thriller-Hysterie: Druck bleibt ruhig, plausibel und institutionell lesbar.",
-              "Nicht ueberbauen. Wenn ein Gegenstand oder Satz den Horror traegt, nicht nochmal aufdrehen."
-            ]
-          : []
-      )
-    ),
-    antiImitationRules: uniqueStrings(
-      [
-        "Keine Stilkopie einzelner Autorinnen, Autoren oder Comp Titles.",
-        "Keine markanten Phrasen, Setzungen oder Signaturbilder aus Referenztexten uebernehmen.",
-        "Tempo und Hooks ueber eigene Satzentscheidungen und Szenenlogik herstellen, nicht ueber erkennbare Fremdstimme."
-      ].concat(
-        alltagsnah
-          ? [
-              "Bedrohung ueber Alltagsbeweise, Verfahren und soziale Reibung tragen, nicht ueber grelle Thrillerornamente."
-            ]
-          : []
-      )
-    )
+  if (!domesticSignals.matches) {
+    return fallback
   }
+
+  return buildDomesticSuspenseThrillerProseTechniqueProfile({
+    alltagsnah: domesticSignals.alltagsnah,
+    noThrillerLoudness: domesticSignals.noThrillerLoudness
+  })
 }
 
 function inferBookEngineMode(params: {
@@ -1619,7 +1569,15 @@ function inferBookEngineMode(params: {
     /superheld|superhero|superkraft|superkrafte|krafte|powers?/.test(normalizedSignals)
   const hasOriginSignal = /origin|ursprung/.test(normalizedSignals)
 
-  return hasSuperheroSignal && (hasTeenSignal || hasOriginSignal) ? "ya_superhero_origin" : "default"
+  if (hasSuperheroSignal && (hasTeenSignal || hasOriginSignal)) {
+    return "ya_superhero_origin"
+  }
+
+  if (detectDomesticSuspenseThrillerSignals(normalizedSignals).isDomesticSuspense) {
+    return "domestic_suspense_thriller"
+  }
+
+  return "default"
 }
 
 function applyLockedFactOverrides(

@@ -28,6 +28,7 @@ import {
   buildStateDiffFromExtraction,
   validateBookStateDiff
 } from "@/lib/book-state-validator";
+import { buildDomesticSuspenseLockedFactHardConstraints } from "@/lib/book-genre-engine-domestic-thriller";
 import { createUuid, isUuid } from "@/lib/id";
 
 export type CanonLedgerEntry = StoryDocument["book"]["memory"]["canonLedger"][number];
@@ -2793,106 +2794,13 @@ function buildSceneObjectColorHardConstraints(story: StoryDocument, sceneCard: T
 }
 
 function buildLockedFactHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
-  const lockedFacts = story.book.memory.lockedFacts;
   const sceneText = normalizeGuardText(collectSceneCardTextEntries(sceneCard).join(" "));
-  const constraints: string[] = [];
-
-  if (
-    lockedFacts.institutionName &&
-    (normalizedTextContainsTerm(sceneText, lockedFacts.institutionName) || normalizedTextContainsTerm(sceneText, "kita"))
-  ) {
-    constraints.push(
-      `Locked Fact - Kita: ${lockedFacts.institutionName}. Wenn die Einrichtung namentlich auftaucht, muss sie so heissen.`
-    );
-  }
-
-  if (
-    lockedFacts.incidentDate &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.incidentDate) ||
-      normalizedTextContainsTerm(sceneText, "datum") ||
-      normalizedTextContainsTerm(sceneText, "vortag") ||
-      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
-      normalizedTextContainsTerm(sceneText, "abschlussvermerk")
-    )
-  ) {
-    constraints.push(`Locked Fact - Vorfallsdatum: ${lockedFacts.incidentDate}.`);
-  }
-
-  if (
-    lockedFacts.incidentTime &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.incidentTime) ||
-      normalizedTextContainsTerm(sceneText, "abhol") ||
-      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
-      normalizedTextContainsTerm(sceneText, "abschlussvermerk")
-    )
-  ) {
-    constraints.push(`Locked Fact - Dokumentierte Abholzeit: ${lockedFacts.incidentTime} Uhr.`);
-  }
-
-  if (
-    lockedFacts.notificationTime &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.notificationTime) ||
-      normalizedTextContainsTerm(sceneText, "app") ||
-      normalizedTextContainsTerm(sceneText, "benachrichtigung")
-    )
-  ) {
-    constraints.push(`Locked Fact - App-Benachrichtigung: ${lockedFacts.notificationTime} Uhr.`);
-  }
-
-  if (
-    lockedFacts.firstOfficeTime &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.firstOfficeTime) ||
-      normalizedTextContainsTerm(sceneText, "leitungsbuero") ||
-      normalizedTextContainsTerm(sceneText, "petra")
-    )
-  ) {
-    constraints.push(`Locked Fact - Leitungsbuero-Zeit: ${lockedFacts.firstOfficeTime} Uhr.`);
-  }
-
-  if (
-    lockedFacts.evaAlibiLocation &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.evaAlibiLocation) ||
-      normalizedTextContainsTerm(sceneText, "nachweisbar") ||
-      normalizedTextContainsTerm(sceneText, "kundentermin") ||
-      normalizedTextContainsTerm(sceneText, "alibi")
-    )
-  ) {
-    constraints.push(`Locked Fact - Alibi-Ort: ${lockedFacts.evaAlibiLocation}.`);
-  }
-
-  if (
-    lockedFacts.evaAlibiWindow &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.evaAlibiWindow) ||
-      normalizedTextContainsTerm(sceneText, "kundentermin") ||
-      normalizedTextContainsTerm(sceneText, "alibi") ||
-      normalizedTextContainsTerm(sceneText, "termin")
-    )
-  ) {
-    constraints.push(`Locked Fact - Alibi-Zeitfenster: ${lockedFacts.evaAlibiWindow}.`);
-  }
-
-  if (
-    lockedFacts.documentedPickupPerson &&
-    (
-      normalizedTextContainsTerm(sceneText, lockedFacts.documentedPickupPerson) ||
-      normalizedTextContainsTerm(sceneText, "dokumentierte abholperson") ||
-      normalizedTextContainsTerm(sceneText, "abholperson") ||
-      normalizedTextContainsTerm(sceneText, "app-eintrag") ||
-      normalizedTextContainsTerm(sceneText, "abschlussvermerk") ||
-      normalizedTextContainsTerm(sceneText, "abholbuch") ||
-      normalizedTextContainsTerm(sceneText, "protokoll")
-    )
-  ) {
-    constraints.push(`Locked Fact - Dokumentierte Abholperson: ${lockedFacts.documentedPickupPerson}.`);
-  }
-
-  return constraints;
+  return buildDomesticSuspenseLockedFactHardConstraints({
+    engineMode: story.book.engineMode,
+    lockedFacts: story.book.memory.lockedFacts,
+    sceneText,
+    containsTerm: normalizedTextContainsTerm
+  });
 }
 
 function resolveStoryObjectColorAnchors(story: StoryDocument): ObjectColorAnchor[] {
