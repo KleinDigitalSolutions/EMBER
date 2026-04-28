@@ -53,22 +53,22 @@ export const LEGACY_BOOK_WRITER_CONSTITUTION = [
 ] as const;
 
 export const DEFAULT_BOOK_STORY_ARCHITECTURE = [
-  "Akt 1: Setup. Fuehre Figur, Welt und zentrales Problem ein und ende mit dem ausloesenden Ereignis.",
-  "Akt 2: Konfrontation. Lass den Widerstand wachsen, setze einen klaren Midpoint-Turn und ende in einer scheinbar hoffnungslosen Lage.",
-  "Akt 3: Aufloesung. Liefere Klimax, Konsequenzen und einen befriedigenden Schluss fuer Plot und Emotion.",
-  "Tracke Wollen vs. Brauchen: Das sichtbare Ziel zieht die erste Haelfte, die tiefere innere Notwendigkeit loest die zweite Haelfte."
+  "Anfang: Fuehre Figur, Welt, Versprechen und erste Veraenderung konkret ein.",
+  "Entwicklung: Lass Entscheidungen, Beziehungen und aeussere Lage sichtbar aufeinander reagieren.",
+  "Folgen: Zahle die wichtigsten Versprechen in Handlung, Beziehung und Selbstbild aus.",
+  "Tracke sichtbares Ziel und innere Notwendigkeit getrennt, bis beide in einer konkreten Entscheidung aufeinandertreffen."
 ] as const;
 
 export const DEFAULT_BOOK_WRITER_CONSTITUTION = [
-  "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
+  "Jede Szene braucht konkrete Lage, Reibung, Veraenderung und eine lesbare Folge.",
   "Steige spaet in die Szene ein und verlasse sie frueh, sobald der dramatische Punkt gesetzt ist.",
   "Zeige Emotion ueber Verhalten, Koerper, Handlung und sinnliche Details statt sie nur zu benennen.",
-  "Dialog ist dramatische Verdichtung; jede Zeile muss Konflikt, Information oder Machtbalance verschieben.",
+  "Dialog veraendert Beziehung, Information, Entscheidung oder Machtbalance.",
   "Starker Dialog traegt Subtext: Was Figuren sagen und was sie meinen, darf auseinanderliegen.",
-  "Negative Regel: Figuren erklaeren ihre Emotion nicht essayistisch; sie reagieren konkret, treffen Entscheidungen und tragen die Spannung ueber Handlung.",
-  "Negative Regel: Hauptfiguren klingen nie generisch, passiv-aggressiv oder austauschbar; jede Stimme bleibt klar, gerichtsfest und wiedererkennbar.",
-  "Pacing wird bewusst gesteuert: kurze Saetze fuer Druck, laengere fuer Reflexion und Nachhall.",
-  "Kapitel und Szenen enden nach Moeglichkeit mit einem klaren Haken, einer offenen Reibung oder einer neuen Drohung, nicht mit weichem Auslaufen.",
+  "Negative Regel: Figuren erklaeren ihre Emotion nicht essayistisch; sie reagieren konkret, treffen Entscheidungen und veraendern ihr Verhalten.",
+  "Negative Regel: Hauptfiguren klingen nie generisch oder austauschbar; jede Stimme bleibt klar und wiedererkennbar.",
+  "Pacing wird bewusst gesteuert: kurze Saetze fuer akute Bewegung, laengere fuer Reflexion und Ausklang.",
+  "Kapitel und Szenen enden nach Moeglichkeit mit einem klaren Bild, einer offenen Reibung oder einer neuen Entscheidung, nicht mit weichem Auslaufen.",
   "Jede Hauptfigur braucht eine eigene Stimme, Wortwahl und Rhythmik.",
   "Bevorzuge aktive Verben, starke Nomen und konkrete Bilder statt schwacher Konstruktionen.",
   "Redundanzen, Fuellwoerter und dekorative Adverbien werden gestrichen, nicht gesammelt.",
@@ -1034,9 +1034,9 @@ export function normalizeBookLockedFacts(value: unknown): BookLockedFacts {
 export function createDefaultBookProseTechniqueProfile(): BookProseTechniqueProfile {
   return {
     narrativeIntent:
-      "Schreibe als zugkraeftige, lesbare Spannungsprosa: konkret, nah, druckvoll und ohne Autorenmasken.",
+      "Schreibe als zugkraeftige, lesbare Szenenprosa: konkret, nah, beweglich und ohne Autorenmasken.",
     povDistance: "close",
-    tensionMode: "progressive_escalation",
+    tensionMode: "scene_pressure_from_consequence",
     expositionMode: "embedded_only",
     sensoryWeight: "medium",
     interiorityMode: "micro_reactions",
@@ -1050,13 +1050,13 @@ export function createDefaultBookProseTechniqueProfile(): BookProseTechniqueProf
       ending: "image_or_reversal"
     },
     dialogueMode: "subtext_and_pressure",
-    revealPattern: "withhold_then_clarify",
+    revealPattern: "withhold_then_ground",
     anchorPolicy: "each_scene_needs_a_concrete_anchor",
     techniqueRules: [
-      "Beginne mit Stoerung, Druck oder veraenderter Lage statt mit Vorerklaerung.",
+      "Beginne mit veraenderter Lage, Handlung oder Beziehung statt mit Vorerklaerung.",
       "Fuehre Wahrnehmung, Handlung und Mikroreaktion enger als abstrakte Reflexion.",
       "Exposition nur unter Bewegung, Konflikt oder Gegenstandsdruck einlassen.",
-      "Nach sichtbarem Machtwechsel, Evidenzturn oder Stoerbild zuegig beenden."
+      "Nach sichtbarer Veraenderung, Entscheidung oder neuem Bild zuegig beenden."
     ],
     antiImitationRules: [
       "Keine erkennbaren Anleihen bei einzelnen Autorinnen, Autoren oder Comp Titles.",

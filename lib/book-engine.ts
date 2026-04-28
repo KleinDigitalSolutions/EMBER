@@ -2298,13 +2298,13 @@ function buildOutlineSteps(packet: SceneContextPacket) {
   const steps = sceneCardOutline.length
     ? sceneCardOutline
     : [
-    `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "den unmittelbaren Konflikt"}.`,
+    `Oeffnung: ${packet.dynamicContext.sceneTitle} mit Fokus auf ${packet.dynamicContext.sceneSummary || "die unmittelbare Lage"}.`,
     packet.stablePrefix.storyArchitecture[0]
       ? `Strukturanker: ${packet.stablePrefix.storyArchitecture[0]}`
       : "",
-    `Druck aufbauen: ${packet.dynamicContext.activeThreads[0]?.label || "eine offene Frage"} konkretisieren.`,
-    `Wendung: ${packet.dynamicContext.relevantCodex[0]?.title || "der Kernkonflikt"} neu rahmen.`,
-    "Nachhall: Die Szene endet mit Nachhall, nicht mit Aufloesung."
+    `Szenische Reibung: ${packet.dynamicContext.activeThreads[0]?.label || "eine offene Frage"} konkretisieren.`,
+    `Veraenderung: ${packet.dynamicContext.relevantCodex[0]?.title || "der Kern der Szene"} neu rahmen.`,
+    "Ausgang: Die Szene endet mit einer konkreten Folge, nicht mit Zusammenfassung."
   ];
 
   return steps.filter(Boolean);
@@ -2323,13 +2323,13 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
       packet.dynamicContext.sceneTitle,
       packet.dynamicContext.sceneSummary || packet.stablePrefix.premise,
       packet.stablePrefix.marketHook
-        ? `Der kommerzielle Zug der Szene bleibt am Hook ausgerichtet: ${packet.stablePrefix.marketHook}`
+        ? `Das Leser-Versprechen der Szene bleibt am Hook ausgerichtet: ${packet.stablePrefix.marketHook}`
         : "",
       lead
-        ? `${lead.title} liegt als relevanter Kanon offen im Raum: ${lead.summary}`
-        : "Die Szene muss den Konflikt aus der Praemisse unmittelbar spueren lassen.",
+        ? `${lead.title} ist als relevanter Kanon fuer die Szene gesetzt: ${lead.summary}`
+        : "Die Szene muss die Praemisse in Handlung, Beziehung oder sichtbarer Lage konkret machen.",
       characterState
-        ? `${characterState.characterName} traegt aktuell diesen Druck: ${characterState.currentState}${
+        ? `${characterState.characterName} bringt diesen Zustand in die Szene: ${characterState.currentState}${
             characterState.snapshots.length
               ? ` Letzte Marker: ${characterState.snapshots.slice(-2).map(function (snapshot) {
                   return snapshot.sourceLabel || snapshot.currentState;
@@ -2344,18 +2344,18 @@ function buildDraftText(packet: SceneContextPacket, targetWordsMin: number) {
         : "Es gibt keinen langen Rueckblick; die Szene steigt schnell in die aktuelle Lage ein.",
       thread
         ? `Der offene Thread lautet im Kern: ${thread.label}. ${thread.detail}`
-        : "Der Druck kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
+        : "Die Bewegung kommt aus der aktuellen Situation und nicht aus abstrakter Erklaerung.",
       "Die Figuren reagieren konkret, nicht essayistisch."
     ].join(" "),
     [
-      packet.stablePrefix.readerPromise || "Der Leser erwartet einen spannungsgetragenen, klaren Vorwaertszug.",
+      packet.stablePrefix.readerPromise || "Der Leser erwartet eine klare, szenisch getragene Vorwaertsbewegung.",
       packet.stablePrefix.thematicCore
         ? `Unter der Aktion arbeitet das Thema: ${packet.stablePrefix.thematicCore}.`
         : "Die Szene soll bereits eine lesbare emotionale Verschiebung erzeugen.",
       packet.stablePrefix.categoryLane
-        ? `Die Szene muss lesbar in der Marktspur bleiben: ${packet.stablePrefix.categoryLane}.`
+        ? `Die Szene bleibt lesbar in der Projektspur: ${packet.stablePrefix.categoryLane}.`
         : "",
-      "Die Szene endet mit Nachhall, nicht mit Aufloesung."
+      "Die Szene endet mit einer konkreten Folge, nicht mit Aufloesung."
     ].join(" ")
   ];
 
@@ -2430,11 +2430,11 @@ function buildRewriteText(
   const codexTail = packet.dynamicContext.relevantCodex
     .slice(0, 2)
     .map(function (entry) {
-      return `${entry.title} bleibt dabei nicht Dekor, sondern aktive Reibungsflaeche.`;
+      return `${entry.title} bleibt dabei nicht Dekor, sondern aktive Szenenflaeche.`;
     })
     .join(" ");
 
-  const ending = "Die Szene endet auf einem Nachhall, nicht auf einer neutralen Ausblendung.";
+  const ending = "Die Szene endet auf einer konkreten Folge, nicht auf einer neutralen Ausblendung.";
 
   return [
     draftText,
@@ -2862,7 +2862,7 @@ function buildLockedFactHardConstraints(story: StoryDocument, sceneCard: Timelin
       normalizedTextContainsTerm(sceneText, "alibi")
     )
   ) {
-    constraints.push(`Locked Fact - Eva-Alibi-Ort: ${lockedFacts.evaAlibiLocation}.`);
+    constraints.push(`Locked Fact - Alibi-Ort: ${lockedFacts.evaAlibiLocation}.`);
   }
 
   if (
@@ -2871,12 +2871,10 @@ function buildLockedFactHardConstraints(story: StoryDocument, sceneCard: Timelin
       normalizedTextContainsTerm(sceneText, lockedFacts.evaAlibiWindow) ||
       normalizedTextContainsTerm(sceneText, "kundentermin") ||
       normalizedTextContainsTerm(sceneText, "alibi") ||
-      normalizedTextContainsTerm(sceneText, "frankfurt") ||
-      normalizedTextContainsTerm(sceneText, "maintower") ||
       normalizedTextContainsTerm(sceneText, "termin")
     )
   ) {
-    constraints.push(`Locked Fact - Eva-Alibi-Fenster: ${lockedFacts.evaAlibiWindow}.`);
+    constraints.push(`Locked Fact - Alibi-Zeitfenster: ${lockedFacts.evaAlibiWindow}.`);
   }
 
   if (
@@ -3125,17 +3123,17 @@ function buildSceneCardOutline(scene: StoryScene, chapterGoal: string, nextScene
           .map(function (block) {
             return block.text.trim();
           })
-          .filter(Boolean)[0] || "Der Druck der Szene muss konkret und beobachtbar werden.",
+          .filter(Boolean)[0] || "Die Reibung der Szene muss konkret und beobachtbar werden.",
         140
       );
 
   return [
     `Oeffnung: ${summary}`,
-    `Druck: ${scenePressure}`,
+    `Reibung: ${scenePressure}`,
     `Ziel: ${clampText(chapterGoal || scene.summary || scene.title || "Die Szene braucht ein klares Ziel.", 140)}`,
     nextSceneTitle
       ? `Ausgang: Die Szene kippt in ${nextSceneTitle}.`
-      : "Ausgang: Die Szene endet mit Nachhall oder offener Drohung."
+      : "Ausgang: Die Szene endet mit konkreter Folge oder offener Reibung."
   ].filter(Boolean);
 }
 

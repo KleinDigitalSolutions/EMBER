@@ -419,7 +419,7 @@ export function BookBlueprintPanel({
             />
           </label>
 
-          <label className="editor-field" title="Das emotionale Versprechen an den Leser. Welches Genre-Gefühl (z.B. Hochdruck-Thriller) wird garantiert?">
+          <label className="editor-field" title="Das emotionale Versprechen an den Leser. Welches Genre-Gefuehl und welche Erwartung werden garantiert?">
             <span>Reader Promise</span>
             <textarea
               className="editor-textarea"
@@ -501,7 +501,7 @@ export function BookBlueprintPanel({
           <div className="book-card__head">
             <div>
               <span className="book-card__label">Market Brief</span>
-              <h4>Amazon-Track ohne die Story-Struktur zu verlassen</h4>
+              <h4>Positionierung ohne die Story-Struktur zu verlassen</h4>
             </div>
           </div>
 
