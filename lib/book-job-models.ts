@@ -8,15 +8,15 @@ export const BOOK_JOB_PROVIDER_STORAGE_KEY = "ember_book_job_provider";
 export const BOOK_JOB_MODEL_STORAGE_KEY = "ember_book_job_models";
 
 export const DEFAULT_BOOK_JOB_MODELS: Record<BookJobModelKey, string> = {
-  openai: "gpt-5.4",
+  openai: "gpt-5.5",
   anthropic: "claude-sonnet-4-6",
   anthropicContinuity: "claude-sonnet-4-6"
 };
 
 export const BOOK_JOB_MODEL_PRESETS: Record<BookJobModelKey, string[]> = {
   openai: ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"],
-  anthropic: ["claude-opus-4-6", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
-  anthropicContinuity: ["claude-haiku-4-5-20251001", "claude-sonnet-4-6", "claude-opus-4-6"]
+  anthropic: ["claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+  anthropicContinuity: ["claude-sonnet-4-6", "claude-opus-4-7", "claude-haiku-4-5-20251001"]
 };
 
 export function createEmptyBookJobModelSelection(): BookJobModelSelection {
@@ -35,7 +35,7 @@ export function parseBookJobModelSelection(value: string | null): BookJobModelSe
       anthropic: typeof parsed.anthropic === "string" ? normalizeKnownModelAlias(parsed.anthropic) ?? "" : "",
       anthropicContinuity:
         parsed.anthropicContinuity === "claude-haiku-4-5-20251001"
-          ? "claude-sonnet-4-6"
+          ? DEFAULT_BOOK_JOB_MODELS.anthropicContinuity
           : typeof parsed.anthropicContinuity === "string"
             ? normalizeKnownModelAlias(parsed.anthropicContinuity) ?? ""
             : ""
@@ -76,8 +76,8 @@ export function resolveBookJobModelValue(
 }
 
 function normalizeKnownModelAlias(value: string | undefined) {
-  if (value === "claude-opus-4-7") {
-    return "claude-opus-4-6";
+  if (!value) {
+    return undefined;
   }
 
   if (value === "gpt-5.4-pro" || value === "gpt-5.4-thinking") {
