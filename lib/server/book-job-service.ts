@@ -1403,14 +1403,17 @@ function buildCoreSystemPrompt() {
 
 function buildProseStyleBrakePrompt() {
   return [
-    "EMBER-Prosa-Praeferenzen:",
+    "PROSA-STILBREMSE:",
     "Bevorzuge konkrete szenische Bewegung vor abstrakter Deutung.",
-    "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen.",
+    "Lass Bilder, Handlungen, Schweigen, Koerper, Dialogverhalten und praktische Folgen Bedeutung tragen.",
     "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihre natuerliche Bewegung anders liegt.",
     "Nutze pro Szene nur wenige konkrete Kontextdetails aktiv. Der Rest dient als Sicherheitsnetz gegen Fehler.",
     "Materialdetails sind Szenentextur, keine automatisch zu benennenden Symbole, Hinweise oder Bedeutungen. Benenne ihre Bedeutung nur, wenn eine Figur das natuerlich sagen wuerde.",
+    "Dialog soll Haltung, Ausweichen, Druck, Naehe oder Beziehung zeigen; vermeide Dialog, der nur Weltwissen erklaert.",
+    "Erklaere nach starken Dialogzeilen nicht sofort, was sie bedeuten. Lass Reaktion, Pause oder naechste Handlung tragen.",
     "Verwende glatte interpretierende Gelenksaetze in deutscher Prosa sparsam, besonders: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\" und \"nicht X, sondern Y\".",
     "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
+    "Bei Tempo- oder Actionszenen bleiben Saetze klar, konkret und kausal; vermeide trotzdem erklaerende Zusammenfassungen, wenn Handlung es tragen kann.",
     "Gegenkraefte duerfen kompetent sein, aber nicht standardmaessig perfekt getaktet oder allwissend wirken. Ein falscher Ton, Uebergriff, eine verspaetete Reaktion, sichtbare Kosten oder unvollstaendiger Zugriff machen sie oft lebendiger.",
     "Vorher/nachher-Praeferenz:",
     "Schwach: Die Figur verstand, dass die Lage anders war, als sie gedacht hatte.",
@@ -1418,7 +1421,10 @@ function buildProseStyleBrakePrompt() {
     "Schwach: Das zeigte eindeutig, dass jemand ihre Grenze ueberschritten hatte.",
     "Staerker: Der Stuhl stand nicht mehr unter dem Tisch. Sie schob ihn nicht zurueck.",
     "Schwach: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
-    "Staerker: Sie legte den Gegenstand ab. Er blieb nicht dort. Sie nahm ihn wieder in die Hand."
+    "Staerker: Sie legte den Gegenstand ab. Er blieb nicht dort. Sie nahm ihn wieder in die Hand.",
+    "Schwach: Sie spürte, wie die Angst in ihr wuchs, als sie realisierte, dass sie nicht mehr sicher war.",
+    "Staerker: Sie wich nicht mehr aus. Ihre Schritte wurden schneller, unregelmäßiger. Sie konnte nicht mehr klar denken.",
+    "Vermeide die Standard-Satzlänge. Variiere zwischen kurzen, harten Beobachtungen und längeren, fließenden Bewegungen. Wenn die Spannung steigt, werden die Sätze kürzer."
   ].join("\n");
 }
 

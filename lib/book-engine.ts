@@ -3397,7 +3397,7 @@ function parseObjectColorHardConstraints(values: string[]) {
 function parseRequiredSceneAnchors(values: string[]) {
   return values
     .map(function (value) {
-      const match = value.match(/^(Pflicht-(?:Beweisobjekt|Alltagswaffe|Ersetzungsmoment|Kindmoment|Objektanker)): (.+?)\./);
+      const match = value.match(/^(Pflicht-[^:]+): (.+?)\./);
 
       if (!match) {
         return null;
