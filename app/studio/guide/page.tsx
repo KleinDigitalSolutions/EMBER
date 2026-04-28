@@ -323,8 +323,8 @@ export default function StudioGuidePage() {
           <div className="grid-item">
             <span className="label">Review</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Hier prüfst du Continuity, Quality Warnings, offene Fäden und Jobs, die nach
-              Kontextänderungen neu bewertet werden sollten.
+              Hier prüfst du Continuity, Quality Warnings, StateDiff-Hinweise, offene Fäden
+              und Jobs, die nach Kontextänderungen neu bewertet werden sollten.
             </p>
           </div>
         </div>
@@ -727,8 +727,8 @@ Scene Card
           <div className="grid-item">
             <span className="label">Review</span>
             <p style={{ fontSize: "0.9rem" }}>
-              Lies Continuity und Quality Warnings. Warnungen sind Hinweise, keine
-              automatischen Rewrite-Befehle.
+              Lies Continuity, Quality Warnings und den extrahierten StateDiff, wenn vorhanden.
+              Warnungen sind Hinweise, keine automatischen Rewrite-Befehle.
             </p>
           </div>
           <div className="grid-item">
@@ -743,6 +743,15 @@ Scene Card
               Speichert den Stand in Supabase. Erst dann ist der Projektstand stabil.
             </p>
           </div>
+        </div>
+
+        <div className="highlight-box">
+          <span className="label">Memory</span>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>
+            Ein StateDiff ist ein Vorschlag für Memory-Updates: Objekte, Wissen, Promises und
+            mögliche Canon-Fakten werden typisiert geprüft. Szenenlokale Details bleiben lokal;
+            Canon entsteht erst nach expliziter Freigabe.
+          </p>
         </div>
 
         <div className="highlight-box">
