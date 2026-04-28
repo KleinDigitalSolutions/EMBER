@@ -373,6 +373,7 @@ function buildLocalGemmaSystemPrompt(outputMode: AssistantOutputMode) {
     "Du bist Gemma lokal im EMBER Studio.",
     "Antworte auf Deutsch.",
     "Deine Rolle: billige Vorarbeit, Brainstorming, Sortierung und Rohentwurf.",
+    "Gib nur die Antwort aus. Keine Selbstnotizen, keine Klammer-Kommentare, keine 'Anmerkung für mich', keine Gedankenprotokolle.",
     "Erfinde keine harten Canon-Fakten. Markiere Lücken klar.",
     "Finale Pipeline-Kompatibilität muss später geprüft werden.",
     outputMode === "regie"
@@ -399,6 +400,12 @@ function buildLocalGemmaUserPrompt(
   const sceneLines = scopedScenes.map(function (sceneContext) {
     return `- ${sceneContext.sceneTitle}: ${trimPromptText(sceneContext.summary || "", 180)}`;
   });
+  const contextBlock = contextSelection.scope === "project"
+    ? buildLocalGemmaProjectDigest(story)
+    : [
+        "AKTIVE SZENEN:",
+        sceneLines.length ? sceneLines.join("\n") : "- Keine Szenen im aktiven Scope."
+      ].join("\n");
 
   return [
     `OUTPUT_MODE: ${outputMode}`,
@@ -416,8 +423,7 @@ function buildLocalGemmaUserPrompt(
     "WRITER CONSTITUTION AUSZUG:",
     formatPromptList(story.book.writerConstitution.slice(0, 8), "Keine Writer Constitution gesetzt.", 8),
     "",
-    "AKTIVE SZENEN:",
-    sceneLines.length ? sceneLines.join("\n") : "- Keine Szenen im aktiven Scope.",
+    contextBlock,
     "",
     "LETZTE NACHRICHTEN:",
     recentMessages.length ? recentMessages.join("\n") : "- Keine bisherigen Nachrichten.",
@@ -439,11 +445,102 @@ function buildLocalGemmaUserPrompt(
             "Keine finale Regie-Datei bauen."
         ].join("\n")
       : [
-          "AUFGABE:",
-          "Beantworte die letzte Nutzerfrage. Nutze Gemma nur für Vorarbeit: sortieren, brainstormen, extrahieren, Varianten bilden.",
-          "Gib bei harten Entscheidungen an, was später mit starkem Modell oder Dry-Run geprüft werden muss."
+    "AUFGABE:",
+    "Beantworte die letzte Nutzerfrage. Nutze Gemma nur für Vorarbeit: sortieren, brainstormen, extrahieren, Varianten bilden.",
+          "Gib bei harten Entscheidungen an, was später mit starkem Modell oder Dry-Run geprüft werden muss.",
+          "Wenn die Nutzerfrage nur eine kurze Verfügbarkeitsfrage ist, antworte nur kurz und ohne Projektanalyse."
         ].join("\n")
   ].join("\n");
+}
+
+function buildLocalGemmaProjectDigest(story: StoryDocument) {
+  const allScenes = getScopedSceneContexts(story, createDefaultAssistantContextSelection("project"));
+  const scenesByAct = story.acts.map(function (act) {
+    const actScenes = allScenes.filter(function (scene) {
+      return scene.actId === act.id;
+    });
+    const firstScenes = actScenes.slice(0, 2);
+    const lastScene = actScenes[actScenes.length - 1] ?? null;
+    const representative = Array.from(new Set(
+      firstScenes.concat(lastScene ? [lastScene] : []).map(function (scene) {
+        return `${scene.sceneTitle}: ${trimPromptText(scene.summary || "", 120)}`;
+      })
+    ));
+
+    return `${act.title}: ${actScenes.length} Szenen. ${representative.join(" | ") || "Keine Szenensummaries."}`;
+  });
+  const highCanon = story.book.memory.canonLedger
+    .slice()
+    .sort(function (left, right) {
+      return scoreImportance(right.importance) - scoreImportance(left.importance) || right.mentionCount - left.mentionCount;
+    })
+    .slice(0, 8)
+    .map(function (entry) {
+      return `${entry.title} [${entry.kind}/${entry.status}]: ${trimPromptText(entry.summary, 180)}`;
+    });
+  const characters = story.book.memory.characterLedger
+    .slice(0, 8)
+    .map(function (entry) {
+      return `${entry.characterName}: ${trimPromptText(entry.currentState, 130)} | Agenda: ${trimPromptText(entry.agenda, 110)}`;
+    });
+  const openThreads = story.book.memory.openThreads
+    .slice()
+    .sort(function (left, right) {
+      return scoreOpenThread(right.status, right.priority) - scoreOpenThread(left.status, left.priority);
+    })
+    .slice(0, 8)
+    .map(function (thread) {
+      return `${thread.label} [${thread.status}/${thread.priority}]: ${trimPromptText(thread.detail, 170)}`;
+    });
+  const acceptedJobs = story.book.draftEngine.jobs.filter(function (job) {
+    return job.status === "accepted";
+  }).length;
+  const latestJobs = story.book.draftEngine.jobs
+    .slice()
+    .sort(function (left, right) {
+      return right.updatedAt.localeCompare(left.updatedAt);
+    })
+    .slice(0, 5)
+    .map(function (job) {
+      return `${job.sceneTitle}: ${job.status}, ${job.provider}${job.modelName ? `/${job.modelName}` : ""}, ${countWords(job.rewriteText)} Wörter`;
+    });
+
+  return [
+    "LOKALER PROJEKT-DIGEST FUER GEMMA:",
+    "Hinweis: Dies ist eine verdichtete Übersicht. Für finale Canon-/Regie-Entscheidungen später starkes Modell oder Dry-Run nutzen.",
+    "",
+    "## Core",
+    `Premise: ${trimPromptText(story.book.masterBrief.premise || "nicht gesetzt", 420)}`,
+    `Reader Promise: ${trimPromptText(story.book.masterBrief.readerPromise || "nicht gesetzt", 320)}`,
+    `Thematic Core: ${trimPromptText(story.book.masterBrief.thematicCore || "nicht gesetzt", 260)}`,
+    `Author Intent: ${trimPromptText(story.book.masterBrief.authorIntent || "nicht gesetzt", 240)}`,
+    `Current Focus: ${trimPromptText(story.book.masterBrief.currentFocus || "nicht gesetzt", 240)}`,
+    "",
+    "## Pressure / Market",
+    `Hook: ${trimPromptText(story.book.marketBrief.hook || "nicht gesetzt", 280)}`,
+    `Category: ${trimPromptText(story.book.marketBrief.categoryLane || "nicht gesetzt", 180)}`,
+    `Narrative Intent: ${trimPromptText(story.book.memory.proseTechniqueProfile.narrativeIntent || "nicht gesetzt", 240)}`,
+    "",
+    "## Key Canon",
+    formatPromptList(highCanon, "Keine Canon-Ledger-Einträge.", 8),
+    "",
+    "## Characters",
+    formatPromptList(characters, "Keine Character States.", 8),
+    "",
+    "## Open Threads",
+    formatPromptList(openThreads, "Keine Open Threads.", 8),
+    "",
+    "## Act Map / Representative Scenes",
+    formatPromptList(scenesByAct, "Keine Acts/Szenen.", 6),
+    "",
+    "## Draft State",
+    `Draft jobs: ${story.book.draftEngine.jobs.length}, accepted: ${acceptedJobs}, total scenes: ${allScenes.length}`,
+    formatPromptList(latestJobs, "Noch keine Draft-Jobs.", 5)
+  ].join("\n");
+}
+
+function scoreImportance(value: StoryDocument["book"]["memory"]["canonLedger"][number]["importance"]) {
+  return value === "high" ? 3 : value === "medium" ? 2 : 1;
 }
 
 function normalizeLocalGemmaOutput(output: string) {
@@ -458,7 +555,7 @@ function normalizeLocalGemmaOutput(output: string) {
   const modelMatch = withoutProgress.match(/<\|turn\>model\s*\n+([\s\S]*?)\n=+\s*(?:Prompt:|$)/);
 
   if (modelMatch?.[1]) {
-    return modelMatch[1].trim();
+    return stripLocalGemmaMetaNotes(modelMatch[1].trim());
   }
 
   const sections = withoutProgress.split("==========").map(function (section) {
@@ -470,16 +567,25 @@ function normalizeLocalGemmaOutput(output: string) {
 
   if (responseSection) {
     const parts = responseSection.split("<|turn>model");
-    return (parts[1] ?? responseSection)
+    return stripLocalGemmaMetaNotes((parts[1] ?? responseSection)
       .replace(/^Prompt:.*$/gm, "")
-      .trim();
+      .trim());
   }
 
-  return withoutProgress
+  return stripLocalGemmaMetaNotes(withoutProgress
     .replace(/^Files:.*$/gm, "")
     .replace(/^Prompt:.*$/gm, "")
     .replace(/^Generation:.*$/gm, "")
     .replace(/^Peak memory:.*$/gm, "")
+    .trim());
+}
+
+function stripLocalGemmaMetaNotes(text: string) {
+  return text
+    .replace(/\n+\s*\*?\(?Anmerkung für mich:[\s\S]*$/i, "")
+    .replace(/\n+\s*\*?\(?Hinweis an mich:[\s\S]*$/i, "")
+    .replace(/\n+\s*\*?\(?Gedankenprotokoll:[\s\S]*$/i, "")
+    .replace(/\n+\s*\*?\(?Interne Notiz:[\s\S]*$/i, "")
     .trim();
 }
 
