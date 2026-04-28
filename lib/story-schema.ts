@@ -46,9 +46,9 @@ export type BookDraftStageRuns = {
 };
 
 export const LEGACY_BOOK_WRITER_CONSTITUTION = [
-  "Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.",
-  "Exposition bleibt knapp und wird nur dramatisch verdient platziert.",
-  "Dialog muss Information tragen oder Spannung verschieben.",
+  "Jede Szene braucht konkrete Lage, Reibung, Veraenderung und eine lesbare Folge.",
+  "Exposition bleibt knapp und wird nur dann platziert, wenn sie die aktuelle Szene traegt.",
+  "Dialog muss Information, Beziehung, Entscheidung oder Machtbalance veraendern.",
   "Kanon geht vor Improvisation; Luecken werden markiert statt erfunden."
 ] as const;
 
@@ -1061,7 +1061,7 @@ export function createDefaultBookProseTechniqueProfile(): BookProseTechniqueProf
     antiImitationRules: [
       "Keine erkennbaren Anleihen bei einzelnen Autorinnen, Autoren oder Comp Titles.",
       "Keine markanten Phrasen, Satzmuster oder Signaturbilder aus Referenztexten uebernehmen.",
-      "Technik nur auf hoher Abstraktion verwenden: Spannung bauen, nicht Stimmen kopieren."
+      "Technik nur auf hoher Abstraktion verwenden: Szenenwirkung bauen, nicht Stimmen kopieren."
     ]
   };
 }

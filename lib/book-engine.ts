@@ -1531,7 +1531,7 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
   }).length;
 
   if (!story.book.masterBrief.readerPromise) {
-    qualityWarnings.push("Reader Promise fehlt; Stil- und Spannungssteuerung bleiben unscharf.");
+    qualityWarnings.push("Reader Promise fehlt; Szenenwirkung und Leserfuehrung bleiben unscharf.");
   }
 
   if (!story.book.marketBrief.hook) {
@@ -1787,7 +1787,7 @@ export function auditSceneRhythm(story: StoryDocument): string[] {
 
     if (proofSceneCount >= 4 && childMomentCount === 0) {
       warnings.push(
-        "Viele Beweisszenen in Folge ohne Kind-Gegenwart. Pruefen, ob Mila als Kind statt als Beweis wieder sichtbar werden sollte."
+        "Viele objekt- oder hinweisorientierte Szenen in Folge ohne konkrete Personennaehe. Pruefen, ob die betroffene Figur wieder als Mensch statt als Funktion sichtbar werden sollte."
       );
     }
   }
@@ -2276,14 +2276,14 @@ const SCENE_CARD_NARRATIVE_LABELS: Record<string, string> = {
   offnung: "Oeffnung",
   opening: "Einstieg",
   einstieg: "Einstieg",
-  druck: "Druck",
+  druck: "Reibung",
   core_action: "Kernaktion",
   coreaction: "Kernaktion",
   kern_aktion: "Kernaktion",
   kernaktion: "Kernaktion",
-  dramatic_beat: "Wendung",
-  dramaticbeat: "Wendung",
-  beat: "Wendung",
+  dramatic_beat: "Veraenderung",
+  dramaticbeat: "Veraenderung",
+  beat: "Veraenderung",
   ending: "Ende",
   ende: "Ende",
   ausgang: "Ausgang",
@@ -2379,7 +2379,7 @@ function extractDraftState(
         return entry.kind === "character";
       })
       .map(function (entry) {
-        return `${entry.title} verlaesst die Szene nicht unveraendert; der innere Druck steigt.`;
+        return `${entry.title} verlaesst die Szene nicht unveraendert; die innere Lage verschiebt sich.`;
       })
       .slice(0, 2),
     openThreadsCreated: packet.dynamicContext.activeThreads
@@ -2403,7 +2403,7 @@ function buildRewriteNotes(
   extractedState: DraftExtractionState
 ) {
   const notes = [
-    "Oeffnung frueher auf Handlung und Druck setzen.",
+    "Oeffnung frueher auf Handlung und konkrete Reibung setzen.",
     "Exposition knapper halten und in die Wahrnehmung der Szene einbetten."
   ];
 
@@ -3715,7 +3715,7 @@ export function detectStyleDrift(packet: SceneContextPacket, draftText: string) 
     profile.expositionMode === "embedded_only" &&
     countAbstractExpositionPhrases(draftText) >= 6
   ) {
-    notes.push("Der Text erklaert zu viel direkt, statt Druck ueber Handlung und Wahrnehmung zu tragen.");
+    notes.push("Der Text erklaert zu viel direkt, statt Wirkung ueber Handlung und Wahrnehmung zu tragen.");
   }
 
   if (countSmoothnessMarkers(draftText) >= 5) {
@@ -3732,7 +3732,7 @@ export function detectStyleDrift(packet: SceneContextPacket, draftText: string) 
 
   if (countOverprecisionSignals(draftText) >= 3) {
     notes.push(
-      "Die Druckfigur wirkt eventuell zu perfekt getaktet. Einen kleinen Fehler, falschen Ton oder ungenauen Zugriff pruefen."
+      "Eine Gegenkraft wirkt eventuell zu perfekt getaktet. Einen kleinen Fehler, falschen Ton oder ungenauen Zugriff pruefen."
     );
   }
 

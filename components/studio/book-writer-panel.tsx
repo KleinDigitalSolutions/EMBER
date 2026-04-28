@@ -50,7 +50,7 @@ const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail
 ];
 
 const DIRECTOR_PRESETS = [
-  "Spannung enger ziehen und mit klarer Eskalation enden.",
+  "Szenische Reibung konkreter machen und mit klarer Veraenderung enden.",
   "Mehr Innenleben und emotionale Reibung der Hauptfigur zeigen.",
   "Sinnliche Details und räumliche Klarheit stärker ausarbeiten.",
   "Prosa straffen, Wiederholungen schneiden und Tempo erhöhen."
@@ -785,7 +785,7 @@ export function BookWriterPanel({
             <textarea
               className="editor-textarea book-writer-director-note"
               value={directorNote}
-              placeholder="Mehr Spannung, dichterer Stil, klarere Raumwahrnehmung."
+              placeholder="Konkretere Reibung, dichterer Stil, klarere Raumwahrnehmung."
               onChange={function (event) {
                 setDirectorNote(event.target.value);
               }}
@@ -1403,14 +1403,14 @@ const OUTLINE_NARRATIVE_LABELS: Record<string, string> = {
   offnung: "Oeffnung",
   opening: "Einstieg",
   einstieg: "Einstieg",
-  druck: "Druck",
+  druck: "Reibung",
   core_action: "Kernaktion",
   coreaction: "Kernaktion",
   kern_aktion: "Kernaktion",
   kernaktion: "Kernaktion",
-  dramatic_beat: "Wendung",
-  dramaticbeat: "Wendung",
-  beat: "Wendung",
+  dramatic_beat: "Veraenderung",
+  dramaticbeat: "Veraenderung",
+  beat: "Veraenderung",
   ending: "Ende",
   ende: "Ende",
   ausgang: "Ausgang",

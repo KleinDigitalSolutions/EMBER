@@ -1406,9 +1406,9 @@ function buildProseStyleBrakePrompt() {
     "EMBER-Prosa-Praeferenzen:",
     "Bevorzuge konkrete szenische Bewegung vor abstrakter Deutung.",
     "Lass Bilder, Handlungen, Schweigen, Koerper und praktische Folgen Bedeutung tragen.",
-    "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihr natuerlicher Druck anders liegt.",
+    "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihre natuerliche Bewegung anders liegt.",
     "Nutze pro Szene nur wenige konkrete Kontextdetails aktiv. Der Rest dient als Sicherheitsnetz gegen Fehler.",
-    "Materialdetails sind Szenentextur, keine automatisch zu benennenden Symbole, Spuren oder Beweise. Benenne ihre Bedeutung nur, wenn eine Figur das natuerlich sagen wuerde.",
+    "Materialdetails sind Szenentextur, keine automatisch zu benennenden Symbole, Hinweise oder Bedeutungen. Benenne ihre Bedeutung nur, wenn eine Figur das natuerlich sagen wuerde.",
     "Verwende glatte interpretierende Gelenksaetze in deutscher Prosa sparsam, besonders: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\" und \"nicht X, sondern Y\".",
     "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
     "Gegenkraefte duerfen kompetent sein, aber nicht standardmaessig perfekt getaktet oder allwissend wirken. Ein falscher Ton, Uebergriff, eine verspaetete Reaktion, sichtbare Kosten oder unvollstaendiger Zugriff machen sie oft lebendiger.",
@@ -1857,7 +1857,7 @@ function cleanIntentionValue(value: string) {
   return truncateText(
     value
       .replace(/\s+/g, " ")
-      .replace(/\. (Die Szene darf|Dieses Beweisobjekt darf|Diese Alltagslogik muss|Diese Ersetzungslogik muss|Mila bleibt Kind|Farbe, Funktion).+$/u, ".")
+      .replace(/\. (Die Szene darf|Dieses [^.]+ darf|Diese [^.]+ muss|[^.]+ bleibt Kind|Farbe, Funktion).+$/u, ".")
       .trim(),
     260
   );
@@ -1988,7 +1988,7 @@ function buildFallbackBeatPlan(
   const source = narrativeOutline.length
     ? narrativeOutline
     : [
-        `${packet.dynamicContext.sceneTitle} startet unter Druck.`,
+        `${packet.dynamicContext.sceneTitle} startet in einer konkreten Veraenderung.`,
         packet.dynamicContext.sceneSummary,
         "Die Szene endet mit einer sichtbaren Verschiebung."
       ];
