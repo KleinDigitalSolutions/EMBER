@@ -1,5 +1,23 @@
 # Repository Guidelines
 
+
+# TODO IMPORTEN ASK USER! 
+Schick ihm am besten:
+
+Danke. Bitte poste noch die exakten rg-Commands + Ergebnis für diese zwei Suchen:
+
+1. Bootstrap darf keine Projektliterale enthalten:
+rg "Eva|Mila|Nora|Simon|Sonnengarten|Kita|Abholzeit|Leitungsbüro|Kundentermin|evaAlibiLocation|evaAlibiWindow|documentedPickupPerson" scripts/bootstrap-book-from-regie.ts
+
+2. YA-Engine darf keine Aftershock-Literale enthalten:
+rg "Veridium|Bixi|B\\.I\\.X|Chicago Advanced Science Center" lib/book-genre-engine-ya-superhero.ts scripts/bootstrap-book-from-regie.ts
+
+Erwartung:
+- Suche 1: Bootstrap keine Treffer.
+- Suche 2: keine Treffer in Bootstrap und YA-Engine.
+
+Einzige offene Architektur-Sache, die ich weiter im Auge behalten würde: deriveDomesticSuspenseLockedFacts darf bei engineMode === "default" nicht zu aggressiv Domestic-Facts ableiten. Das ist kein aktueller Aftershock-Fehler, aber wichtig für spätere Fantasy/Romance-Projekte.
+
 ## Project Structure & Module Organization
 This repository is a Next.js app with the studio under `app/`, shared logic under `lib/`, and UI components under `components/`. The legacy storefront/reader that still powers `/` and `/story` lives in `public/legacy/` with its own `index.html`, `app.js`, `story.js`, `styles.css`, and image assets. Supabase SQL lives in `supabase/migrations/`. Planning material such as `STORY_PLAN.md` and `BOOK_STUDIO_GUIDE.md` is documentation, not runtime code.
 
