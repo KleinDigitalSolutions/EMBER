@@ -503,6 +503,44 @@ async function generateWithAnthropic(
   });
 }
 
+export function previewAnthropicProsePrompts(
+  packet: SceneContextPacket,
+  optionsOverrides?: {
+    targetSceneWordsMin?: number;
+    targetSceneWordsMax?: number;
+    directorNote?: string;
+    humanEditProfile?: string;
+  }
+) {
+  const targetWordsMin =
+    optionsOverrides?.targetSceneWordsMin ?? packet.dynamicContext.wordTargetMin ?? 1200;
+  const targetWordsMax =
+    optionsOverrides?.targetSceneWordsMax ?? packet.dynamicContext.wordTargetMax ?? 1600;
+  const options: DraftGenerationOptions = {
+    modelOverrides: undefined,
+    targetSceneWordsMin: targetWordsMin,
+    targetSceneWordsMax: targetWordsMax,
+    directorNote: optionsOverrides?.directorNote ?? "",
+    humanEditProfile: optionsOverrides?.humanEditProfile ?? ""
+  };
+  const beatPlan = buildFallbackBeatPlan(packet, options);
+  const systemBlocks = buildAnthropicProseSystemPromptBlocks(packet, options);
+  const userPrompt = buildAnthropicScenePrompt({
+    mode: "draft",
+    packet,
+    options,
+    beatPlan
+  });
+
+  return {
+    systemBlocks,
+    userPrompt,
+    targetSceneWordsMin: options.targetSceneWordsMin,
+    targetSceneWordsMax: options.targetSceneWordsMax,
+    proseMaxTokens: resolveAnthropicProseMaxTokens(options.targetSceneWordsMax)
+  };
+}
+
 async function runScenePipeline(
   packet: SceneContextPacket,
   options: DraftGenerationOptions,
