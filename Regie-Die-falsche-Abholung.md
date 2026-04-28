@@ -1,7 +1,7 @@
 # EMBER Story Document — „Die falsche Abholung"
 > Format: EMBER Book Blueprint v2 | Stand: 2026-04-22
 > Autor: Özgür Azap
-> Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads
+> Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads, typed StateDiff, Object/Knowledge/Promise Ledger
 > Hinweis: Diese Regie ist auf Regie-zu-Blueprint Sync ausgelegt. Namen und Orte können später geändert werden, die Funktionslogik der Figuren aber nicht.
 > Agenten-/Pipeline-Meta liegt in `BOOK_PIPELINE_AGENT_NOTES.md`. Diese Datei ist die kreative Blueprint-Referenz; technische Hinweise hier sind nur Orientierung und sollen nicht als langer Draft-Kontext an Opus gegeben werden.
 
@@ -25,11 +25,12 @@ EMBER liest Teile dieser Datei maschinell. Der Rest bleibt menschlich lesbar und
 Die aktuelle Standardpipeline arbeitet in dieser Reihenfolge:
 - Sie baut aus Story, Scene Card, Canon, Character Ledger und Open Threads einen schlanken Szenenkontext.
 - Sie generiert einen direkten Prosa-Draft ohne separaten Beat-Plan-Call und ohne Rewrite-Pass.
-- Danach folgen nur noch technische und qualitative Nachläufe: Notfall-Length-Control, State-Extraction, Continuity-Audit, Quality-Eval.
+- Danach folgen technische und qualitative Nachläufe: Notfall-Length-Control, State-Extraction, konservativer typed StateDiff, Continuity-Audit, Quality-Eval.
 
 Wichtig daraus:
 - Eine Scene Card ist heute **keine Satz-für-Satz-Komposition**, sondern eine **Scene Intention**.
 - Hart bleiben nur Kanon, POV, Ort/Zeit, Locked Facts, Namen und echte Kontinuitätsanker.
+- Typed StateDiff ist **kein Writer-Zwang**, sondern ein Review-/Memory-Vorschlag nach dem Draft: Objektbewegungen, Wissensstände, Promises und mögliche Canon-Fakten werden geprüft, bevor sie Memory werden.
 - Felder wie `opening`, `dramaticBeat`, `ending`, `proof_object`, `alltagswaffe` oder `kindmoment` sind **weiche Orientierung**, nicht Formulierungsdiktat. `coreAction` ist Handlungsorientierung, aber nicht automatisch Wendung; `closingLine` ist Legacy und höchstens optionales Schlussbild, kein Satzdiktat.
 - Aus diesen Feldern baut EMBER eine **Scene Intention**: `situation`, `want`, `pressure`, `concreteMaterial`, `intendedTurn`, `irreversibleChange`, `aftertaste`, `avoid`.
 - Wortziele sind **bevorzugte Szenenrahmen**, keine harten Qualitätsziele. Die Szene darf organisch kürzer oder länger werden.
@@ -95,6 +96,9 @@ Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
 | WORLD BIBLE | Setting, Soziale Lage, Noras Zugriffslogik | Indirekt — Canon-/Context-Quelle, nicht als voller Dump in den Draft |
 | CANON FACTS | Unveränderliche Buchwahrheiten mit IDs | Indirekt — Continuity-Basis |
 | CHARACTER STATE LEDGER | Wunde, Arc, Speech Pattern pro Figur | Indirekt — verdichtet relevant, kein vollständiger Draft-Kontext |
+| OBJECT STATE LEDGER | Besitz, Ort, Zustand und Sichtbarkeit wichtiger Dinge | Review-/Memory-Basis — StateDiff darf Objektänderungen nur konservativ vorschlagen |
+| KNOWLEDGE LEDGER | Wer weiß, glaubt oder noch nicht wissen darf, was wahr ist | Review-/Memory-Basis — Wissen ist nicht automatisch Wahrheit |
+| PROMISE LEDGER | Mystery-, Beziehungs-, Objekt- und Payoff-Versprechen | Review-/Memory-Basis — Payoff braucht logische und emotionale Einlösung |
 | VOICE PACK | Satzebene-Führung pro Figur mit Positiv/Verboten-Mustern | Teilweise — Stilanker und Review-Referenz, nicht vollständig in jeden Draft |
 | PROSA BENCHMARK | Konkrete Prosabeispiele als Stilanker | Indirekt — Review- und Stilreferenz, kein Prosa-Dump |
 | CONTINUITY GUARDRAILS | Namensschutz, Produktionsregeln | **Ja** — treibt `auditSceneContinuityGuards` live |
@@ -105,6 +109,17 @@ Neue Agents sollen deshalb schon beim Aufbau der Regie vermeiden:
 | ACTS & KAPITEL — SCENE CARDS | Szenenebene-Konfiguration pro Kapitel | **Ja** — zentrale Produktions- und Laufzeitgrundlage |
 | WRITER-SUMMARIES | Verdichtete Handlungs-Summaries + Director Notes | Human-/Review-Hilfe — nicht vollständig als Draft-Kontext verwenden |
 | OPERATIVE HINWEISE FUER EMBER | Checkliste + Copy-Paste-Blöcke für die Writer-UI | Operative Hilfe — nicht als Ersatz für gute Scene Cards und nicht als voller Draft-Kontext |
+
+### Typed StateDiff: Was die Regie dafür leisten soll
+
+Die StateDiff-Schicht ersetzt nicht die Regie und schreibt nicht die Szene. Sie prüft nach einem Draft, welche Memory-Änderungen plausibel sind. Diese Regie muss deshalb besonders klar bleiben bei:
+
+- **Objekten**: Wer hält ein Objekt, wo liegt es, in welchem Zustand ist es, und wann wurde es zuletzt glaubhaft gesehen?
+- **Wissen**: Wer weiß etwas wirklich, wer glaubt es nur, wer darf es noch nicht wissen, und was weiß der Leser?
+- **Promises/Payoffs**: Welche Frage oder emotionale Erwartung wurde gesetzt, verstärkt, teilweise eingelöst oder bezahlt?
+- **Canon-Sicherheit**: `sceneLocalDetails` bleiben lokal. Nur explizit geprüfte `proposedCanonFacts` dürfen nach Approval in den Canon.
+
+Für "Die falsche Abholung" sind besonders state-relevant: Kita-App-Eintrag, Abholzeit 15:42 Uhr, gelber Becher, Notfallkontaktstatus, Schlüssel/Zylinder, Tasche, Brotdose, Jacke, Ausflugserklärung, Fotos, Verteiler-/App-Kanäle und die Frage, wer Mila glaubhaft vertreten darf.
 
 ### Wie CONTINUITY GUARDRAILS die Pipeline beeinflusst
 
