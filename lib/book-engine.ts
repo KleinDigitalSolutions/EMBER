@@ -3625,6 +3625,10 @@ function normalizeColorWord(value: string) {
   if (normalized.startsWith("grau")) return "grau";
   if (normalized.startsWith("braun")) return "braun";
   if (normalized.startsWith("orange")) return "orange";
+  if (normalized.startsWith("weiss") || normalized.startsWith("weis")) return "weiss";
+  if (normalized.startsWith("tuerkis") || normalized.startsWith("turkis")) return "tuerkis";
+  if (normalized.startsWith("silber")) return "silber";
+  if (normalized.startsWith("gold")) return "gold";
 
   return null;
 }
@@ -3680,7 +3684,7 @@ export function detectStyleDrift(packet: SceneContextPacket, draftText: string) 
   const lastParagraph = paragraphs[paragraphs.length - 1] ?? "";
 
   if (draftText.includes("Die Figuren reagieren konkret, nicht essayistisch.")) {
-    notes.push("Der lokale Draft enthaelt noch Metasprache und braucht spaetere Modell-Politur.");
+    notes.push("Der lokale Draft enthaelt noch Metasprache und braucht eine echte szenische Ueberarbeitung.");
   }
 
   if (!packet.stablePrefix.readerPromise) {
@@ -3754,6 +3758,7 @@ export function countSmoothnessMarkers(value: string): number {
     /\bgenau\s+darin\b/g,
     /\bdas\s+bedeutete\b/g,
     /\bplotzlich\b/g,
+    /\bploetzlich\b/g,
     /\bihr\s+wurde\s+klar\b/g,
     /\bzum\s+ersten\s+mal\b/g
   ];
@@ -3764,20 +3769,18 @@ export function countSmoothnessMarkers(value: string): number {
 export function countAbstractNouns(value: string): number {
   const normalized = normalizeGuardText(value);
   const patterns = [
-    /\bangst\b/g,
-    /\bpanik\b/g,
-    /\bwahrheit(?:en)?\b/g,
-    /\bkontrolle\b/g,
-    /\bmutterrolle\b/g,
-    /\bdeutungshoheit\b/g,
-    /\bglaubwurdigkeit\b/g,
-    /\bverlasslichkeit\b/g,
-    /\bersetzung(?:en)?\b/g,
-    /\bbedrohung(?:en)?\b/g,
-    /\bzugriff(?:e|en)?\b/g,
-    /\bsicherheit\b/g,
-    /\binstabilitat\b/g,
-    /\bvertrauen\b/g
+    /\bdie\s+angst\s+(?:in|zwischen|vor)\b/g,
+    /\bdie\s+wahrheit\s+(?:war|blieb|lag)\b/g,
+    /\bdie\s+kontrolle\s+(?:verlor|zuruck|zurueck|uber|ueber)\b/g,
+    /\bdas\s+vertrauen\s+(?:war|blieb|zerbrach|fehlte)\b/g,
+    /\bdie\s+bedrohung\s+(?:war|blieb|wurde)\b/g,
+    /\bdie\s+sicherheit\s+(?:war|blieb|fehlte)\b/g,
+    /\bgefuhl\s+von\b/g,
+    /\bgefuehl\s+von\b/g,
+    /\bmoment\s+der\s+(?:wahrheit|klarheit|angst|kontrolle)\b/g,
+    /\bsymbol\s+(?:fur|fuer)\b/g,
+    /\bstand\s+(?:fur|fuer)\b/g,
+    /\bwar\s+ein\s+zeichen\s+(?:fur|fuer)\b/g
   ];
 
   return countPatternMatches(normalized, patterns);
@@ -3804,12 +3807,16 @@ export function countOverprecisionSignals(value: string): number {
 function countFunctionalLanguageSignals(value: string): number {
   const normalized = normalizeGuardText(value);
   const patterns = [
-    /\bmuss\b/g,
-    /\bsoll\b/g,
-    /\bbraucht\b/g,
-    /\bdarf\s+nicht\b/g,
+    /\bdie\s+szene\s+(?:muss|soll|braucht|darf)\b/g,
+    /\bdie\s+figur\s+(?:muss|soll|braucht|darf)\b/g,
+    /\bder\s+text\s+(?:muss|soll|braucht|darf)\b/g,
+    /\bdieser\s+moment\s+(?:muss|soll|braucht)\b/g,
     /\bfunktioniert\s+als\b/g,
-    /\bsteht\s+fur\b/g
+    /\bsteht\s+fur\b/g,
+    /\bsteht\s+fuer\b/g,
+    /\bsymbolisiert\b/g,
+    /\bverdeutlicht\b/g,
+    /\bzeigt\s+dem\s+leser\b/g
   ];
 
   return countPatternMatches(normalized, patterns);
@@ -3822,13 +3829,15 @@ function countPatternMatches(value: string, patterns: RegExp[]) {
 }
 
 function hasEarlySensoryAnchor(value: string) {
-  const openingWindow = value
-    .trim()
-    .split(/\s+/)
-    .slice(0, 90)
-    .join(" ");
+  const openingWindow = normalizeGuardText(
+    value
+      .trim()
+      .split(/\s+/)
+      .slice(0, 90)
+      .join(" ")
+  );
 
-  return /(sah|sieht|blickte|blick|hoerte|horte|klang|roch|roch es|spuerte|spurte|fuehlte|fuhlte|kalt|warm|licht|geraeusch|geruch)/i.test(
+  return /(sah|sieht|blickte|blick|hoerte|horte|klang|summte|brummte|knackte|flackerte|vibrierte|roch|ozon|metall|glas|spuerte|spurte|fuehlte|fuhlte|kalt|warm|licht|schatten|stimme|schritte|geraeusch|gerausch|geruch)/i.test(
     openingWindow
   );
 }
@@ -3851,21 +3860,8 @@ function countAbstractExpositionPhrases(value: string) {
 }
 
 function padDraftToTarget(value: string, targetWords: number) {
-  const buffer = [
-    "Jeder Absatz bleibt funktional und versucht zugleich, atmosphaerische Reibung zu tragen.",
-    "Der Text ist noch kein fertiger Romanstil, aber ein belastbarer Rohzug fuer spaetere Modell- und Human-Paesse.",
-    "Konflikt, Wahrnehmung und Konsequenz werden enger zusammengedraengt als in einer reinen Outline."
-  ];
-
-  let nextValue = value;
-  let bufferIndex = 0;
-
-  while (countApproxWords(nextValue) < targetWords && bufferIndex < buffer.length) {
-    nextValue = `${nextValue}\n\n${buffer[bufferIndex]}`;
-    bufferIndex += 1;
-  }
-
-  return nextValue;
+  void targetWords;
+  return value.trim();
 }
 
 function countApproxWords(value: string) {

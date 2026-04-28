@@ -479,7 +479,7 @@ function buildLocalGemmaSystemPrompt(outputMode: AssistantOutputMode) {
   return [
     "Du bist Gemma lokal im EMBER Studio.",
     "Antworte auf Deutsch.",
-    "Deine Rolle: billige Vorarbeit, Brainstorming, Sortierung und Rohentwurf.",
+    "Deine Rolle: Vorarbeit, Brainstorming, Sortierung und Rohentwurf.",
     "Gib nur die Antwort aus. Keine Selbstnotizen, keine Klammer-Kommentare, keine 'Anmerkung für mich', keine Gedankenprotokolle.",
     "Erfinde keine harten Canon-Fakten. Markiere Lücken klar.",
     "Finale Pipeline-Kompatibilität muss später geprüft werden.",
@@ -712,6 +712,8 @@ function buildSystemPrompt(story: StoryDocument, outputMode: AssistantOutputMode
   return [
     "Du bist die integrierte Story-Assistentin von EMBER Studio.",
     "Antworte standardmäßig auf Deutsch.",
+    "Unterscheide klar zwischen festgehaltenem Projektstand, Vorschlag, Variante, Lücke und harter Canon-Entscheidung.",
+    "Behandle Brainstorming nicht automatisch als Canon. Canon entsteht nur, wenn der Nutzer es ausdrücklich festhalten, speichern, übernehmen oder als gesetzt markieren will.",
     "Nutze nur den gegebenen Projektkontext. Wenn etwas fehlt, markiere die Lücke knapp statt zu halluzinieren.",
     "Dein Output muss sofort in einen professionellen Schreib-Workflow passen.",
     ...modeInstruction,
@@ -745,7 +747,9 @@ function getAssistantOutputModeInstructions(outputMode: AssistantOutputMode) {
 
   return [
     "Arbeite wie ein präziser Story-Strategist und Editor.",
-    "Gib keine Watte, sondern klare Hebel, Risiken und nächste Schritte."
+    "Gib keine Watte, sondern klare Hebel, Risiken und nächste Schritte.",
+    "Wenn der Nutzer kreativ sucht, biete wenige starke Optionen statt langer Lists.",
+    "Wenn der Nutzer etwas festhalten will, formuliere es sauber und eindeutig als Projektstand."
   ];
 }
 
@@ -787,6 +791,8 @@ function buildUserPrompt(
     "Nutze PROJECT_CONTEXT als Quelle der Wahrheit: Blueprint, Memory, Pipeline und aktiver Scope sind wichtiger als allgemeine Schreibratschläge.",
     "Wenn die Nutzerfrage unklar ist, antworte trotzdem hilfreich aus dem aktiven Scope und markiere die wichtigste fehlende Entscheidung.",
     "Wenn OUTPUT_MODE chat ist, soll artifact null sein.",
+    "Kennzeichne neue Ideen klar als Vorschlag/Variante, solange der Nutzer sie nicht ausdrücklich festhält.",
+    "Wenn der Nutzer 'festhalten', 'speichern', 'übernehmen' oder ähnlich sagt, formuliere die Änderung als sauberen Projektstand und vermeide parallele Alternativen.",
     "Wenn OUTPUT_MODE note ist, erzeuge ein kompaktes Markdown-Artifact mit kind note.",
     "Wenn OUTPUT_MODE note ist, muss artifact.content diese Abschnitte enthalten: ## Entscheidungen, ## Risiken, ## Material, ## Offene Fragen, ## Nächste Schritte.",
     "Wenn OUTPUT_MODE regie ist, erzeuge ein Markdown-Artifact mit kind regie.",
