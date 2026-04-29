@@ -237,6 +237,36 @@
       progressLabel: "16 von 42 Szenen online"
     },
     {
+      title: "Aftershock",
+      subtitle: "Buchprobe",
+      description:
+        "YA-Superhelden-Origin über drei Jugendliche, einen verbotenen Forschungstrakt und die Nachwirkungen eines Fehltritts, der nicht mehr rückgängig wird.",
+      tags: ["YA Superhero", "Origin", "Sci-Fi"],
+      imageAlt: "Aftershock Buchprobe",
+      imagePosition: "center top",
+      status: "Leseprobe",
+      available: true,
+      action: "open-link",
+      href: "/samples/aftershock",
+      buttonLabel: "Lesen",
+      progressLabel: "6 von 6 Szenen online"
+    },
+    {
+      title: "Aftershock",
+      subtitle: "Buchprobe · English",
+      description:
+        "English sample: three students, one restricted research wing, and a school trip that stops being ordinary half a step too late.",
+      tags: ["English", "YA Superhero", "Sci-Fi"],
+      imageAlt: "Aftershock English book sample",
+      imagePosition: "center top",
+      status: "English",
+      available: true,
+      action: "open-link",
+      href: "/samples/aftershock-english",
+      buttonLabel: "Read",
+      progressLabel: "6 of 6 scenes online"
+    },
+    {
       title: "Ascheprotokoll",
       subtitle: "Mystery Novella",
       description: "Eine Ermittlungsakte mit geschwärzten Seiten, gelöschten Namen und einem Brand ohne Quelle.",

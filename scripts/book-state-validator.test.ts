@@ -9,7 +9,10 @@ import {
   validateBookStateDiff
 } from "@/lib/book-state-validator";
 import {
+  auditSceneContinuityGuards,
+  buildSceneContextPacket,
   buildObjectCandidatesFromSceneCard,
+  getDraftJobAcceptanceBlockers,
   type TimelineBeat
 } from "@/lib/book-engine";
 import {
@@ -19,6 +22,7 @@ import {
   createEmptyStoryDocument,
   normalizeBookStateDiff,
   normalizeBookStateDiffStatus,
+  type BookDraftJob,
   type BookStateDiff,
   type StoryDocument
 } from "@/lib/story-schema";
@@ -442,6 +446,162 @@ async function main() {
 {
   const story = createStory();
   const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const sceneCard = createTestSceneCard(sceneId, [
+    { key: "material", value: "Liste, Rucksack, Uhr, Signal, Tuer, Schild" },
+    { key: "forbidden_public_term", value: "Veridium | X7" },
+    { key: "fixed_visual_text", value: "AUTHORIZED PERSONNEL ONLY" },
+    { key: "sequence_anchor", value: "Bus -> Ankunft -> Gruppeneinteilung" }
+  ]);
+  sceneCard.directives = {
+    ...sceneCard.directives,
+    opening: "Es gibt Schulausfluege, die man vergisst. Und es gibt Schulausfluege, die alles veraendern.",
+    closingLine: "Niemand ging zurueck."
+  };
+  const storyWithAnchors: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        sceneCards: [sceneCard],
+        lastSyncedAt: "2026-04-28T00:00:00.000Z"
+      }
+    }
+  };
+  const packet = buildSceneContextPacket(storyWithAnchors, sceneId);
+
+  assert.ok(packet);
+  assert.ok(packet.dynamicContext.sceneHardConstraints.some(function (constraint) {
+    return constraint.startsWith("Fixer Einstiegssatz:");
+  }));
+  assert.ok(packet.dynamicContext.sceneSoftGuidance.some(function (guidance) {
+    return guidance.includes("Concrete material:");
+  }));
+
+  const badDraft = [
+    "Im Bus roch es nach Plastik. Frau Joelle hob ihr Tablet. Frau Joelle laechelte.",
+    "Veridium stand auf einem Display.",
+    "Am Ende blieb ein Schild mit Wartung. Kein Zutritt."
+  ].join("\n\n");
+  const issues = auditSceneContinuityGuards(packet, badDraft);
+
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Fixer Einstiegssatz");
+  }), issues.join("\n"));
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Fixer Schlussanker");
+  }), issues.join("\n"));
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Fixer Textanker");
+  }), issues.join("\n"));
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Verbotener Szenenbegriff");
+  }), issues.join("\n"));
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Neuer Eigenname");
+  }), issues.join("\n"));
+
+  const storyWithJob: StoryDocument = {
+    ...storyWithAnchors,
+    book: {
+      ...storyWithAnchors.book,
+      draftEngine: {
+        ...storyWithAnchors.book.draftEngine,
+        jobs: [createTestDraftJob(sceneId, badDraft)]
+      }
+    }
+  };
+
+  assert.ok(getDraftJobAcceptanceBlockers(storyWithJob, "job_acceptance_guard_test").length >= 4);
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const sceneCard = createTestSceneCard(sceneId, [
+    { key: "sequence_anchor", value: "Bus -> Ankunft -> Gruppeneinteilung -> Tourbeginn/Foyer" }
+  ]);
+  const storyWithSequence: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        sceneCards: [sceneCard],
+        lastSyncedAt: "2026-04-28T00:00:00.000Z"
+      }
+    }
+  };
+  const packet = buildSceneContextPacket(storyWithSequence, sceneId);
+
+  assert.ok(packet);
+
+  const draftWithSceneBuiltGrouping = [
+    "Blake, Coleman und Mills stritten im Bus ueber die Sitzplaetze.",
+    "Sie stiegen vor dem Science Center aus.",
+    "Der Lehrer teilte sie in Dreiergruppen ein und las Namen vor.",
+    "Die Tour begann im Foyer."
+  ].join("\n\n");
+  const issues = auditSceneContinuityGuards(packet, draftWithSceneBuiltGrouping);
+
+  assert.ok(!issues.some(function (issue) {
+    return issue.includes("Gruppeneinteilung fehlt");
+  }), issues.join("\n"));
+  assert.ok(!issues.some(function (issue) {
+    return issue.includes("Gruppeneinteilung steht vor");
+  }), issues.join("\n"));
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const sceneCard = createTestSceneCard(sceneId, [
+    { key: "sequence_anchor", value: "Bus -> Ankunft -> Gruppeneinteilung -> Tourbeginn/Foyer" }
+  ]);
+  const storyWithSequence: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        sceneCards: [sceneCard],
+        lastSyncedAt: "2026-04-28T00:00:00.000Z"
+      }
+    }
+  };
+  const packet = buildSceneContextPacket(storyWithSequence, sceneId);
+
+  assert.ok(packet);
+
+  const draftWithWrongSequence = [
+    "Der Bus roch nach Sonnencreme.",
+    "Der Lehrer teilte sie in Dreiergruppen ein.",
+    "Sie stiegen vor dem Science Center aus.",
+    "Die Tour begann im Foyer."
+  ].join("\n\n");
+  const issues = auditSceneContinuityGuards(packet, draftWithWrongSequence);
+
+  assert.ok(issues.some(function (issue) {
+    return issue.includes("Pflicht-Ablauf verletzt");
+  }), issues.join("\n"));
+
+  const storyWithJob: StoryDocument = {
+    ...storyWithSequence,
+    book: {
+      ...storyWithSequence.book,
+      draftEngine: {
+        ...storyWithSequence.book.draftEngine,
+        jobs: [createTestDraftJob(sceneId, draftWithWrongSequence)]
+      }
+    }
+  };
+
+  assert.deepEqual(getDraftJobAcceptanceBlockers(storyWithJob, "job_acceptance_guard_test"), []);
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
   const { generateBookDraftJob } = await import("@/lib/server/book-job-service");
   const result = await generateBookDraftJob({
     story,
@@ -477,6 +637,47 @@ function createStage() {
     qualityScore: null,
     qualityIssues: [],
     notes: []
+  };
+}
+
+function createTestDraftJob(sceneId: string, rewriteText: string): BookDraftJob {
+  return {
+    id: "job_acceptance_guard_test",
+    sceneId,
+    sceneTitle: "Setup",
+    createdAt: "2026-04-28T00:00:00.000Z",
+    updatedAt: "2026-04-28T00:00:00.000Z",
+    provider: "local",
+    mode: "local_fallback",
+    modelName: null,
+    status: "ready",
+    acceptedAt: null,
+    outline: [],
+    draftText: rewriteText,
+    rewriteText,
+    rewriteNotes: [],
+    extractedState: createExtractionState({}),
+    stateDiff: baseDiff(sceneId),
+    stateDiffStatus: "pending",
+    stages: {
+      context: createStage(),
+      beat_plan: createStage(),
+      draft: createStage(),
+      rewrite: createStage(),
+      length_control: createStage(),
+      extract: createStage(),
+      continuity: createStage(),
+      quality_eval: createStage()
+    },
+    contextSnapshot: {
+      contextPackId: null,
+      memorySyncedAt: null,
+      chapterTitle: "Kapitel 1",
+      sceneSummary: "",
+      relevantCodexTitles: [],
+      relevantCharacterNames: [],
+      activeThreadLabels: []
+    }
   };
 }
 

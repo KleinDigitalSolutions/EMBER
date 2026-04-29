@@ -339,7 +339,7 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
   const sceneRefsByThreadLegacyId = new Map<string, string[]>()
 
   sceneMetadata.forEach(function (entry) {
-    entry.parsed.setupRefs.forEach(function (ref) {
+    getSceneReferenceIds(entry.parsed).forEach(function (ref) {
       if (ref.startsWith("CF")) {
         const current = sceneRefsByCanonLegacyId.get(ref) ?? []
         current.push(entry.sceneId)
@@ -448,8 +448,15 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
     }
   })
 
+  const sceneOrderById = new Map(
+    sceneMetadata.map(function (entry, index) {
+      return [entry.sceneId, index] as const
+    })
+  )
+
   const contextPacks: BookContextPack[] = sceneMetadata.map(function (entry, index) {
-    const setupCanonIds = entry.parsed.setupRefs
+    const sceneRefIds = getSceneReferenceIds(entry.parsed)
+    const setupCanonIds = sceneRefIds
       .filter(function (ref) {
         return ref.startsWith("CF")
       })
@@ -459,7 +466,7 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       .filter(function (id): id is string {
         return Boolean(id)
       })
-    const setupThreadIds = entry.parsed.setupRefs
+    const setupThreadIds = sceneRefIds
       .filter(function (ref) {
         return ref.startsWith("OT")
       })
@@ -491,7 +498,12 @@ function buildStoryFromRegie(baseStory: StoryDocument, parsed: ParsedRegie): Sto
       relevantCharacterStateIds: relevantCharacterStateIds.slice(0, 4),
       activeThreadIds: (setupThreadIds.length ? uniqueStrings(setupThreadIds) : openThreads
         .filter(function (thread) {
-          return thread.status === "active"
+          if (thread.status !== "active") {
+            return false
+          }
+
+          const sourceOrder = sceneOrderById.get(thread.sourceSceneId)
+          return sourceOrder !== undefined && sourceOrder <= index
         })
         .slice(0, 4)
         .map(function (thread) {
@@ -1125,6 +1137,25 @@ function parseSceneCardBlock(lines: string[]) {
     custom,
     setupRefs
   }
+}
+
+function getSceneReferenceIds(scene: ParsedScene) {
+  const inlineRefs = scene.directives.custom.flatMap(function (entry) {
+    const normalized = normalizeKey(entry.key)
+
+    if (normalized !== "thread" && normalized !== "setup") {
+      return []
+    }
+
+    return entry.value
+      .split(/\s*(?:,|;|\|)\s*/u)
+      .map(function (ref) {
+        return ref.trim()
+      })
+      .filter(Boolean)
+  })
+
+  return uniqueStrings(scene.setupRefs.concat(inlineRefs))
 }
 
 function parseWriterSummaries(section: string): ParsedWriterSummary[] {

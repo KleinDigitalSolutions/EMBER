@@ -670,14 +670,19 @@ Scene Card
 id: SC_1_1
 title: Der letzte Pflichttermin
 pov: Auktorial, nah bei Ember
-opening: Es gibt Schulausfluege, die man vergisst, und es gibt Schulausfluege, die alles veraendern.
+opening: Es gibt Schulausflüge, die man vergisst. Und es gibt Schulausflüge, die alles verändern. Das hier war der zweite Typ.
 ort: Lane Tech College Prep High School / Chicago Advanced Science Center
 uhrzeit: Sommer, kurz vor den Ferien
 objective: Ember, Henry und Trey als unfreiwillige Gruppe setzen.
 situation: Lehrer liest Gruppen vor. Ember hoert ihren Namen direkt neben Trey.
 want: Ember will den Tag kontrolliert und ohne Peinlichkeit hinter sich bringen.
 pressure: Ember wirkt nach aussen kontrolliert, ist innen angespannt. Trey bedeutet Chaos, Henry bedeutet Stille.
-material: Klassenliste, Lehrer, Besuchergruppe, Embers Kontrollblick, Henrys Brille, Treys Uhr mit Bixi
+material: Treys Uhr mit Bixi, Klassenliste, Lehrer, Besuchergruppe, Embers Kontrollblick, Henrys Brille
+sequence_anchor: Bus -> Ankunft -> Gruppeneinteilung -> Tourbeginn/Foyer
+fixed_visual_text: AUTHORIZED PERSONNEL ONLY
+forbidden_public_term: Veridium | X7
+narrator_anchor: Pflicht: trockener YA-Erzaehlerhumor im Vordergrund. 2-3 kurze Beobachtungen aus Teenager-Reibung, Embers Kontrolle, Treys Bixi-Chaos oder Henrys sozialem Verschwinden.
+tone_anchor: Vordergrund ist ein nerviger letzter Schulausflug mit peinlicher Gruppendynamik. Die verbotene Tuer ist nur ein kleiner falscher Fleck am Rand, noch kein Thriller-Setpiece.
 turn: Aus normaler Gruppeneinteilung wird die kausale Startanordnung des Unfalls.
 irreversible_change: Genau diese drei sind zusammen unterwegs, als der Spalt in der Wartungstuer auffaellig wird.
 thread: OT002
@@ -704,6 +709,8 @@ situation: Ein Halverson-Mitarbeiter verliert unbemerkt einen Schraubenschluesse
 want: Trey will die technische Auffaelligkeit nur kurz ansehen.
 pressure: Bixi meldet ein Signal, das nicht zum Besucherbereich passt. Ember will Trey zurueckholen; Henry merkt, dass es keine gute Idee ist.
 material: Wartungstuer, ein Zentimeter Spalt, Schraubenschluessel, Rollwagen, Treys Handy, Treys Uhr, Bixis Signal-Diagnose
+fixed_visual_text: AUTHORIZED PERSONNEL ONLY
+forbidden_public_term: Veridium | X7
 turn: Trey geht durch den Spalt.
 irreversible_change: Ember und Henry folgen Trey durch die minimal verkeilte Tuer in einen Wartungskorridor, den sie nicht betreten duerfen.
 thread: OT002

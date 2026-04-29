@@ -117,6 +117,7 @@ type SceneIntentionPayload = {
   concreteMaterial: string;
   intendedTurn: string;
   irreversibleChange: string;
+  narratorAnchor: string;
   aftertaste: string;
   avoid: string[];
 };
@@ -1801,11 +1802,15 @@ function buildSceneContextPrompt(packet: SceneContextPacket) {
 
 function buildProseSceneContextPrompt(packet: SceneContextPacket) {
   const proseConstraints = filterProseHardConstraints(packet.dynamicContext.sceneHardConstraints);
+  const narratorContract = extractNarratorContractRules(packet.stablePrefix.writerConstitution).slice(0, 8);
+  const sceneNarratorAnchor = findGuidanceValue(packet.dynamicContext.sceneSoftGuidance, "Narrator anchor:");
 
   return [
     `Act: ${packet.dynamicContext.actTitle}`,
     `Chapter: ${packet.dynamicContext.chapterTitle}`,
     `Scene: ${packet.dynamicContext.sceneTitle}`,
+    `Narrator contract for this scene: ${narratorContract.join(" | ") || "none"}`,
+    `Scene narrator anchor: ${sceneNarratorAnchor || "none"}`,
     buildSceneIntentionPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
     `Soft scene guidance: ${packet.dynamicContext.sceneSoftGuidance.join(" || ") || "none"}`,
@@ -1857,6 +1862,7 @@ function buildSceneIntentionPrompt(packet: SceneContextPacket) {
     `Concrete material: ${intention.concreteMaterial}`,
     `Intended turn: ${intention.intendedTurn}`,
     `Irreversible change: ${intention.irreversibleChange}`,
+    `Narrator anchor: ${intention.narratorAnchor}`,
     `Aftertaste: ${intention.aftertaste}`,
     `Avoid: ${intention.avoid.join(" | ") || "none"}`
   ].join("\n");
@@ -1876,6 +1882,7 @@ function buildSceneIntention(packet: SceneContextPacket): SceneIntentionPayload 
     concreteMaterial: cleanIntentionValue(findGuidanceValue(softGuidance, "Concrete material:") || "Use 1-3 concrete details that naturally belong in the room."),
     intendedTurn: cleanIntentionValue(findGuidanceValue(softGuidance, "Intended turn:") || lastOutline || "Let knowledge, access, relationship, or self-image shift."),
     irreversibleChange: cleanIntentionValue(findGuidanceValue(softGuidance, "Irreversible change:") || findGuidanceValue(softGuidance, "Aftertaste:") || "Make one thing unable to go back to how it was before."),
+    narratorAnchor: cleanIntentionValue(findGuidanceValue(softGuidance, "Narrator anchor:") || "Follow the project narrator contract when present; do not flatten narrator color into neutral report."),
     aftertaste: cleanIntentionValue(findGuidanceValue(softGuidance, "Aftertaste:") || lastOutline || "Leave a felt consequence without explaining the theme."),
     avoid: buildAvoidGuidance(packet, softGuidance)
   };

@@ -66,6 +66,37 @@ const HARD_CUSTOM_DIRECTIVE_KEYS = new Set([
   "locked_material"
 ]);
 
+const HARD_LINE_DIRECTIVE_KEYS = new Set([
+  "fixed_opening_line",
+  "opening_line",
+  "fixed_narrator_line",
+  "fixed_closing_line",
+  "fixed_visual_text",
+  "sign_text",
+  "schildtext"
+]);
+
+const FORBIDDEN_TERM_DIRECTIVE_KEYS = new Set([
+  "forbidden_term",
+  "forbidden_public_term",
+  "canonical_absence",
+  "verbotener_begriff"
+]);
+
+const SEQUENCE_DIRECTIVE_KEYS = new Set([
+  "sequence_anchor",
+  "ablauf",
+  "chronology",
+  "chronologie"
+]);
+
+const NAME_PERMISSION_DIRECTIVE_KEYS = new Set([
+  "allow_new_named_characters",
+  "allow_new_names",
+  "name_permission",
+  "namens_erlaubnis"
+]);
+
 const MAPPED_SOFT_GUIDANCE_KEYS = new Set([
   "situation",
   "where_when",
@@ -99,12 +130,39 @@ const MAPPED_SOFT_GUIDANCE_KEYS = new Set([
   "avoid",
   "bad_version_risk",
   "revision_focus",
+  "tone_anchor",
   "aftertaste",
   "closing_line",
   "closingline",
   "letzter_satz",
-  "required_material"
+  "required_material",
+  "narrator_anchor"
 ]);
+
+const UNKNOWN_NAME_STOPWORDS = new Set([
+  "Act",
+  "Akte",
+  "Akt",
+  "Ankunft",
+  "Bus",
+  "Chicago",
+  "Ende",
+  "Foyer",
+  "Future",
+  "Gruppe",
+  "Gruppen",
+  "Kapitel",
+  "Kein",
+  "Lane",
+  "Materials",
+  "Scene",
+  "Sommer",
+  "Tour",
+  "Wartung",
+  "Zutritt"
+].map(function (value) {
+  return normalizeGuardToken(value);
+}));
 
 const COLOR_WORD_PATTERN =
   "gelb\\p{L}*|rosa|pink\\p{L}*|lila|violett\\p{L}*|rot\\p{L}*|blau\\p{L}*|gruen\\p{L}*|grun\\p{L}*|grün\\p{L}*|schwarz\\p{L}*|grau\\p{L}*|braun\\p{L}*|orange\\p{L}*";
@@ -298,7 +356,7 @@ function ensureCharacterStateSnapshots(entry: CharacterStateEntry): CharacterSta
 
 export function buildTimelineBeats(story: StoryDocument): TimelineBeat[] {
   if (story.book.memory.sceneCards.length) {
-    return story.book.memory.sceneCards;
+    return sortTimelineBeatsByOrder(story.book.memory.sceneCards);
   }
 
   return deriveTimelineBeats(story);
@@ -1178,6 +1236,12 @@ function deriveContextPacks(
   characterLedger: CharacterStateEntry[],
   openThreads: OpenThread[]
 ): ContextPack[] {
+  const sceneOrderMap = new Map(
+    sceneCards.map(function (beat, index) {
+      return [beat.sceneId, parseSceneOrderLabel(beat.orderLabel) ?? index] as const;
+    })
+  );
+
   return sceneCards.map(function (sceneCard, index) {
     const previousSceneIds = sceneCards
       .slice(Math.max(0, index - 2), index)
@@ -1193,7 +1257,14 @@ function deriveContextPacks(
     ).slice(0, 4);
     const activeThreadIds = openThreads
       .filter(function (thread) {
-        return thread.sourceSceneId === sceneCard.sceneId || thread.status === "active";
+        if (thread.status !== "active") {
+          return false;
+        }
+
+        const currentOrder = sceneOrderMap.get(sceneCard.sceneId) ?? index;
+        const sourceOrder = sceneOrderMap.get(thread.sourceSceneId);
+
+        return sourceOrder !== undefined && sourceOrder <= currentOrder;
       })
       .slice(0, 4)
       .map(function (thread) {
@@ -1490,7 +1561,11 @@ export function getDraftJobAcceptanceBlockers(story: StoryDocument, jobId: strin
     return ["Scene context konnte fuer den Draft-Job nicht aufgebaut werden."];
   }
 
-  return auditSceneContinuityGuards(packet, job.rewriteText);
+  return auditSceneContinuityGuards(packet, job.rewriteText).filter(isDraftJobAcceptanceBlocker);
+}
+
+function isDraftJobAcceptanceBlocker(issue: string) {
+  return !issue.startsWith("Pflicht-Ablauf verletzt:");
 }
 
 function getApprovedMemorySyncValues(
@@ -1993,7 +2068,7 @@ function filterVisibleThreadsForScene(
   const currentSceneOrder = sceneOrderMap.get(sceneId);
 
   return threads.filter(function (thread) {
-    if (thread.status === "resolved") {
+    if (thread.status !== "active") {
       return false;
     }
 
@@ -2066,7 +2141,7 @@ function filterVisibleCharacterStatesForScene(
 function buildSceneOrderMap(story: StoryDocument) {
   const sceneOrderMap = new Map<string, number>();
   const timeline = story.book.memory.sceneCards.length
-    ? story.book.memory.sceneCards
+    ? sortTimelineBeatsByOrder(story.book.memory.sceneCards)
     : deriveTimelineBeats(story);
 
   timeline.forEach(function (beat, index) {
@@ -2090,13 +2165,40 @@ function buildSceneOrderMap(story: StoryDocument) {
 }
 
 function parseSceneOrderLabel(orderLabel: string) {
-  const match = orderLabel.match(/SC[_\s-]*(\d+)/iu);
+  const matches = Array.from(orderLabel.matchAll(/\d+/gu)).map(function (match) {
+    return Number.parseInt(match[0], 10);
+  });
 
-  if (!match) {
+  if (!matches.length) {
     return null;
   }
 
-  return Math.max(0, Number.parseInt(match[1], 10) - 1);
+  if (matches.length >= 2) {
+    return matches[0] * 1000 + matches[1];
+  }
+
+  return matches[0];
+}
+
+function sortTimelineBeatsByOrder(beats: TimelineBeat[]) {
+  return beats.slice().sort(function (left, right) {
+    const leftOrder = parseSceneOrderLabel(left.orderLabel);
+    const rightOrder = parseSceneOrderLabel(right.orderLabel);
+
+    if (leftOrder !== null && rightOrder !== null && leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    if (leftOrder !== null && rightOrder === null) {
+      return -1;
+    }
+
+    if (leftOrder === null && rightOrder !== null) {
+      return 1;
+    }
+
+    return left.sceneTitle.localeCompare(right.sceneTitle);
+  });
 }
 
 function rankCharacterStatesForScene(
@@ -2524,6 +2626,18 @@ function buildSceneHardConstraints(story: StoryDocument, sceneCard: TimelineBeat
     hardConstraints.push(`Zeit der Szene: ${directives.timeAnchor}. Verwende keine andere konkrete Uhrzeit.`)
   }
 
+  if (directives.opening) {
+    hardConstraints.push(`Fixer Einstiegssatz: ${directives.opening}. Der Draft muss mit diesem Satz oder Satzblock beginnen.`);
+  }
+
+  if (directives.closingLine) {
+    hardConstraints.push(`Fixer Schlussanker: ${directives.closingLine}. Der Draft muss mit diesem Satz oder Schlussbild enden.`);
+  }
+
+  if (!hasNameCreationPermission(directives.custom)) {
+    hardConstraints.push("Keine neuen benannten Nebenfiguren oder Eigennamen einfuehren. Rollen ohne gesetzten Namen generisch halten.");
+  }
+
   buildSceneCharacterNameHardConstraints(story, sceneCard).forEach(function (constraint) {
     hardConstraints.push(constraint);
   });
@@ -2541,6 +2655,18 @@ function buildSceneHardConstraints(story: StoryDocument, sceneCard: TimelineBeat
 
     if (HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey)) {
       hardConstraints.push(formatHardCustomDirective(normalizedKey, entry.value));
+    }
+
+    if (HARD_LINE_DIRECTIVE_KEYS.has(normalizedKey)) {
+      hardConstraints.push(formatHardLineDirective(normalizedKey, entry.value));
+    }
+
+    if (FORBIDDEN_TERM_DIRECTIVE_KEYS.has(normalizedKey)) {
+      hardConstraints.push(formatForbiddenTermDirective(entry.value));
+    }
+
+    if (SEQUENCE_DIRECTIVE_KEYS.has(normalizedKey)) {
+      hardConstraints.push(formatSequenceDirective(entry.value));
     }
   });
 
@@ -2585,6 +2711,8 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
   ]));
   addSoftGuidance(guidance, "Thread", readCustomDirectiveValue(custom, ["thread", "main_question", "information_gap"]));
   addSoftGuidance(guidance, "Avoid", readCustomDirectiveValue(custom, ["avoid", "bad_version_risk", "revision_focus"]));
+  addSoftGuidance(guidance, "Tone anchor", readCustomDirectiveValue(custom, ["tone_anchor"]));
+  addSoftGuidance(guidance, "Narrator anchor", readCustomDirectiveValue(custom, ["narrator_anchor"]));
   addSoftGuidance(guidance, "Aftertaste", readCustomDirectiveValue(custom, ["aftertaste"]) || directives.ending);
 
   custom.forEach(function (entry) {
@@ -2592,6 +2720,10 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
 
     if (
       HARD_CUSTOM_DIRECTIVE_KEYS.has(normalizedKey) ||
+      HARD_LINE_DIRECTIVE_KEYS.has(normalizedKey) ||
+      FORBIDDEN_TERM_DIRECTIVE_KEYS.has(normalizedKey) ||
+      SEQUENCE_DIRECTIVE_KEYS.has(normalizedKey) ||
+      NAME_PERMISSION_DIRECTIVE_KEYS.has(normalizedKey) ||
       isMappedSoftGuidanceKey(normalizedKey) ||
       normalizedKey === "ending_type" ||
       normalizedKey === "endingtype"
@@ -2732,7 +2864,11 @@ function limitConcreteMaterialGuidance(value: string | null | undefined) {
     return trimmed;
   }
 
-  return parts.slice(0, 3).join(", ");
+  if (parts.length <= 8) {
+    return parts.join(", ");
+  }
+
+  return parts.slice(0, 4).concat(parts.slice(-4)).join(", ");
 }
 
 function isMappedSoftGuidanceKey(normalizedKey: string) {
@@ -2753,6 +2889,43 @@ function formatHardCustomDirective(normalizedKey: string, value: string) {
   }
 
   return `Hard Custom Anchor: ${value}. Als Kontinuitaetsanker behandeln, nicht als Stilauftrag.`;
+}
+
+function formatHardLineDirective(normalizedKey: string, value: string) {
+  if (normalizedKey === "fixed_opening_line" || normalizedKey === "opening_line") {
+    return `Fixer Einstiegssatz: ${value}. Der Draft muss mit diesem Satz oder Satzblock beginnen.`;
+  }
+
+  if (normalizedKey === "fixed_closing_line") {
+    return `Fixer Schlussanker: ${value}. Der Draft muss mit diesem Satz oder Schlussbild enden.`;
+  }
+
+  if (normalizedKey === "fixed_narrator_line") {
+    return `Fixer Erzaehleranker: ${value}. Dieser Erzaehlerkommentar muss sichtbar bleiben.`;
+  }
+
+  return `Fixer Textanker: ${value}. Dieser sichtbare Text muss exakt erhalten bleiben.`;
+}
+
+function formatForbiddenTermDirective(value: string) {
+  return `Verbotener Szenenbegriff: ${value}. Dieser Begriff darf in dieser Szene nicht sichtbar, ausgeschildert oder ausgesprochen werden.`;
+}
+
+function formatSequenceDirective(value: string) {
+  return `Pflicht-Ablauf: ${value}. Die Reihenfolge darf nicht durch Rueckblick oder Umstellung verdreht werden.`;
+}
+
+function hasNameCreationPermission(custom: Array<{ key: string; value: string }>) {
+  return custom.some(function (entry) {
+    const normalizedKey = normalizeDirectiveKey(entry.key);
+    const normalizedValue = normalizeGuardText(entry.value);
+
+    if (!NAME_PERMISSION_DIRECTIVE_KEYS.has(normalizedKey)) {
+      return false;
+    }
+
+    return !/^(false|nein|no|none|keine?)$/.test(normalizedValue);
+  });
 }
 
 function buildSceneCharacterNameHardConstraints(story: StoryDocument, sceneCard: TimelineBeat) {
@@ -3188,6 +3361,48 @@ export function auditSceneContinuityGuards(packet: SceneContextPacket, proseText
     }
   });
 
+  parseFixedOpeningAnchors(packet.dynamicContext.sceneHardConstraints).forEach(function (anchor) {
+    if (!fixedOpeningAppears(proseText, anchor.value)) {
+      issues.push(`${anchor.label} fehlt am Szenenanfang: ${clampText(anchor.value, 90)}`);
+    }
+  });
+
+  parseFixedClosingAnchors(packet.dynamicContext.sceneHardConstraints).forEach(function (anchor) {
+    if (!fixedClosingAppears(proseText, anchor.value)) {
+      issues.push(`${anchor.label} fehlt am Szenenende: ${clampText(anchor.value, 90)}`);
+    }
+  });
+
+  parseFixedTextAnchors(packet.dynamicContext.sceneHardConstraints).forEach(function (anchor) {
+    if (!fixedTextAppears(proseText, anchor.value)) {
+      issues.push(`${anchor.label} nicht sichtbar: ${clampText(anchor.value, 90)}`);
+    }
+  });
+
+  parseForbiddenTermConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
+    const hit = constraint.terms.find(function (term) {
+      return normalizedTextContainsTerm(normalizedProse, term);
+    });
+
+    if (hit) {
+      issues.push(`${constraint.label} verletzt: ${hit} erscheint im Draft.`);
+    }
+  });
+
+  parseSequenceConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
+    const sequenceIssue = findSequenceIssue(normalizedProse, constraint.steps);
+
+    if (sequenceIssue) {
+      issues.push(`${constraint.label} verletzt: ${sequenceIssue}`);
+    }
+  });
+
+  if (blocksNewNamedCharacters(packet.dynamicContext.sceneHardConstraints)) {
+    findUnknownNamedEntities(packet, proseText).forEach(function (name) {
+      issues.push(`Neuer Eigenname ohne Scene-Card-Erlaubnis: ${name}.`);
+    });
+  }
+
   parseLockedFactConstraints(packet.dynamicContext.sceneHardConstraints).forEach(function (constraint) {
     if (constraint.kind === "institution") {
       if (!requiredAnchorAppears(normalizedProse, constraint.value)) {
@@ -3312,6 +3527,10 @@ function parseRequiredSceneAnchors(values: string[]) {
         return null;
       }
 
+      if (match[1] === "Pflicht-Ablauf") {
+        return null;
+      }
+
       return {
         label: match[1],
         value: match[2]
@@ -3320,6 +3539,124 @@ function parseRequiredSceneAnchors(values: string[]) {
     .filter(function (entry): entry is { label: string; value: string } {
       return Boolean(entry);
     });
+}
+
+function parseFixedOpeningAnchors(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Fixer Einstiegssatz: (.+?)\. Der Draft muss/s);
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        label: "Fixer Einstiegssatz",
+        value: match[1]
+      };
+    })
+    .filter(function (entry): entry is { label: string; value: string } {
+      return Boolean(entry);
+    });
+}
+
+function parseFixedClosingAnchors(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Fixer Schlussanker: (.+?)\. Der Draft muss/s);
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        label: "Fixer Schlussanker",
+        value: match[1]
+      };
+    })
+    .filter(function (entry): entry is { label: string; value: string } {
+      return Boolean(entry);
+    });
+}
+
+function parseFixedTextAnchors(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^(Fixer (?:Textanker|Erzaehleranker)): (.+?)\. Dieser/s);
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        label: match[1],
+        value: match[2]
+      };
+    })
+    .filter(function (entry): entry is { label: string; value: string } {
+      return Boolean(entry);
+    });
+}
+
+function parseForbiddenTermConstraints(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Verbotener Szenenbegriff: (.+?)\. Dieser Begriff darf/s);
+
+      if (!match) {
+        return null;
+      }
+
+      const terms = splitHardList(match[1]);
+
+      if (!terms.length) {
+        return null;
+      }
+
+      return {
+        label: "Verbotener Szenenbegriff",
+        terms
+      };
+    })
+    .filter(function (entry): entry is { label: string; terms: string[] } {
+      return Boolean(entry);
+    });
+}
+
+function parseSequenceConstraints(values: string[]) {
+  return values
+    .map(function (value) {
+      const match = value.match(/^Pflicht-Ablauf: (.+?)\. Die Reihenfolge/s);
+
+      if (!match) {
+        return null;
+      }
+
+      const steps = match[1]
+        .split(/\s*(?:->|→|>|,)\s*/u)
+        .map(function (step) {
+          return step.trim();
+        })
+        .filter(Boolean);
+
+      if (steps.length < 2) {
+        return null;
+      }
+
+      return {
+        label: "Pflicht-Ablauf",
+        steps
+      };
+    })
+    .filter(function (entry): entry is { label: string; steps: string[] } {
+      return Boolean(entry);
+    });
+}
+
+function blocksNewNamedCharacters(values: string[]) {
+  return values.some(function (value) {
+    return value.startsWith("Keine neuen benannten Nebenfiguren");
+  });
 }
 
 function parseLockedFactConstraints(values: string[]) {
@@ -3393,6 +3730,168 @@ function containsLockedTimeWindow(proseText: string, timeWindow: string) {
   return expectedTimes.every(function (time) {
     return proseTimes.has(time);
   });
+}
+
+function fixedOpeningAppears(proseText: string, expected: string) {
+  const expectedText = normalizeFixedAnchorText(expected);
+  const openingWindow = normalizeFixedAnchorText(firstWords(proseText, Math.max(80, expected.split(/\s+/).length + 20)));
+
+  return openingWindow.startsWith(expectedText) || openingWindow.includes(expectedText);
+}
+
+function fixedClosingAppears(proseText: string, expected: string) {
+  const expectedText = normalizeFixedAnchorText(expected);
+  const closingWindow = normalizeFixedAnchorText(lastWords(proseText, Math.max(90, expected.split(/\s+/).length + 25)));
+
+  return closingWindow.endsWith(expectedText) || closingWindow.includes(expectedText);
+}
+
+function fixedTextAppears(proseText: string, expected: string) {
+  return normalizeFixedAnchorText(proseText).includes(normalizeFixedAnchorText(expected));
+}
+
+function normalizeFixedAnchorText(value: string) {
+  return normalizeGuardText(value)
+    .replace(/ae/g, "a")
+    .replace(/oe/g, "o")
+    .replace(/ue/g, "u");
+}
+
+function firstWords(value: string, count: number) {
+  return value.trim().split(/\s+/).slice(0, count).join(" ");
+}
+
+function lastWords(value: string, count: number) {
+  const words = value.trim().split(/\s+/);
+  return words.slice(Math.max(0, words.length - count)).join(" ");
+}
+
+function splitHardList(value: string) {
+  return value
+    .split(/\s*(?:,|;|\||\/|\boder\b)\s*/iu)
+    .map(function (term) {
+      return term.trim();
+    })
+    .filter(Boolean);
+}
+
+function findSequenceIssue(normalizedProse: string, steps: string[]) {
+  let lastIndex = -1;
+
+  for (const step of steps) {
+    const index = findSequenceStepIndex(normalizedProse, step);
+
+    if (index === -1) {
+      return `${step} fehlt.`;
+    }
+
+    if (index < lastIndex) {
+      return `${step} steht vor einem frueheren Ablaufanker.`;
+    }
+
+    lastIndex = index;
+  }
+
+  return "";
+}
+
+function findSequenceStepIndex(normalizedProse: string, step: string) {
+  const semanticIndex = findSemanticSequenceStepIndex(normalizedProse, step);
+
+  if (semanticIndex !== -1) {
+    return semanticIndex;
+  }
+
+  const terms = expandSequenceStepTerms(step, extractGuardTerms(step));
+
+  if (!terms.length) {
+    const normalizedStep = normalizeGuardToken(step);
+    return normalizedStep ? normalizedProse.indexOf(normalizedStep) : -1;
+  }
+
+  return terms.reduce(function (best, term) {
+    const index = normalizedProse.indexOf(normalizeGuardToken(term));
+
+    if (index === -1) {
+      return best;
+    }
+
+    return best === -1 ? index : Math.min(best, index);
+  }, -1);
+}
+
+function findSemanticSequenceStepIndex(normalizedProse: string, step: string) {
+  const normalizedStep = normalizeGuardToken(step);
+
+  if (normalizedStep.includes("gruppeneinteilung")) {
+    return findFirstNormalizedPhraseIndex(normalizedProse, [
+      "gruppeneinteilung",
+      "dreiergruppen",
+      "gruppen ein",
+      "in gruppen",
+      "eingeteilt",
+      "namen vor",
+      "las namen",
+      "las die namen"
+    ]);
+  }
+
+  if (normalizedStep.includes("ankunft")) {
+    return findFirstNormalizedPhraseIndex(normalizedProse, [
+      "ankunft",
+      "kamen an",
+      "kam an",
+      "stiegen aus",
+      "stieg aus",
+      "aus dem bus",
+      "vor dem eingang",
+      "am eingang"
+    ]);
+  }
+
+  if (normalizedStep.includes("tourbeginn")) {
+    return findFirstNormalizedPhraseIndex(normalizedProse, [
+      "tourbeginn",
+      "tour begann",
+      "tour startete",
+      "fuehrung begann",
+      "gefuehrt"
+    ]);
+  }
+
+  return -1;
+}
+
+function findFirstNormalizedPhraseIndex(normalizedProse: string, phrases: string[]) {
+  return phrases.reduce(function (best, phrase) {
+    const normalizedPhrase = normalizeGuardToken(phrase);
+    const index = normalizedPhrase ? normalizedProse.indexOf(normalizedPhrase) : -1;
+
+    if (index === -1) {
+      return best;
+    }
+
+    return best === -1 ? index : Math.min(best, index);
+  }, -1);
+}
+
+function expandSequenceStepTerms(step: string, terms: string[]) {
+  const normalizedStep = normalizeGuardToken(step);
+  const expanded = terms.slice();
+
+  if (normalizedStep.includes("gruppeneinteilung")) {
+    expanded.push("dreiergruppen", "gruppen");
+  }
+
+  if (normalizedStep.includes("ankunft")) {
+    expanded.push("ankunft", "eingang");
+  }
+
+  if (normalizedStep.includes("tourbeginn")) {
+    expanded.push("tour", "los", "gefuehrt", "fuehrte");
+  }
+
+  return dedupeStrings(expanded);
 }
 
 function findWrongInstitutionMentions(proseText: string, expectedName: string) {
@@ -3474,6 +3973,88 @@ function findWrongSurnameMentions(proseText: string, firstName: string, fullName
   }
 
   return dedupeStrings(wrongNames);
+}
+
+function findUnknownNamedEntities(packet: SceneContextPacket, proseText: string) {
+  const allowedTerms = buildAllowedNameTerms(packet);
+  const candidates = new Map<string, { label: string; count: number; titleHit: boolean }>();
+  const titlePattern = /\b(?:Mr|Mrs|Ms|Miss|Herr|Frau|Dr)\.?\s+([A-ZÄÖÜ][\p{L}ßäöüÄÖÜ-]{2,})/gu;
+  let titleMatch: RegExpExecArray | null = titlePattern.exec(proseText);
+
+  while (titleMatch) {
+    addUnknownNameCandidate(candidates, allowedTerms, titleMatch[1], titleMatch[0], true);
+    titleMatch = titlePattern.exec(proseText);
+  }
+
+  return Array.from(candidates.values())
+    .filter(function (candidate) {
+      return candidate.titleHit;
+    })
+    .map(function (candidate) {
+      return candidate.label;
+    })
+    .slice(0, 6);
+}
+
+function addUnknownNameCandidate(
+  candidates: Map<string, { label: string; count: number; titleHit: boolean }>,
+  allowedTerms: Set<string>,
+  token: string,
+  label: string,
+  titleHit: boolean
+) {
+  const normalized = normalizeGuardToken(token);
+
+  if (
+    normalized.length < 4 ||
+    token === token.toUpperCase() ||
+    allowedTerms.has(normalized) ||
+    UNKNOWN_NAME_STOPWORDS.has(normalized) ||
+    /^\d+$/.test(normalized)
+  ) {
+    return;
+  }
+
+  const existing = candidates.get(normalized);
+
+  candidates.set(normalized, {
+    label: existing?.label ?? label,
+    count: (existing?.count ?? 0) + 1,
+    titleHit: Boolean(existing?.titleHit || titleHit)
+  });
+}
+
+function buildAllowedNameTerms(packet: SceneContextPacket) {
+  const values = [
+    packet.dynamicContext.sceneTitle,
+    packet.dynamicContext.sceneSummary,
+    packet.dynamicContext.sceneExcerpt,
+    JSON.stringify(packet.stablePrefix.lockedFacts),
+    packet.stablePrefix.premise,
+    packet.stablePrefix.readerPromise,
+    packet.stablePrefix.thematicCore
+  ]
+    .concat(packet.dynamicContext.sceneHeaderHints)
+    .concat(packet.dynamicContext.sceneHardConstraints)
+    .concat(packet.dynamicContext.sceneSoftGuidance)
+    .concat(packet.dynamicContext.sceneCardOutline)
+    .concat(
+      packet.dynamicContext.relevantCodex.map(function (entry) {
+        return `${entry.title} ${entry.summary}`;
+      })
+    )
+    .concat(
+      packet.dynamicContext.relevantCharacterStates.map(function (entry) {
+        return `${entry.characterName} ${entry.currentState} ${entry.innerShift} ${entry.agenda}`;
+      })
+    )
+    .concat(
+      packet.dynamicContext.activeThreads.map(function (thread) {
+        return `${thread.label} ${thread.detail}`;
+      })
+    );
+
+  return new Set(values.flatMap(extractGuardTerms));
 }
 
 function extractObjectColorAnchors(values: string[]) {
