@@ -804,7 +804,7 @@ pov: Auktorial, rotierend zwischen Ember, Henry und Trey
 ort: Schule und Alltag der drei nach dem Ausflug
 uhrzeit: Einige Tage nach dem Ausflug
 objective: Kleine, irritierende Veraenderungen fuehren die drei wieder zusammen.
-situation: Embers Stimme wirkt im Flur zu stark. Henry wird vor Zoe scheinbar nicht gesehen. Treys Wut bringt Lampe, Handy und Bixi zum Flimmern.
+situation: Einige Tage nach dem Ausflug zeigen sich erste Veraenderungen. Treys Zimmer-Szene nach dem Streit ist der lauteste Moment. Embers Flur-Zoff ist der oeffentlichste. Henrys Zoe-Moment ist der leiseste und bleibt am laengsten offen.
 want: Die drei wollen herausfinden, was mit ihnen passiert ist.
 pressure: Die Veraenderungen sind noch keine klaren Superkraefte, sondern unkontrolliert, peinlich oder technisch/sozial schwer erklaerbar.
 material: Schule, Nachrichten oder Treffen nach der Schule, Embers Stimme im Zoff mit einer Mitschuelerin, Zoe im Flur, Henrys Licht/Wahrnehmung, Treys Zimmer, gestrichene The-Weeknd-Tickets, Lampe, Handy, Bixis flimmerndes Display
