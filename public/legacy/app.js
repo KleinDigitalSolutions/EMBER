@@ -242,6 +242,7 @@
       description:
         "YA-Superhelden-Origin über drei Jugendliche, einen verbotenen Forschungstrakt und die Nachwirkungen eines Fehltritts, der nicht mehr rückgängig wird.",
       tags: ["YA Superhero", "Origin", "Sci-Fi"],
+      imageSrc: "/images/after_schok_cover1.png",
       imageAlt: "Aftershock Buchprobe",
       imagePosition: "center top",
       status: "Leseprobe",
@@ -257,6 +258,7 @@
       description:
         "English sample: three students, one restricted research wing, and a school trip that stops being ordinary half a step too late.",
       tags: ["English", "YA Superhero", "Sci-Fi"],
+      imageSrc: "/images/after_schok_cover1.png",
       imageAlt: "Aftershock English book sample",
       imagePosition: "center top",
       status: "English",
