@@ -149,7 +149,7 @@ function deriveYaSuperheroTeamMemberNames(
         return false;
       }
 
-      if (/dr\.?|bixi|b\.i\.x/.test(normalizedName)) {
+      if (/^(?:dr|prof)\.?\s+/.test(normalizedName)) {
         return false;
       }
 

@@ -68,7 +68,14 @@ export function deriveDomesticSuspenseLockedFacts(params: DomesticSuspenseLocked
   common: Partial<BookCommonLockedFacts>;
   profile: BookDomesticSuspenseThrillerLockedFacts;
 } {
-  if (params.engineMode !== "domestic_suspense_thriller" && params.engineMode !== "default") {
+  const shouldDeriveLockedFacts =
+    params.engineMode === "domestic_suspense_thriller" ||
+    (
+      params.engineMode === "default" &&
+      detectDomesticSuspenseThrillerSignals(normalizeText(params.signalText)).isDomesticSuspense
+    );
+
+  if (!shouldDeriveLockedFacts) {
     return {
       common: {},
       profile: createEmptyDomesticSuspenseLockedFacts()
@@ -371,4 +378,11 @@ function matchSingle(value: string, pattern: RegExp) {
 
 function isString(value: string | null): value is string {
   return Boolean(value);
+}
+
+function normalizeText(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }

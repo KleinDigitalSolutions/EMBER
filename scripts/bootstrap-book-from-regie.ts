@@ -8,14 +8,16 @@ import {
   detectDomesticSuspenseThrillerSignals
 } from "../lib/book-genre-engine-domestic-thriller"
 import { deriveYaSuperheroOriginLockedFacts } from "../lib/book-genre-engine-ya-superhero"
+import {
+  createEmptyBookLockedFacts,
+  getDomesticSuspenseLockedFacts,
+  mergeBookLockedFacts
+} from "../lib/book-locked-facts"
 import { supabaseAdmin } from "../lib/supabase/server"
 import {
   createDefaultBookBlueprint,
-  createEmptyBookLockedFacts,
   createDefaultBookProseTechniqueProfile,
   createEmptyBookSceneCardDirectives,
-  getDomesticSuspenseLockedFacts,
-  getYaSuperheroLockedFacts,
   type BookCharacterState,
   type BookContextPack,
   type BookLockedFacts,
@@ -104,7 +106,7 @@ async function main() {
     parseRegie(markdown, options.titleOverride, options.authorOverride),
     {
       incidentDate: options.lockedIncidentDate,
-      evaAlibiWindow: options.lockedAlibiWindow
+      alibiWindow: options.lockedAlibiWindow
     }
   )
 
@@ -1555,10 +1557,6 @@ function inferBookEngineMode(params: {
     ].join(" ")
   )
 
-  if (normalizedSignals.includes("aftershock")) {
-    return "ya_superhero_origin"
-  }
-
   const hasTeenSignal =
     /\bya\b|young adult|teen|teenager|teen hero|teen heroes|jugend|jugendlich|jugendliche|schule|school|schuler|schueler/.test(normalizedSignals)
   const hasSuperheroSignal =
@@ -1581,7 +1579,7 @@ function applyLockedFactOverrides(
   parsed: ParsedRegie,
   overrides: {
     incidentDate: string | null
-    evaAlibiWindow: string | null
+    alibiWindow: string | null
   }
 ) {
   const domesticFacts = getDomesticSuspenseLockedFacts(parsed.lockedFacts)
@@ -1600,7 +1598,7 @@ function applyLockedFactOverrides(
         domestic_suspense_thriller: {
           ...domesticFacts,
           incidentDate: overrides.incidentDate || domesticFacts.incidentDate,
-          alibiWindow: overrides.evaAlibiWindow || domesticFacts.alibiWindow
+          alibiWindow: overrides.alibiWindow || domesticFacts.alibiWindow
         }
       }
     }
@@ -1620,49 +1618,6 @@ function mergeBookRuntimeContext(
       existing.proseTechniqueProfile,
       incoming.proseTechniqueProfile
     )
-  }
-}
-
-function mergeBookLockedFacts(existing: BookLockedFacts, incoming: BookLockedFacts) {
-  const existingDomestic = getDomesticSuspenseLockedFacts(existing)
-  const incomingDomestic = getDomesticSuspenseLockedFacts(incoming)
-  const existingYa = getYaSuperheroLockedFacts(existing)
-  const incomingYa = getYaSuperheroLockedFacts(incoming)
-
-  return {
-    common: {
-      protagonistNames: uniqueStrings(existing.common.protagonistNames.concat(incoming.common.protagonistNames)),
-      antagonistNames: uniqueStrings(existing.common.antagonistNames.concat(incoming.common.antagonistNames)),
-      institutionNames: uniqueStrings(existing.common.institutionNames.concat(incoming.common.institutionNames)),
-      keyObjectNames: uniqueStrings(existing.common.keyObjectNames.concat(incoming.common.keyObjectNames)),
-      fixedLocations: uniqueStrings(existing.common.fixedLocations.concat(incoming.common.fixedLocations)),
-      fixedDates: uniqueStrings(existing.common.fixedDates.concat(incoming.common.fixedDates))
-    },
-    profiles: {
-      domestic_suspense_thriller: {
-        childName: incomingDomestic.childName || existingDomestic.childName,
-        coparentName: incomingDomestic.coparentName || existingDomestic.coparentName,
-        institutionName: incomingDomestic.institutionName || existingDomestic.institutionName,
-        incidentDate: incomingDomestic.incidentDate || existingDomestic.incidentDate,
-        incidentTime: incomingDomestic.incidentTime || existingDomestic.incidentTime,
-        notificationTime: incomingDomestic.notificationTime || existingDomestic.notificationTime,
-        firstOfficeTime: incomingDomestic.firstOfficeTime || existingDomestic.firstOfficeTime,
-        documentedPickupPerson:
-          incomingDomestic.documentedPickupPerson || existingDomestic.documentedPickupPerson,
-        alibiLocation: incomingDomestic.alibiLocation || existingDomestic.alibiLocation,
-        alibiWindow: incomingDomestic.alibiWindow || existingDomestic.alibiWindow
-      },
-      ya_superhero_origin: {
-        teamMemberNames: uniqueStrings(existingYa.teamMemberNames.concat(incomingYa.teamMemberNames)),
-        substanceName: incomingYa.substanceName || existingYa.substanceName,
-        aiCompanionName: incomingYa.aiCompanionName || existingYa.aiCompanionName,
-        experimentLocation: incomingYa.experimentLocation || existingYa.experimentLocation,
-        organizationName: incomingYa.organizationName || existingYa.organizationName,
-        triggerEvent: incomingYa.triggerEvent || existingYa.triggerEvent,
-        accidentMechanism: incomingYa.accidentMechanism || existingYa.accidentMechanism,
-        powerOrigin: incomingYa.powerOrigin || existingYa.powerOrigin
-      }
-    }
   }
 }
 
