@@ -2,8 +2,8 @@
 
 > Format: EMBER Book Blueprint v2
 > Autor: [FEHLT: Autorname eintragen.]
-> Stand: 2026-04-28
-> Quelle: /Users/bucci369/Downloads/Aftershock v3.md
+> Stand: 2026-04-29
+> Quelle: /Users/bucci369/Downloads/Aftershock v3.md; /Users/bucci369/Downloads/aftershock_bibel.html
 > Kompatibel mit: Master Brief, Market Brief, Writer Constitution, Scene Cards, Canon Facts, Character State Ledger, Open Threads, typed StateDiff.
 > Arbeitsregel: Diese Regie sichert nur vorhandene Angaben aus der Ideensammlung. Fehlende Punkte sind als `[FEHLT: ...]` markiert und duerfen nicht als erfundenes Canon-Material behandelt werden.
 
@@ -13,15 +13,15 @@
 
 | Feld | Inhalt |
 |---|---|
-| **Praemisse** | Drei Jugendliche aus Chicago geraten bei einem Schulausflug ins Chicago Advanced Science Center durch eine offene Wartungstuer, eine elektromagnetische Stoerung und ein geheimes Veridium-Experiment in einen Test, der nicht fuer Menschen gedacht war; erst scheint alles gut gegangen zu sein, dann beginnen die Nachwirkungen und ihre Kraefte veraendern Ember, Henry und Trey dauerhaft. |
+| **Praemisse** | Drei Jugendliche aus Chicago geraten bei einem Schulausflug ins Chicago Advanced Science Center durch eine offene Wartungstuer, eine elektromagnetische Stoerung und ein geheimes Veridium-Experiment in einen Test, der nicht fuer Menschen gedacht war; erst scheint alles gut gegangen zu sein, dann beginnen die Nachwirkungen und ihre Kraefte veraendern Ember Blake, Henry Mills und Trey Coleman dauerhaft. |
 | **Reader Promise** | Eine moderne Teen-Superhelden-Origin mit Schulalltag, Humor, wachsender Freundschaft, geheimer Forschung, diskreter institutioneller Bedrohung und Kraeften, die nicht Wunschfantasie sind, sondern die inneren Konflikte der Figuren verschaerfen. |
-| **Ending Promise** | Die Geschichte verspricht, dass Ember, Henry und Trey aus zufaellig zusammengewuerfelten Klassenkameraden zu einem echten Team werden und lernen, ihre Kraefte nicht nur als Problem, sondern als verantwortliche Handlungsmacht zu begreifen. [FEHLT: Konkrete Art der finalen Einloesung ohne Finale-Leak definieren.] |
+| **Ending Promise** | Die Geschichte verspricht, dass Ember Blake, Henry Mills und Trey Coleman aus zufaellig zusammengewuerfelten Klassenkameraden zu einem echten Team werden und lernen, ihre Kraefte nicht nur als Problem, sondern als verantwortliche Handlungsmacht zu begreifen. Band 1 soll abgeschlossen funktionieren und zugleich Serienpotenzial offenhalten. [FEHLT: Konkrete Art der finalen Einloesung ohne Finale-Leak definieren.] |
 | **Thematischer Kern** | Die Nachwirkung eines kurzen Fehltritts: Macht macht die Figuren nicht automatisch groesser, sondern zwingt sie, genau das anzusehen, wovor sie sich vorher gedrueckt haben. Embers Kontrolle, Henrys Unsichtbarkeit und Treys Impulsivitaet werden durch ihre Kraefte sichtbarer und gefaehrlicher. |
 | **Author Intent** | Die Geschichte soll nicht als glatte Superhelden-Schablone funktionieren, sondern Teenager-Alltag, Humor, ernste Konsequenzen und organisch wachsende Figurenentwicklung verbinden. Superkraefte und Figurenentwicklung sollen poe a poe entstehen, nicht alles auf einmal. |
-| **Current Focus** | Prämisse, Unfallsequenz, erste Nachwirkungen, Dreier-Dynamik, Dr.-Charter-vs.-Dr.-Voss-Gegenpol und klare Trennung zwischen gesetztem Material und echten offenen Fragen sichern. |
+| **Current Focus** | Prämisse, Unfallsequenz, erste Nachwirkungen, Dreier-Dynamik, Halverson Group, Dr.-Charter-vs.-Dr.-Voss-Gegenpol, Scott Hartwell als Projektmanager und klare Trennung zwischen gesetztem Material und echten offenen Fragen sichern. |
 | **Arbeitstitel** | Aftershock |
 | **Genre** | Young Adult / Teenager-Superhelden-Fiction / Sci-Fi-Action-Drama |
-| **Ziel-Wortanzahl** | [FEHLT: Zielumfang festlegen, z.B. kurzer YA-Roman oder laengerer Serienauftakt.] |
+| **Ziel-Wortanzahl** | 70000 |
 | **POV-Strategie** | Auktorialer Erzaehler in klassischer Romantradition; externe Stimme, kein Charakter; kann zwischen Ember, Henry und Trey wechseln und in einzelnen Szenen nah an Gedanken und Gefuehle gehen. Ton filmisch, modern, nicht maerchenhaft, mit punktuellem liebevollem Kommentar zu Embers Kontrollzwang, Henrys Zoegern und Treys Chaos. |
 
 ---
@@ -30,11 +30,11 @@
 
 | Feld | Inhalt |
 |---|---|
-| **Amazon Goal** | [FEHLT: Vertriebsziel festlegen. Arbeitsrichtung aus Quelle: gut lesbare YA-Superhelden-Origin mit Serienpotenzial.] |
+| **Amazon Goal** | Gut lesbare YA-Superhelden-Origin als abgeschlossener Band mit klarem Serienpotenzial. |
 | **Category Lane** | Young Adult / Superhelden-Drama / Science-Fiction-Action mit Schulalltag. |
 | **Comp Titles** | [FEHLT: Vergleichstitel und klare Negativgrenzen definieren. Quelle nennt nur als Figurenassoziation: Ember erinnert in Eigenschaften etwas an Hermine aus Harry Potter.] |
-| **Commercial Hook** | Ein Schulausflug in ein Wissenschaftszentrum sollte der letzte langweilige Pflichttermin vor den Sommerferien werden; dann entdecken Ember, Henry und Trey eine offene Wartungstuer, eine elektromagnetische Stoerung und ein geheimes Experiment, dessen eigentliche Nachwirkung erst Tage spaeter beginnt. |
-| **Serienpotenzial** | Moeglich, aber nicht entschieden. Die Quelle setzt Kraefte, Organisation, Mentor, Veridium-Materie, Bixi und Teamdynamik als fortfuehrbares Material. [FEHLT: Entscheiden, ob Band 1 abgeschlossen oder klarer Serienauftakt sein soll.] |
+| **Commercial Hook** | Ein Schulausflug in ein Wissenschaftszentrum sollte der letzte langweilige Pflichttermin vor den Sommerferien werden; dann entdecken Ember Blake, Henry Mills und Trey Coleman eine offene Wartungstuer, eine elektromagnetische Stoerung und ein geheimes Experiment, dessen eigentliche Nachwirkung erst Tage spaeter beginnt. Tonanker: Es gibt Schulausfluege, die man vergisst, und Schulausfluege, die alles veraendern. |
+| **Serienpotenzial** | Band 1 soll abgeschlossen funktionieren, aber Halverson Group, Veridium-Materie, Bixi, Dr. Charter, Dr. Voss, Scott Hartwell und die Teamdynamik lassen eine Fortsetzung offen. |
 | **Cover-Richtung** | [FEHLT: Motivlogik festlegen. Aus Quelle ableitbare Elemente: Chicago, Wissenschaftszentrum, Wartungstuer, elektromagnetische Stoerung, drei Teenager, Nachwirkungs-/Energie-Motiv.] |
 
 ### Marktentscheidung
@@ -60,6 +60,7 @@
 - NARRATOR: Stilanker fuer Haltung und Dosierung, nicht woertlich kopieren: Henry hatte sich natuerlich vorgenommen, diesmal nichts zu loeschen. Er loeschte es trotzdem.
 - NARRATOR: Stilanker fuer Haltung und Dosierung, nicht woertlich kopieren: Trey hatte in diesem Moment mindestens vier Ideen gleichzeitig. Drei davon waren objektiv keine guten Ideen. Die vierte war moeglicherweise illegal.
 - NARRATOR: Stilanker fuer Haltung und Dosierung, nicht woertlich kopieren: Trey nannte es spaeter Neugier. Ember nannte es etwas anderes.
+- NARRATOR: Stilanker fuer Haltung und Dosierung, nicht woertlich kopieren: Diego Mendoza hatte in seinem Leben viele verrueckte Dinge gehoert. Die meisten davon kamen von Trey. Aber das hier war neu.
 - Jede Szene braucht Ziel, Widerstand, Wendung und Nachhall.
 - Steige spaet in die Szene ein und verlasse sie frueh, sobald der dramatische Punkt gesetzt ist.
 - Zeige Emotion ueber Verhalten, Koerper, Handlung und sinnliche Details statt sie nur zu benennen.
@@ -87,20 +88,27 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 - **Schule:** Lane Tech College Prep High School, oeffentliche Schule.
 - **Zeit:** Sommer, kurz vor den Ferien.
 - **Ausflugsschauplatz:** Chicago Advanced Science Center, grosses oeffentliches Wissenschaftszentrum mit Ausstellungen fuer Schulen; dahinter echte Forschung, Labore und Regierungsprojekte.
-- **Verbotener Bereich:** Abgesperrter Forschungsfluegel unterhalb des Besucherbereichs, Schild `AUTHORIZED PERSONNEL ONLY`.
-- **Atmosphaere:** Besucherbereich wirkt schulisch und oeffentlich; dahinter Wartungstuer, Rollwagen, Sicherheitsglas, Server, Energieanlage, alte Versuchskammer, unfertiges Experiment und eine elektromagnetische Stoerung, die nicht zum normalen Ausstellungsbereich passt.
+- **Verbotener Bereich:** Abgesperrter Forschungsbereich tief unter dem Besucherbereich, erreichbar ueber Wartungskorridor, Wartungsraum und einen unscheinbaren Lastenaufzug.
+- **Zugangskette:** Ein Halverson-Mitarbeiter kommt mit einem Rollwagen aus einem Lastenaufzug tief unter dem Gebaeude und faehrt durch einen Wartungskorridor hinter dem Besucherbereich. Eine Wartungstuer faellt hinter ihm ins Schloss, aber ein unbemerkt vom Wagen gefallener Schraubenschluessel verkeilt die Tuer minimal. Es bleibt ein Spalt von etwa einem Zentimeter.
+- **Bixi-Anomalie:** Bixi registriert durch den Spalt ein ungewoehnliches elektromagnetisches Signal, kein normales Ausstellungssignal. Trey sieht den Spalt und will nur kurz gucken.
+- **Wartungsraum:** Hinter der Tuer liegt erst nur ein schlichter Korridor und ein unspektakulaerer Wartungsraum mit Regalen und Technik. Bixi trackt das Signal; auf Treys Uhr wird es staerker, je weiter sie gehen. Im Wartungsraum belauschen sie Voss und Hartwell.
+- **Lastenaufzug:** Eine unscheinbare Aufzugtuer steht in der Wand des Wartungsraums. Ein Mitarbeiter kommt heraus, die drei verstecken sich hinter einem Regal, und nach seinem Weggehen beginnt die Aufzugtuer automatisch zu schliessen. Trey rennt zuerst hinein, Ember folgt, um ihn aufzuhalten, Henry folgt, weil er nicht allein zurueckbleiben will. Niemand drueckt einen Knopf; der Aufzug faehrt von selbst nach unten.
+- **Toter Winkel:** Der entscheidende Moment liegt nicht sauber im Live-Sicherheitsblick. Halverson findet spaeter Spuren und Aufnahmen, reagiert aber nicht sofort. Das gibt Ember, Henry und Trey einen kleinen Vorsprung.
+- **Atmosphaere:** Besucherbereich wirkt schulisch und oeffentlich; dahinter werden Korridor, Wartungsraum und Lastenaufzug zunehmend enger, technischer und klaustrophobischer. Der Unfall entsteht durch menschliche Schlamperei, automatische Systeme und falsches Timing, nicht weil Halverson grundsaetzlich dumm ist.
 
 ### Zentrales Drucksystem
 
-- **Name / Funktion:** [FEHLT: Name der Organisation hinter dem Veridium-Projekt.] Arbeitsstand: geheime Forschungsorganisation bzw. Projektstruktur hinter dem Chicago Advanced Science Center.
-- **Gesicht der Gegenkraft:** Dr. Evelyn Voss, Leiterin des geheimen Veridium-Projekts und verantwortlich fuer die Sicherheit des Forschungsbereichs.
-- **Wie wirkt der Druck aktuell sichtbar?** Nach dem Unfall existieren Sicherheitsaufnahmen. Die Organisation kann die Schulgruppe identifizieren, den Vorfall auswerten, beteiligte Erwachsene unter Druck setzen, beobachten und spaeter versuchen, Ember, Henry und Trey zu finden und zu untersuchen.
-- **Welche Zugriffe sind plausibel?** Sicherheitsaufnahmen, Vorfallauswertung, Schulgruppen-Identifizierung, institutionelle Abdeckung, Druck auf Erwachsene, Beobachtung. [FEHLT: konkrete rechtliche, technische und personelle Mittel der Organisation definieren.]
-- **Welche Grenzen hat das Drucksystem?** Die Organisation jagt nicht sofort offen Kinder. Sie ist nicht allmaechtig und muss den Vorfall vertuschen, das Projekt schuetzen und Investoren nicht verlieren.
+- **Name / Funktion:** Halverson Group, privates Forschungsunternehmen hinter dem Veridium-/X7-Projekt. Halverson arbeitet fuer Regierung, Militaer und private Investoren, hat grosses Budget, eigene Sicherheitsleute und forscht parallel in mehreren Bereichen.
+- **Gesicht der Gegenkraft:** Dr. Evelyn Voss, Projektleiterin X7 und verantwortlich fuer Leitung und Sicherheit des Veridium-Projekts.
+- **Projektmanager X7:** Scott Hartwell sitzt zwischen Voss und den Investoren, liefert Ergebnisse weiter, steht unter Quartalsdruck und ist nicht boese, nicht mutig, sondern erschoepft.
+- **Wie wirkt der Druck aktuell sichtbar?** Nach dem Unfall existieren Sicherheitsaufnahmen. Halverson kann die Schulgruppe identifizieren, den Vorfall auswerten, beteiligte Erwachsene unter Druck setzen, beobachten und spaeter versuchen, Ember Blake, Henry Mills und Trey Coleman zu finden und zu untersuchen.
+- **Eskalationsspur:** Sicherheitsaufnahmen zeigen, dass die drei im Bereich waren; Auswertung identifiziert die Schulgruppe; schwarze SUVs tauchen auf; Bixi meldet Halverson-Kennzeichen, die Trey zuerst ignoriert; ein Mann fotografiert die Gruppe; Diego benennt die Beschattung laut; Druck auf beteiligte Erwachsene fuehrt spaeter zur direkten Konfrontation.
+- **Welche Zugriffe sind plausibel?** Sicherheitsaufnahmen, Vorfallauswertung, Schulgruppen-Identifizierung, institutionelle Abdeckung, eigene Sicherheitsleute, Kennzeichen/Observationsfahrzeuge, Druck auf Erwachsene, Beobachtung. [FEHLT: konkrete rechtliche und technische Befugnisse definieren.]
+- **Welche Grenzen hat das Drucksystem?** Halverson jagt nicht sofort offen Kinder. Die Organisation ist nicht allmaechtig und muss den Vorfall vertuschen, das Projekt schuetzen und Investoren nicht verlieren.
 
 ### Veridium Substanz X7
 
-- **Name:** Veridium Substanz X7 ist der aktuelle Name; Arbeitstitel der Materie ist noch offen.
+- **Name:** Veridium ist der aktuelle Name der Materie; X7 ist der interne Projekt-Codename innerhalb der Halverson Group.
 - **Gegenwartsfunktion:** Im Labor hergestellte Substanz, nicht in der Periodentabelle; speichert Energie in einer Dichte, die kein bekanntes Material erreicht.
 - **Interesse:** Kontrolle ueber diese Materie wuerde Energieversorgung, Militaertechnologie und Infrastruktur auf neues Niveau bringen.
 - **Problem:** Unter bestimmten Bedingungen instabil.
@@ -108,6 +116,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 - **Unfalllogik:** Ember, Henry und Trey geraten in den Aktivierungsmoment. Die Energie entlaedt sich unkontrolliert und trifft sie.
 - **Negativgrenze:** Das Experiment ist keine Superkraft-Maschine; die Kraefte entstehen als unerwarteter Nebeneffekt.
 - **FEHLT:** Genauer Zweck des eigentlichen Experiments, genaue physikalische Regeln, Belastungsgrenzen, Nebenwirkungen, Langzeitfolgen.
+- **Belauschtes Gespraech:** Ember, Henry und Trey verstehen nicht alle Details, hoeren aber starken Zeitdruck, Investorenerwartungen, Instabilitaet des Experiments und bewusst in Kauf genommenes Risiko. Die zwei Personen sind Dr. Evelyn Voss und Scott Hartwell. Hartwell sagt sinngemaess, dass die Investoren Ergebnisse bis Ende des Quartals wollen.
 
 ### Bixi / B.I.X.
 
@@ -122,7 +131,10 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ### Wiederkehrende Objekte und Routinen
 
-- **Wartungstuer:** Zugang in den abgesperrten Bereich; bleibt nach einem Mitarbeiter mit Rollwagen einen Spalt offen.
+- **Schraubenschluessel:** Faellt unbemerkt vom Rollwagen eines Halverson-Mitarbeiters und verkeilt die Wartungstuer minimal. Er ist der kleine menschliche Fehler, der den Zugang plausibel macht.
+- **Wartungstuer:** Zugang in den Wartungskorridor hinter dem Besucherbereich; bleibt nur wegen des Schraubenschluessels einen Zentimeter offen.
+- **Wartungsraum:** Unspektakulaerer Raum mit Regalen und Technik; hier ist Bixis Signal am staerksten, hier belauschen die drei Voss und Hartwell, und hier liegt die unscheinbare Aufzugtuer.
+- **Lastenaufzug:** Normale Service-Infrastruktur im oeffentlichen Gebaeude, aber an Halversons untere Bereiche angebunden. Die automatische Abfahrt macht den Regelbruch unwiderruflich.
 - **Treys Handy und Uhr:** Tragen Bixi, Signal-Diagnose, einfache Koerperdaten, technische Analyse.
 - **Henrys Kamera / Fotografie:** Rueckzugs- und Beobachtungsmodus; er fotografiert vor allem Natur.
 - **Veridium Substanz X7:** Zentrales Forschungsobjekt und Unfallausloeser.
@@ -133,10 +145,10 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 - **Grundregel:** Kraefte spiegeln innere Konflikte. Sie entstehen als Nebeneffekt des Veridium-Experiments, nicht als Ziel des Experiments.
 - **Entwicklungsregel:** Am Anfang koennen Ember, Henry und Trey nicht sofort alles. Faehigkeiten zeigen sich klein, irritierend und unkontrolliert. Durch Uebung entstehen spaeter staerkere Anwendungen.
-- **Ember:** Kann mit ihrer Stimme Emotionen und Aufmerksamkeit beeinflussen; ihre Worte wirken staerker als normal, besonders wenn sie selbst emotional ist. Spaeter moeglich: Gegner zoegern lassen, Panik/Unsicherheit ausloesen, Aufmerksamkeit ziehen, Mut verstaerken, Aggression beruhigen, Gegner aus dem Rhythmus bringen, Schockmoment durch lauten Befehl.
-- **Henry:** Kann Licht um sich herum brechen und dadurch schwer sichtbar oder zeitweise unsichtbar werden; reagiert besonders stark, wenn er sich verstecken will oder Angst hat. Spaeter moeglich: blenden, Spiegelungen, falsche Silhouetten, Kameras taeuschen, Gegner verwirren.
-- **Trey:** Kann elektrische Signale und technische Systeme in seiner Naehe spueren und beeinflussen; anfangs flackern Geraete, Verbindungen brechen ab, Technik reagiert auf Emotionen. Spaeter moeglich: Geraete stoeren, Kameras/Drohnen lahmlegen, Tueren oder Schloesser ueberladen, kleine Elektroschocks, Leitungen spueren, Bixi taktisch einbinden, eventuell riskanter EMP-artiger Impuls.
-- **FEHLT:** Erste konkrete Manifestationsszene fuer jede Kraft, harte Grenzen, Kosten, Erschoepfung, Reichweiten, Gegenmittel und Eskalationsstufen.
+- **Ember:** Kann mit ihrer Stimme Emotionen und Aufmerksamkeit beeinflussen; ihre Worte wirken staerker als normal, besonders wenn sie selbst emotional ist. Erste Manifestation: Flur, Pause, Zoff mit Mitschuelerin; Embers Stimme wirkt schwerer als gewollt, die Mitschuelerin stoppt und entschuldigt sich reflexartig. Spaeter moeglich: Gegner zoegern lassen, Panik/Unsicherheit ausloesen, Aufmerksamkeit ziehen, Mut verstaerken, Aggression beruhigen, Gegner aus dem Rhythmus bringen, Schockmoment durch lauten Befehl.
+- **Henry:** Kann Licht um sich herum brechen und dadurch schwer sichtbar oder zeitweise unsichtbar werden; reagiert besonders stark, wenn er sich verstecken will oder Angst hat. Erste Manifestation: Henry sieht Zoe von weitem im Flur. Zoe ist nicht sein Crush, sondern das beliebteste und heisseste Maedchen der Schule; genau deshalb wird Henry in der Situation unbeholfen und denkt sinngemaess "bitte nicht sehen". Zoe laeuft direkt an ihm vorbei, ohne ihn wahrzunehmen; offen bleibt fuer ihn, ob sie ihn ignoriert oder wirklich nicht gesehen hat. Spaeter moeglich: blenden, Spiegelungen, falsche Silhouetten, Kameras taeuschen, Gegner verwirren.
+- **Trey:** Kann elektrische Signale und technische Systeme in seiner Naehe spueren und beeinflussen; anfangs flackern Geraete, Verbindungen brechen ab, Technik reagiert auf Emotionen. Erste Manifestation: Streit mit seinem Vater wegen gestrichener The-Weeknd-Tickets; Trey geht wuetend in sein Zimmer, Lampe flackert, Handy startet neu, Bixis Display flimmert, und die eigene Kraft stoert ausgerechnet seinen besten Begleiter. Spaeter moeglich: Geraete stoeren, Kameras/Drohnen lahmlegen, Tueren oder Schloesser ueberladen, kleine Elektroschocks, Leitungen spueren, Bixi taktisch einbinden, eventuell riskanter EMP-artiger Impuls.
+- **FEHLT:** Harte Grenzen, Kosten, Erschoepfung, Reichweiten, Gegenmittel und Eskalationsstufen.
 
 ---
 
@@ -162,12 +174,12 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     },
     {
       "id": "CF004",
-      "fact": "Ember, Henry und Trey sind vor dem Unfall Klassenkameraden, aber nicht beste Freunde.",
+      "fact": "Ember Blake, Henry Mills und Trey Coleman sind vor dem Unfall Klassenkameraden, aber nicht beste Freunde.",
       "status": "aktiv"
     },
     {
       "id": "CF005",
-      "fact": "Der Lehrer teilt Ember, Henry und Trey beim Ausflug zufaellig in eine Gruppe ein.",
+      "fact": "Der Lehrer teilt Ember Blake, Henry Mills und Trey Coleman beim Ausflug zufaellig in eine Gruppe ein.",
       "status": "aktiv"
     },
     {
@@ -187,7 +199,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     },
     {
       "id": "CF009",
-      "fact": "Veridium Substanz X7 ist eine im Labor hergestellte, instabile Materie, die extrem dichte Energie speichern kann.",
+      "fact": "Veridium ist eine im Labor hergestellte, instabile Materie, die extrem dichte Energie speichern kann; X7 ist der interne Projekt-Codename innerhalb der Halverson Group.",
       "status": "aktiv"
     },
     {
@@ -197,12 +209,12 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     },
     {
       "id": "CF011",
-      "fact": "Dr. Evelyn Voss leitet das geheime Veridium-Projekt und will den Vorfall kontrollieren, das Projekt retten und die Investoren nicht verlieren.",
+      "fact": "Dr. Evelyn Voss leitet das geheime Veridium-/X7-Projekt der Halverson Group und will den Vorfall kontrollieren, das Projekt retten und die Investoren nicht verlieren.",
       "status": "aktiv"
     },
     {
       "id": "CF012",
-      "fact": "Die Organisation will die drei Jugendlichen nicht sofort offen jagen, sondern beginnt ueber Auswertung, Identifizierung, Beobachtung und Druck.",
+      "fact": "Die Halverson Group will die drei Jugendlichen nicht sofort offen jagen, sondern beginnt ueber Sicherheitsaufnahmen, Auswertung, Identifizierung, Beobachtung und Druck.",
       "status": "aktiv"
     },
     {
@@ -212,7 +224,32 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     },
     {
       "id": "CF014",
-      "fact": "Ember und Henry kommen aus der oberen Mittelschicht. Trey kommt aus einer Familie, die durch den Jobverlust seines Vaters finanziell deutlich unter Druck geraten ist.",
+      "fact": "Ember Blake und Henry Mills kommen aus der oberen Mittelschicht. Trey Coleman kommt aus einer Familie, die durch den Jobverlust seines Vaters finanziell deutlich unter Druck geraten ist.",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF015",
+      "fact": "Die Halverson Group ist ein privates Forschungsunternehmen mit Regierung-, Militaer- und Investorenauftraegen, eigenem Sicherheitsapparat und mehreren parallelen Forschungsprojekten.",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF016",
+      "fact": "Scott Hartwell ist Projektmanager X7, sitzt zwischen Dr. Evelyn Voss und den Investoren und steht unter Quartalsdruck.",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF017",
+      "fact": "Diego Mendoza ist Treys bester Freund, hat keine Kraefte, wird in Act 2 eingeweiht und macht die Beschattung fuer die Gruppe laut aussprechbar.",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF018",
+      "fact": "Zoe ist eines der beliebtesten und heissesten Maedchen der Schule. Sie ist nicht Henrys Crush, sondern sozialer Druck; Henry wird in ihrer Naehe unbeholfen, und dadurch loest sie seine erste Manifestation aus.",
+      "status": "aktiv"
+    },
+    {
+      "id": "CF019",
+      "fact": "Der Zugang zum Halverson-Bereich entsteht durch einen vom Rollwagen gefallenen Schraubenschluessel, eine minimal verkeilte Wartungstuer, Bixis Signaldiagnose, einen Wartungsraum und einen automatisch abfahrenden Lastenaufzug; niemand hackt das System und niemand drueckt bewusst einen Aufzugsknopf.",
       "status": "aktiv"
     }
   ]
@@ -223,11 +260,11 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ## CHARACTER STATE LEDGER
 
-### Ember — „Kontrolle / Stimme / Feldkontrolle"
+### Ember Blake — „Kontrolle / Stimme / Feldkontrolle"
 ```json
 {
   "character_id": "EMBER",
-  "name": "Ember",
+  "name": "Ember Blake",
   "role": "Eine der drei zentralen Jugendlichen; sehr gute Schuelerin, Schulsprecherin, kommunikative Figur und spaetere Feldkontrolle ueber Stimme und Einfluss.",
   "background": "Ember ist Einzelkind aus der oberen Mittelschicht. In ihre perfekte Erziehung floss viel Energie. Ihre Eltern sind liebevoll, aber anspruchsvoll und erwarten Erfolg. Sie liest viel in ihrem Zimmer und ist gut vorbereitet.",
   "wunde": {
@@ -238,7 +275,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
   },
   "initial_state": {
     "physisch": "Keine besondere koerperliche Einschraenkung gesetzt.",
-    "psychisch": "Selbstbewusst, intelligent, gut vorbereitet, aber kontrollierend, manchmal ueberheblich, nervoes ohne Antwort und unsicher bei emotionaler Naehe.",
+    "psychisch": "Selbstbewusst, intelligent, gut vorbereitet, aber kontrollierend, manchmal ueberheblich, nervoes ohne Antwort und unsicher bei emotionaler Naehe. Sie korrigiert andere automatisch, findet Trey anstrengend und Henry zu still; sie merkt, dass Henry auf sie steht, und distanziert sich.",
     "verhaeltnis_zum_konflikt": "Sie will Situationen kontrollieren und folgt Trey in den verbotenen Bereich, um ihn zurueckzuholen.",
     "verhaeltnis_zur_gegenkraft": "Vor dem Unfall kein bewusstes Verhaeltnis zur Organisation oder zu Dr. Voss."
   },
@@ -260,11 +297,11 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 }
 ```
 
-### Henry — „Unsichtbarkeit / Beobachtung / Schutz"
+### Henry Mills — „Unsichtbarkeit / Beobachtung / Schutz"
 ```json
 {
   "character_id": "HENRY",
-  "name": "Henry",
+  "name": "Henry Mills",
   "role": "Eine der drei zentralen Jugendlichen; schuechtern, beobachtend, loyal, spaeter Lichtbrechung und Unsichtbarkeit.",
   "background": "Henry kommt aus der oberen Mittelschicht, traegt eine Brille, hat einen kleinen Bruder und unterstuetzende, liebevolle Eltern. Er verbringt oft Zeit mit seinem kleinen Bruder und ist fuer ihn Spielkamerad und beschuetzend.",
   "wunde": {
@@ -275,7 +312,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
   },
   "initial_state": {
     "physisch": "Traegt eine Brille; fotografiert gern, vor allem Natur.",
-    "psychisch": "Schuechtern, vorsichtig, ehrlich, loyal, beobachtet Details, loescht Nachrichten vor dem Abschicken und denkt zu lange nach.",
+    "psychisch": "Schuechtern, vorsichtig, ehrlich, loyal, beobachtet Details, loescht Nachrichten vor dem Abschicken und denkt zu lange nach. Er steht auf Ember, traut sich aber nicht, und traut sich auch nicht, sich zu outen.",
     "verhaeltnis_zum_konflikt": "Er merkt im verbotenen Bereich, dass etwas nicht stimmt, traut sich aber nicht, allein zurueckzugehen.",
     "verhaeltnis_zur_gegenkraft": "Vor dem Unfall kein bewusstes Verhaeltnis zur Organisation oder zu Dr. Voss."
   },
@@ -297,11 +334,11 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 }
 ```
 
-### Trey — „Technik / Impuls / Energie"
+### Trey Coleman — „Technik / Impuls / Energie"
 ```json
 {
   "character_id": "TREY",
-  "name": "Trey",
+  "name": "Trey Coleman",
   "role": "Eine der drei zentralen Jugendlichen; technikaffin, neugierig, schnell, impulsiv, Bixi-Entwickler und spaeter Technik-/Energie-Stoerer.",
   "background": "Trey ist ein afroamerikanischer Teenager, hat drei weitere Geschwister und ist frueh mit Netzwerken, Sicherheitssystemen und technischen Problemen in Beruehrung gekommen. Sein Vater war IT-Sicherheitsspezialist fuer eine staedtische Behoerde oder staatliche Einrichtung und hat seinen Job verloren, wodurch die Familie finanziell unter Druck geraten ist.",
   "wunde": {
@@ -312,7 +349,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
   },
   "initial_state": {
     "physisch": "Voller Energie und Tatendrang; manchmal tollpatschig.",
-    "psychisch": "Neugierig, technikaffin, guter Problemloeser, loyal, nerdig, nicht nur Gaming-Freak.",
+    "psychisch": "Neugierig, technikaffin, guter Problemloeser, loyal, nerdig, nicht nur Gaming-Freak. Er findet Ember zu kontrollierend und Diego Mendoza ist sein bester Freund.",
     "verhaeltnis_zum_konflikt": "Bixi meldet die Stoerung; Trey will nur kurz gucken und treibt die Gruppe tiefer in den verbotenen Bereich.",
     "verhaeltnis_zur_gegenkraft": "Vor dem Unfall kein bewusstes Verhaeltnis zur Organisation oder zu Dr. Voss."
   },
@@ -334,13 +371,38 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 }
 ```
 
+### Diego Mendoza — „Treys bester Freund / keine Kraefte"
+```json
+{
+  "character_id": "DIEGO_MENDOZA",
+  "name": "Diego Mendoza",
+  "role": "Treys bester Freund; mexikanisch-amerikanischer Teenager aus Chicago, physisch praesent, loyal und ungefiltert direkt. Er hat keine Kraefte.",
+  "background": "Diego ist in Chicago aufgewachsen, kommt aus einer grossen, lauten und warmen Familie und ist fuer Trey eine verlaessliche Alltagsbindung ausserhalb der Dreiergruppe.",
+  "wunde": {
+    "was_passiert_ist": "[FEHLT: Ob Diego eine eigene Wunde braucht oder bewusst als stabiler Gegenpol bleibt.]",
+    "was_es_heute_macht": "Er sagt, was er denkt, ungefiltert, aber nicht gemein. Seine Direktheit macht die Bedrohung fuer die anderen schwerer wegzuerklaeren.",
+    "was_er_niemals_tut": "Er verrät Trey nicht und wird nicht nachtraeglich mit eigenen Kraeften ausgestattet.",
+    "arc_abschluss": "[FEHLT: Diegos genaue Funktion in Act 3 klaeren.]"
+  },
+  "initial_state": {
+    "sichtbar": "Gross, stark, sozial direkt, loyal bis in die Knochen.",
+    "verdeckt": "Keine verdeckte Kraft.",
+    "zugriff": "Freundschaft zu Trey, soziale Beobachtung, physische Praesenz und Mut, Dinge laut zu benennen."
+  },
+  "speech_pattern": "Direkt, warm, ungefiltert, aber nie grausam. Er macht unausgesprochene Dinge sprechbar.",
+  "funktion_im_buch": "Wird von Trey in Act 2 eingeweiht, weil Trey Hilfe braucht. Sein lautes Erkennen der Beschattung macht Halverson als reale Bedrohung fuer die Gruppe greifbar.",
+  "kern": "Keine Kraefte, aber Loyalitaet, Koerperlichkeit und klare Sprache.",
+  "was_unklar_bleibt": "Wie Diego ohne Kraefte in Act 2 und Act 3 konkret hilft."
+}
+```
+
 ### Dr. Michael Charter — „Mentor / erwachsene Vertrauensperson"
 ```json
 {
   "character_id": "DR_CHARTER",
   "name": "Dr. Michael Charter",
   "role": "Erwachsener Wissenschaftler, begleitet den Schulausflug als Experte und ist als ehrlicher Mentor-Typ angelegt.",
-  "background": "Er ist Teil des Ausflugskontexts im Wissenschaftszentrum. Weitere Biografie ist nicht gesetzt.",
+  "background": "Er ist Teil des Ausflugskontexts im Wissenschaftszentrum. In Act 2 besitzt er einen Keller voller aussergewoehnlicher Experimente und Geraete. Trey kennt ihn bereits ueber ein gemeinsames Hobby. [FEHLT: Hobby festlegen.]",
   "wunde": {
     "was_passiert_ist": "[FEHLT: Persoenliche Vorgeschichte oder beruflicher Konflikt von Dr. Charter.]",
     "was_es_heute_macht": "Er merkt nach dem Unfall, dass mit Ember, Henry und Trey etwas passiert ist, und will ihnen helfen.",
@@ -350,12 +412,37 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
   "initial_state": {
     "sichtbar": "Erwachsene Vertrauensperson und Wissenschaftler.",
     "verdeckt": "[FEHLT: Was weiss er ueber das geheime Projekt, falls ueberhaupt?]",
-    "zugriff": "Wissenschaftliche Autoritaet im Kontext des Ausflugs."
+    "zugriff": "Wissenschaftliche Autoritaet im Kontext des Ausflugs; Keller mit Experimenten und Geraeten; ein noch offenes Hilfsgeraet, das Trey sich ausleihen will."
   },
   "speech_pattern": "[FEHLT: Stimme festlegen. Vorschlag nur als Frage: ruhig, erklaerend, aber nicht verschleiernd?]",
-  "funktion_im_buch": "Gegenpol zu Dr. Voss: Charter will helfen, Voss will kontrollieren.",
+  "funktion_im_buch": "Gegenpol zu Dr. Voss: Charter will helfen, Voss will kontrollieren. In Act 2 entdeckt er Treys Kraft nicht durch ein Geständnis, sondern weil ein Geraet in seinem Keller auf Trey reagiert.",
   "kern": "Erwachsene Hilfe ohne Verratslogik.",
-  "was_unklar_bleibt": "Wie viel Charter ueber Veridium, Voss und den Forschungsfluegel weiss."
+  "was_unklar_bleibt": "Wie viel Charter ueber Veridium, Voss und Halversons untere Forschungsbereiche weiss; welches Hobby ihn mit Trey verbindet; welches Hilfsgeraet Trey ausleihen will; welches Geraet auf Trey reagiert."
+}
+```
+
+### Zoe — „Sozialer Druck / Ausloeser"
+```json
+{
+  "character_id": "ZOE",
+  "name": "Zoe",
+  "role": "Eines der beliebtesten und heissesten Maedchen der Schule; kein Crush von Henry, sondern sozialer Druck und Ausloeser seiner ersten Manifestation.",
+  "background": "Zoe bleibt vorerst eine Randfigur im Schulalltag. Ob sie spaeter eine groessere Rolle bekommt, ist offen.",
+  "wunde": {
+    "was_passiert_ist": "[FEHLT: Nur ausarbeiten, falls Zoe mehr als Ausloeser wird.]",
+    "was_es_heute_macht": "Sie steht fuer den sozialen Blick und Statusdruck, vor dem Henry verschwinden will. Seine Unbeholfenheit kommt nicht aus Verliebtheit, sondern aus sozialer Ueberforderung.",
+    "was_er_niemals_tut": "Sie darf nicht nur als Klischee-Beliebtheitsfigur funktionieren, falls sie spaeter groesser wird.",
+    "arc_abschluss": "[FEHLT: Zoes spaetere Funktion klaeren oder bewusst klein halten.]"
+  },
+  "initial_state": {
+    "sichtbar": "Beliebtes Maedchen der Schule.",
+    "verdeckt": "Keine gesetzte Verbindung zu Halverson oder Veridium.",
+    "zugriff": "Sozialer Druck auf Henry."
+  },
+  "speech_pattern": "[FEHLT: Nur definieren, falls Zoe aktiv wird.]",
+  "funktion_im_buch": "Loest Henrys erste Manifestation aus: Er will in diesem peinlichen Moment nicht gesehen werden, und sie sieht ihn nicht.",
+  "kern": "Sozialer Ausloeser fuer Henrys Unsichtbarkeitskonflikt, kein romantischer Crush.",
+  "was_unklar_bleibt": "Ob Zoe eine groessere Rolle bekommt."
 }
 ```
 
@@ -364,8 +451,8 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 {
   "character_id": "DR_VOSS",
   "name": "Dr. Evelyn Voss",
-  "role": "Leiterin des geheimen Veridium-Projekts und verantwortlich fuer die Sicherheit des Forschungsbereichs.",
-  "background": "Sie steht fuer die institutionelle Seite des Projekts, die nach dem Unfall den Vorfall kontrollieren will.",
+  "role": "Projektleiterin X7 der Halverson Group und verantwortlich fuer Leitung und Sicherheit des Veridium-Projekts.",
+  "background": "Sie steht fuer die institutionelle Seite der Halverson Group, die nach dem Unfall den Vorfall kontrollieren will.",
   "wunde": {
     "was_passiert_ist": "[FEHLT: Persoenliche Vorgeschichte, falls noetig.]",
     "was_es_heute_macht": "Sie handelt nicht aus Sadismus, sondern will den Vorfall kontrollieren, das Projekt retten und Investoren nicht verlieren.",
@@ -373,14 +460,39 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     "arc_abschluss": "[FEHLT: Endfunktion von Voss klaeren: Gegenspielerin, ambivalente Projektleiterin, spaetere Verbuendete oder dauerhafte Bedrohung?]"
   },
   "initial_state": {
-    "sichtbar": "Projektleiterin und Sicherheitsverantwortliche.",
-    "verdeckt": "Sie sieht nach dem Unfall auf Sicherheitsaufnahmen, dass Ember, Henry und Trey dem Experiment ausgesetzt waren.",
-    "zugriff": "Sicherheitsaufnahmen, Identifizierung, Beobachtung, Druck auf Erwachsene und Projektressourcen."
+    "sichtbar": "Projektleiterin X7 und Sicherheitsverantwortliche.",
+    "verdeckt": "Sie sieht nach dem Unfall auf Sicherheitsaufnahmen, dass Ember Blake, Henry Mills und Trey Coleman dem Experiment ausgesetzt waren.",
+    "zugriff": "Sicherheitsaufnahmen, Identifizierung, Beobachtung, Druck auf Erwachsene, eigene Sicherheitsleute und Projektressourcen."
   },
   "speech_pattern": "[FEHLT: Stimme festlegen. Quelle setzt nur Funktion und Motivation.]",
   "funktion_im_buch": "Gegenkraft zur jugendlichen Unsicherheit und zu Dr. Charter.",
   "kern": "Sie will Vorfall, Projekt und Investoren kontrollieren.",
-  "was_unklar_bleibt": "Name der Organisation, genaue Investoren, konkrete Befugnisse und Eskalationsgrenze."
+  "was_unklar_bleibt": "Genaue Investoren, konkrete Befugnisse und Eskalationsgrenze."
+}
+```
+
+### Scott Hartwell — „Projektmanager X7 / Quartalsdruck"
+```json
+{
+  "character_id": "SCOTT_HARTWELL",
+  "name": "Scott Hartwell",
+  "role": "Projektmanager X7 innerhalb der Halverson Group; Vermittler zwischen Dr. Evelyn Voss und den Investoren.",
+  "background": "Scott Hartwell ist kein boeser Strippenzieher und kein mutiger Whistleblower. Er ist erschoepft, steht unter Ergebnisdruck und liefert Erwartungen nach unten weiter.",
+  "wunde": {
+    "was_passiert_ist": "[FEHLT: Ob Hartwell eigene Vorgeschichte braucht.]",
+    "was_es_heute_macht": "Er denkt in Quartalszielen, Investorenerwartungen und Projektrisiko.",
+    "was_er_niemals_tut": "Er wird nicht zur cartoonhaften Bossfigur und nicht automatisch zum Retter.",
+    "arc_abschluss": "[FEHLT: Ob Hartwell spaeter einknickt, hilft oder eskaliert.]"
+  },
+  "initial_state": {
+    "sichtbar": "Projektmanager X7, im belauschten Gespraech neben Voss.",
+    "verdeckt": "Er kennt den Investoren- und Quartalsdruck, aber seine genaue Macht ist offen.",
+    "zugriff": "Projektkommunikation, Ergebnisdruck, Investorenkontakt."
+  },
+  "speech_pattern": "Erschoepft, sachlich, druckgetrieben.",
+  "funktion_im_buch": "Macht die wirtschaftliche und organisatorische Drucklogik hinter X7 konkret.",
+  "kern": "Zwischen Voss und Investoren eingeklemmt.",
+  "was_unklar_bleibt": "Wie viel Entscheidungsmacht er hat und ob er spaeter eskaliert oder bricht."
 }
 ```
 
@@ -415,12 +527,14 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ### Namens- und Funktionsschutz
 
-- Ember bleibt Einzelkind, sehr gute Schuelerin, Schulsprecherin und Kontrollfigur. [FEHLT: Nachname.]
-- Henry bleibt schuechtern, Brillentraeger, Natur-Fotograf, grosser Bruder und Beobachter. [FEHLT: Nachname.]
-- Trey bleibt technikaffin, afroamerikanischer Teenager, Bixi-Entwickler, impulsiver Problemloeser und Teil einer Familie, die durch den Jobverlust seines Vaters finanziell deutlich unter Druck steht. [FEHLT: Nachname; konkrete Sichtbarkeit dieses Drucks im Alltag klaeren.]
+- Ember Blake bleibt Einzelkind, sehr gute Schuelerin, Schulsprecherin und Kontrollfigur.
+- Henry Mills bleibt schuechtern, Brillentraeger, Natur-Fotograf, grosser Bruder und Beobachter.
+- Trey Coleman bleibt technikaffin, afroamerikanischer Teenager, Bixi-Entwickler, impulsiver Problemloeser und Teil einer Familie, die durch den Jobverlust seines Vaters finanziell deutlich unter Druck steht. [FEHLT: konkrete Sichtbarkeit dieses Drucks im Alltag klaeren.]
+- Diego Mendoza bleibt Treys bester Freund ohne Kraefte; er wird nicht nachtraeglich zum vierten Superkraft-Traeger.
 - Bixi bleibt Treys Assistenz-KI auf Handy und Uhr, keine Superkraft und kein Alleskoenner.
 - Dr. Michael Charter bleibt ehrlicher Mentor-Typ und darf nicht nachtraeglich als heimlicher Boesewicht umcodiert werden, solange die Quelle das nicht neu entscheidet.
-- Dr. Evelyn Voss bleibt nicht-cartoonhafte Kontrollfigur; sie handelt aus Projekt-, Vertuschungs- und Investorenlogik, nicht aus Sadismus.
+- Dr. Evelyn Voss bleibt nicht-cartoonhafte Kontrollfigur der Halverson Group; sie handelt aus Projekt-, Vertuschungs- und Investorenlogik, nicht aus Sadismus.
+- Scott Hartwell bleibt Projektmanager X7 unter Quartalsdruck, nicht cartoonhaft boese und nicht automatisch mutig.
 
 ### Objektfarben und harte Objektanker
 
@@ -429,6 +543,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 - Die Wartungstuer ist der plausible Zugang; kein alternatives Wunderportal einfuehren.
 - Veridium Substanz X7 ist der gesetzte aktuelle Name der Materie; wenn der Name spaeter geaendert wird, alle Referenzen zusammen aktualisieren.
 - Sicherheitsaufnahmen sind der gesetzte Grund, warum Voss von Ember, Henry und Trey weiss.
+- Schwarze SUVs, Halverson-Kennzeichen, ein fotografierender Mann und Diegos ausgesprochener Beschattungsverdacht sind die gesetzte diskrete Eskalationsspur in Act 2.
 
 ### Produktionsregeln
 
@@ -487,9 +602,27 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
     },
     {
       "id": "OT007",
-      "thread": "Wer sind die Investoren oder Auftraggeber hinter dem Veridium-Projekt?",
+      "thread": "Wer sind die Investoren oder Auftraggeber hinter Halversons Veridium-/X7-Projekt?",
       "status": "offen",
       "payoff_act": "Act 3"
+    },
+    {
+      "id": "OT008",
+      "thread": "Welches gemeinsame Hobby verbindet Trey Coleman und Dr. Michael Charter, welches Hilfsgeraet will Trey ausleihen, und welches Kellergeraet verraet Treys Kraft?",
+      "status": "offen",
+      "payoff_act": "Act 2"
+    },
+    {
+      "id": "OT009",
+      "thread": "Wie hilft Diego Mendoza in Act 2 und Act 3, ohne eigene Kraefte zu bekommen?",
+      "status": "offen",
+      "payoff_act": "Act 2"
+    },
+    {
+      "id": "OT010",
+      "thread": "Bleibt Zoe nur Henrys Manifestationsausloeser oder bekommt sie eine groessere soziale Rolle?",
+      "status": "offen",
+      "payoff_act": "Act 2"
     }
   ]
 }
@@ -508,13 +641,16 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ### Act 2 — Kontrolle, Beobachtung, erste Kosten
 
-- **Vertiefung:** Die Kraefte zeigen sich klein und unkontrolliert; die Gruppe trifft sich nach der Schule, um Veraenderungen zu beobachten. Die Organisation wertet Sicherheitsaufnahmen aus und beginnt, den Vorfall diskret zu kontrollieren.
+- **Umfang / Struktur:** Ca. 30000 Woerter, 7-8 Kapitel, Chicago im Sommer. Act 2 beginnt mit den Sommerferien: Schule ist vorbei, die Stadt wirkt offen, aber irgendwo parkt ein schwarzer SUV.
+- **Vertiefung:** Die Kraefte zeigen sich klein und unkontrolliert; die Gruppe trifft sich nach der Schule, um Veraenderungen zu beobachten. Halverson wertet Sicherheitsaufnahmen aus und beginnt, den Vorfall diskret zu kontrollieren.
 - **Kosten:** Normalitaet, Vertrauen, Sicherheit in Schule und Familie, technische Verlaesslichkeit, koerperliche/soziale Kontrolle. [FEHLT: konkrete wiederkehrende Kosten pro Figur und Szene.]
 - **Falsche Sicherheit:** Die drei koennten glauben, sie koennten alles geheim halten oder mit Bixi allein erklaeren. [FEHLT: konkrete falsche Loesung festlegen.]
-- **Act-2-Kippmoment:** [FEHLT: Irreversible Verschiebung zwischen Gruppe und Organisation definieren.]
+- **Gesetzte Eskalationspunkte:** K7 Ferienfeeling mit Diego, Lake Michigan und Chicago im Sommer; K8 Halverson-Kennzeichen, Bixi meldet es, Trey hoert zuerst nicht hin, dann kommt der Schock; K9-K11 Kraefte entwickeln sich, Bedrohung wird konkreter, Diego wird eingeweiht; K12-K14 offen.
+- **Act-2-Kippmoment:** [FEHLT: Irreversible Verschiebung zwischen Gruppe und Halverson definieren.]
 
 ### Act 3 — Verantwortung statt Reaktion
 
+- **Umfang / Struktur:** Ca. 20000 Woerter, 5-6 Kapitel, K15-K20 noch zu entwickeln.
 - **Rueckeroberung:** Die drei muessen ihre Kraefte verantworten, einander vertrauen und aktiv gegen Kontrolle/Vertuschung handeln. [FEHLT: konkretes Ziel, Ort und Gegnerzugriff fuer Act 3.]
 - **Negativgrenzen:** Kein Wunder-Hack von Bixi, keine sofort perfekte Kraeftebeherrschung, keine cartoonhafte Boesewicht-Aufloesung, kein offenes Kinderjagd-Klischee ohne vorherige Eskalation.
 - **Einloesung:** Teamwerdung, verantwortliche Kraeftenutzung und die Erkenntnis, dass die Nachwirkung des Experiments nicht nur Gefahr, sondern Charakterpruefung ist.
@@ -534,24 +670,25 @@ Scene Card
 id: SC_1_1
 title: Der letzte Pflichttermin
 pov: Auktorial, nah bei Ember
-ort: Lane Tech College Prep High School / Ankunft im Chicago Advanced Science Center
+opening: Es gibt Schulausfluege, die man vergisst, und es gibt Schulausfluege, die alles veraendern.
+ort: Lane Tech College Prep High School / Chicago Advanced Science Center
 uhrzeit: Sommer, kurz vor den Ferien
-objective: Die drei Jugendlichen als unfreiwillige Gruppe fuer den Schulausflug setzen.
-situation: Der Ausflug wirkt wie ein langweiliger Pflichttermin vor den Ferien, aber Ember, Henry und Trey sind keine eingespielte Gruppe.
+objective: Ember, Henry und Trey als unfreiwillige Gruppe setzen.
+situation: Lehrer liest Gruppen vor. Ember hoert ihren Namen direkt neben Trey.
 want: Ember will den Tag kontrolliert und ohne Peinlichkeit hinter sich bringen.
-pressure: Trey wirkt fuer Ember anstrengend, Henry zu still, und die zufaellige Gruppeneinteilung zwingt sie zusammen.
-material: Schulgruppe, Besucherbereich, Embers Schulsprecherinnen-Haltung, Henrys Brille, Treys Handy und Uhr mit Bixi
-turn: Die drei werden durch die Gruppeneinteilung kausal zusammengebunden.
-irreversible_change: Genau diese drei sind zusammen unterwegs, als spaeter der verbotene Bereich auffaellig wird.
+pressure: Ember wirkt nach aussen kontrolliert, ist innen angespannt. Trey bedeutet Chaos, Henry bedeutet Stille.
+material: Klassenliste, Lehrer, Besuchergruppe, Embers Kontrollblick, Henrys Brille, Treys Uhr mit Bixi
+turn: Aus normaler Gruppeneinteilung wird die kausale Startanordnung des Unfalls.
+irreversible_change: Genau diese drei sind zusammen unterwegs, als der Spalt in der Wartungstuer auffaellig wird.
 thread: OT002
-avoid: Nicht als generische Schulhofvorstellung schreiben; Gruppendynamik ueber Verhalten, Blick und Reibung zeigen.
+avoid: Kein Charakterdossier abladen. Ton ueber Embers Reaktion, Timing und Beobachtung herstellen.
 aftertaste: Ein normaler Tag hat eine kleine falsche Anordnung bekommen.
 ending_type: relationship_shift
 word_target_min: 1000
 word_target_max: 1400
 ```
 
-Review-only Notiz fuer Menschen: Der erste Satz aus der Quelle kann als Tonanker dienen: Es gibt Schulausfluege, die man vergisst, und Schulausfluege, die alles veraendern. Nicht zwingend wortgleich verwenden.
+Review-only Notiz fuer Menschen: Globaler Erzähler- und YA-Ton kommt aus Engine Prompt und Writer Constitution. Die Card setzt nur den konkreten Einstiegsmoment.
 
 #### Kapitel 2: „Nur kurz gucken"
 
@@ -562,13 +699,13 @@ title: Nur kurz gucken
 pov: Auktorial, nah bei Trey
 ort: Besucherbereich nahe einer Wartungstuer im Chicago Advanced Science Center
 uhrzeit: Waehrend des Schulausflugs
-objective: Bixi meldet die ungewoehnliche elektromagnetische Stoerung und Trey sieht die offene Wartungstuer.
-situation: Die Klasse ist kurz unbeaufsichtigt oder verteilt, ein Mitarbeiter kommt mit einem Rollwagen aus einer Wartungstuer, und die Tuer faellt nicht richtig ins Schloss.
+objective: Ein kleiner menschlicher Fehler oeffnet den Zugang: Ein Schraubenschluessel verkeilt eine Wartungstuer, und Bixi meldet durch den Spalt ein ungewoehnliches elektromagnetisches Signal.
+situation: Ein Halverson-Mitarbeiter verliert unbemerkt einen Schraubenschluessel. Die Wartungstuer faellt hinter ihm ins Schloss, bleibt aber einen Spalt offen.
 want: Trey will die technische Auffaelligkeit nur kurz ansehen.
-pressure: Ember will ihn zurueckholen, Henry merkt, dass es keine gute Idee ist, und Bixi weiss nicht, was die Stoerung bedeutet.
-material: Wartungstuer, Rollwagen, Treys Handy, Treys Uhr, Bixis Signal-Diagnose
-turn: Aus Neugier wird ein konkreter Regelbruch.
-irreversible_change: Ember und Henry folgen Trey in Richtung eines Bereichs, den sie nicht betreten duerfen.
+pressure: Bixi meldet ein Signal, das nicht zum Besucherbereich passt. Ember will Trey zurueckholen; Henry merkt, dass es keine gute Idee ist.
+material: Wartungstuer, ein Zentimeter Spalt, Schraubenschluessel, Rollwagen, Treys Handy, Treys Uhr, Bixis Signal-Diagnose
+turn: Trey geht durch den Spalt.
+irreversible_change: Ember und Henry folgen Trey durch die minimal verkeilte Tuer in einen Wartungskorridor, den sie nicht betreten duerfen.
 thread: OT002
 avoid: Bixi darf nicht hacken oder allwissend wirken; sie meldet nur, dass technisch etwas nicht stimmt.
 aftertaste: Neugier bekommt eine Kante, die nicht mehr ganz harmlos ist.
@@ -577,7 +714,7 @@ word_target_min: 1000
 word_target_max: 1400
 ```
 
-Review-only Notiz fuer Menschen: Erzaehler-Kommentar aus Quelle als Tonanker: Trey nannte es spaeter Neugier; Ember nannte es etwas anderes.
+Review-only Notiz fuer Menschen: Erzaehler-Kommentar aus Quelle als Tonanker: Trey nannte es spaeter Neugier; Ember nannte es etwas anderes. Wichtig: Nicht Halverson ist dumm, sondern ein einzelner Mitarbeiter hat geschludert.
 
 #### Kapitel 3: „Authorized Personnel Only"
 
@@ -586,15 +723,15 @@ Scene Card
 id: SC_1_3
 title: Authorized Personnel Only
 pov: Auktorial, Dreiergruppe
-ort: Abgesperrter Forschungsfluegel unterhalb des Besucherbereichs
+ort: Wartungskorridor und Wartungsraum hinter dem Besucherbereich
 uhrzeit: Kurz nach SC_1_2
-objective: Die drei betreten den verbotenen Bereich und belauschen ein Gespraech ueber das instabile Experiment.
-situation: Hinter der Tuer liegt kein normaler Ausstellungsbereich, sondern ein Forschungsfluegel mit Sicherheitsglas, Servern, Energieanlage und Versuchskammer.
-want: Trey will verstehen, was dort laeuft; Ember will die Situation kontrollieren; Henry will eigentlich zurueck.
-pressure: Die Verantwortlichen sprechen ueber Zeitdruck, Investoren, Instabilitaet und bewusst in Kauf genommenes Risiko.
-material: Schild AUTHORIZED PERSONNEL ONLY, Sicherheitsglas, Server, Energieanlage, unfertiges Experiment
-turn: Die Jugendlichen begreifen, dass im Gebaeude etwas Gefaehrliches laeuft.
-irreversible_change: Nach dem belauschten Gespraech ist der Bereich nicht mehr nur verboten, sondern moralisch und technisch bedrohlich.
+objective: Die drei folgen Bixis staerker werdendem Signal bis in einen Wartungsraum und belauschen dort Voss und Hartwell.
+situation: Hinter der Wartungstuer liegt ein schlichter Korridor. Am Ende steht ein Wartungsraum mit Regalen und Technik.
+want: Trey will verstehen, was dort technisch auffaellig ist; Ember will die Situation kontrollieren; Henry will eigentlich zurueck.
+pressure: Voss und Hartwell sprechen ueber Zeitdruck, Investoren, Instabilitaet und bewusst in Kauf genommenes Risiko. Dann kommen Schritte aus einer unscheinbaren Aufzugtuer.
+material: Wartungskorridor, Wartungsraum, Regale, Technik, Treys Uhr, Bixis staerkeres Signal, Voss-Hartwell-Gespraech, unscheinbare Lastenaufzugtuer
+turn: Ein Mitarbeiter kommt aus dem Aufzug; die drei verstecken sich hinter einem Regal.
+irreversible_change: Der Wartungsraum ist nicht mehr nur verboten, sondern mit Halversons unteren Bereichen verbunden.
 thread: OT007
 avoid: Keine vollstaendige Exposition im belauschten Gespraech; die drei verstehen Gegenseiten, aber nicht alle Details.
 aftertaste: Sie wissen genug, um Angst zu haben, aber nicht genug, um klug zu handeln.
@@ -603,7 +740,7 @@ word_target_min: 1100
 word_target_max: 1500
 ```
 
-Review-only Notiz fuer Menschen: Namen der zwei belauschten Personen fehlen. Nicht automatisch Voss einsetzen, falls die Quelle das nicht spaeter entscheidet.
+Review-only Notiz fuer Menschen: Das belauschte Gespraech gehoert Voss und Scott Hartwell. Die drei verstehen nicht alle Details; Hartwells Investorendruck darf anklingen, aber nicht als kompletter Infodump. Der Lastenaufzug ist normaler Servicezugang, wirkt aber im Wartungsraum fast unsichtbar.
 
 #### Kapitel 4: „Die Kammer faehrt hoch"
 
@@ -612,24 +749,24 @@ Scene Card
 id: SC_1_4
 title: Die Kammer faehrt hoch
 pov: Auktorial, nah an wechselnder Panik der drei
-ort: Versuchskammer / Sicherheitsbereich des Veridium-Projekts
+ort: Lastenaufzug / Vorraum der Versuchskammer / Sicherheitsbereich des Veridium-Projekts
 uhrzeit: Kurz nach SC_1_3
-objective: Die Jugendlichen geraten unbemerkt in den laufenden Veridium-Test.
-situation: Die Mitarbeiter starten das Experiment, ohne zu wissen, dass Ember, Henry und Trey im Sicherheitsbereich sind.
-want: Ember will sofort verschwinden, Trey analysiert die unbekannte Maschine mit Bixi, Henry merkt, dass etwas nicht stimmt.
-pressure: Die Versuchskammer faehrt hoch, bevor sie herauskommen, und Veridium Substanz X7 ist instabil.
-material: Versuchskammer, Veridium Substanz X7, Energieentladung, Treys Handy mit Bixi
-turn: Das Experiment entlaedt sich unkontrolliert und trifft alle drei.
-irreversible_change: Die drei sind dem Veridium-Aktivierungsmoment ausgesetzt; die Nachwirkungen beginnen, auch wenn sie das noch nicht wissen.
+objective: Die schliessende Aufzugtuer macht den Regelbruch unwiderruflich.
+situation: Der Mitarbeiter ist weg. Die Aufzugtuer beginnt sich automatisch zu schliessen. Trey rennt zuerst hinein, Ember folgt, Henry folgt.
+want: Ember will sofort heraus, Trey will verstehen, was gerade passiert, Henry will nicht getrennt werden.
+pressure: Niemand drueckt einen Knopf. Der Aufzug faehrt nach unten, das System riegelt ab, und die drei landen im Vorraum der Versuchskammer.
+material: schliessende Aufzugtuer, enger Lastenaufzug, Treys Handy mit Bixi, abfallende Anzeige, Vorraum der Versuchskammer, Veridium Substanz X7, Energieentladung
+turn: Die Mitarbeiter starten das Experiment, ohne zu wissen, dass die drei unten sind.
+irreversible_change: Die drei sind eingeschlossen und dem Veridium-Aktivierungsmoment ausgesetzt; die Nachwirkungen beginnen, auch wenn sie das noch nicht wissen.
 thread: OT001
-avoid: Nicht als Superhelden-Geburtsfeuerwerk ueberhoehen; der Moment dauert nur kurz und wirkt zunaechst verwirrend.
+avoid: Nicht als Superhelden-Geburtsfeuerwerk ueberhoehen; der Moment dauert nur kurz und wirkt zunaechst eng, laut, klaustrophobisch und verwirrend. Trey hat keinen Knopf gedrueckt und Bixi hat nichts gehackt.
 aftertaste: Alles scheint vorbei zu sein, aber der Titel hat gerade begonnen.
 ending_type: moral_reframe
 word_target_min: 1200
 word_target_max: 1600
 ```
 
-Review-only Notiz fuer Menschen: Das Experiment ist keine Superkraft-Maschine. Genau diese Negativgrenze schuetzt die Praemisse.
+Review-only Notiz fuer Menschen: Das Experiment ist keine Superkraft-Maschine. Genau diese Negativgrenze schuetzt die Praemisse. Der Aufzug ist der Unwiderruflichkeitsmoment: Vorher haetten sie umkehren koennen; danach sind sie eingeschlossen.
 
 #### Kapitel 5: „Alles scheint gut"
 
@@ -640,13 +777,13 @@ title: Alles scheint gut
 pov: Auktorial, nah bei Henry
 ort: Rueckweg aus dem abgesperrten Bereich / Anschluss an die Schulklasse
 uhrzeit: Unmittelbar nach SC_1_4
-objective: Die drei verlassen den gesperrten Bereich und schliessen sich wieder der Klasse an.
-situation: Das Experiment ist nach wenigen Momenten beendet, die Jugendlichen sind verwirrt, aber koerperlich scheinbar unverletzt.
+objective: Die drei kehren scheinbar unverletzt zur Klasse zurueck.
+situation: Das Experiment ist vorbei. Die Jugendlichen sind verwirrt, aber koerperlich scheinbar in Ordnung.
 want: Henry will, dass niemand merkt, wo sie waren und was passiert ist.
 pressure: Sie wissen nicht, ob sie beobachtet wurden, was das Experiment war oder ob sie jemandem davon erzaehlen koennen.
 material: Flur aus dem Sicherheitsbereich, Schulklasse, Henrys Brille, unterdrueckte Panik
 turn: Der Vorfall wird nicht sofort zur offenen Katastrophe, sondern zu einem Geheimnis.
-irreversible_change: Die drei tragen denselben unausgesprochenen Vorfall mit zurueck in den normalen Schulausflug.
+irreversible_change: Die drei tragen denselben unausgesprochenen Vorfall in den normalen Schulausflug zurueck.
 thread: OT003
 avoid: Keine sofortige Kraefte-Erklaerung; die Figuren wissen zu diesem Zeitpunkt nicht, welche Auswirkungen das Experiment hatte.
 aftertaste: Normalitaet wirkt wiederhergestellt, aber nicht mehr glaubwuerdig.
@@ -666,33 +803,34 @@ title: Nachwirkungen
 pov: Auktorial, rotierend zwischen Ember, Henry und Trey
 ort: Schule und Alltag der drei nach dem Ausflug
 uhrzeit: Einige Tage nach dem Ausflug
-objective: Die ersten kleinen, irritierenden Veraenderungen fuehren die drei wieder zusammen.
-situation: Zuerst scheint alles normal, dann merken Ember, Henry und Trey nach und nach, dass etwas mit ihnen nicht stimmt.
-want: Die drei wollen herausfinden, was passiert ist, was das Experiment veraendert hat und ob sie jemandem davon erzaehlen koennen.
+objective: Kleine, irritierende Veraenderungen fuehren die drei wieder zusammen.
+situation: Embers Stimme wirkt im Flur zu stark. Henry wird vor Zoe scheinbar nicht gesehen. Treys Wut bringt Lampe, Handy und Bixi zum Flimmern.
+want: Die drei wollen herausfinden, was mit ihnen passiert ist.
 pressure: Die Veraenderungen sind noch keine klaren Superkraefte, sondern unkontrolliert, peinlich oder technisch/sozial schwer erklaerbar.
-material: Schule, Nachrichten oder Treffen nach der Schule, Embers Stimme, Henrys Licht/Wahrnehmung, Treys reagierende Technik
+material: Schule, Nachrichten oder Treffen nach der Schule, Embers Stimme im Zoff mit einer Mitschuelerin, Zoe im Flur, Henrys Licht/Wahrnehmung, Treys Zimmer, gestrichene The-Weeknd-Tickets, Lampe, Handy, Bixis flimmerndes Display
 turn: Aus zufaelligen Klassenkameraden wird eine geheime Arbeitsgruppe.
-irreversible_change: Ember, Henry und Trey suchen aktiv Kontakt zueinander und beginnen, ihre Veraenderungen gemeinsam zu beobachten.
+irreversible_change: Ember, Henry und Trey suchen aktiv Kontakt zueinander und beobachten ihre Veraenderungen gemeinsam.
 thread: OT001
-avoid: Erste Manifestationen nicht zu gross machen; Quelle verlangt klein und irritierend, nicht sofort kampftauglich.
+avoid: Erste Manifestationen nicht zu gross machen; sie bleiben sozial peinlich, irritierend und schwer erklaerbar, nicht sofort kampftauglich.
 aftertaste: Freundschaft beginnt nicht warm, sondern als notwendige gemeinsame Beunruhigung.
 ending_type: relationship_shift
 word_target_min: 1200
 word_target_max: 1600
 ```
 
-Review-only Notiz fuer Menschen: [FEHLT: erste konkrete Szene, in der jede Superkraft sichtbar wird. Diese Karte darf erst finalisiert werden, wenn pro Figur ein konkreter erster Ausloeser, sichtbarer Effekt und sozialer Preis entschieden ist.]
+Review-only Notiz fuer Menschen: Gesetzte erste Manifestationen: Ember im Pausenflur/Zoff, Henry bei Zoe im Flur, Trey nach Streit mit seinem Vater wegen gestrichener The-Weeknd-Tickets. Harte Kosten und Grenzen bleiben noch offen.
 
-### ACT 2 — „[FEHLT: Act-2-Titel]"
+### ACT 2 — „Sommerferien und wachsende Bedrohung"
 
 Keine finalen Scene Cards in der Quelle. Vor dem Import weiterer Kapitel muessen mindestens diese Entscheidungen fallen:
 
 - erster Trainingsort nach der Schule
-- erste konkrete Manifestationsszene fuer Ember
-- erste konkrete Manifestationsszene fuer Henry
-- erste konkrete Manifestationsszene fuer Trey
-- erster aktiver Zugriff der Organisation auf die Jugendlichen
+- konkrete Ausarbeitung von K7 Ferienfeeling / Diego / Lake Michigan
+- konkrete Ausarbeitung von K8 Halverson-Kennzeichen / schwarzer SUV / Bixi-Warnung
+- erster aktiver Zugriff der Halverson Group auf die Jugendlichen
 - Dr. Charters Wissensstand und Hilfsmoeglichkeit
+- Dr.-Charter-Keller: gemeinsames Hobby, Hilfsgeraet und reagierendes Messgeraet festlegen
+- Diego ohne Kraefte sinnvoll in die Gruppe einbauen
 
 ### ACT 3 — „[FEHLT: Act-3-Titel]"
 
@@ -714,7 +852,7 @@ Diese Sektion ist Human-/Review-Hilfe. Sie ersetzt keine Scene Cards.
 
 **Writer Summary**
 
-Der Ausflug ins Chicago Advanced Science Center beginnt als letzter Pflichttermin vor den Sommerferien. Ember, Henry und Trey sind Klassenkameraden, aber keine Freunde; ihre Reibung ist bereits sichtbar. Die Gruppeneinteilung zwingt genau diese drei zusammen und macht aus Alltag die kausale Startanordnung des Unfalls.
+Der Ausflug ins Chicago Advanced Science Center beginnt als letzter Pflichttermin vor den Sommerferien. Ember Blake, Henry Mills und Trey Coleman sind Klassenkameraden, aber keine Freunde; ihre Reibung ist bereits sichtbar. Die Gruppeneinteilung zwingt genau diese drei zusammen und macht aus Alltag die kausale Startanordnung des Unfalls.
 
 **Director Note**
 
@@ -724,31 +862,31 @@ Fokus: Gruppendynamik und Ton. Nicht tun: lange Charakterdossiers abladen. Mater
 
 **Writer Summary**
 
-Bixi meldet eine ungewoehnliche elektromagnetische Stoerung hinter einer Wartungstuer, die nach einem Mitarbeiter mit Rollwagen nicht richtig ins Schloss faellt. Trey will nur kurz schauen, Ember folgt, um ihn aufzuhalten, Henry folgt, weil er merkt, dass es keine gute Idee ist. Der Regelbruch entsteht nicht aus Mut, sondern aus Neugier, Kontrolle und Zoegern.
+Bixi meldet eine ungewoehnliche elektromagnetische Stoerung hinter einer Wartungstuer, die nicht richtig geschlossen ist, weil ein vom Rollwagen gefallener Schraubenschluessel sie minimal verkeilt. Trey sieht den Spalt und will nur kurz schauen, Ember folgt, um ihn aufzuhalten, Henry folgt, weil er merkt, dass es keine gute Idee ist. Der Regelbruch entsteht nicht aus Mut, sondern aus Neugier, Kontrolle, Zoegern und einem kleinen menschlichen Fehler.
 
 **Director Note**
 
-Fokus: Plausibilitaet des Zugangs. Nicht tun: Bixi hackt keine geheimen Systeme. Ende: Die Tuer ist nicht mehr nur Tuer, sondern Entscheidung.
+Fokus: Plausibilitaet des Zugangs. Nicht tun: Bixi hackt keine geheimen Systeme, Halverson wirkt nicht dumm. Ende: Die Tuer ist nicht mehr nur Tuer, sondern Entscheidung.
 
 ### Kapitel 3 — „Authorized Personnel Only"
 
 **Writer Summary**
 
-Im abgesperrten Forschungsfluegel sehen die drei, dass hinter dem Besucherbereich echte Forschung laeuft. Sie belauschen ein Gespraech ueber Zeitdruck, Investoren, ein instabiles Experiment und in Kauf genommenes Risiko. Sie verstehen nicht alles, aber genug, um zu wissen, dass sie an einem gefaehrlichen Ort sind.
+Hinter der Wartungstuer liegt erst ein schlichter Korridor, dann ein unspektakulaerer Wartungsraum mit Regalen und Technik. Bixis Signal wird auf Treys Uhr staerker. Dort belauschen sie Dr. Evelyn Voss und Scott Hartwell in einem Gespraech ueber Zeitdruck, Investoren, ein instabiles Experiment und in Kauf genommenes Risiko. Dann kommt ein Mitarbeiter aus einer unscheinbaren Aufzugtuer im Wartungsraum, und die drei verstecken sich hinter einem Regal.
 
 **Director Note**
 
-Fokus: Bedrohung ohne Infodump. Nicht tun: alle Geheimnisse im Gespraech erklaeren. Material: Sicherheitsglas, Server, Energieanlage, Schild, Versuchskammer.
+Fokus: Bedrohung ohne Infodump und klaustrophobische Annaeherung. Nicht tun: alle Geheimnisse im Gespraech erklaeren. Material: Wartungskorridor, Wartungsraum, Regale, Treys Uhr, Bixi-Signal, unscheinbare Lastenaufzugtuer.
 
 ### Kapitel 4 — „Die Kammer faehrt hoch"
 
 **Writer Summary**
 
-Die Mitarbeiter starten das Experiment, ohne von den Jugendlichen im Sicherheitsbereich zu wissen. Trey analysiert mit Bixi, Ember draengt zum Gehen, Henry spuert, dass etwas nicht stimmt. Die Versuchskammer faehrt hoch, Veridium Substanz X7 entlaedt sich, und die drei werden getroffen.
+Nachdem der Mitarbeiter verschwunden ist, beginnt die Lastenaufzugtuer automatisch zu schliessen. Trey rennt zuerst hinein, Ember folgt, um ihn aufzuhalten, Henry folgt, weil er nicht allein zurueckbleiben will. Niemand drueckt einen Knopf; der Aufzug faehrt von selbst tief nach unten. Unten riegelt das System wegen einer Ueberladung ab. Die Mitarbeiter starten das Experiment, ohne von den Jugendlichen im Vorraum der Versuchskammer zu wissen. Veridium Substanz X7 entlaedt sich, und die drei werden getroffen.
 
 **Director Note**
 
-Fokus: kurzer, harter Unfall statt Superhelden-Oper. Nicht tun: Kraefte erklaeren oder kontrolliert zeigen. Ende: Die Nachwirkung ist gesetzt, obwohl niemand sie erkennt.
+Fokus: kurzer, harter, enger Unfall statt Superhelden-Oper. Nicht tun: Kraefte erklaeren oder kontrolliert zeigen. Der Aufzug ist der Punkt ohne Rueckweg. Ende: Die Nachwirkung ist gesetzt, obwohl niemand sie erkennt.
 
 ### Kapitel 5 — „Alles scheint gut"
 
@@ -764,30 +902,29 @@ Fokus: Rueckkehr in Normalitaet, die nicht mehr stimmt. Nicht tun: sofortige Org
 
 **Writer Summary**
 
-Einige Tage nach dem Ausflug merken Ember, Henry und Trey nach und nach, dass etwas mit ihnen nicht stimmt. Die Veraenderungen zeigen sich klein und irritierend. Weil alle drei beim selben Vorfall waren, suchen sie in der Schule wieder Kontakt und beginnen, sich nach der Schule regelmaessig zu treffen.
+Einige Tage nach dem Ausflug merken Ember, Henry und Trey nach und nach, dass etwas mit ihnen nicht stimmt. Embers Stimme wirkt im Pausenflur zu stark, Henry verschwindet vor Zoes Blick, und Treys Wut laesst Lampe, Handy und Bixi flimmern. Weil alle drei beim selben Vorfall waren, suchen sie in der Schule wieder Kontakt und beginnen, sich nach der Schule regelmaessig zu treffen.
 
 **Director Note**
 
-Fokus: Der Team-Anfang entsteht aus Problem-Teilung, nicht aus sofortiger Freundschaft. Nicht tun: volle Kampfrollen vorwegnehmen. Material: Embers Stimme, Henrys Lichtbrechung, Treys reagierende Technik. [FEHLT: konkrete Manifestationsmomente.]
+Fokus: Der Team-Anfang entsteht aus Problem-Teilung, nicht aus sofortiger Freundschaft. Nicht tun: volle Kampfrollen vorwegnehmen. Material: Embers Stimme im Streit, Henrys Lichtbrechung vor Zoe, Treys reagierende Technik nach dem Streit um gestrichene The-Weeknd-Tickets.
 
 ---
 
 ## LUECKEN VOR IMPORT / BRAINSTORMING-AUFTRAEGE
 
 - **Autorname fehlt:** In der Regie steht derzeit `[FEHLT: Autorname eintragen.]`.
-- **Ziel-Wortanzahl fehlt:** Entscheiden, ob Aftershock kurzer YA-Roman, voller YA-Serienauftakt oder anderes Format wird.
-- **Nachnamen fehlen:** Ember, Henry und Trey haben keine Nachnamen.
 - **Treys finanzieller Alltag fehlt:** Sein Vater hat den Job verloren und die Familie steht unter Druck. Es muss noch entschieden werden, wie sichtbar dieser Druck in Schule, Kleidung, Technik, Zuhause und Familiengespraechen wird.
-- **Organisation fehlt:** Name, Struktur, Befugnisse, Geldgeber und oeffentliche Tarnung der Organisation hinter dem Veridium-Projekt fehlen.
+- **Halverson-Befugnisse fehlen:** Name und Grundstruktur sind gesetzt; konkrete rechtliche/technische Befugnisse, Geldgeber und oeffentliche Tarnung der Halverson Group fehlen.
 - **Experiment-Zweck fehlt teilweise:** Veridium-Stabilisierung ist gesetzt, aber der genaue Versuchsaufbau und die konkrete Hypothese fehlen.
 - **Investoren fehlen:** Quelle nennt Investoren, aber keine Namen, Art oder Interessen.
-- **Belauschte Personen fehlen:** Namen und Funktionen der zwei Personen im verbotenen Bereich sind offen.
 - **Kraeftegrenzen fehlen:** Reichweite, Erschoepfung, Nebenwirkungen, Gegenmittel, Kontrollverlust und harte Kosten pro Kraft muessen definiert werden.
-- **Erste Manifestationen fehlen:** Fuer Ember, Henry und Trey braucht es je eine konkrete erste Szene mit Ausloeser, sichtbarem Effekt, sozialem Preis und Nachhall.
 - **Trainingsort fehlt:** Erster Trainingsort nach der Schule ist offen.
-- **Dr. Charter fehlt Tiefe:** Wissensstand, Grenzen und konkrete Hilfsmoeglichkeit muessen geklaert werden.
+- **Dr. Charter fehlt Tiefe:** Wissensstand, Grenzen, gemeinsames Hobby mit Trey, Hilfsgeraet und das reagierende Kellergeraet muessen geklaert werden.
 - **Dr. Voss fehlt Eskalationsbogen:** Wie weit sie geht, was sie nicht tun kann oder will und ob sie reine Gegenspielerin bleibt, ist offen.
-- **Act 2 und Act 3 fehlen als konkrete Kapitelstruktur:** Die Quelle nennt Richtungen, aber keine ausformulierten Szenen.
+- **Scott Hartwell fehlt spaetere Funktion:** Er ist als Projektmanager X7 gesetzt, aber noch nicht, ob er spaeter eskaliert, einknickt oder hilft.
+- **Diego fehlt Funktionsausarbeitung:** Diego ist gesetzt und wird in Act 2 eingeweiht; offen ist, wie er ohne Kraefte in Act 2 und Act 3 konkret hilft.
+- **Zoe fehlt Rollenentscheidung:** Zoe loest Henrys erste Manifestation aus; offen ist, ob sie Randfigur bleibt oder mehr wird.
+- **Act 2 und Act 3 fehlen als konkrete Kapitelstruktur:** Die Quelle nennt K7, K8, K9-K11 und K15-K20 grob, aber keine ausformulierten Szenen.
 - **Cover-/Marktpositionierung fehlt:** Comp Titles, Amazon Goal und Cover-Richtung muessen noch entschieden werden.
 
 ---

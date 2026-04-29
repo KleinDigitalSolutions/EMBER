@@ -18,6 +18,8 @@ export function deriveYaSuperheroOriginLockedFacts(params: YaSuperheroOriginLock
   profile: BookYaSuperheroOriginLockedFacts;
 } {
   const teamMemberNames = deriveYaSuperheroTeamMemberNames(params.characters, params.engineMode);
+  const institutionNames = deriveInstitutionNames(params.signalText);
+  const organizationName = deriveOrganizationName(params.signalText);
 
   if (params.engineMode !== "ya_superhero_origin") {
     return {
@@ -29,7 +31,7 @@ export function deriveYaSuperheroOriginLockedFacts(params: YaSuperheroOriginLock
   return {
     common: {
       protagonistNames: teamMemberNames,
-      institutionNames: deriveInstitutionNames(params.signalText),
+      institutionNames: uniqueStrings(institutionNames.concat(organizationName ? [organizationName] : [])),
       keyObjectNames: uniqueStrings([
         deriveSubstanceName(params.signalText),
         deriveAiCompanionName(params.signalText)
@@ -41,8 +43,8 @@ export function deriveYaSuperheroOriginLockedFacts(params: YaSuperheroOriginLock
       teamMemberNames,
       substanceName: deriveSubstanceName(params.signalText),
       aiCompanionName: deriveAiCompanionName(params.signalText),
-      experimentLocation: deriveInstitutionNames(params.signalText)[0] ?? null,
-      organizationName: deriveOrganizationName(params.signalText),
+      experimentLocation: institutionNames[0] ?? null,
+      organizationName,
       triggerEvent: findSentence(params.signalText, /\b(?:energieentladung|entlaedt|entlädt|getroffen|ausgesetzt|exponiert|aktivierung)\b/i),
       accidentMechanism: findSentence(params.signalText, /\b(?:entlaedt|entlädt|trifft|getroffen|ausgesetzt|exponiert)\b/i),
       powerOrigin: findSentence(params.signalText, /\b(?:kraefte|kräfte|power|powers)\b.*\b(?:nebeneffekt|unfall|experiment|kontakt|ausgesetzt|exponiert)\b/i)
@@ -153,7 +155,7 @@ function deriveYaSuperheroTeamMemberNames(
         return false;
       }
 
-      return !/ki|assistenz|leiter|organisation|gegenkraft|mentor|erwachsen/.test(normalizedRole);
+      return !/ki|assistenz|leiter|organisation|gegenkraft|mentor|erwachsen|keine kr(?:a|ae)fte|ohne kr(?:a|ae)fte|schwarm|ausl(?:o|oe)ser|sozialer druck|projektmanager|manager/.test(normalizedRole);
     })
     .map(function (character) {
       return character.name;
@@ -247,6 +249,15 @@ function deriveAiCompanionName(value: string) {
 }
 
 function deriveOrganizationName(value: string) {
+  const organizationName = matchSingle(
+    value,
+    /\b([A-ZÄÖÜ][\p{L}0-9.'-]+(?:\s+[A-ZÄÖÜ][\p{L}0-9.'-]+){0,4}\s+(?:Group|Corporation|Corp|Labs|Industries|Research|Foundation|Institute|Institut|GmbH|AG))\b/u
+  );
+
+  if (organizationName) {
+    return cleanFactName(organizationName);
+  }
+
   const organizationSentence = findSentence(
     value,
     /\b(?:organisation|auftraggeber|investoren|projektstruktur|forschungsorganisation)\b/i
