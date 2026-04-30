@@ -2,15 +2,15 @@ import { SampleReader, type SampleReaderScene } from "@/components/sample-reader
 
 const sceneOneParagraphs = [
   "Es gibt Schulausflüge, die man vergisst. Und es gibt Schulausflüge, die alles verändern. Das hier war der zweite Typ.",
-  "Der Bus roch nach Sonnencreme, billigem Energydrink und der nervösen Vorfreude von zweiunddreißig Jugendlichen, die in zwei Wochen Sommerferien haben würden. Ember Blake saß in der dritten Reihe, links am Fenster, Rücken gerade, Block auf den Knien, weil sie sich angewöhnt hatte, auch bei Pflichtterminen so auszusehen, als wäre der Termin freiwillig. Lane Tech glitt hinter ihnen weg, dann der Lake Shore Drive, dann eine Werbetafel, die irgendetwas über die Zukunft versprach. Ember mochte Werbetafeln über die Zukunft nicht. Sie waren ihr zu unkonkret.",
-  "Hinter ihr, drei Reihen weiter, lachte Trey Coleman zu laut über etwas, das sein Handgelenk gesagt hatte. Das war nicht metaphorisch. Trey trug eine selbstgebaute Uhr, auf der eine selbstgebaute KI lebte, die er Bixi getauft hatte und die offenbar Witze machte. Oder etwas, das Trey für Witze hielt. Ember hatte noch nicht entschieden, was sie schlimmer fand: dass Trey mit seiner Uhr sprach, oder dass die Uhr zurücksprach, oder dass Trey ihr beides erklären wollen würde, sobald sie zufällig in seine Reichweite geriet.",
+  "Der Bus roch nach Sonnencreme, billigem Energydrink und der nervösen Vorfreude von zweiunddreißig Jugendlichen, für die in zwei Tagen die Sommerferien beginnen würden. Ember Blake saß in der dritten Reihe, links am Fenster, Rücken gerade, Block auf den Knien, weil sie sich angewöhnt hatte, auch bei Pflichtterminen so auszusehen, als wäre der Termin freiwillig. Lane Tech glitt hinter ihnen weg, dann der Lake Shore Drive, dann eine Werbetafel, die irgendetwas über die Zukunft versprach. Ember mochte Werbetafeln über die Zukunft nicht. Sie waren ihr zu unkonkret.",
+  "Hinter ihr, drei Reihen weiter, lachte Trey Coleman zu laut über etwas, das sein Handgelenk gesagt hatte. Das war nicht metaphorisch. Trey trug eine selbstgebaute Uhr, auf der eine selbst programmierte KI lebte, die er Bixi getauft hatte und die offenbar Witze machte. Oder etwas, das Trey für Witze hielt. Ember hatte noch nicht entschieden, was sie schlimmer fand: dass Trey mit seiner Uhr sprach, oder dass die Uhr zurücksprach, oder dass Trey ihr beides erklären wollen würde, sobald sie zufällig in seine Reichweite geriet.",
   "Sie nahm sich vor, nicht in seine Reichweite zu geraten.",
   "Henry Mills saß irgendwo. Ember hätte nicht sagen können, wo. Henry hatte das Talent, in Bussen, Klassenzimmern und Gruppenfotos so präsent zu sein wie ein leerer Stuhl. Sie sah ihn erst, als sie ausstiegen, und auch nur, weil er sich an seiner Brille festhielt, während ein Wind, den es im Sommer in Chicago eigentlich nicht geben sollte, durch die Lücke zwischen den Hochhäusern fuhr.",
   "Das Chicago Advanced Science Center war größer, als die Fotos auf der Schulwebsite vermuten ließen. Eine Glasfassade, die in der Vormittagssonne so tat, als verberge sie keinen Beton. Über dem Eingang ein Logo, das nach drei Workshops und einer Marketingagentur aussah. Drinnen, hinter einer Drehtür, ein Foyer mit einem Modell der Galaxie, das langsam rotierte, ein Empfangstresen aus Eiche, eine Besuchergruppe in farbigen Lanyards und der typische Geruch von Klimaanlage und Bodenreiniger.",
-  "\"Bleibt bitte zusammen\", sagte der Lehrer, der es bereits aufgegeben hatte, dabei streng zu klingen. Er hatte eine Klassenliste in der Hand, ein laminiertes Programm und den Gesichtsausdruck eines Mannes, der noch acht Schultage vor sich hatte. \"Ich teile euch jetzt in Dreiergruppen ein. Die Gruppen bleiben den ganzen Vormittag zusammen. Den ganzen Vormittag, Coleman.\"",
+  "\"Bleibt bitte zusammen\", sagte der Lehrer, der es bereits aufgegeben hatte, dabei streng zu klingen. Er hatte eine Klassenliste in der Hand, ein laminiertes Programm und den Gesichtsausdruck eines Mannes, der noch zwei Schultage vor sich hatte. \"Ich teile euch jetzt in Dreiergruppen ein. Die Gruppen bleiben den ganzen Vormittag zusammen. Den ganzen Vormittag, Coleman.\"",
   "\"Ich hab nichts gesagt\", sagte Trey.",
   "\"Du hast geatmet.\"",
-  "Ember unterdrückte ein Lächeln, weil sie sich angewöhnt hatte, Lehrerwitze nicht zu belohnen. Stattdessen öffnete sie ihren Block, schrieb das Datum oben in die Ecke, unterstrich es einmal, und dachte an die zwei Möglichkeiten, wie dieser Vormittag verlaufen konnte: effizient, oder lang.",
+  "Ember unterdrückte ein Lächeln, stattdessen öffnete sie ihren Block, schrieb das Datum oben in die Ecke, unterstrich es einmal, und dachte an die zwei Möglichkeiten, wie dieser Vormittag verlaufen konnte: effizient, oder lang.",
   "Der Lehrer las Namen vor. Drei. Drei. Drei.",
   "\"Blake, Coleman, Mills.\"",
   "Ember hörte ihren Nachnamen, und für einen Moment war es, als hätte jemand die Lautstärke des Foyers leise gedreht. Sie sah nicht hin. Sie musste nicht hinsehen. Sie hörte Trey, weil Trey ein Geräusch machte. Es war kein Wort, eher ein Hm-okay, so ein nasaler Laut, der gleichzeitig amüsiert und beleidigt klang.",
@@ -37,7 +37,7 @@ const sceneOneParagraphs = [
   "\"Ich hatte nicht gefragt\", sagte Trey.",
   "\"Du wolltest gleich fragen.\"",
   "Trey sah Ember an, als hätten sie gerade ein Erlebnis geteilt. Ember sah nicht zurück.",
-  "Sie gingen weiter. Henry hielt sich am hinteren Rand der Gruppe, Ember in der Mitte, Trey vorn, weil Trey immer dort war, wo es etwas zu sehen gab. Die Frau erklärte etwas über Materialforschung, über die Geschichte des Gebäudes, über einen Architekten, der Glas gemocht hatte. Ember hörte zu und nicht zu. Sie hatte eine innere Frequenz, auf der sie Vorträge abspeicherte, ohne sie wirklich zu erleben.",
+  "Sie gingen weiter. Henry hielt sich am hinteren Rand der Gruppe, Ember in der Mitte, Trey vorn, weil Trey immer vorn war, wenn es vorn etwas zu sehen gab. Die Frau erklärte etwas über Materialforschung, über die Geschichte des Gebäudes, über einen Architekten, der Glas gemocht hatte. Ember hörte zu und nicht zu. Es gab eine Frequenz, auf der sie Vorträge abspeicherte, ohne sie wirklich zu erleben.",
   "Auf der rechten Seite des Gangs, ungefähr in Höhe der dritten Tür, war etwas falsch.",
   "Ember sah es zuerst nicht, dann doch. Eine Tür, schwerer als die anderen, ohne Lampe, mit einem grauen Schild auf Augenhöhe. Dunkler Hintergrund, weiße Schrift.",
   "AUTHORIZED PERSONNEL ONLY.",
@@ -54,7 +54,6 @@ const sceneOneParagraphs = [
   "Henry schob die Brille hoch und sah sehr angestrengt so aus, als wäre er nicht Teil dieser Gruppe.",
   "Der Vormittag hatte begonnen wie geplant. Das war das Problem mit Plänen. Sie merkten meistens zuletzt, dass sie vorbei waren."
 ];
-
 const sceneTwoParagraphs = [
   "Trey blieb vor der Vitrine mit den ausgestellten Schaltkreisen stehen, weil er sehen wollte, ob die ein echtes Board zeigten oder nur eine Attrappe aus dem Geschäft. Eine Attrappe. Natürlich. Er drehte sich auf dem Absatz, fertig damit, und genau in diesem Moment vibrierte seine Uhr.",
   "Nicht der normale Puls einer Nachricht. Drei kurze Stöße, einer länger.",
@@ -130,24 +129,27 @@ const sceneTwoParagraphs = [
   "Hinter ihnen fiel die Tür nicht ins Schloss. Der Schraubenschlüssel lag, wo Trey ihn wieder abgelegt hatte, halb auf der Schwelle, halb auf dem grauen Bodenbelag des Korridors, in dem sie nichts zu suchen hatten. Die Tür ruhte auf dem Werkzeug, einen Zentimeter offen. Genau wie vorher.",
   "Bixis Kurve zappelte weiter. Trey wischte sie mit dem Daumen weg und ging um die Ecke."
 ];
-
 const sceneThreeParagraphs = [
   "Der Korridor war enttäuschend.",
   "Trey hatte sich hinter der Wartungstür mehr erwartet. Etwas mit Warnschildern in einer Sprache, die er nicht las. Stattdessen graue Wände, ein graues Linoleum, eine Reihe schmaler Deckenleuchten, von denen jede zweite an war. Es roch nicht einmal interessant. Es roch nach nichts.",
-  "\"Glückwunsch\", flüsterte Ember Blake hinter ihm. \"Du hast einen Flur entdeckt.\"",
+  "\"Glückwunsch\", flüsterte Ember hinter ihm. \"Du hast einen Flur entdeckt.\"",
   "\"Es geht weiter.\"",
-  "\"Es geht zurück\", sagte Henry Mills.",
+  "„Ich glaube ... wir sollten zurück\", murmelte Henry.",
   "Trey hörte ihn nicht. Er hatte die Uhr schon wieder am Handgelenk gedreht, das kleine Display nach innen, weil er die Anzeige so besser erkennen konnte, wenn er die Hand etwas hob. Bixis Indikator zeigte zwei Balken. Vor der Tür hatte er nur einen angezeigt.",
-  "\"Bixi sagt, hier ist mehr Funk.\"",
-  "\"Bixi ist eine App, die du selbst geschrieben hast\", sagte Ember.",
-  "\"Eben.\"",
-  "Sie hatte darauf nichts. Trey ging schon weiter. Henry sah sich nach hinten um, zur Wartungstür, in deren Spalt der Schraubenschlüssel klemmte, den niemand hingelegt hatte, damit drei Schüler ihn benutzten. Der Spalt war von hier aus ein dünner heller Strich. Nicht weit. Aber doch weit genug, dass Henry zwei Schritte rechnete, bevor er sie laut sagte.",
+  "„Bixi sagt, hier drin ist das RF-Signal stärker.\"",
+  "„RF?\", flüsterte Henry.",
+  "„Radiofrequenz\", sagte Trey, als würde das irgendetwas besser machen.",
+  "„Bixi ist eine App, die du selbst geschrieben hast\", sagte Ember.",
+  "„Eben.\"",
+  "Ausnahmsweise fiel Ember darauf nichts ein.",
+  "Trey ging schon weiter. Henry sah sich nach hinten um, zur Wartungstür, in deren Spalt der Schraubenschlüssel klemmte, den niemand hingelegt hatte, damit drei Schüler ihn benutzten. Der Spalt war von hier aus ein dünner heller Strich. Nicht weit. Aber doch weit genug, dass Henry zwei Schritte rechnete, bevor er sie laut sagte.",
   "\"Ember.\"",
   "\"Ich weiß.\"",
   "\"Du gehst auch weiter.\"",
   "\"Damit er nichts kaputt macht.\"",
   "Henry folgte. Er folgte immer.",
   "Der Korridor knickte einmal nach links, und dahinter wurde er kürzer, als Trey gehofft hatte. Eine Tür, leicht offen, ein Spalt, in dem Licht stand. Davor blieb er stehen, weil drinnen jemand sprach.",
+  "Durch den Spalt kamen die Stimmen nur in Stücken. Genug, um neugierig zu werden. Nicht genug, um klug zu sein.",
   "Eine Frauenstimme. Ruhig, abgemessen. \"— bis Freitag. Das ist nicht verhandelbar, Scott.\"",
   "\"Ich verhandle nicht. Ich sage dir, dass es so nicht trägt.\" Eine Männerstimme, tiefer, aufgerieben. \"Die Werte aus der zweiten Reihe waren —\"",
   "\"Ich habe die Werte gesehen.\"",
@@ -211,15 +213,14 @@ const sceneThreeParagraphs = [
   "Trey öffnete den Mund und schloss ihn wieder. Das war, gerade noch, das Klügste, was er heute getan hatte.",
   "Hinter ihnen, im Korridor, ging niemand zurück."
 ];
-
 const sceneFourParagraphs = [
   "Die Tür des Lastenaufzugs setzte sich in Bewegung, ohne dass jemand sie dazu aufgefordert hätte. Ein nüchternes, mechanisches Geräusch, kein Warnton, kein Blinken, nur das schmale Surren der Schiene, an der die Stahlplatte entlangglitt.",
-  "Trey Coleman drehte den Kopf zuerst.",
+  "Trey drehte den Kopf zuerst.",
   "\"Warte, warte, warte.\"",
   "Er sagte es zu niemandem. Vielleicht zur Tür. Er stand im Korridor, das Handy schräg in der Hand, Bixi noch offen, und in dem Moment, in dem die Türhälften sich aufeinander zubewegten, machte er den Schritt, den er später nicht mehr richtig erklären konnte. Nicht hinein, nicht hinaus. Nur einen Schritt zu weit.",
   "\"Trey.\" Embers Stimme war scharf, weil sie scharf sein musste. \"Komm da raus.\"",
   "Sie ging hinterher. Drei Schritte, die sich nicht wie eine Entscheidung anfühlten, eher wie eine Korrektur. Sie hatte den ganzen Vormittag damit verbracht, Trey aus Räumen zu holen, in denen er nichts zu suchen hatte, und sie sah keinen Grund, jetzt damit aufzuhören.",
-  "Henry Mills blieb eine Sekunde stehen.",
+  "Henry blieb eine Sekunde stehen.",
   "Eine Sekunde, in der er den leeren, halbdunklen Wartungskorridor sah, das schwache Summen einer Lüftung hörte und dahinter den Aufzug mit den beiden anderen darin, und sich selbst, allein, an einem Ort, an dem er nicht sein durfte. Er ging hinterher, weil das die kürzere Variante war. Die Tür schloss sich hinter ihm, und in der Sekunde, in der das Schloss einrastete, dachte er, dass er wirklich gerade in einen geschlossenen Aufzug gestiegen war, in dem niemand einen Knopf gedrückt hatte.",
   "\"Okay\", sagte Trey. \"Okay, das ist –\"",
   "Die Kabine ruckte.",
@@ -227,7 +228,7 @@ const sceneFourParagraphs = [
   "\"Wer hat gedrückt?\" Ember sah Trey an. \"Trey. Hast du was gedrückt.\"",
   "\"Nein.\" Er hob beide Hände, das Handy mit. \"Ich schwöre. Ich schwöre, ich –\"",
   "\"Trey.\"",
-  "\"Ich habe gar nichts angefasst, Ember Blake, ich war an der Tür, ich –\"",
+  "\"Ich habe gar nichts angefasst, Ember, ich war an der Tür, ich –\"",
   "Sie drehte sich zur Bedienleiste. Zwei Schalter, ein Schlüsselloch, ein roter Knopf, alles ohne Beschriftung oder mit einer Beschriftung in einem Code, der nicht für Schulausflüge gedacht war. Sie drückte den roten Knopf. Nichts. Sie drückte ihn noch einmal, zweimal kurz, einmal lang, als hätte sie irgendwann gelernt, wie man einen Notrufknopf richtig drückt, was sie nicht hatte.",
   "Henry stand mit dem Rücken an der Wand. Er sagte: \"Ich glaube, der ist schneller geworden.\"",
   "Er hatte recht. Das Surren war tiefer geworden, das Vibrieren in der Bodenplatte hatte sich angeglichen zu einem konstanten, leicht ungesunden Brummen. Sie fuhren tiefer, als dieses Gebäude tief sein sollte.",
@@ -284,7 +285,6 @@ const sceneFourParagraphs = [
   "Sie gingen.",
   "Hinter ihnen, weit unten, in einem Vorraum, in dem niemand mehr stand, blinkte ein Lämpchen einmal grün, einmal rot, und entschied sich dann für rot."
 ];
-
 const sceneFiveParagraphs = [
   "Der Korridor war kürzer, als Henry ihn in Erinnerung hatte. Vorhin war jeder Meter eine eigene Entscheidung gewesen, jetzt verschwanden die Meter einfach hinter ihnen, als hätte jemand ein gespanntes Band wieder aufgerollt. Trey ging vorne, Ember in der Mitte, Henry zuletzt. So hatten sie nicht angefangen. So gingen sie zurück.",
   "Die Wartungstür stand noch genauso offen wie vorher. Der Schraubenschlüssel lag unter dem unteren Türblatt, hellgrau, schmutzig, ein Werkzeug, das jemand vermisste, sobald er es suchte. Trey hob ihn nicht auf. Henry sah, wie Trey ihn ansah, eine halbe Sekunde zu lange, und dann weiterging. Es war das erste Mal, dass Henry Trey etwas nicht anfassen sah, das offen herumlag.",
@@ -323,12 +323,11 @@ const sceneFiveParagraphs = [
   "Die Lehrerin zählte noch einmal, aus Gewohnheit. Sie kam wieder auf dieselbe Zahl.",
   "Henry sah zu Ember. Sie hatte die Hände in den Jackentaschen und stand in einer Haltung, die er von ihr aus dem Schulflur kannte, freundlich, gerade, präsent. Er sah zu Trey. Trey lehnte am Geländer, eine Hand am Display, ein Bein angewinkelt, und sah zu, wie eine Gruppe Erwachsener durch die Drehtür ging.",
   "Es sah aus wie vorher.",
-  "Es sah genau aus wie vorher, und das war es, was nicht stimmte. Henry konnte nicht sagen, woran er es sah. Er sah es daran, dass er es nicht sehen konnte. Die Frau am Funkgerät hatte immer noch nicht gesprochen. Er hatte sie zu lange angeschaut. Er sah weg.",
+  "Genau das war das Problem. Henry konnte nicht sagen, was sich verändert hatte. Die Frau am Funkgerät hatte immer noch nicht gesprochen. Er merkte, dass er sie zu lange ansah und wandte den Blick ab.",
   "Vor der Drehtür wartete der Bus. Henry hielt seine Brille mit zwei Fingern fest, als er hinausging, und merkte erst draußen, dass das gar nicht nötig gewesen war."
 ];
-
 const sceneSixParagraphs = [
-  "Mittwoch, dritte Stunde, Pausenflur. Ember Blake stand mit dem Rücken zur Schließfächerreihe, einen Stapel Mappen an den Bauch gedrückt, und versuchte, einer Mitschülerin aus der Parallelklasse zu erklären, warum sie die Reservierung für den Sitzungsraum am Freitag nicht einfach verschieben konnte. Das war an sich kein Drama. Es war eines dieser kleinen Gespräche, die Ember dreimal pro Woche hatte und die sie im Schlaf führen konnte.",
+  "Mittwoch, dritte Stunde, Pausenflur. Ember stand mit dem Rücken zur Schließfächerreihe, einen Stapel Mappen an den Bauch gedrückt, und versuchte, einer Mitschülerin aus der Parallelklasse zu erklären, warum sie die Reservierung für den Sitzungsraum am Freitag nicht einfach verschieben konnte. Das war an sich kein Drama. Es war eines dieser kleinen Gespräche, die Ember dreimal pro Woche hatte und die sie im Schlaf führen konnte.",
   "Die Mitschülerin redete schneller, als Ember es mochte. Irgendwo zwischen \"Ich brauche den Raum aber\" und \"Du machst das ständig so\" sank etwas in Embers Brustkorb tiefer, und sie hob die Stimme nicht einmal besonders, sie sagte nur:",
   "\"Hör auf.\"",
   "Es war kein lautes Wort. Es war eher leise. Aber es traf den Flur wie ein zugeschlagenes Buch.",
@@ -357,12 +356,12 @@ const sceneSixParagraphs = [
   "Sein Handy auf dem Bett vibrierte einmal kurz, ohne Benachrichtigung. Dann noch einmal.",
   "Auf dem Schreibtisch, neben dem Monitor, blinkte das kleine Display, auf dem Bixi normalerweise eine ruhige Statuszeile zeigte. Es flimmerte. Nicht aus, nicht an. Etwas dazwischen.",
   "\"Bixi\", sagte Trey. Seine Stimme war heiserer als er erwartet hatte.",
-  "\"Hier\", antwortete Bixi. Die Stimme stockte einmal in der Mitte des Wortes. \"Spannungs… schwankung. Lokal. Quelle un— \"",
+  "\"Hier\", antwortete Bixi. Die Stimme stockte einmal in der Mitte des Wortes. \"Spannungs... schwankung. Lokal. Quelle un— \"",
   "Das Display fror. Dann lief es weiter, normal.",
   "\"Hä\", sagte Trey, sehr leise.",
   "Er ging zum Schreibtisch. Die Lampe hatte sich beruhigt. Das Handy lag still. Bixi zeigte wieder ihre Statuszeile, als wäre nichts gewesen.",
   "Er fasste die Lampe nicht an. Er setzte sich auf den Bettrand und starrte auf den Schreibtisch und dachte an den Wartungsgang.",
-  "Donnerstag, große Pause. Ember Blake stand im Mittelflur, weil ihr Schließfach im Mittelflur war. Sie sah Henry Mills am Pfeiler, wo Henry Mills immer stand, und sie sah Trey Coleman, der an diesem Tag ungewöhnlich still durch den Flur ging und weder mit Diego noch mit Marcus redete.",
+  "Donnerstag, große Pause. Ember stand im Mittelflur, weil ihr Schließfach im Mittelflur war. Sie sah Henry am Pfeiler, wo Henry immer stand, und sie sah Trey, der an diesem Tag ungewöhnlich still durch den Flur ging und weder mit Diego noch mit Marcus redete.",
   "Es war keine Entscheidung. Es war eher ein Wegfallen aller anderen Möglichkeiten.",
   "Sie ging zu Henry. Henry sah sie kommen und ordnete den Rucksackgurt, was sein Pfeiler-Reflex war.",
   "\"Hi\", sagte Ember.",
@@ -378,26 +377,28 @@ const sceneSixParagraphs = [
   "\"Ja\", sagte Ember.",
   "\"Ja\", sagte Henry, leiser.",
   "Trey schloss sein Schließfach, ohne etwas herausgenommen zu haben.",
-  "\"Bibliothek\", sagte er. \"Hinten, wo die alten Atlanten stehen. Da geht keiner hin.\"",
-  "\"Sechste Stunde\", sagte Ember.",
-  "\"Sechste Stunde\", wiederholte Trey.",
+  "„Bibliothek\", sagte er. „Hinten bei den alten Atlanten. Da geht niemand hin.\"",
+  "„Letzte Stunde\", sagte Ember.",
+  "„Vor den Ferien\", ergänzte Trey.",
+  "„Ja\", sagte Ember.",
   "Henry nickte. Er nickte zweimal, weil das erste Nicken zu klein gewesen war.",
   "Sie standen noch einen Moment, drei Leute, die offiziell nichts miteinander zu tun hatten, am selben Schließfächerblock, ohne Lächeln, ohne Smalltalk. Dann ging Trey nach links, Henry nach rechts, und Ember blieb am Schließfach stehen, bis der Flur sich geleert hatte.",
   "Sie stellte fest, dass sie die Mappe in ihrer Hand zu fest hielt. Sie lockerte den Griff. Sie atmete einmal aus, kontrolliert, durch die Nase, wie man es ihr beigebracht hatte.",
-  "In der sechsten Stunde, hinten bei den Atlanten, würde sie zwei Leute treffen, mit denen sie bis Montag nichts zu besprechen gehabt hätte. Das war neu. Aber das war nicht das Neue daran.",
-  "Neu war, dass sie erleichtert war."
+  "In der letzten Stunde vor den Sommerferien, hinten bei den Atlanten, würde sie sich mit zwei Menschen treffen, mit denen sie vor Montag nichts zu besprechen gehabt hätte.",
+  "Das war neu.",
+  "Aber das war nicht das Neue daran.",
+  "Das Neue war, dass sie erleichtert war."
 ];
-
 const sceneSevenParagraphs = [
   "Theoretisch hätte der letzte Schultag ein Selbstläufer sein müssen. Praktisch hatten sich drei Leute, die offiziell nichts miteinander zu tun hatten, hinten bei den Atlanten verabredet, als gehörten Sommerferien zu den Dingen, für die man eine Tagesordnung brauchte.",
-  "Ember Blake war zuerst da. Sie hatte ihre Mappe schon aufgeschlagen, bevor sie sich gesetzt hatte, und die Atlanten standen so, wie sie immer standen: schief, staubig, halb nutzlos und genau hoch genug, um den Tisch von der Ausleihe abzuschirmen. Zwei Reihen weiter saß jemand mit Kopfhörern. Drei Tische weiter blätterte ein Mädchen in einem Buch, das sie sicher nicht ausleihen würde. Ferienstimmung roch nach Sonnencreme und Plastikflasche, und niemand interessierte sich besonders dafür, wer hinten in der Bibliothek auf wen wartete.",
-  "Trey Coleman kam als Zweiter, was für Trey ungewöhnlich früh war. Er ließ sich auf den Stuhl gegenüber fallen, als hätte ihn jemand geworfen, und legte sein Handy mit dem Display nach oben auf den Tisch. Bixi war offen. Bixi war immer offen.",
+  "Ember war zuerst da. Sie hatte ihre Mappe schon aufgeschlagen, bevor sie sich gesetzt hatte, und die Atlanten standen so, wie sie immer standen: schief, staubig, halb nutzlos und genau hoch genug, um den Tisch von der Ausleihe abzuschirmen. Zwei Reihen weiter saß jemand mit Kopfhörern. Drei Tische weiter blätterte ein Mädchen in einem Buch, das sie sicher nicht ausleihen würde. Ferienstimmung roch nach Sonnencreme und Plastikflasche, und niemand interessierte sich besonders dafür, wer hinten in der Bibliothek auf wen wartete.",
+  "Trey kam als Zweiter, was für Trey ungewöhnlich früh war. Er ließ sich auf den Stuhl gegenüber fallen, als hätte ihn jemand geworfen, und legte sein Handy mit dem Display nach oben auf den Tisch. Bixi war offen. Bixi war immer offen.",
   "\"Du hast eine Mappe\", sagte Trey. \"Du hast wirklich eine Mappe mitgebracht.\"",
   "\"Wir haben zehn Minuten, bis hier jemand vorbei will.\"",
   "\"Niemand will hier vorbei. Das ist die Atlantenecke. Hier kommt nur jemand vorbei, wenn er sich verlaufen hat.\"",
   "\"Trey.\"",
   "\"Ich sag ja nichts.\"",
-  "Henry Mills kam als Letzter, was für Henry normal war. Er setzte sich nicht sofort. Er blieb einen Moment neben dem Stuhl stehen, als müsste er noch entscheiden, ob er wirklich gemeint war, dann zog er den Stuhl ein Stück weiter heraus, als nötig gewesen wäre, und setzte sich. Seine Brille saß zu weit unten. Er schob sie nicht hoch.",
+  "Henry kam als Letzter, was für Henry normal war. Er setzte sich nicht sofort. Er blieb einen Moment neben dem Stuhl stehen, als müsste er noch entscheiden, ob er wirklich gemeint war, dann zog er den Stuhl ein Stück weiter heraus, als nötig gewesen wäre, und setzte sich.",
   "Ember nahm einen Stift aus der Mappe.",
   "\"Ich mache keine Liste\", sagte sie. \"Ich schreibe nur ein paar Sachen auf.\"",
   "\"Das ist eine Liste\", sagte Trey.",
@@ -414,53 +415,75 @@ const sceneSevenParagraphs = [
   "Henry hatte etwas auf sein Blatt geschrieben. Ember konnte es vom anderen Ende des Tisches nicht lesen. Sie beugte sich nicht sofort hin. Sie wusste, dass er das nicht mochte.",
   "\"Zweitens\", sagte sie. \"Wir reden mit niemandem darüber. Mit niemandem heißt mit niemandem. Auch nicht mit Geschwistern. Auch nicht spätabends. Auch nicht, wenn es lustig wird.\"",
   "\"Wann wird das lustig?\", fragte Trey.",
-  "\"Drittens\", sagte Ember. \"Wenn etwas passiert –\"",
+  "\"Drittens\", sagte Ember. \"Wenn etwas passiert -\"",
   "Sie suchte das Wort.",
-  "\"– wenn etwas passiert, das nicht passieren sollte, dann sagen wir es. Wir verstecken es nicht.\"",
+  "\"- wenn etwas passiert, das nicht passieren sollte, dann sagen wir es. Wir verstecken es nicht.\"",
   "Henry sah auf sein Blatt. Sein Bleistift bewegte sich nicht. An einer der hinteren Lampen klickte etwas, wie es Schulbeleuchtungen eben tun, wenn sie kurz vor den Ferien das Interesse verloren.",
   "\"Du meinst Kräfte\", sagte Trey, leiser jetzt.",
   "\"Ich meine alles.\"",
-  "Henry schrieb etwas. Strich es durch. Schrieb es wieder hin.",
-  "Ember beugte sich vor, um zu sehen, was er notiert hatte. Es war nicht weit. Eine halbe Tischbreite, ein Stück über die Atlanten gelehnt. Ihr Ärmel streifte seinen. Sie wollte nur kurz mit dem Stift auf eine Stelle zeigen, wo er einen Treffpunkt eintragen sollte, irgendeinen, einen Park, eine Eisdiele, irgendetwas, das nach Sommer aussah und nicht nach Krisenprotokoll.",
-  "Henry wich nicht zurück. Genau das war das Problem. Er wich nicht zurück, und sein Atem wurde flacher, und seine Schulter wurde sehr still.",
-  "Auf Treys Handy sagte Bixi mit der ruhigen, hilfsbereiten Stimme, in der Bixi alles sagte:",
-  "\"Erhöhte Herzfrequenz bei Henry Mills. Hundertdrei.\"",
-  "Es war nicht laut. Es war einfach nur sehr klar.",
-  "Ember zog den Arm zurück. Zu spät. Sie merkte, dass es zu spät war, in dem Moment, in dem sie es tat, und das machte es nicht besser.",
-  "Trey starrte auf sein Handy, als hätte es ihn persönlich verraten.",
-  "\"Bixi, was zur –\"",
-  "\"Trey.\" Henrys Stimme war sehr leise.",
-  "\"Bixi liest keine fremden Werte aus, Bixi liest nur meine –\"",
-  "\"Trey.\"",
-  "\"Normalerweise.\"",
-  "\"Trey, hör auf.\"",
-  "Es ging schnell. Schneller, als Ember zugeben wollte.",
-  "Henrys Schulter, die eben noch da gewesen war, war nicht mehr da. Sein Bleistift fiel auf das Blatt, ohne dass eine Hand ihn losließ. Der Stuhl rückte nicht zurück. Die Tasche stand noch zwischen den Stuhlbeinen. Auf dem Blatt lag der Bleistift quer über drei halb durchgestrichenen Wörtern: nicht zu nah. Ember las sie, verstand sie einen Herzschlag zu spät und tat sofort so, als hätte sie sie nicht gelesen.",
-  "Drei Tische weiter blätterte das Mädchen weiter. Der Junge mit den Kopfhörern hörte, was immer er hörte. An der Lampe klickte etwas.",
-  "Ember atmete einmal ein, ohne dass es aussah wie ein Atemzug. Sie sah nicht noch einmal auf das Blatt.",
-  "\"Okay\", sagte Trey. Sehr ruhig. Er sah auf Henrys Stuhl, auf die Tasche, auf den Bleistift, auf den Punkt in der Luft, an dem eben noch eine Brille gewesen war.",
-  "\"Okay\", sagte er noch einmal.",
-  "Der Erzähler hätte an dieser Stelle gern etwas Trockenes gesagt. Aber Trey hatte das Trockene schon übernommen, und es war nicht trocken, es war nur leer.",
-  "\"Henry\", sagte Ember, so leise, wie man es leise sagt, wenn man nicht weiß, in welche Richtung man sprechen soll. \"Du bist noch da.\"",
-  "Es war keine Frage. Es war auch keine Antwort.",
-  "Sie zog den Stift langsam zurück, legte ihn auf ihre Mappe und machte das, was sie immer machte, wenn ihr eine Situation entglitt: Sie tat so, als hätte sie sie noch.",
-  "\"Niemand schaut her\", sagte sie, ohne den Kopf zu bewegen. \"Trey. Handy weg. Bixi aus.\"",
-  "\"Bixi ist nicht –\"",
-  "\"Trey.\"",
-  "Trey legte das Handy auf den Tisch, Display nach unten. Er ließ die Hand darauf liegen, als müsste er es festhalten.",
-  "Auf Henrys Stuhl bewegte sich nichts. Dann, sehr leicht, ein Knirschen im Holz, das auch von keinem Stuhl der Welt hätte kommen können, wenn niemand darauf saß.",
-  "\"Wir gehen gleich raus\", sagte Ember, in die Richtung des Stuhls, nicht zu nah, nicht zu weit. \"Du musst nicht reden. Du musst nur mitkommen, wenn du wieder da bist. Okay?\"",
+  "Henry schrieb etwas. Strich es durch. Schrieb es wieder hin.\nEmber beugte sich vor, um zu sehen, was er notiert hatte.",
+  "Es war nicht weit. Eine halbe Tischbreite, ein Stück über die alten Atlanten hinweg. Sie wollte nur kurz mit dem Stift auf eine freie Stelle zeigen, wo Henry einen Treffpunkt eintragen konnte. Einen Park. Eine Eisdiele. Irgendetwas, das nach Sommer aussah und nicht nach Krisenprotokoll.",
+  "Ihr Ärmel streifte seinen.",
+  "Henry wich nicht zurück.",
+  "Genau das war das Problem.",
+  "Er wich nicht zurück. Sein Atem wurde flacher. Seine Schulter wurde sehr still.",
+  "Auf Treys Handy sagte Bixi mit der ruhigen, hilfsbereiten Stimme, in der Bixi auch einen Weltuntergang vermutlich als Statusmeldung vorgetragen hätte:",
+  "„Erhöhte Herzfrequenz bei Henry Mills. Hundertdrei.\"",
+  "Es war nicht laut.",
+  "Es war schlimmer als laut.",
+  "Es war klar.",
+  "Ember zog den Arm zurück.",
+  "Zu spät.",
+  "Trey starrte auf sein Handy, als hätte es ihn vor allen Leuten verraten.",
+  "„Bixi, was zur—\"",
+  "„Trey.\" Henrys Stimme war kaum mehr als Luft.",
+  "„Bixi liest keine fremden Werte aus, Bixi liest nur meine—\"",
+  "„Trey.\"",
+  "„Normalerweise.\"",
+  "„Trey, hör auf.\"",
+  "Dann war Henry weg.",
+  "Nicht mit einem Geräusch. Nicht mit einem Licht. Nicht einmal mit einem richtigen Moment.",
+  "Seine Schulter, die eben noch unter Embers Ärmel gewesen war, war nicht mehr da. Der Bleistift fiel auf das Blatt, ohne dass eine Hand ihn losließ. Der Stuhl rückte nicht zurück. Die Tasche stand noch zwischen den Stuhlbeinen.",
+  "Auf dem Blatt lag der Bleistift quer über drei halb durchgestrichenen Wörtern.",
+  "nicht zu nah",
+  "Ember las sie.",
+  "Verstand sie einen Herzschlag zu spät.",
+  "Und tat sofort so, als hätte sie sie nicht gelesen.",
+  "Drei Tische weiter blätterte das Mädchen weiter. Der Junge mit den Kopfhörern hörte, was immer er hörte. An der hinteren Lampe klickte etwas.",
+  "Die Welt hatte sehr höflich beschlossen, nichts bemerkt zu haben.",
+  "„Okay\", sagte Trey.",
+  "Sehr ruhig.",
+  "Er sah auf Henrys Stuhl. Auf die Tasche. Auf den Bleistift. Auf den Punkt in der Luft, an dem eben noch eine Brille gewesen war.",
+  "„Okay\", sagte er noch einmal.",
+  "Diesmal klang es nicht wie okay.",
+  "„Henry\", sagte Ember, so leise, wie man etwas sagt, wenn man nicht weiß, in welche Richtung man sprechen soll. „Du bist noch da.\"",
+  "Keine Antwort.",
+  "Aber auch kein Nein.",
+  "Ember zog den Stift langsam zurück, legte ihn auf ihre Mappe und machte das, was sie immer machte, wenn ihr eine Situation entglitt: Sie tat so, als hätte sie sie noch.",
+  "„Niemand schaut her\", sagte sie, ohne den Kopf zu bewegen. „Trey. Handy weg. Bixi aus.\"",
+  "„Bixi ist nicht—\"",
+  "„Trey.\"",
+  "Trey drehte das Handy um. Display nach unten. Seine Hand blieb darauf liegen, als müsste er es festhalten.",
+  "Auf Henrys Stuhl bewegte sich nichts.",
+  "Dann kam ein leises Knirschen aus dem Holz.",
+  "Ein Stuhlgeräusch.",
+  "Von einem Stuhl, auf dem niemand saß.",
+  "„Wir gehen gleich raus\", sagte Ember. Sie sprach in Richtung des Stuhls. Nicht zu nah. Nicht zu weit. „Du musst nicht reden. Du musst nur mitkommen, wenn du wieder da bist. Okay?\"",
   "Stille.",
-  "Dann, kaum hörbar, ein Atemzug, der zu einem Körper gehörte, den man nicht sah.",
-  "Ember klappte die Mappe zu. Sie schrieb keinen Punkt mehr auf. Sie hatte vorhin gesagt, sie würden in die Ferien gehen mit Regeln. Jetzt gingen sie in die Ferien mit Henrys Tasche zwischen zwei Stuhlbeinen, mit Treys Hand auf einem stillgelegten Handy und mit dem Wissen, dass einer von ihnen verschwinden konnte, wenn jemand zu nah kam, ohne zu fragen.",
-  "Henrys Stuhl blieb, wo er war. Die Ferien hatten trotzdem angefangen."
+  "Dann, kaum hörbar, ein Atemzug.",
+  "Ein Atemzug, der zu einem Körper gehörte, den man nicht sah.",
+  "Ember klappte die Mappe zu.",
+  "Sie schrieb keinen Punkt mehr auf.",
+  "Vor zehn Minuten hatte sie geglaubt, sie würden mit Regeln in die Ferien gehen. Mit Treffpunkten, Kontaktwegen und einer vernünftigen Reihenfolge.",
+  "Jetzt gingen sie in die Ferien mit Henrys Tasche zwischen zwei Stuhlbeinen, Treys Hand auf einem stillgelegten Handy und dem Wissen, dass einer von ihnen verschwinden konnte, wenn jemand zu nah kam, ohne zu fragen.",
+  "Henrys Stuhl blieb, wo er war.",
+  "Die Ferien hatten trotzdem angefangen.."
 ];
-
 const scenes: SampleReaderScene[] = [
   {
     id: "scene-1",
     kicker: "Buchprobe · Szene 1",
-    title: "Der letzte Pflichttermin",
+    title: "Der Schulausflug",
     summary:
       "Der Ausflug ins Chicago Advanced Science Center beginnt als letzter Pflichttermin vor den Sommerferien. Ember Blake, Henry Mills und Trey Coleman sind Klassenkameraden, aber keine…",
     paragraphs: sceneOneParagraphs
@@ -468,7 +491,7 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-2",
     kicker: "Buchprobe · Szene 2",
-    title: "Zwei Meter",
+    title: "Nur kurz gucken",
     summary:
       "Trey folgt Bixis Signal bis zu einer Wartungstür. Ember will ihn zurückholen, Henry rechnet zu lange, und der Spalt bleibt offen.",
     paragraphs: sceneTwoParagraphs
@@ -476,7 +499,7 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-3",
     kicker: "Buchprobe · Szene 3",
-    title: "Der enttäuschende Korridor",
+    title: "AUthorized PERSONNEL ONLY",
     summary:
       "Hinter der Wartungstür finden die drei zuerst nur graues Linoleum. Dann hören sie Stimmen, sehen eine verborgene Tür und merken, dass der Rückweg gerade verschwindet.",
     paragraphs: sceneThreeParagraphs
@@ -484,7 +507,7 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-4",
     kicker: "Buchprobe · Szene 4",
-    title: "Der Lastenaufzug",
+    title: "Abwärts",
     summary:
       "Ein Aufzug fährt ohne Knopfdruck abwärts. Unten wartet kein Stockwerk, sondern ein Vorraum, ein rotes Lämpchen und etwas, das sich nicht wie Licht verhält.",
     paragraphs: sceneFourParagraphs
@@ -492,7 +515,7 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-5",
     kicker: "Buchprobe · Szene 5",
-    title: "Alles scheint gut",
+    title: "Alles scheint gebaut",
     summary:
       "Die drei kehren scheinbar unverletzt zur Klasse zurück. Für Henry wirkt die Normalität wiederhergestellt, aber nicht mehr glaubwürdig.",
     paragraphs: sceneFiveParagraphs
@@ -500,7 +523,7 @@ const scenes: SampleReaderScene[] = [
   {
     id: "scene-6",
     kicker: "Buchprobe · Szene 6",
-    title: "Nachwirkungen",
+    title: "Nachwirkung",
     summary:
       "Embers Stimme, Henrys Wahrnehmung und Treys Technik reagieren falsch. Aus drei Klassenkameraden wird eine geheime Arbeitsgruppe.",
     paragraphs: sceneSixParagraphs
@@ -522,7 +545,7 @@ export default function AftershockSamplePage() {
       title="Aftershock"
       description="Szene 1 bis 7 sind live. Die Leseprobe wird fortlaufend ergänzt."
       heroKicker="Buchprobe · Szene 1"
-      heroTitle="Der letzte Pflichttermin"
+      heroTitle="Der Schulausflug"
       heroSummary="Ein Schulausflug ins Chicago Advanced Science Center beginnt als Pflichttermin vor den Sommerferien. Für Ember Blake, Henry Mills und Trey Coleman stimmt bald eine kleine Anordnung nicht mehr."
       scenes={scenes}
       continuationTitle="Szene 8"
