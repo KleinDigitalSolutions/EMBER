@@ -388,6 +388,74 @@ const sceneSixParagraphs = [
   "Neu war, dass sie erleichtert war."
 ];
 
+const sceneSevenParagraphs = [
+  "Theoretisch hätte der letzte Schultag ein Selbstläufer sein müssen. Praktisch hatten sich drei Leute, die offiziell nichts miteinander zu tun hatten, hinten bei den Atlanten verabredet, als gehörten Sommerferien zu den Dingen, für die man eine Tagesordnung brauchte.",
+  "Ember Blake war zuerst da. Sie hatte ihre Mappe schon aufgeschlagen, bevor sie sich gesetzt hatte, und die Atlanten standen so, wie sie immer standen: schief, staubig, halb nutzlos und genau hoch genug, um den Tisch von der Ausleihe abzuschirmen. Zwei Reihen weiter saß jemand mit Kopfhörern. Drei Tische weiter blätterte ein Mädchen in einem Buch, das sie sicher nicht ausleihen würde. Ferienstimmung roch nach Sonnencreme und Plastikflasche, und niemand interessierte sich besonders dafür, wer hinten in der Bibliothek auf wen wartete.",
+  "Trey Coleman kam als Zweiter, was für Trey ungewöhnlich früh war. Er ließ sich auf den Stuhl gegenüber fallen, als hätte ihn jemand geworfen, und legte sein Handy mit dem Display nach oben auf den Tisch. Bixi war offen. Bixi war immer offen.",
+  "\"Du hast eine Mappe\", sagte Trey. \"Du hast wirklich eine Mappe mitgebracht.\"",
+  "\"Wir haben zehn Minuten, bis hier jemand vorbei will.\"",
+  "\"Niemand will hier vorbei. Das ist die Atlantenecke. Hier kommt nur jemand vorbei, wenn er sich verlaufen hat.\"",
+  "\"Trey.\"",
+  "\"Ich sag ja nichts.\"",
+  "Henry Mills kam als Letzter, was für Henry normal war. Er setzte sich nicht sofort. Er blieb einen Moment neben dem Stuhl stehen, als müsste er noch entscheiden, ob er wirklich gemeint war, dann zog er den Stuhl ein Stück weiter heraus, als nötig gewesen wäre, und setzte sich. Seine Brille saß zu weit unten. Er schob sie nicht hoch.",
+  "Ember nahm einen Stift aus der Mappe.",
+  "\"Ich mache keine Liste\", sagte sie. \"Ich schreibe nur ein paar Sachen auf.\"",
+  "\"Das ist eine Liste\", sagte Trey.",
+  "\"Es sind Punkte.\"",
+  "\"Punkte sind eine Liste.\"",
+  "Henry zog ein leeres Blatt aus seinem Heft und legte es vor sich. Er sagte nichts. Er hatte einen Bleistift in der Hand, den er nicht benutzte.",
+  "\"Okay\", sagte Ember leise. \"Erstens. Wir sehen uns nicht jeden Tag in den Ferien. Aber wir wissen, wie wir uns erreichen. Nicht über Schulchat. Nicht öffentlich.\"",
+  "\"Bixi\", sagte Trey sofort.",
+  "\"Nicht nur Bixi.\"",
+  "\"Bixi ist sicher.\"",
+  "\"Bixi ist auf deinem Handy. Wenn dein Handy bei jemandem auf dem Küchentisch liegt, ist Bixi auf dem Küchentisch.\"",
+  "Trey öffnete den Mund. Schloss ihn. Tippte mit dem Finger gegen den Rand seines Handys.",
+  "\"Fairer Punkt\", sagte er. Es klang fast beleidigt.",
+  "Henry hatte etwas auf sein Blatt geschrieben. Ember konnte es vom anderen Ende des Tisches nicht lesen. Sie beugte sich nicht sofort hin. Sie wusste, dass er das nicht mochte.",
+  "\"Zweitens\", sagte sie. \"Wir reden mit niemandem darüber. Mit niemandem heißt mit niemandem. Auch nicht mit Geschwistern. Auch nicht spätabends. Auch nicht, wenn es lustig wird.\"",
+  "\"Wann wird das lustig?\", fragte Trey.",
+  "\"Drittens\", sagte Ember. \"Wenn etwas passiert –\"",
+  "Sie suchte das Wort.",
+  "\"– wenn etwas passiert, das nicht passieren sollte, dann sagen wir es. Wir verstecken es nicht.\"",
+  "Henry sah auf sein Blatt. Sein Bleistift bewegte sich nicht. An einer der hinteren Lampen klickte etwas, wie es Schulbeleuchtungen eben tun, wenn sie kurz vor den Ferien das Interesse verloren.",
+  "\"Du meinst Kräfte\", sagte Trey, leiser jetzt.",
+  "\"Ich meine alles.\"",
+  "Henry schrieb etwas. Strich es durch. Schrieb es wieder hin.",
+  "Ember beugte sich vor, um zu sehen, was er notiert hatte. Es war nicht weit. Eine halbe Tischbreite, ein Stück über die Atlanten gelehnt. Ihr Ärmel streifte seinen. Sie wollte nur kurz mit dem Stift auf eine Stelle zeigen, wo er einen Treffpunkt eintragen sollte, irgendeinen, einen Park, eine Eisdiele, irgendetwas, das nach Sommer aussah und nicht nach Krisenprotokoll.",
+  "Henry wich nicht zurück. Genau das war das Problem. Er wich nicht zurück, und sein Atem wurde flacher, und seine Schulter wurde sehr still.",
+  "Auf Treys Handy sagte Bixi mit der ruhigen, hilfsbereiten Stimme, in der Bixi alles sagte:",
+  "\"Erhöhte Herzfrequenz bei Henry Mills. Hundertdrei.\"",
+  "Es war nicht laut. Es war einfach nur sehr klar.",
+  "Ember zog den Arm zurück. Zu spät. Sie merkte, dass es zu spät war, in dem Moment, in dem sie es tat, und das machte es nicht besser.",
+  "Trey starrte auf sein Handy, als hätte es ihn persönlich verraten.",
+  "\"Bixi, was zur –\"",
+  "\"Trey.\" Henrys Stimme war sehr leise.",
+  "\"Bixi liest keine fremden Werte aus, Bixi liest nur meine –\"",
+  "\"Trey.\"",
+  "\"Normalerweise.\"",
+  "\"Trey, hör auf.\"",
+  "Es ging schnell. Schneller, als Ember zugeben wollte.",
+  "Henrys Schulter, die eben noch da gewesen war, war nicht mehr da. Sein Bleistift fiel auf das Blatt, ohne dass eine Hand ihn losließ. Der Stuhl rückte nicht zurück. Die Tasche stand noch zwischen den Stuhlbeinen. Auf dem Blatt lag der Bleistift quer über drei halb durchgestrichenen Wörtern: nicht zu nah. Ember las sie, verstand sie einen Herzschlag zu spät und tat sofort so, als hätte sie sie nicht gelesen.",
+  "Drei Tische weiter blätterte das Mädchen weiter. Der Junge mit den Kopfhörern hörte, was immer er hörte. An der Lampe klickte etwas.",
+  "Ember atmete einmal ein, ohne dass es aussah wie ein Atemzug. Sie sah nicht noch einmal auf das Blatt.",
+  "\"Okay\", sagte Trey. Sehr ruhig. Er sah auf Henrys Stuhl, auf die Tasche, auf den Bleistift, auf den Punkt in der Luft, an dem eben noch eine Brille gewesen war.",
+  "\"Okay\", sagte er noch einmal.",
+  "Der Erzähler hätte an dieser Stelle gern etwas Trockenes gesagt. Aber Trey hatte das Trockene schon übernommen, und es war nicht trocken, es war nur leer.",
+  "\"Henry\", sagte Ember, so leise, wie man es leise sagt, wenn man nicht weiß, in welche Richtung man sprechen soll. \"Du bist noch da.\"",
+  "Es war keine Frage. Es war auch keine Antwort.",
+  "Sie zog den Stift langsam zurück, legte ihn auf ihre Mappe und machte das, was sie immer machte, wenn ihr eine Situation entglitt: Sie tat so, als hätte sie sie noch.",
+  "\"Niemand schaut her\", sagte sie, ohne den Kopf zu bewegen. \"Trey. Handy weg. Bixi aus.\"",
+  "\"Bixi ist nicht –\"",
+  "\"Trey.\"",
+  "Trey legte das Handy auf den Tisch, Display nach unten. Er ließ die Hand darauf liegen, als müsste er es festhalten.",
+  "Auf Henrys Stuhl bewegte sich nichts. Dann, sehr leicht, ein Knirschen im Holz, das auch von keinem Stuhl der Welt hätte kommen können, wenn niemand darauf saß.",
+  "\"Wir gehen gleich raus\", sagte Ember, in die Richtung des Stuhls, nicht zu nah, nicht zu weit. \"Du musst nicht reden. Du musst nur mitkommen, wenn du wieder da bist. Okay?\"",
+  "Stille.",
+  "Dann, kaum hörbar, ein Atemzug, der zu einem Körper gehörte, den man nicht sah.",
+  "Ember klappte die Mappe zu. Sie schrieb keinen Punkt mehr auf. Sie hatte vorhin gesagt, sie würden in die Ferien gehen mit Regeln. Jetzt gingen sie in die Ferien mit Henrys Tasche zwischen zwei Stuhlbeinen, mit Treys Hand auf einem stillgelegten Handy und mit dem Wissen, dass einer von ihnen verschwinden konnte, wenn jemand zu nah kam, ohne zu fragen.",
+  "Henrys Stuhl blieb, wo er war. Die Ferien hatten trotzdem angefangen."
+];
+
 const scenes: SampleReaderScene[] = [
   {
     id: "scene-1",
@@ -436,6 +504,14 @@ const scenes: SampleReaderScene[] = [
     summary:
       "Embers Stimme, Henrys Wahrnehmung und Treys Technik reagieren falsch. Aus drei Klassenkameraden wird eine geheime Arbeitsgruppe.",
     paragraphs: sceneSixParagraphs
+  },
+  {
+    id: "scene-7",
+    kicker: "Buchprobe · Szene 7",
+    title: "Bei den Atlanten",
+    summary:
+      "Am letzten Schultag treffen Ember, Henry und Trey sich hinten in der Schulbibliothek. Aus Regeln wird ein peinliches Geheimnis, als Bixi Henrys Herzfrequenz verrät.",
+    paragraphs: sceneSevenParagraphs
   }
 ];
 
@@ -444,12 +520,12 @@ export default function AftershockSamplePage() {
     <SampleReader
       sampleId="aftershock"
       title="Aftershock"
-      description="Szene 1 bis 6 sind live. Die Leseprobe wird fortlaufend ergänzt."
+      description="Szene 1 bis 7 sind live. Die Leseprobe wird fortlaufend ergänzt."
       heroKicker="Buchprobe · Szene 1"
       heroTitle="Der letzte Pflichttermin"
       heroSummary="Ein Schulausflug ins Chicago Advanced Science Center beginnt als Pflichttermin vor den Sommerferien. Für Ember Blake, Henry Mills und Trey Coleman stimmt bald eine kleine Anordnung nicht mehr."
       scenes={scenes}
-      continuationTitle="Szene 7"
+      continuationTitle="Szene 8"
       continuationCopy="Die Leseprobe endet hier vorerst. Im EMBER Studio wird die nächste Szene weiterentwickelt."
       theme={{
         accent: "#5fa8d3",

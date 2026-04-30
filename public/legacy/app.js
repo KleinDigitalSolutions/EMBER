@@ -250,7 +250,7 @@
       action: "open-link",
       href: "/samples/aftershock",
       buttonLabel: "Lesen",
-      progressLabel: "6 von 6 Szenen online"
+      progressLabel: "7 von 7 Szenen online"
     },
     {
       title: "Aftershock",
@@ -266,7 +266,7 @@
       action: "open-link",
       href: "/samples/aftershock-english",
       buttonLabel: "Read",
-      progressLabel: "6 of 6 scenes online"
+      progressLabel: "7 of 7 scenes online"
     },
     {
       title: "Ascheprotokoll",

@@ -474,6 +474,86 @@ const sceneSixParagraphs = [
   "The new part was that she was relieved."
 ];
 
+const sceneSevenParagraphs = [
+  "Theoretically, the last day of school should have run itself.",
+  "In practice, three people who officially had nothing to do with one another had arranged to meet behind the old atlases, as if summer break were the kind of thing that required an agenda.",
+  "Ember was there first. She had already opened her folder before she sat down, and the atlases stood the way they always did: crooked, dusty, half useless, and just tall enough to shield the table from the checkout desk. Two rows over, someone sat with headphones on. Three tables away, a girl flipped through a book she was definitely not going to check out. Summer-break energy smelled like sunscreen and plastic water bottles, and no one particularly cared who was waiting for whom in the back of the library.",
+  "Trey arrived second, which, for Trey, was unusually early. He dropped into the chair across from her like someone had thrown him there and set his phone on the table, screen up. Bixi was open. Bixi was always open.",
+  "\"You brought a folder,\" Trey said. \"You actually brought a folder.\"",
+  "\"We have ten minutes before someone needs this area.\"",
+  "\"No one needs this area. It's the atlas corner. People only come back here if they're lost.\"",
+  "\"Trey.\"",
+  "\"I'm not saying anything.\"",
+  "Henry arrived last, which, for Henry, was normal. He did not sit down right away. He stood beside the chair for a moment, as if he still had to decide whether he had really been invited, then pulled it out a little farther than necessary and sat.",
+  "Ember took a pen from her folder.",
+  "\"I'm not making a list,\" she said. \"I'm just writing a few things down.\"",
+  "\"That's a list,\" Trey said.",
+  "\"They're points.\"",
+  "\"Points are a list.\"",
+  "Henry pulled a blank sheet from his notebook and placed it in front of him. He said nothing. He had a pencil in his hand, but he was not using it.",
+  "\"Okay,\" Ember said quietly. \"First. We're not seeing each other every day over break. But we know how to reach each other. Not through the school chat. Not publicly.\"",
+  "\"Bixi,\" Trey said immediately.",
+  "\"Not only Bixi.\"",
+  "\"Bixi is secure.\"",
+  "\"Bixi is on your phone. If your phone is sitting on someone's kitchen table, Bixi is sitting on someone's kitchen table.\"",
+  "Trey opened his mouth. Closed it. Tapped one finger against the edge of his phone.",
+  "\"Fair point,\" he said. It sounded almost offended.",
+  "Henry had written something on his sheet. Ember could not read it from the other end of the table. She did not lean over right away. She knew he did not like that.",
+  "\"Second,\" she said. \"We don't talk to anyone about this. Anyone means anyone. Not siblings. Not late at night. Not even if it starts to feel funny.\"",
+  "\"When does this start to feel funny?\" Trey asked.",
+  "\"Third,\" Ember said. \"If something happens—\"",
+  "She searched for the word.",
+  "\"—if something happens that shouldn't happen, we say so. We don't hide it.\"",
+  "Henry looked down at his paper. His pencil did not move. One of the lamps in the back clicked, the way school lights did when they had also lost interest right before summer break.",
+  "\"You mean powers,\" Trey said, quieter now.",
+  "\"I mean anything.\"",
+  "Henry wrote something. Crossed it out. Wrote it again.",
+  "Ember leaned forward to see what he had written. It was not far. Half a table length, just over the atlases. Her sleeve brushed his. She only meant to point with her pen at a spot where he could write down a meeting place. Any meeting place. A park, an ice cream place, something that sounded like summer and not like a crisis protocol.",
+  "Henry did not pull away.",
+  "That was the problem.",
+  "He did not pull away, and his breathing went shallow, and his shoulder became very still.",
+  "On Trey's phone, Bixi said, in the calm, helpful voice Bixi used for everything:",
+  "\"Elevated heart rate detected in Henry Mills. One hundred and three.\"",
+  "It was not loud.",
+  "It was just very clear.",
+  "Ember pulled her arm back. Too late. She knew it was too late the moment she did it, which did not make it better.",
+  "Trey stared at his phone as if it had betrayed him personally.",
+  "\"Bixi, what the—\"",
+  "\"Trey.\" Henry's voice was very quiet.",
+  "\"Bixi doesn't read other people's vitals. Bixi only reads mine—\"",
+  "\"Trey.\"",
+  "\"Usually.\"",
+  "\"Trey, stop.\"",
+  "It happened fast.",
+  "Faster than Ember wanted to admit.",
+  "Henry's shoulder, which had been there a second ago, was no longer there. His pencil dropped onto the paper without any hand letting go of it. The chair did not scrape back. His bag was still between the chair legs. On the sheet, the pencil lay across three half-crossed-out words:",
+  "not too close.",
+  "Ember read them, understood them one heartbeat too late, and immediately pretended she had not read them at all.",
+  "Three tables away, the girl kept turning pages. The boy with the headphones kept listening to whatever he was listening to. The lamp clicked again.",
+  "Ember breathed in once, without letting it look like a breath. She did not look at the page again.",
+  "\"Okay,\" Trey said. Very calmly. He looked at Henry's chair, at the bag, at the pencil, at the place in the air where a pair of glasses had been a moment ago.",
+  "\"Okay,\" he said again.",
+  "The narrator would have liked to say something dry at this point. But Trey had already taken care of dry, and it was not dry. It was just empty.",
+  "\"Henry,\" Ember said, as quietly as you say a thing when you do not know which direction to say it in. \"You're still here.\"",
+  "It was not a question.",
+  "It was not an answer either.",
+  "She slowly pulled the pen back, set it on her folder, and did what she always did when a situation slipped out of her hands: she acted as if she still had it.",
+  "\"No one is looking over here,\" she said without moving her head. \"Trey. Phone away. Bixi off.\"",
+  "\"Bixi isn't—\"",
+  "\"Trey.\"",
+  "Trey placed the phone on the table, screen down. He kept his hand on it, as if he had to hold it in place.",
+  "Nothing moved on Henry's chair.",
+  "Then, very faintly, there was a creak in the wood that could not have come from any chair in the world if no one had been sitting in it.",
+  "\"We're going to leave in a second,\" Ember said, toward the chair, not too close, not too far. \"You don't have to talk. You just have to come with us when you're back. Okay?\"",
+  "Silence.",
+  "Then, barely audible, a breath that belonged to a body no one could see.",
+  "Ember closed the folder.",
+  "She did not write down another point.",
+  "Earlier, she had said they would go into summer break with rules. Now they were going into summer break with Henry's bag between two chair legs, Trey's hand on a silenced phone, and the knowledge that one of them could disappear when someone got too close without asking.",
+  "Henry's chair stayed exactly where it was.",
+  "Summer break had started anyway."
+];
+
 const scenes: SampleReaderScene[] = [
   {
     id: "scene-1",
@@ -522,6 +602,14 @@ const scenes: SampleReaderScene[] = [
     summary:
       "Ember's voice, Henry's visibility, and Trey's tech begin to misfire. Three classmates become a secret working group.",
     paragraphs: sceneSixParagraphs
+  },
+  {
+    id: "scene-7",
+    kicker: "Book Sample · English · Scene 7",
+    title: "Behind the Atlases",
+    summary:
+      "On the last day of school, Ember, Henry, and Trey meet in the back of the library. Rules turn into an awkward secret when Bixi reports Henry's heart rate.",
+    paragraphs: sceneSevenParagraphs
   }
 ];
 
@@ -530,12 +618,12 @@ export default function AftershockEnglishSamplePage() {
     <SampleReader
       sampleId="aftershock-english"
       title="Aftershock"
-      description="English version. Scenes 1 through 6 are live; the sample will be expanded over time."
+      description="English version. Scenes 1 through 7 are live; the sample will be expanded over time."
       heroKicker="Book Sample · English · Scene 1"
       heroTitle="The Last Mandatory Event"
       heroSummary="A school trip to the Chicago Advanced Science Center begins as one last mandatory event before summer break. For Ember Blake, Henry Mills, and Trey Coleman, one small arrangement soon stops fitting."
       scenes={scenes}
-      continuationTitle="Scene 7"
+      continuationTitle="Scene 8"
       continuationCopy="The sample ends here for now. The next scene is being developed in EMBER Studio."
       theme={{
         accent: "#5fa8d3",

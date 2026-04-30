@@ -641,11 +641,11 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ### Act 2 — Kontrolle, Beobachtung, erste Kosten
 
-- **Umfang / Struktur:** Ca. 30000 Woerter, 7-8 Kapitel, Chicago im Sommer. Act 2 beginnt mit den Sommerferien: Schule ist vorbei, die Stadt wirkt offen, aber irgendwo parkt ein schwarzer SUV.
-- **Vertiefung:** Die Kraefte zeigen sich klein und unkontrolliert; die Gruppe trifft sich nach der Schule, um Veraenderungen zu beobachten. Halverson wertet Sicherheitsaufnahmen aus und beginnt, den Vorfall diskret zu kontrollieren.
+- **Umfang / Struktur:** Ca. 30000 Woerter, 7-8 Kapitel, Chicago im Sommer. Act 2 beginnt als Schwellenmoment am letzten Schultag: Noch ist Schule, aber die Ferien stehen unmittelbar offen, und die drei muessen entscheiden, ob sie nach dem Unfall bewusst zusammenbleiben.
+- **Vertiefung:** Die Kraefte zeigen sich klein und unkontrolliert; die Gruppe trifft sich zuerst in der Schulbibliothek, um Regeln und den naechsten Schritt zu klaeren. Danach oeffnet sich der Sommer mit Lake Michigan, Diego und wachsender Beobachtung. Halverson wertet Sicherheitsaufnahmen aus und beginnt, den Vorfall diskret zu kontrollieren.
 - **Kosten:** Normalitaet, Vertrauen, Sicherheit in Schule und Familie, technische Verlaesslichkeit, koerperliche/soziale Kontrolle. [FEHLT: konkrete wiederkehrende Kosten pro Figur und Szene.]
 - **Falsche Sicherheit:** Die drei koennten glauben, sie koennten alles geheim halten oder mit Bixi allein erklaeren. [FEHLT: konkrete falsche Loesung festlegen.]
-- **Gesetzte Eskalationspunkte:** K7 Ferienfeeling mit Diego, Lake Michigan und Chicago im Sommer; K8 Halverson-Kennzeichen, Bixi meldet es, Trey hoert zuerst nicht hin, dann kommt der Schock; K9-K11 Kraefte entwickeln sich, Bedrohung wird konkreter, Diego wird eingeweiht; K12-K14 offen.
+- **Gesetzte Eskalationspunkte:** K7 / SC_2_1 Schulbibliothek als bewusster Gruppen- und Ferienuebergang; K8 Ferienfeeling mit Diego, Lake Michigan und Chicago im Sommer; K9 Halverson-Kennzeichen, Bixi meldet es, Trey hoert zuerst nicht hin, dann kommt der Schock; K10-K12 Kraefte entwickeln sich, Bedrohung wird konkreter, Diego wird eingeweiht; K13-K14 offen.
 - **Act-2-Kippmoment:** [FEHLT: Irreversible Verschiebung zwischen Gruppe und Halverson definieren.]
 
 ### Act 3 — Verantwortung statt Reaktion
@@ -659,7 +659,7 @@ World Bible enthaelt nur Gegenwartszustand, sichtbare Funktion, soziale Ordnung,
 
 ## ACTS & KAPITEL — SCENE CARDS
 
-Pipeline-Hinweis: Die Quelle legt noch keine finale Kapitelstruktur fest. Die folgenden Scene Cards sichern die vorhandene kausale Anfangssequenz. Act 2 und Act 3 brauchen spaeter weitere konkrete Karten.
+Pipeline-Hinweis: Die Quelle legt noch keine finale Kapitelstruktur fest. Die folgenden Scene Cards sichern die vorhandene kausale Anfangssequenz und den ersten Act-2-Uebergang. Act 2 ab K8 und Act 3 brauchen spaeter weitere konkrete Karten.
 
 ### ACT 1 — „Der Ausflug und die Nachwirkung"
 
@@ -829,11 +829,40 @@ Review-only Notiz fuer Menschen: Gesetzte erste Manifestationen: Ember im Pausen
 
 ### ACT 2 — „Sommerferien und wachsende Bedrohung"
 
-Keine finalen Scene Cards in der Quelle. Vor dem Import weiterer Kapitel muessen mindestens diese Entscheidungen fallen:
+#### Kapitel 7: „Bei den Atlanten"
+
+```
+Scene Card
+id: SC_2_1
+title: Bei den Atlanten
+pov: Auktorial, nah bei Ember
+ort: Schulbibliothek, hinten bei den Atlanten
+uhrzeit: Letzter Schultag vor den Sommerferien, sechste Stunde, ca. 13:15 Uhr
+time_anchor: Direkt nach dem Schliessfach-Moment aus Act 1
+objective: Act 2 mit einer leisen bewussten Entscheidung eroeffnen: Die drei treffen sich nicht mehr zufaellig oder im Notfall, sondern weil sie nach dem Unfall einen naechsten Schritt brauchen. Im letzten Drittel kippt der Regelversuch durch Bixi, Henrys Herzfrequenz und ein unkontrolliertes Verschwinden in etwas Persoenliches.
+situation: Ember, Henry und Trey treffen sich wie abgemacht hinten bei den Atlanten. Der letzte Schultag laeuft normal um sie herum weiter. Zum ersten Mal sitzen sie bewusst und geplant zusammen, nicht durch Zufall und nicht durch akute Panik. Jede Figur traegt die Spannung anders: Ember ordnet, Trey beschleunigt, Henry versucht unsichtbar zu bleiben, bevor es buchstaeblich wird.
+want: Ember will klaeren, was sie fuereinander sind und was das konkret bedeutet: Regeln, Grenzen, wer was weiss und wie sie in die Ferien gehen. Sie will Struktur, bevor die Ferien anfangen.
+pressure: Trey bringt Energie statt Struktur. Henry sagt wenig und meint mehr. Die Bibliothek ist nicht leer; andere Schueler sitzen in Hoerweite, also muss alles normal aussehen. Ember lehnt sich spaeter kurz zu Henrys Zettel, um auf etwas zu zeigen; der Moment ist beiläufig, aber fuer Henry nah genug.
+material: Embers Mappe, Atlanten als Sichtschutz, Treys Handy mit Bixi, leerer Bibliothekstisch, Henrys Zettel, normale Schulgeraeusche kurz vor Ferienbeginn
+turn: Ember beugt sich zu Henrys Zettel, um eine Regel oder einen Treffpunkt zu notieren. Bixi meldet trocken Henrys erhoehte Herzfrequenz. Trey versteht zu schnell, Ember einen halben Moment zu spaet, und Henry verschwindet unkontrolliert mitten am Bibliothekstisch. Sein Stuhl steht noch da. Seine Tasche auch.
+irreversible_change: Henrys Unsichtbarkeit ist nicht mehr nur ein abstraktes Nachwirkungsproblem, sondern an Scham, Naehe und Gesehenwerden gebunden. Ember und Trey haben etwas bemerkt, das Henry nicht zeigen wollte, und aus drei Leuten, die offiziell nichts miteinander zu tun haben, wird eine Gruppe mit einem peinlichen Geheimnis und einem naechsten Schritt.
+cost: Henry hat unter sozialem Druck keine Kontrolle ueber seine Faehigkeit. Das ist jetzt kein Geheimnis mehr vor Trey und Ember. Ember gibt Kontrolle ab: Sie hat einem Ferientreffen zugestimmt, bevor sie sauber begruenden kann, warum, und sie weiss jetzt etwas ueber Henry, das sie nicht gesucht hat.
+thread: OT001, OT005
+avoid: Nicht in Exposition kippen; kein Rueckblick auf Act 1 und kein Zusammenfassen, was passiert ist. Die Szene setzt voraus, dass der Leser dabei war. Kein grosses Teamgefuehl; sie sind noch keine eingeschworene Gruppe, sie haben nur einen gemeinsamen peinlichen Moment und einen naechsten Schritt. Henrys Verschwinden darf nicht heldenhaft wirken; es ist ein Fluchtreflex, kein kontrollierter Faehigkeitseinsatz. Bixi darf den Moment ausloesen, aber nicht erklaeren oder loesen.
+narrator_anchor: Bixis Herzfrequenz-Meldung landet im schlechtesten Moment. Der Erzaehler darf Treys Reaktion auf das Schweigen danach trocken kommentieren, eine Zeile, nicht mehr. Treys doppeltes "Okay" nach dem Verschwinden ist staerker als jeder ausformulierte Kommentar.
+aftertaste: Ferien beginnen nicht als Freiheit, sondern als Abmachung ohne Sicherheitsnetz und mit dem Wissen, dass einer von ihnen buchstaeblich verschwinden kann, wenn es zu viel wird.
+ending_type: social_reframe
+word_target_min: 900
+word_target_max: 1200
+```
+
+Review-only Notiz fuer Menschen: Diese Szene ist die Act-2-Eroeffnung und steht bewusst noch in der Schule. Lake Michigan / Diego / Sommerfeeling folgt danach als K8, nicht als erste Act-2-Szene.
+
+Vor dem Import weiterer Act-2-Kapitel muessen mindestens diese Entscheidungen fallen:
 
 - erster Trainingsort nach der Schule
-- konkrete Ausarbeitung von K7 Ferienfeeling / Diego / Lake Michigan
-- konkrete Ausarbeitung von K8 Halverson-Kennzeichen / schwarzer SUV / Bixi-Warnung
+- konkrete Ausarbeitung von K8 Ferienfeeling / Diego / Lake Michigan
+- konkrete Ausarbeitung von K9 Halverson-Kennzeichen / schwarzer SUV / Bixi-Warnung
 - erster aktiver Zugriff der Halverson Group auf die Jugendlichen
 - Dr. Charters Wissensstand und Hilfsmoeglichkeit
 - Dr.-Charter-Keller: gemeinsames Hobby, Hilfsgeraet und reagierendes Messgeraet festlegen
@@ -931,7 +960,7 @@ Fokus: Der Team-Anfang entsteht aus Problem-Teilung, nicht aus sofortiger Freund
 - **Scott Hartwell fehlt spaetere Funktion:** Er ist als Projektmanager X7 gesetzt, aber noch nicht, ob er spaeter eskaliert, einknickt oder hilft.
 - **Diego fehlt Funktionsausarbeitung:** Diego ist gesetzt und wird in Act 2 eingeweiht; offen ist, wie er ohne Kraefte in Act 2 und Act 3 konkret hilft.
 - **Zoe fehlt Rollenentscheidung:** Zoe loest Henrys erste Manifestation aus; offen ist, ob sie Randfigur bleibt oder mehr wird.
-- **Act 2 und Act 3 fehlen als konkrete Kapitelstruktur:** Die Quelle nennt K7, K8, K9-K11 und K15-K20 grob, aber keine ausformulierten Szenen.
+- **Act 2 und Act 3 brauchen weitere Kapitelstruktur:** K7 / SC_2_1 ist als Act-2-Eroeffnung in der Schulbibliothek gesetzt. K8, K9, K10-K12, K13-K14 und K15-K20 brauchen noch ausformulierte Scene Cards.
 - **Cover-/Marktpositionierung fehlt:** Comp Titles, Amazon Goal und Cover-Richtung muessen noch entschieden werden.
 
 ---
