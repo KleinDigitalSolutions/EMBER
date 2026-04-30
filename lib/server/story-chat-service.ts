@@ -29,20 +29,34 @@ import {
   getAllScenes
 } from "@/lib/story-schema";
 
+const STORY_CHAT_THREAD_TITLE_MAX = 80;
+const STORY_CHAT_ARTIFACT_TITLE_MAX = 120;
+const STORY_CHAT_ARTIFACT_SUMMARY_MAX = 240;
+
 const storyChatSchema = z.object({
   reply: z.string().min(40),
-  suggestedThreadTitle: z.string().min(3).max(80).optional(),
+  suggestedThreadTitle: z.string().min(3).optional(),
   artifact: z
     .object({
-      title: z.string().min(3).max(120),
-      kind: z.enum(["regie", "note"]),
-      summary: z.string().min(12).max(240),
+      title: z.string().min(3),
+      kind: z.string().min(1),
+      summary: z.string().min(3),
       content: z.string().min(80)
     })
     .nullable()
 });
 
-type StoryChatPayload = z.infer<typeof storyChatSchema>;
+type RawStoryChatPayload = z.infer<typeof storyChatSchema>;
+type StoryChatPayload = {
+  reply: string;
+  suggestedThreadTitle?: string;
+  artifact: {
+    title: string;
+    kind: AssistantArtifactKind;
+    summary: string;
+    content: string;
+  } | null;
+};
 type RemoteStoryChatProvider = "openai" | "anthropic";
 type StoryChatDraftJob = StoryDocument["book"]["draftEngine"]["jobs"][number];
 const DEFAULT_LOCAL_GEMMA_COMMAND = "/Users/bucci369/mlx-gemma4/.venv/bin/mlx_vlm.generate";
@@ -254,7 +268,7 @@ async function generateWithOpenAI(
 
   return {
     modelName,
-    data: response.output_parsed
+    data: normalizeStoryChatPayload(response.output_parsed, outputMode)
   };
 }
 
@@ -294,7 +308,7 @@ async function generateWithAnthropic(
 
   return {
     modelName,
-    data: message.parsed_output
+    data: normalizeStoryChatPayload(message.parsed_output, outputMode)
   };
 }
 
@@ -379,7 +393,7 @@ async function generateWithLocalGemma(
 
   return {
     modelName,
-    data
+    data: normalizeStoryChatPayload(data, outputMode)
   };
 }
 
@@ -696,6 +710,75 @@ function stripLocalGemmaMetaNotes(text: string) {
     .trim();
 }
 
+function normalizeStoryChatPayload(
+  payload: RawStoryChatPayload,
+  outputMode: AssistantOutputMode
+): StoryChatPayload {
+  const suggestedThreadTitle = clampOptionalText(
+    payload.suggestedThreadTitle,
+    STORY_CHAT_THREAD_TITLE_MAX
+  );
+
+  if (outputMode === "chat" || !payload.artifact) {
+    return {
+      reply: payload.reply,
+      suggestedThreadTitle,
+      artifact: null
+    };
+  }
+
+  const kind = normalizeArtifactKind(payload.artifact.kind, outputMode);
+
+  return {
+    reply: payload.reply,
+    suggestedThreadTitle,
+    artifact: {
+      title: clampRequiredText(payload.artifact.title, STORY_CHAT_ARTIFACT_TITLE_MAX, "Assistant Artifact"),
+      kind,
+      summary: clampRequiredText(payload.artifact.summary, STORY_CHAT_ARTIFACT_SUMMARY_MAX, "Arbeitsdokument"),
+      content: payload.artifact.content
+    }
+  };
+}
+
+function normalizeArtifactKind(value: string, outputMode: AssistantOutputMode): AssistantArtifactKind {
+  if (outputMode === "regie") {
+    return "regie";
+  }
+
+  if (outputMode === "note") {
+    return "note";
+  }
+
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === "regie" || normalized === "regie-vorlage") {
+    return "regie";
+  }
+
+  return "note";
+}
+
+function clampOptionalText(value: string | undefined, maxLength: number) {
+  const trimmed = value?.replace(/\s+/g, " ").trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return clampRequiredText(trimmed, maxLength, "");
+}
+
+function clampRequiredText(value: string, maxLength: number, fallback: string) {
+  const trimmed = value.replace(/\s+/g, " ").trim() || fallback;
+
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+
+  return `${trimmed.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
+}
+
 function getLastUserMessage(story: StoryDocument, threadId: string) {
   const thread = story.assistant.threads.find(function (candidate) {
     return candidate.id === threadId;
@@ -788,14 +871,15 @@ function buildUserPrompt(
     recentMessages.length ? recentMessages.join("\n") : "- Keine bisherigen Nachrichten.",
     "",
     "LIEFERE JSON im vereinbarten Schema.",
+    "suggestedThreadTitle muss kurz sein: maximal 80 Zeichen, kein Satz, kein Untertitel.",
     "Nutze PROJECT_CONTEXT als Quelle der Wahrheit: Blueprint, Memory, Pipeline und aktiver Scope sind wichtiger als allgemeine Schreibratschläge.",
     "Wenn die Nutzerfrage unklar ist, antworte trotzdem hilfreich aus dem aktiven Scope und markiere die wichtigste fehlende Entscheidung.",
-    "Wenn OUTPUT_MODE chat ist, soll artifact null sein.",
+    "Wenn OUTPUT_MODE chat ist, muss artifact null sein.",
     "Kennzeichne neue Ideen klar als Vorschlag/Variante, solange der Nutzer sie nicht ausdrücklich festhält.",
     "Wenn der Nutzer 'festhalten', 'speichern', 'übernehmen' oder ähnlich sagt, formuliere die Änderung als sauberen Projektstand und vermeide parallele Alternativen.",
-    "Wenn OUTPUT_MODE note ist, erzeuge ein kompaktes Markdown-Artifact mit kind note.",
+    "Wenn OUTPUT_MODE note ist, erzeuge ein kompaktes Markdown-Artifact mit kind exakt note.",
     "Wenn OUTPUT_MODE note ist, muss artifact.content diese Abschnitte enthalten: ## Entscheidungen, ## Risiken, ## Material, ## Offene Fragen, ## Nächste Schritte.",
-    "Wenn OUTPUT_MODE regie ist, erzeuge ein Markdown-Artifact mit kind regie.",
+    "Wenn OUTPUT_MODE regie ist, erzeuge ein Markdown-Artifact mit kind exakt regie.",
     "Wenn OUTPUT_MODE regie ist, muss artifact.content die neue Regie-Vorlagenstruktur anlegen: # EMBER Story Document, ## MASTER BRIEF, ## MARKET BRIEF, ## WRITER CONSTITUTION, ## WORLD BIBLE, ## CANON FACTS, ## CHARACTER STATE LEDGER, ## CONTINUITY GUARDRAILS, ## OPEN THREADS, ## LOSS LADDER / ACT MAP, ## ACTS & KAPITEL — SCENE CARDS, ## LÜCKEN VOR IMPORT.",
     "Wenn OUTPUT_MODE regie ist, sichere alle vorhandenen konkreten Angaben aus PROJECT_CONTEXT, bevor du Lücken benennst.",
     "Wenn OUTPUT_MODE regie ist, darfst du Hook, Setting, Figuren, Kräfte, Regeln, Organisation, Mentor, Unfallmechanik oder Act-Material nicht als Lücke markieren, wenn PROJECT_CONTEXT dazu bereits verwertbare Angaben enthält.",
