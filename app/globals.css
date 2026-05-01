@@ -345,6 +345,18 @@ textarea {
   background: rgba(255, 255, 255, 0.02);
 }
 
+.book-state-diff-panel {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.book-state-diff-panel > p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
 .book-ledger-card__head,
 .book-thread-card__head {
   display: flex;
@@ -359,6 +371,26 @@ textarea {
   margin: 0;
   color: var(--text-soft);
   line-height: 1.45;
+}
+
+.book-state-diff-list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.book-state-diff-list__item {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.book-state-diff-list__actions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
 }
 
 .book-thread-card__meta {
@@ -2338,6 +2370,11 @@ textarea {
 
 .book-writer-output {
   max-height: 23rem;
+}
+
+.book-writer-output-editor {
+  min-height: 23rem;
+  resize: vertical;
 }
 
 .book-writer-panel__header {

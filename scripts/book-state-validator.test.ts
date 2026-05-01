@@ -9,10 +9,13 @@ import {
   validateBookStateDiff
 } from "@/lib/book-state-validator";
 import {
+  analyzeBookDraftReadiness,
+  approveBookStateDiffItem,
   auditSceneContinuityGuards,
   buildSceneContextPacket,
   buildObjectCandidatesFromSceneCard,
   getDraftJobAcceptanceBlockers,
+  rejectBookStateDiffItem,
   type TimelineBeat
 } from "@/lib/book-engine";
 import {
@@ -441,6 +444,133 @@ async function main() {
 
   assert.equal(rejected.book.memory.canonLedger.length, 0);
   assert.equal(rejected.book.draftEngine.jobs[0].stateDiffStatus, "rejected");
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const storyWithConflictingDiff: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        canonLedger: []
+      },
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: [
+          {
+            ...createTestDraftJob(sceneId, "Ein kurzer Draft."),
+            id: "job_conflicting_state_diff",
+            stateDiff: {
+              ...baseDiff(sceneId),
+              objectChanges: [
+                {
+                  objectName: "silberner Ring",
+                  toLocationName: "Safe",
+                  evidenceQuote: "Der Ring liegt im Safe.",
+                  confidence: 0.8
+                }
+              ],
+              proposedCanonFacts: ["Ring: Der Ring liegt im Safe."]
+            },
+            stateDiffStatus: "pending"
+          }
+        ]
+      }
+    }
+  };
+
+  const approved = approveBookStateDiff(storyWithConflictingDiff, "job_conflicting_state_diff");
+
+  assert.equal(approved.book.memory.canonLedger.length, 0);
+  assert.equal(approved.book.draftEngine.jobs[0].stateDiffStatus, "pending");
+  assert.ok(approved.book.draftEngine.jobs[0].stateDiff?.conflicts.length);
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const storyWithPendingStateDiff: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: [
+          {
+            ...createTestDraftJob(sceneId, "Ein kurzer Draft."),
+            stateDiff: {
+              ...baseDiff(sceneId),
+              proposedCanonFacts: ["Ring: Lea nimmt den silbernen Ring an sich."]
+            },
+            stateDiffStatus: "pending"
+          }
+        ]
+      }
+    }
+  };
+
+  const readiness = analyzeBookDraftReadiness(storyWithPendingStateDiff);
+
+  assert.ok(
+    readiness.continuityBlockers.some(function (blocker) {
+      return blocker.includes("StateDiff(s) sind noch nicht angenommen oder verworfen");
+    })
+  );
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const jobId = "job_state_diff_item_review";
+  const storyWithItemDiff: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        canonLedger: []
+      },
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: [
+          {
+            ...createTestDraftJob(sceneId, "Ein kurzer Draft."),
+            id: jobId,
+            stateDiff: {
+              ...baseDiff(sceneId),
+              proposedCanonFacts: [
+                "Ring: Lea nimmt den silbernen Ring an sich.",
+                "Lampe: Die Lampe flackert gruen."
+              ]
+            },
+            stateDiffStatus: "pending"
+          }
+        ]
+      }
+    }
+  };
+
+  const afterApprove = approveBookStateDiffItem(storyWithItemDiff, {
+    jobId,
+    kind: "proposedCanonFacts",
+    index: 0
+  });
+  const afterReject = rejectBookStateDiffItem(afterApprove, {
+    jobId,
+    kind: "proposedCanonFacts",
+    index: 0
+  });
+  const canonText = afterReject.book.memory.canonLedger.map(function (entry) {
+    return `${entry.title}: ${entry.summary}`;
+  }).join("\n");
+
+  assert.match(canonText, /Ring/);
+  assert.doesNotMatch(canonText, /Lampe/);
+  assert.equal(afterReject.book.draftEngine.jobs[0].stateDiffStatus, "approved_manual");
+  assert.equal(afterReject.book.draftEngine.jobs[0].stateDiff?.proposedCanonFacts.length, 0);
 }
 
 {

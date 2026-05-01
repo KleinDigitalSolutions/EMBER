@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
+import { BookStateDiffReview } from "@/components/studio/book-state-diff-review";
 import {
   analyzeBookDraftReadiness,
   acceptDraftJobToScene,
@@ -9,14 +10,17 @@ import {
   buildAmazonLaunchPackage,
   buildCanonLedger,
   buildCharacterLedger,
+  approveBookStateDiffItem,
   buildOpenThreads,
   buildSceneContextPacket,
   buildTimelineBeats,
   getDraftJobAcceptanceBlockers,
   getDraftJobsForScene,
+  rejectBookStateDiffItem,
   updateDraftJobMemorySyncKindStatus,
   updateDraftJobMemorySyncStatus,
   upsertDraftJob,
+  type BookStateDiffItemKind,
   type BookReviewQueueItem
 } from "@/lib/book-engine";
 import {
@@ -34,6 +38,10 @@ import {
   formatBookEngineModeLabel,
   isBookEngineMode
 } from "@/lib/book-engine-modes";
+import {
+  approveBookStateDiff,
+  rejectBookStateDiff
+} from "@/lib/book-state-validator";
 import {
   analyzeBookDraftPreparation,
   countStoryStats,
@@ -1287,6 +1295,51 @@ export function BookBlueprintPanel({
                   <DraftJobCard
                     key={job.id}
                     job={job}
+                    onApproveStateDiff={function () {
+                      let approved = false;
+                      let conflicts: string[] = [];
+
+                      onUpdateStory(function (currentStory) {
+                        const nextStory = approveBookStateDiff(currentStory, job.id);
+                        const reviewedJob = nextStory.book.draftEngine.jobs.find(function (candidate) {
+                          return candidate.id === job.id;
+                        });
+                        approved = reviewedJob?.stateDiffStatus === "approved";
+                        conflicts = reviewedJob?.stateDiff?.conflicts ?? [];
+                        return nextStory;
+                      });
+                      setJobStatus(
+                        approved
+                          ? "StateDiff angenommen und in den Memory Backbone übernommen."
+                          : conflicts[0] || "StateDiff bleibt pending, weil die Validierung Review verlangt."
+                      );
+                    }}
+                    onRejectStateDiff={function () {
+                      onUpdateStory(function (currentStory) {
+                        return rejectBookStateDiff(currentStory, job.id);
+                      });
+                      setJobStatus("StateDiff verworfen. Der Draft bleibt erhalten, der State wird nicht kanonisch.");
+                    }}
+                    onApproveStateDiffItem={function (kind, index) {
+                      onUpdateStory(function (currentStory) {
+                        return approveBookStateDiffItem(currentStory, {
+                          jobId: job.id,
+                          kind,
+                          index
+                        });
+                      });
+                      setJobStatus("StateDiff-Zeile angenommen.");
+                    }}
+                    onRejectStateDiffItem={function (kind, index) {
+                      onUpdateStory(function (currentStory) {
+                        return rejectBookStateDiffItem(currentStory, {
+                          jobId: job.id,
+                          kind,
+                          index
+                        });
+                      });
+                      setJobStatus("StateDiff-Zeile verworfen.");
+                    }}
                     onAccept={function () {
                       let accepted = false;
                       let blockers: string[] = [];
@@ -1566,9 +1619,17 @@ function Metric({ label, value }: { label: string; value: string | number }) {
 
 function DraftJobCard({
   job,
+  onApproveStateDiff,
+  onRejectStateDiff,
+  onApproveStateDiffItem,
+  onRejectStateDiffItem,
   onAccept
 }: {
   job: BookDraftJob;
+  onApproveStateDiff: () => void;
+  onRejectStateDiff: () => void;
+  onApproveStateDiffItem: (kind: BookStateDiffItemKind, index: number) => void;
+  onRejectStateDiffItem: (kind: BookStateDiffItemKind, index: number) => void;
   onAccept: () => void;
 }) {
   return (
@@ -1583,6 +1644,7 @@ function DraftJobCard({
         </div>
         <div className="book-card__meta">
           <span>{job.status}</span>
+          <span>State: {formatStateDiffStatusShort(job.stateDiffStatus)}</span>
           <span>{job.contextSnapshot.relevantCodexTitles.length} Codex</span>
           <span>{job.contextSnapshot.relevantCharacterNames?.length ?? 0} Character States</span>
         </div>
@@ -1633,6 +1695,16 @@ function DraftJobCard({
               2
             )}
           </pre>
+
+          <strong>State Review</strong>
+          <BookStateDiffReview
+            job={job}
+            compact
+            onApprove={onApproveStateDiff}
+            onReject={onRejectStateDiff}
+            onApproveItem={onApproveStateDiffItem}
+            onRejectItem={onRejectStateDiffItem}
+          />
         </div>
 
         <div className="book-context-stack">
@@ -1862,6 +1934,22 @@ function formatDraftStageLabel(stageId: (typeof BOOK_DRAFT_STAGE_SEQUENCE)[numbe
   }
 
   return "Quality Eval";
+}
+
+function formatStateDiffStatusShort(status: BookDraftJob["stateDiffStatus"]) {
+  if (status === "approved" || status === "approved_manual") {
+    return "approved";
+  }
+
+  if (status === "rejected") {
+    return "rejected";
+  }
+
+  if (status === "pending") {
+    return "pending";
+  }
+
+  return "none";
 }
 
 function formatSceneCardDirectiveLabel(step: string, index: number) {

@@ -5,6 +5,8 @@ import {
   normalizeBookKnowledgeStates,
   normalizeBookObjectStates,
   normalizeBookPromiseStates,
+  type BookKnowledgeState,
+  type BookObjectStateChange,
   type BookDraftStageId,
   countWords,
   findSceneContext,
@@ -16,6 +18,7 @@ import {
   type BookDraftStageRuns,
   type BookJobProvider,
   type BookPromiseState,
+  type BookStateDiff,
   type BookStateObjectCandidate,
   type DraftMemorySyncItemKind,
   type DraftMemorySyncStatus,
@@ -26,6 +29,7 @@ import {
   withDraftMemorySync
 } from "@/lib/story-schema";
 import {
+  applyBookStateDiffToMemory,
   buildStateDiffFromExtraction,
   validateBookStateDiff
 } from "@/lib/book-state-validator";
@@ -39,6 +43,15 @@ export type CharacterStateSnapshotEntry =
 export type TimelineBeat = StoryDocument["book"]["memory"]["sceneCards"][number];
 export type OpenThread = StoryDocument["book"]["memory"]["openThreads"][number];
 type ContextPack = StoryDocument["book"]["memory"]["contextPacks"][number];
+
+export type BookStateDiffItemKind =
+  | "proposedCanonFacts"
+  | "objectChanges"
+  | "knowledgeChanges"
+  | "promiseUpdates"
+  | "characterStateUpdates"
+  | "relationshipNotes"
+  | "sceneLocalDetails";
 
 export type BookPromiseCandidate = {
   label: string;
@@ -1481,6 +1494,347 @@ export function updateDraftJobMemorySyncKindStatus(
   });
 }
 
+export function approveBookStateDiffItem(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    kind: BookStateDiffItemKind;
+    index: number;
+  }
+): StoryDocument {
+  return reviewBookStateDiffItem(story, {
+    ...params,
+    action: "approved"
+  });
+}
+
+export function rejectBookStateDiffItem(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    kind: BookStateDiffItemKind;
+    index: number;
+  }
+): StoryDocument {
+  return reviewBookStateDiffItem(story, {
+    ...params,
+    action: "rejected"
+  });
+}
+
+function reviewBookStateDiffItem(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    kind: BookStateDiffItemKind;
+    index: number;
+    action: "approved" | "rejected";
+  }
+): StoryDocument {
+  const now = new Date().toISOString();
+  const targetJob = story.book.draftEngine.jobs.find(function (job) {
+    return job.id === params.jobId;
+  });
+
+  if (!targetJob?.stateDiff) {
+    return story;
+  }
+
+  const itemDiff = buildStateDiffForSingleItem(targetJob.stateDiff, params.kind, params.index);
+
+  if (!itemDiff) {
+    return story;
+  }
+
+  const validation = validateBookStateDiff(story, itemDiff);
+
+  if (params.action === "approved" && !validation.valid) {
+    return updateStateDiffReviewConflicts(story, params.jobId, validation.conflicts, now);
+  }
+
+  const storyWithReviewedJob = updateStateDiffItemReview(story, {
+    ...params,
+    now,
+    itemDiff
+  });
+  const storyWithMemory =
+    params.action === "approved"
+      ? {
+          ...storyWithReviewedJob,
+          book: {
+            ...storyWithReviewedJob.book,
+            activePhase: "phase_2_memory" as const,
+            memory: applyBookStateDiffToMemory(storyWithReviewedJob, itemDiff, now)
+          }
+        }
+      : storyWithReviewedJob;
+
+  return syncStoryBookArtifacts(storyWithMemory);
+}
+
+function updateStateDiffReviewConflicts(
+  story: StoryDocument,
+  jobId: string,
+  conflicts: string[],
+  now: string
+): StoryDocument {
+  return {
+    ...story,
+    book: {
+      ...story.book,
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: story.book.draftEngine.jobs.map(function (job) {
+          if (job.id !== jobId || !job.stateDiff) {
+            return job;
+          }
+
+          return {
+            ...job,
+            updatedAt: now,
+            stateDiff: {
+              ...job.stateDiff,
+              conflicts,
+              requiresHumanReview: true
+            },
+            stateDiffStatus: "pending" as const
+          };
+        })
+      }
+    }
+  };
+}
+
+function updateStateDiffItemReview(
+  story: StoryDocument,
+  params: {
+    jobId: string;
+    kind: BookStateDiffItemKind;
+    index: number;
+    action: "approved" | "rejected";
+    now: string;
+    itemDiff: BookStateDiff;
+  }
+): StoryDocument {
+  return {
+    ...story,
+    book: {
+      ...story.book,
+      activePhase: "phase_2_memory",
+      draftEngine: {
+        ...story.book.draftEngine,
+        jobs: story.book.draftEngine.jobs.map(function (job) {
+          if (job.id !== params.jobId || !job.stateDiff) {
+            return job;
+          }
+
+          const nextDiff = removeStateDiffItem(job.stateDiff, params.kind, params.index);
+          const hasPendingItems = countStateDiffReviewItems(nextDiff) > 0;
+
+          return {
+            ...job,
+            updatedAt: params.now,
+            extractedState: updateMemorySyncForStateDiffItem(job, params),
+            stateDiff: {
+              ...nextDiff,
+              conflicts: [],
+              requiresHumanReview: hasPendingItems ? nextDiff.requiresHumanReview : false
+            },
+            stateDiffStatus: hasPendingItems ? "pending" as const : "approved_manual" as const
+          };
+        })
+      }
+    }
+  };
+}
+
+function updateMemorySyncForStateDiffItem(
+  job: BookDraftJob,
+  params: {
+    kind: BookStateDiffItemKind;
+    action: "approved" | "rejected";
+    itemDiff: BookStateDiff;
+    now: string;
+  }
+): BookDraftJob["extractedState"] {
+  const syncKind = resolveMemorySyncKindForStateDiffItem(params.kind);
+  const value = resolveMemorySyncValueForStateDiffItem(params.kind, params.itemDiff);
+
+  if (!syncKind || !value) {
+    return job.extractedState;
+  }
+
+  const nextItems = job.extractedState.memorySync.items.map(function (item) {
+    if (
+      item.kind === syncKind &&
+      normalizeText(item.value) === normalizeText(value)
+    ) {
+      return {
+        ...item,
+        status: params.action,
+        reviewedAt: params.now
+      };
+    }
+
+    return item;
+  });
+
+  const hasExistingItem = nextItems.some(function (item) {
+    return item.kind === syncKind && normalizeText(item.value) === normalizeText(value);
+  });
+
+  return {
+    ...job.extractedState,
+    memorySync: {
+      items: hasExistingItem
+        ? nextItems
+        : nextItems.concat({
+            id: createUuid(),
+            kind: syncKind,
+            value,
+            status: params.action,
+            createdAt: params.now,
+            reviewedAt: params.now
+          })
+    }
+  };
+}
+
+function resolveMemorySyncKindForStateDiffItem(
+  kind: BookStateDiffItemKind
+): DraftMemorySyncItemKind | null {
+  if (kind === "proposedCanonFacts") {
+    return "canon_fact";
+  }
+
+  if (kind === "characterStateUpdates") {
+    return "character_state";
+  }
+
+  return null;
+}
+
+function resolveMemorySyncValueForStateDiffItem(
+  kind: BookStateDiffItemKind,
+  diff: BookStateDiff
+) {
+  if (kind === "proposedCanonFacts") {
+    return diff.proposedCanonFacts[0] ?? "";
+  }
+
+  if (kind === "characterStateUpdates") {
+    return diff.characterStateUpdates[0] ?? "";
+  }
+
+  return "";
+}
+
+function buildStateDiffForSingleItem(
+  diff: BookStateDiff,
+  kind: BookStateDiffItemKind,
+  index: number
+): BookStateDiff | null {
+  const next = createStateDiffShell(diff.sceneId);
+
+  if (kind === "proposedCanonFacts") {
+    const item = diff.proposedCanonFacts[index];
+    return item ? { ...next, proposedCanonFacts: [item] } : null;
+  }
+
+  if (kind === "objectChanges") {
+    const item = diff.objectChanges[index];
+    return item ? { ...next, objectChanges: [item] } : null;
+  }
+
+  if (kind === "knowledgeChanges") {
+    const item = diff.knowledgeChanges[index];
+    return item ? { ...next, knowledgeChanges: [item] } : null;
+  }
+
+  if (kind === "promiseUpdates") {
+    const item = diff.promiseUpdates[index];
+    return item ? { ...next, promiseUpdates: [item] } : null;
+  }
+
+  if (kind === "characterStateUpdates") {
+    const item = diff.characterStateUpdates[index];
+    return item ? { ...next, characterStateUpdates: [item] } : null;
+  }
+
+  if (kind === "relationshipNotes") {
+    const item = diff.relationshipNotes[index];
+    return item ? { ...next, relationshipNotes: [item] } : null;
+  }
+
+  const item = diff.sceneLocalDetails[index];
+  return item ? { ...next, sceneLocalDetails: [item], requiresHumanReview: true } : null;
+}
+
+function removeStateDiffItem(
+  diff: BookStateDiff,
+  kind: BookStateDiffItemKind,
+  index: number
+): BookStateDiff {
+  if (kind === "proposedCanonFacts") {
+    return { ...diff, proposedCanonFacts: removeArrayIndex(diff.proposedCanonFacts, index) };
+  }
+
+  if (kind === "objectChanges") {
+    return { ...diff, objectChanges: removeArrayIndex(diff.objectChanges, index) };
+  }
+
+  if (kind === "knowledgeChanges") {
+    return { ...diff, knowledgeChanges: removeArrayIndex(diff.knowledgeChanges, index) };
+  }
+
+  if (kind === "promiseUpdates") {
+    return { ...diff, promiseUpdates: removeArrayIndex(diff.promiseUpdates, index) };
+  }
+
+  if (kind === "characterStateUpdates") {
+    return { ...diff, characterStateUpdates: removeArrayIndex(diff.characterStateUpdates, index) };
+  }
+
+  if (kind === "relationshipNotes") {
+    return { ...diff, relationshipNotes: removeArrayIndex(diff.relationshipNotes, index) };
+  }
+
+  return { ...diff, sceneLocalDetails: removeArrayIndex(diff.sceneLocalDetails, index) };
+}
+
+function createStateDiffShell(sceneId: string): BookStateDiff {
+  return {
+    sceneId,
+    objectChanges: [],
+    knowledgeChanges: [],
+    promiseUpdates: [],
+    characterStateUpdates: [],
+    relationshipNotes: [],
+    proposedCanonFacts: [],
+    sceneLocalDetails: [],
+    conflicts: [],
+    requiresHumanReview: false
+  };
+}
+
+function countStateDiffReviewItems(diff: BookStateDiff) {
+  return (
+    diff.objectChanges.length +
+    diff.knowledgeChanges.length +
+    diff.promiseUpdates.length +
+    diff.characterStateUpdates.length +
+    diff.relationshipNotes.length +
+    diff.proposedCanonFacts.length +
+    diff.sceneLocalDetails.length
+  );
+}
+
+function removeArrayIndex<T>(items: T[], index: number) {
+  return items.filter(function (_item, itemIndex) {
+    return itemIndex !== index;
+  });
+}
+
 export function acceptDraftJobToScene(
   story: StoryDocument,
   jobId: string
@@ -1596,6 +1950,9 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
       }).length
     );
   }, 0);
+  const pendingStateDiffCount = jobs.filter(function (job) {
+    return job.stateDiff && job.stateDiffStatus === "pending";
+  }).length;
   const continuityBlockers: string[] = [];
   const qualityWarnings: string[] = [];
   const marketWarnings: string[] = [];
@@ -1632,6 +1989,12 @@ export function analyzeBookDraftReadiness(story: StoryDocument): BookDraftAudit 
   if (pendingMemorySyncCount) {
     continuityBlockers.push(
       `${pendingMemorySyncCount} Memory-Sync-Extract(s) sind noch nicht bestaetigt.`
+    );
+  }
+
+  if (pendingStateDiffCount) {
+    continuityBlockers.push(
+      `${pendingStateDiffCount} StateDiff(s) sind noch nicht angenommen oder verworfen.`
     );
   }
 

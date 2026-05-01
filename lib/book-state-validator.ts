@@ -143,7 +143,9 @@ function updateBookStateDiffStatus(
     conflicts: validation.conflicts,
     requiresHumanReview: validation.requiresHumanReview
   };
-  const shouldApply = status === "approved" || status === "approved_manual";
+  const shouldApply = status === "approved_manual" || (status === "approved" && validation.valid);
+  const nextStatus: BookDraftJob["stateDiffStatus"] =
+    status === "approved" && !validation.valid ? "pending" : status;
 
   return {
     ...story,
@@ -151,7 +153,7 @@ function updateBookStateDiffStatus(
       ...story.book,
       activePhase: "phase_2_memory",
       memory: shouldApply
-        ? applyStateDiffToMemory(story, reviewedDiff, now)
+        ? applyBookStateDiffToMemory(story, reviewedDiff, now)
         : story.book.memory,
       draftEngine: {
         ...story.book.draftEngine,
@@ -164,7 +166,7 @@ function updateBookStateDiffStatus(
             ...job,
             updatedAt: now,
             stateDiff: reviewedDiff,
-            stateDiffStatus: status
+            stateDiffStatus: nextStatus
           };
         })
       }
@@ -172,7 +174,7 @@ function updateBookStateDiffStatus(
   };
 }
 
-function applyStateDiffToMemory(
+export function applyBookStateDiffToMemory(
   story: StoryDocument,
   diff: BookStateDiff,
   now: string

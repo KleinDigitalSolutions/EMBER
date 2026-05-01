@@ -3,12 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { flushSync } from "react-dom";
 import { BookJobModelFields } from "@/components/studio/book-job-model-fields";
+import { BookStateDiffReview } from "@/components/studio/book-state-diff-review";
 import {
   BOOK_DRAFT_STAGE_SEQUENCE,
   acceptDraftJobToScene,
+  approveBookStateDiffItem,
   buildSceneContextPacket,
   getDraftJobAcceptanceBlockers,
   getDraftJobsForScene,
+  rejectBookStateDiffItem,
+  type BookStateDiffItemKind,
   upsertDraftJob
 } from "@/lib/book-engine";
 import { createUuid } from "@/lib/id";
@@ -27,6 +31,10 @@ import {
   isBookEngineMode
 } from "@/lib/book-engine-modes";
 import {
+  approveBookStateDiff,
+  rejectBookStateDiff
+} from "@/lib/book-state-validator";
+import {
   analyzeBookDraftPreparation,
   countSceneWords,
   countStoryStats,
@@ -41,7 +49,7 @@ import {
   type StoryScene
 } from "@/lib/story-schema";
 
-type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "continuity";
+type AiPanelView = "draft" | "rewrite" | "outline" | "notes" | "extract" | "state" | "continuity";
 
 const PROVIDER_OPTIONS: Array<{ id: BookJobProviderOption; label: string; detail: string }> = [
   { id: "auto", label: "Auto", detail: "empfohlen" },
@@ -60,6 +68,7 @@ const AI_PANEL_VIEWS: Array<{ id: AiPanelView; label: string }> = [
   { id: "draft", label: "Draft" },
   { id: "rewrite", label: "Final" },
   { id: "extract", label: "Extract" },
+  { id: "state", label: "State" },
   { id: "continuity", label: "Continuity" },
   { id: "notes", label: "Notes" },
   { id: "outline", label: "Outline" }
@@ -335,6 +344,95 @@ export function BookWriterPanel({
         ? "Finaler Job-Text in die aktuelle Szene übernommen. Human Edit Memory wird beim Speichern erfasst, wenn du danach bearbeitest."
         : blockers[0] || "Job-Text wurde nicht übernommen."
     );
+  }
+
+  function handleUpdateJobRewriteText(jobId: string, rewriteText: string) {
+    const now = new Date().toISOString();
+
+    onUpdateStory(function (currentStory) {
+      return {
+        ...currentStory,
+        book: {
+          ...currentStory.book,
+          draftEngine: {
+            ...currentStory.book.draftEngine,
+            jobs: currentStory.book.draftEngine.jobs.map(function (job) {
+              if (job.id !== jobId) {
+                return job;
+              }
+
+              const stateDiff = job.stateDiff
+                ? {
+                    ...job.stateDiff,
+                    requiresHumanReview: true,
+                    sceneLocalDetails: appendUniqueString(
+                      job.stateDiff.sceneLocalDetails,
+                      "Manuell geänderter Final-Text: StateDiff vor Canon-Übernahme erneut prüfen."
+                    )
+                  }
+                : job.stateDiff;
+
+              return {
+                ...job,
+                updatedAt: now,
+                rewriteText,
+                stateDiff,
+                stateDiffStatus: stateDiff ? "pending" : job.stateDiffStatus
+              };
+            })
+          }
+        }
+      };
+    });
+  }
+
+  function handleApproveStateDiff(jobId: string) {
+    let approved = false;
+    let conflicts: string[] = [];
+
+    onUpdateStory(function (currentStory) {
+      const nextStory = approveBookStateDiff(currentStory, jobId);
+      const reviewedJob = nextStory.book.draftEngine.jobs.find(function (job) {
+        return job.id === jobId;
+      });
+      approved = reviewedJob?.stateDiffStatus === "approved";
+      conflicts = reviewedJob?.stateDiff?.conflicts ?? [];
+      return nextStory;
+    });
+    setJobStatus(
+      approved
+        ? "StateDiff angenommen. Nur dieser geprüfte State wird in den Memory Backbone übernommen."
+        : conflicts[0] || "StateDiff bleibt pending, weil die Validierung Review verlangt."
+    );
+  }
+
+  function handleRejectStateDiff(jobId: string) {
+    onUpdateStory(function (currentStory) {
+      return rejectBookStateDiff(currentStory, jobId);
+    });
+    setJobStatus("StateDiff verworfen. Der Draft-Text bleibt unverändert, aber seine State-Änderungen werden nicht kanonisch.");
+  }
+
+  function handleApproveStateDiffItem(
+    jobId: string,
+    kind: BookStateDiffItemKind,
+    index: number
+  ) {
+    onUpdateStory(function (currentStory) {
+      return approveBookStateDiffItem(currentStory, { jobId, kind, index });
+    });
+    setJobStatus("StateDiff-Zeile angenommen. Nur diese Änderung wurde in den Memory Backbone übernommen.");
+  }
+
+  function handleRejectStateDiffItem(
+    jobId: string,
+    kind: BookStateDiffItemKind,
+    index: number
+  ) {
+    onUpdateStory(function (currentStory) {
+      return rejectBookStateDiffItem(currentStory, { jobId, kind, index });
+    });
+    setJobStatus("StateDiff-Zeile verworfen. Die übrigen pending Änderungen bleiben prüfbar.");
   }
 
   function handleHumanEditLearningStatus(
@@ -904,7 +1002,17 @@ export function BookWriterPanel({
               {activePanelView === "draft" ? (
                 <pre className="book-code-block book-writer-output">{latestJob.draftText}</pre>
               ) : activePanelView === "rewrite" ? (
-                <pre className="book-code-block book-writer-output">{latestJob.rewriteText}</pre>
+                <label className="editor-field">
+                  <span>Final-Kandidat</span>
+                  <textarea
+                    className="editor-textarea book-writer-output-editor"
+                    value={latestJob.rewriteText}
+                    rows={18}
+                    onChange={function (event) {
+                      handleUpdateJobRewriteText(latestJob.id, event.target.value);
+                    }}
+                  />
+                </label>
               ) : activePanelView === "extract" ? (
                 <div className="book-mini-list">
                   {buildExtractCards(latestJob).map(function (card) {
@@ -916,6 +1024,22 @@ export function BookWriterPanel({
                     );
                   })}
                 </div>
+              ) : activePanelView === "state" ? (
+                <BookStateDiffReview
+                  job={latestJob}
+                  onApprove={function () {
+                    handleApproveStateDiff(latestJob.id);
+                  }}
+                  onReject={function () {
+                    handleRejectStateDiff(latestJob.id);
+                  }}
+                  onApproveItem={function (kind, index) {
+                    handleApproveStateDiffItem(latestJob.id, kind, index);
+                  }}
+                  onRejectItem={function (kind, index) {
+                    handleRejectStateDiffItem(latestJob.id, kind, index);
+                  }}
+                />
               ) : activePanelView === "continuity" ? (
                 <div className="book-mini-list">
                   {buildContinuityCards(latestJob).map(function (card) {
@@ -963,6 +1087,25 @@ export function BookWriterPanel({
                     : "Final übernehmen"}
                 </button>
               </div>
+
+              {latestJob.stateDiffStatus === "pending" && activePanelView !== "state" ? (
+                <BookStateDiffReview
+                  job={latestJob}
+                  compact
+                  onApprove={function () {
+                    handleApproveStateDiff(latestJob.id);
+                  }}
+                  onReject={function () {
+                    handleRejectStateDiff(latestJob.id);
+                  }}
+                  onApproveItem={function (kind, index) {
+                    handleApproveStateDiffItem(latestJob.id, kind, index);
+                  }}
+                  onRejectItem={function (kind, index) {
+                    handleRejectStateDiffItem(latestJob.id, kind, index);
+                  }}
+                />
+              ) : null}
 
               <section className="book-mini-card">
                 <strong>Human Edit Memory</strong>
@@ -1245,6 +1388,12 @@ function buildContinuityCards(job: BookDraftJob) {
       content: job.stages.continuity.notes.join(" | ") || "Keine weiteren Continuity-Notizen."
     }
   ];
+}
+
+function appendUniqueString(values: string[], value: string) {
+  return Array.from(new Set(values.concat(value).map(function (entry) {
+    return entry.trim();
+  }).filter(Boolean))).slice(0, 8);
 }
 
 function findFirstSceneId(story: StoryDocument) {
