@@ -1,5 +1,14 @@
 # EMBER — AI-Powered Novel Writing Studio
 
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![OpenAI](https://img.shields.io/badge/OpenAI-SDK-412991?logo=openai&logoColor=white)
+![Anthropic](https://img.shields.io/badge/Anthropic-SDK-D4A574?logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+
 A structured writing environment for long-form fiction, powered by OpenAI and Anthropic. EMBER combines a **scene-card pipeline**, a **memory backbone**, and a **stateful draft engine** to help authors write consistently across chapters and books — not just generate text.
 
 ---
@@ -91,7 +100,7 @@ ember-studio/
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/your-username/ember-studio.git
+git clone https://github.com/KleinDigitalSolutions/EMBER.git
 cd ember-studio
 npm install
 
