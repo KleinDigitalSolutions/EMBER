@@ -7,3 +7,27 @@ out
 .env.local
 supabase/.temp
 tsconfig.tsbuildinfo
+
+# Generated outputs & API job results
+outputs/
+
+# Creative source material (project-specific, not part of the engine)
+Regie-*.md
+Regie_Anleitung.md
+Die_Falsche_Abholung_alte_regie.md
+STORY_PLAN.md
+Noveldirector.md
+Regie
+
+# Internal planning docs
+BOOK_BLUEPRINT_FULLSCREEN_PLAN.md
+REWRITE_LENGTH_CONTROL_V2.md
+
+# Prose files in lib (not source code)
+lib/Aftershock_aktualisiert_DE
+
+# Personal / deployment scripts
+scripts/sync-env-to-vercel.sh
+
+# Novel-director experiment outputs
+novel-director/examples/
