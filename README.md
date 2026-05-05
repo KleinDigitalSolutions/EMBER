@@ -9,6 +9,8 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 
+![EMBER Hero](/public/images/after_schok_cover1.png)
+
 A structured writing environment for long-form fiction, powered by OpenAI and Anthropic. EMBER combines a **scene-card pipeline**, a **memory backbone**, and a **stateful draft engine** to help authors write consistently across chapters and books — not just generate text.
 
 ---
@@ -47,6 +49,30 @@ A branching-fiction storefront and reader at `public/legacy/`, built in vanilla 
 
 ### 💬 Studio Assistant
 An in-studio chat assistant (OpenAI / Anthropic / local Gemma) scoped to project, act, chapter, or scene context.
+
+---
+
+## Studio Impressions
+
+### 🖋️ Manuscript Editor
+Direct prose drafting with integrated scene context, word count tracking, and AI copilot selection.
+![Studio Editor](/public/images/studio_editor.png)
+
+### 📊 Blueprint & Memory Backbone
+High-level project control across multiple phases, from foundation to market readiness.
+![Blueprint Overview](/public/images/blueprint_overview.png)
+
+### ⚖️ Writer Constitution
+Fine-grained narrative rules and model orchestration instructions to maintain a consistent voice.
+![Writer Constitution](/public/images/writer_constitution.png)
+
+### 📖 Codex & World Bible
+Centralized tracking of characters, locations, and objects with automated state updates.
+![Codex & World Bible](/public/images/codex_world_bible.png)
+
+### 🤖 Assistant Chat
+Context-aware brainstorming and strategic feedback on manuscript chapters and scene cards.
+![Assistant Chat](/public/images/assistant_chat.png)
 
 ---
 
