@@ -8,9 +8,6 @@
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
-
-![EMBER Hero](/public/images/after_schok_cover1.png)
-
 A structured writing environment for long-form fiction, powered by OpenAI and Anthropic. EMBER combines a **scene-card pipeline**, a **memory backbone**, and a **stateful draft engine** to help authors write consistently across chapters and books — not just generate text.
 
 ---
