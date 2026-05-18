@@ -1,5 +1,9 @@
 # EMBER — AI-Powered Novel Writing Studio
 
+**[👉 Live Studio at ember-story.vercel.app](https://ember-story.vercel.app/studio/)**
+
+
+
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
