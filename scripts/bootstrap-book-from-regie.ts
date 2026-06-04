@@ -1126,7 +1126,7 @@ function parseSceneCardBlock(lines: string[]) {
       return
     }
 
-    custom.push({ key: normalized === "required_material" ? "locked_material" : rawKey, value })
+    custom.push({ key: rawKey, value })
   })
 
   directives.custom = custom

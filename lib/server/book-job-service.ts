@@ -1407,28 +1407,12 @@ function buildCoreSystemPrompt() {
 
 function buildProseStyleBrakePrompt() {
   return [
-    "PROSA-STILBREMSE:",
-    "Bevorzuge konkrete szenische Bewegung vor abstrakter Deutung.",
-    "Lass Bilder, Handlungen, Schweigen, Koerper, Dialogverhalten und praktische Folgen Bedeutung tragen.",
-    "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste. Eine Szene muss nicht jedes verfuegbare Detail anfassen, wenn ihre natuerliche Bewegung anders liegt.",
-    "Nutze pro Szene nur wenige konkrete Kontextdetails aktiv. Der Rest dient als Sicherheitsnetz gegen Fehler.",
-    "Materialdetails sind Szenentextur, keine automatisch zu benennenden Symbole, Hinweise oder Bedeutungen. Benenne ihre Bedeutung nur, wenn eine Figur das natuerlich sagen wuerde.",
-    "Dialog soll Haltung, Ausweichen, Druck, Naehe oder Beziehung zeigen; vermeide Dialog, der nur Weltwissen erklaert.",
-    "Erklaere nach starken Dialogzeilen nicht sofort, was sie bedeuten. Lass Reaktion, Pause oder naechste Handlung tragen.",
-    "Verwende glatte interpretierende Gelenksaetze in deutscher Prosa sparsam, besonders: \"Sie spürte, wie...\", \"Etwas in ihr...\", \"Sie verstand\", \"Sie begriff\", \"Ihr wurde klar\", \"in diesem Moment\", \"plötzlich\", \"zum ersten Mal\", \"genau darin\", \"das bedeutete\" und \"nicht X, sondern Y\".",
-    "Setze direkte Gefuehlsnomen nach Handlung sparsam ein. Bevorzuge Handlung, koerperliche Justierung, Objekt, veraendertes Verhalten.",
-    "Bei Tempo- oder Actionszenen bleiben Saetze klar, konkret und kausal; vermeide trotzdem erklaerende Zusammenfassungen, wenn Handlung es tragen kann.",
-    "Gegenkraefte duerfen kompetent sein, aber nicht standardmaessig perfekt getaktet oder allwissend wirken. Ein falscher Ton, Uebergriff, eine verspaetete Reaktion, sichtbare Kosten oder unvollstaendiger Zugriff machen sie oft lebendiger.",
-    "Vorher/nachher-Praeferenz:",
-    "Schwach: Die Figur verstand, dass die Lage anders war, als sie gedacht hatte.",
-    "Staerker: Der Name auf dem Zettel stimmte nicht mit dem Umschlag ueberein.",
-    "Schwach: Das zeigte eindeutig, dass jemand ihre Grenze ueberschritten hatte.",
-    "Staerker: Der Stuhl stand nicht mehr unter dem Tisch. Sie schob ihn nicht zurueck.",
-    "Schwach: Etwas in ihr zog sich zusammen, als ihr klar wurde, dass sie die Kontrolle verlor.",
-    "Staerker: Sie legte den Gegenstand ab. Er blieb nicht dort. Sie nahm ihn wieder in die Hand.",
-    "Schwach: Sie spürte, wie die Angst in ihr wuchs, als sie realisierte, dass sie nicht mehr sicher war.",
-    "Staerker: Sie wich nicht mehr aus. Ihre Schritte wurden schneller, unregelmäßiger. Sie konnte nicht mehr klar denken.",
-    "Vermeide die Standard-Satzlänge. Variiere zwischen kurzen, harten Beobachtungen und längeren, fließenden Bewegungen. Wenn die Spannung steigt, darf die Syntax knapper, härter oder brüchiger werden; erzwinge dieses Muster nicht mechanisch."
+    "PROSA-FREIRAUM:",
+    "Nutze Kontext als Sicherheitsnetz, nicht als Checkliste.",
+    "Schreibe die Szene aus ihrer natuerlichen Bewegung: konkrete Handlung, Dialog, Koerper, Objekt, Reibung, Konsequenz.",
+    "Wenn ein Bild, eine Geste oder eine Dialogzeile Bedeutung bereits traegt, vertraue ihr.",
+    "Materialdetails sind Szenentextur. Benenne ihre Bedeutung nur, wenn eine Figur das natuerlich sagen wuerde.",
+    "Variiere Satzlaenge und Absatzrhythmus nach Szene, Figur und Druck; erzwinge kein mechanisches Muster."
   ].join("\n");
 }
 
@@ -1750,7 +1734,6 @@ function buildAnthropicScenePrompt(params: {
 
   return [
     `<scene_context>${escapeXml(buildProseSceneContextPrompt(params.packet))}</scene_context>`,
-    `<continuity>${escapeXml(buildProseContinuityContext(params.packet))}</continuity>`,
     params.options.directorNote
       ? `<director_note>${escapeXml(params.options.directorNote)}</director_note>`
       : "",
@@ -1813,7 +1796,6 @@ function buildProseSceneContextPrompt(packet: SceneContextPacket) {
     `Scene narrator anchor: ${sceneNarratorAnchor || "none"}`,
     buildSceneIntentionPrompt(packet),
     `Hard scene constraints: ${proseConstraints.join(" || ") || "none"}`,
-    `Soft scene guidance: ${packet.dynamicContext.sceneSoftGuidance.join(" || ") || "none"}`,
     `Locked facts: ${formatLockedFacts(packet).join(" || ") || "none"}`,
     `Scene summary: ${packet.dynamicContext.sceneSummary}`,
     `Relevant codex: ${packet.dynamicContext.relevantCodex
@@ -1948,18 +1930,6 @@ function buildContinuityContext(packet: SceneContextPacket) {
     `Active threads: ${packet.dynamicContext.activeThreads
       .map(function (thread) {
         return `${thread.label}: ${thread.detail}`;
-      })
-      .join(" | ") || "none"}`
-  ].join("\n");
-}
-
-function buildProseContinuityContext(packet: SceneContextPacket) {
-  return [
-    `Locked facts: ${formatLockedFacts(packet).join(" | ") || "none"}`,
-    `Hard scene constraints: ${packet.dynamicContext.sceneHardConstraints.join(" | ") || "none"}`,
-    `Relevant codex: ${packet.dynamicContext.relevantCodex
-      .map(function (entry) {
-        return `${entry.title}: ${entry.summary}`;
       })
       .join(" | ") || "none"}`
   ].join("\n");

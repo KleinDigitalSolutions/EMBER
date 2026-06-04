@@ -649,6 +649,43 @@ async function main() {
   const story = createStory();
   const sceneId = story.acts[0].chapters[0].scenes[0].id;
   const sceneCard = createTestSceneCard(sceneId, [
+    { key: "required_material", value: "Treys Uhr mit Bixi" },
+    { key: "avoid", value: "Nicht als Checkliste schreiben." }
+  ]);
+  const storyWithSoftMaterial: StoryDocument = {
+    ...story,
+    book: {
+      ...story.book,
+      memory: {
+        ...story.book.memory,
+        sceneCards: [sceneCard],
+        lastSyncedAt: "2026-04-28T00:00:00.000Z"
+      }
+    }
+  };
+  const packet = buildSceneContextPacket(storyWithSoftMaterial, sceneId);
+
+  assert.ok(packet);
+  assert.ok(packet.dynamicContext.sceneSoftGuidance.some(function (guidance) {
+    return guidance.includes("Concrete material: Treys Uhr mit Bixi");
+  }));
+  assert.ok(!packet.dynamicContext.sceneHardConstraints.some(function (constraint) {
+    return constraint.includes("Treys Uhr mit Bixi");
+  }));
+
+  const { previewAnthropicProsePrompts } = await import("@/lib/server/book-job-service");
+  const preview = previewAnthropicProsePrompts(packet);
+
+  assert.match(preview.userPrompt, /Scene intention:/);
+  assert.match(preview.userPrompt, /Concrete material: Treys Uhr mit Bixi/);
+  assert.doesNotMatch(preview.userPrompt, /Soft scene guidance:/);
+  assert.doesNotMatch(preview.userPrompt, /<continuity>/);
+}
+
+{
+  const story = createStory();
+  const sceneId = story.acts[0].chapters[0].scenes[0].id;
+  const sceneCard = createTestSceneCard(sceneId, [
     { key: "sequence_anchor", value: "Bus -> Ankunft -> Gruppeneinteilung -> Tourbeginn/Foyer" }
   ]);
   const storyWithSequence: StoryDocument = {

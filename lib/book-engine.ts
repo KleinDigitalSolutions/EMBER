@@ -3056,7 +3056,8 @@ function buildSceneSoftGuidance(sceneCard: TimelineBeat | null) {
     "beweisobjekt",
     "kindmoment",
     "mila_kindmoment",
-    "alltagswaffe"
+    "alltagswaffe",
+    "required_material"
   ])));
   addSoftGuidance(
     guidance,
